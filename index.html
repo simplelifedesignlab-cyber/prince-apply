@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja"><head><base target="_top"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap">
+<style>
+body{font-family:sans-serif;margin:0 auto;padding:12px;max-width:760px;font-size:18px;line-height:1.5}
+button,.btn{font-size:18px;min-height:48px;padding:8px 16px;margin:2px;border:1px solid #888;border-radius:8px;background:#f4f4f4;color:#000;text-decoration:none;display:inline-block;box-sizing:border-box}
+button.pri,.btn.pri{background:#1a56db;color:#fff;border-color:#1a56db}
+button.warn{background:#fff0f0;border-color:#c00}
+button.sm{min-height:44px;font-size:16px}
+input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],input[type=time],input[type=number],select,textarea{width:100%;box-sizing:border-box;font-size:18px;min-height:48px;padding:8px;border:1px solid #aaa;border-radius:8px;background:#fff}
+textarea{min-height:90px}
+.q{margin:16px 0;padding-bottom:6px;border-bottom:1px solid #eee}
+.q label.t{display:block;font-weight:bold;white-space:pre-wrap;margin-bottom:4px}
+.req{color:#c00}
+.opt{display:block;padding:8px 0;min-height:44px}
+.opt input{margin-right:8px;transform:scale(1.5)}
+.opt .oth{width:70%;display:inline-block;margin-left:6px}
+.item{padding:12px;border:1px solid #ccc;border-radius:8px;margin:8px 0;cursor:pointer}
+.small{color:#666;font-size:14px}
+.tabs button.on{background:#333;color:#fff}
+#msg{position:sticky;top:0;background:#fff8c5;padding:8px;display:none;white-space:pre-wrap;z-index:5}
+#msg.err{background:#ffd6d6}
+.bar{position:sticky;bottom:0;background:#fff;padding:8px 0;border-top:1px solid #ccc}
+.sec{border:1px solid #bbb;border-radius:10px;padding:8px 14px;margin:16px 0}
+.sec h3{margin:6px 0;padding-bottom:4px;border-bottom:2px solid #1a56db}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.row3{display:flex;gap:6px;align-items:center}
+.row3 select{flex:1}
+.ferr{color:#c00;font-size:15px;min-height:0}
+.bad input,.bad select{background:#ffd6d6}
+.day{margin:8px 0;padding:6px 0;border-bottom:1px dotted #ccc}
+.times{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.times select{flex:1;min-width:100px}
+.consent{border:1px solid #999;border-radius:6px;padding:8px 12px;background:#fafafa;white-space:pre-wrap;font-size:15px;max-height:260px;overflow:auto}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;background:#e8eefc;font-weight:bold}
+.big{font-size:22px}
+#modal{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9}
+#modal div{background:#fff;border-radius:10px;padding:18px;max-width:420px;margin:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
+.chip{min-height:44px;margin:0;padding:6px 16px;border-radius:22px;font-size:17px;background:#fff}
+.chip.on{background:#1a56db;color:#fff;border-color:#1a56db}
+.pl{font-size:15px;color:#555;margin:10px 0 2px}
+.nt{margin-top:8px;font-size:16px}
+.nav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.prog{padding:8px 12px;border-radius:8px;font-weight:bold;margin-bottom:8px}
+.sum .sr{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #eee}
+.sum .sr b{min-width:8em;max-width:8em;font-size:15px}
+.sum .sr span{flex:1;word-break:break-all}
+.card{border:2px solid #1a56db;border-radius:10px;padding:8px 12px;margin:8px 0;cursor:pointer}
+
+:root{--pri:#1a73e8;--priL:#e8f0fe;--priD:#174ea6}
+body{font-family:'Noto Sans JP','Roboto',sans-serif;background:#f0f4f9;color:#202124;font-size:16px;max-width:680px;padding:12px 16px 90px}
+.q,.sec{background:#fff;border:0;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:16px 18px;margin:12px 0}
+.sec .q{box-shadow:none;padding:8px 0;margin:8px 0}
+.sec h3{border:0;color:var(--priD);font-size:17px;margin:0 0 4px}
+.pg>h2{background:#fff;border-top:10px solid var(--pri);border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:18px;margin:8px 0;font-size:22px}
+.item,.card{border:0;background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15)}
+.card{outline:2px solid var(--priL)}
+input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],select,textarea{border:1px solid #80868b;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:0;border:2px solid var(--pri);padding:7px}
+button,.btn{font-family:inherit;border:0;background:transparent;color:var(--pri);border-radius:20px;font-weight:500}
+button.pri,.btn.pri{background:var(--pri);color:#fff;border-radius:24px;padding:8px 28px}
+button.warn{background:#fce8e6;color:#c5221f}
+.chip{border:1px solid #dadce0;background:#fff;color:#3c4043;border-radius:16px;min-height:40px;font-weight:400}
+.chip.on{background:var(--priL);border-color:var(--priL);color:var(--priD);font-weight:500}
+.chip.on::before{content:'\2713\00a0'}
+.prog{background:none!important;position:relative;padding:0 0 12px;font-size:14px;color:#5f6368}
+.prog::before,.prog::after{content:'';position:absolute;left:0;bottom:0;height:4px;border-radius:2px}
+.prog::before{right:0;background:#dadce0}.prog::after{width:var(--w,0);background:var(--pri)}
+.bar{background:rgba(240,244,249,.96);border:0;padding:10px 0}
+.sum .sr,.day{border:0}
+.badge{background:var(--priL);color:var(--priD)}
+.consent{border:0;background:#f8f9fa}
+.ferr{color:#d93025}
+.tc{flex:1;min-width:96px}
+.times{align-items:flex-end}
+@media(min-width:0){.tdate{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:8px 0}.tdate input{width:auto;min-height:44px}
+.tcard{background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:12px 16px;margin:10px 0}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0;font-size:15px}.tg span{display:block;color:#5f6368;font-size:12px}
+.tb{display:flex;flex-wrap:wrap;gap:2px}}
+#demobar{position:sticky;top:0;z-index:20;background:#fef7e0;color:#7a4f01;padding:8px 12px;border-radius:0 0 12px 12px;font-size:14px;text-align:center}
+#demobar a{color:#1a73e8}
+</style></head><body>
+<div id="msg"></div>
+<div id="modal"><div><p id="mtext"></p><button class="pri" id="mok">OK</button><button id="mng">キャンセル</button></div></div>
+<div id="app">読み込み中...</div>
+<script>
+// google.script.run 互換 shim: GAS の doPost へ fetch (Cookie なし・プリフライトなし)
+(function () {
+  var EXEC = "https://script.google.com/macros/s/AKfycbwrR4ae_RmDgMykwOap2qjxUK_CogocZKBfOzopVbbDB3sP-gs5tGFUnYJ0_wso9RZ7/exec";
+  function call(fn, args, ok, ng) {
+    fetch(EXEC, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok) { if (ok) ok(j.result); } else throw new Error(j && j.error || '送信に失敗しました'); })
+      .catch(function (e) { if (ng) ng(e); else console.error(e); });
+  }
+  function make(ok, ng) {
+    return new Proxy({}, { get: function (t, k) {
+      if (k === 'withSuccessHandler') return function (f) { return make(f, ng); };
+      if (k === 'withFailureHandler') return function (f) { return make(ok, f); };
+      return function () { call(String(k), Array.prototype.slice.call(arguments), ok, ng); };
+    } });
+  }
+  window.google = { script: { run: make(null, null) } };
+})();
+</script>
+<script>
+var MODE = "apply", BASE = "", CONSENT = ["個人情報取り扱い同意書", "私は、個人情報の取り扱いについて、以下の事項を確認のうえ、同意します。", "", "1、個人情報の利用目的について", "取得した個人情報を以下の目的で使用し、それ以外の目的で利用することが無いことをお約束いたします。", "1.新規店舗open時などの際のお声かけ。", "2.当社営業店舗の入店活動に関わるご連絡など。", "3", "", "2、第三者への個人情報の提供に関して", "取得した個人情報は、あらかじめご本人の同意を得てある場合、または法律上公的機関への届出・提出が", "必要な場合を除いて第三者への開示や提供をしません。", "", "3、個人情報の開示・訂正・削除について", "取得した個人情報の内容の訂正や変更、追加または削除の要求あった場合には、必ずご本人であることを", "確認し、すみやかに対応します。"];
+var CASTQ = [{"f": "jikyu", "qi": 3, "page": "work", "label": "ナイトワークの経歴", "parts": [{"k": "s", "o": ["未経験", "体験のみ経験あり", "３か月以内", "3～6か月以内", "6か月～1年以内", "１年以上", "3年以上", "5年以上", "10年以上"]}]}, {"f": "jikyu", "qi": 4, "page": "work", "label": "直近で働いていた業態", "parts": [{"k": "s", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 5, "page": "work", "label": "今までに働いたことがある業態 (すべて)", "parts": [{"k": "m", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 6, "page": "work", "label": "ブランク (お仕事をしていない期間)", "parts": [{"k": "sel", "o": ["なし", "〜3ヶ月", "3〜6ヶ月", "6ヶ月〜1年", "1年以上"]}], "note": true}, {"f": "jikyu", "qi": 12, "page": "work", "label": "直近のお店の名前 (体験のみでもOK)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 14, "page": "work", "label": "そのお店の時給・給与", "parts": [{"l": "給与の形", "k": "sel", "o": ["時給のみ", "時給＋バック", "完全歩合", "体験時給のみ", "わからない"]}, {"l": "時給", "k": "sel", "o": ["1,000円", "1,100円", "1,200円", "1,300円", "1,400円", "1,500円", "1,600円", "1,700円", "1,800円", "1,900円", "2,000円", "2,100円", "2,200円", "2,300円", "2,400円", "2,500円", "2,600円", "2,700円", "2,800円", "2,900円", "3,000円", "3,100円", "3,200円", "3,300円", "3,400円", "3,500円", "3,600円", "3,700円", "3,800円", "3,900円", "4,000円", "4,100円", "4,200円", "4,300円", "4,400円", "4,500円", "4,600円", "4,700円", "4,800円", "4,900円", "5,000円", "5,100円", "5,200円", "5,300円", "5,400円", "5,500円", "5,600円", "5,700円", "5,800円", "5,900円", "6,000円", "6,100円", "6,200円", "6,300円", "6,400円", "6,500円", "6,600円", "6,700円", "6,800円", "6,900円", "7,000円", "7,100円", "7,200円", "7,300円", "7,400円", "7,500円", "7,600円", "7,700円", "7,800円", "7,900円", "8,000円", "8,100円", "8,200円", "8,300円", "8,400円", "8,500円", "8,600円", "8,700円", "8,800円", "8,900円", "9,000円", "9,100円", "9,200円", "9,300円", "9,400円", "9,500円", "9,600円", "9,700円", "9,800円", "9,900円", "10,000円", "10,000円より上", "わからない"]}], "note": true}, {"f": "jikyu", "qi": 15, "page": "work", "label": "指名本数と売上 (月)", "parts": [{"l": "指名本数", "k": "sel", "o": ["0本", "1〜5本", "6〜10本", "11〜20本", "21本以上"]}, {"l": "月の売上", "k": "sel", "o": ["〜30万円", "30〜50万円", "50〜100万円", "100〜200万円", "200万円以上", "わからない"]}]}, {"f": "jikyu", "qi": 16, "page": "work", "label": "お客様の特徴 (当てはまるものすべて)", "parts": [{"k": "m", "o": ["特定の一人のお客様が沢山来店してくれている", "特定の一人のお客様が高額会計だ", "複数のお客様がある程度のペースで毎月来店される", "地元のお客様が多い", "地方（道内のお客様が多い）", "地方（道外のお客様が多い）", "サラリーマンが多い", "経営者が多い（社長 役員）", "自営業の方が多い", "20代のお客様が多い", "30代のお客様が多い", "40代のお客様が多い", "50代のお客様が多い", "60代以上のお客様が多い", "1名で来られるお客様が多い", "基本は複数名でいらっしゃるお客様が大半だ", "接待で使われることが多い", "旅行の方が多い", "出張の方が多い", "未経験又は始めたばかりなのでまだわからない", "その他"]}], "note": true}, {"f": "jikyu", "qi": 18, "page": "work", "label": "直近のお店について", "parts": [{"l": "良かった点", "k": "m", "o": ["給料・バックが良い", "お客様が良い", "女の子の仲が良い", "黒服・店長が良い", "働きやすいシフト", "送迎がある", "ノルマがない", "特になし"]}, {"l": "辞めた理由", "k": "m", "o": ["給料・バック", "人間関係", "黒服・店長の対応", "ノルマ・罰金", "シフトの自由度", "お客様の質", "送迎がない", "店の方針", "引っ越し・生活の変化", "体調", "他のお店に移りたい", "在籍中", "集客が少なかった", "早上がりが多かった", "出勤調整が多かった", "その他"]}], "note": true}, {"f": "jikyu", "qi": 20, "page": "work", "label": "直近のお店の店長・担当黒服の名前 (わかる範囲)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 22, "page": "work", "label": "CASTとして頑張りたいポイント (複数可)", "parts": [{"k": "m", "o": ["LINE・連絡をマメにする", "誕生日・記念日のお祝い", "お客様の話を覚える", "同伴・アフターをする", "SNSで発信する", "接客を勉強する", "身だしなみ・美容を磨く", "清潔感", "言葉遣い", "聞き上手になる", "話しすぎない", "時間を守る", "お客様を否定しない", "距離感に気を付ける", "指名を増やしたい", "接客を教わりたい", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 7, "page": "shop", "label": "お店選びで重要視すること (複数可)", "parts": [{"k": "m", "o": ["時給", "お店の雰囲気", "女の子の仲の良さ", "フリーのお客様の多さ", "送迎", "日払い", "ノルマがない", "シフトの融通", "その他"]}], "note": true}, {"f": "jikyu", "qi": 8, "page": "shop", "label": "希望の時給", "parts": [{"k": "sel", "o": ["2,000円", "2,500円", "3,000円", "3,500円", "4,000円", "4,500円", "5,000円", "5,500円", "6,000円", "6,000円より上", "相談したい"]}]}, {"f": "jikyu", "qi": 9, "page": "shop", "label": "その時給が欲しい理由", "parts": [{"k": "m", "o": ["生活費", "借金返済", "貯金", "学費", "目標がある", "前のお店と同じ以上", "その他"]}], "note": true}, {"f": "jikyu", "qi": 11, "page": "shop", "label": "当店への期待・要望 (複数可)", "parts": [{"k": "m", "o": ["シフトを融通してほしい", "子供がいるので配慮してほしい", "送迎がほしい", "日払いがいい", "ノルマなしがいい", "未経験から教えてほしい", "特になし", "その他"]}], "note": true}, {"f": "kyujin", "qi": 2, "page": "shop", "label": "応募したきっかけ", "parts": [{"k": "s", "o": ["紹介", "求人サイト・ホームページ", "スカウト", "SNS", "知人の口コミ", "その他"]}]}, {"f": "kyujin", "qi": 3, "page": "shop", "label": "紹介者のお名前・会社名", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "紹介"}}, {"f": "kyujin", "qi": 4, "page": "shop", "label": "見た求人媒体の名前", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "求人サイト・ホームページ"}}, {"f": "kyujin", "qi": 6, "page": "shop", "label": "面接に来るまでに見たもの (すべて)", "parts": [{"k": "m", "o": ["ホームページ", "Googleマップ", "インスタグラム", "TikTok", "バイトル", "ポケパラ", "ナイツネット", "その他"]}], "note": true}, {"f": "kyujin", "qi": 5, "page": "shop", "label": "応募するお店", "parts": [{"k": "s", "o": ["リージェントクラブ千歳", "328", "ウェーブ", "ラウンジ千歳", "希望無し", "その他"]}]}, {"f": "kyujin", "qi": 8, "page": "shop", "label": "他のお店ではなく当店を選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地・通いやすさ", "送迎", "日払い", "知人の紹介", "求人の内容", "その他"]}], "note": true}, {"f": "kyujin", "qi": 9, "page": "shop", "label": "求人やSNSで重要視した点 (複数可)", "parts": [{"k": "m", "o": ["内装が綺麗", "更衣室が綺麗・広いなど", "時給が高い", "可愛い子がいる", "ＳＮＳでよく出てくる 有名かどうか", "有名じゃない知名度が低いほうがいい", "お店の理念 会社理念", "店長やスタッフの顔がわかる", "女の子がぎすぎすしてなさそう", "女性スタッフがいる", "自分が成長できる環境かどうか", "自身の働くペースと折り合いがつくか（出勤少なくてもＯＫなど）", "日払いができる", "単純に友達が働いてた", "知人の口コミで", "その他"]}], "note": true}, {"f": "kyujin", "qi": 11, "page": "shop", "label": "上で選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["しっかり稼ぎたい", "働きやすさ", "安心して働きたい", "自分を成長させたい", "人間関係", "通いやすさ", "その他"]}], "note": true}, {"f": "kyujin", "qi": 12, "page": "shop", "label": "他に応募中のお店", "parts": [{"l": "応募中", "k": "s", "o": ["ない", "ある"]}, {"l": "店名", "k": "t"}, {"l": "気になる理由", "k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地", "送迎", "日払い", "その他"]}]}, {"f": "kyujin", "qi": 13, "page": "shop", "label": "そのお店を見つけたきっかけ", "parts": [{"k": "s", "o": ["求人サイト", "SNS", "知人の口コミ", "スカウト", "Googleマップ", "通りがかり", "その他"]}], "note": true}, {"f": "kyujin", "qi": 14, "page": "shop", "label": "特に気になった言葉 (求人やSNSの中で)", "parts": [{"k": "t"}]}, {"f": "app", "qi": "alcohol", "page": "me", "label": "お酒", "parts": [{"k": "s", "o": ["飲める", "普通", "飲めない"]}]}, {"f": "jikyu", "qi": 24, "page": "me", "label": "他のお仕事の経験 (夜のお仕事以外)", "parts": [{"k": "m", "o": ["飲食・接客", "販売", "事務", "医療・介護", "美容", "工場・軽作業", "学生", "なし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 25, "page": "me", "label": "資格・趣味", "parts": [{"l": "資格", "k": "m", "o": ["美容系", "医療・介護系", "語学系", "運転免許", "なし", "その他"]}, {"l": "趣味", "k": "m", "o": ["音楽", "映画・ドラマ", "旅行", "スポーツ", "ゲーム", "料理", "ファッション・美容", "お酒", "その他"]}], "note": true}, {"f": "jikyu", "qi": 26, "page": "me", "label": "将来の夢・目標 (複数可)", "parts": [{"k": "m", "o": ["貯金", "独立・開業", "旅行", "美容整形", "資格取得", "家族のため", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 27, "page": "me", "label": "日本語以外で話せる言語", "parts": [{"k": "m", "o": ["英語", "韓国語", "中国語", "日本語のみ", "その他"]}], "note": true}, {"f": "jikyu", "qi": 28, "page": "me", "label": "(日本語のみ以外を選んだ方) どの程度使えますか", "parts": [{"k": "s", "o": ["日常会話ができる", "聞き取りはできる", "単語のみ", "勉強中"]}]}, {"f": "jikyu", "qi": 29, "page": "me", "label": "(任意) お子さん・パートナーはいますか", "parts": [{"k": "s", "o": ["旦那 あり 子供 なし", "子供のみ", "異性のパートナー", "無し", "その他"]}], "note": true}, {"f": "jikyu", "qi": 30, "page": "me", "label": "(任意) そのパートナーはこのお仕事に協力的ですか", "parts": [{"k": "s", "o": ["協力的", "条件つきでOK", "あまり協力的でない", "いない"]}], "note": true}], CAST_PAGES = [["work", "これまでのお仕事"], ["shop", "お店選び"], ["me", "あなたについて"]];
+var OTHER = '__OTHER__', WEEK = ['月', '火', '水', '木', '金', '土', '日'];
+var B = null, CUR = null, TAB = null, VALS = {}, LIST = [];
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+}
+function msg(t, bad) {
+  var m = $('msg'); m.style.display = t ? 'block' : 'none'; m.textContent = t || ''; m.className = bad ? 'err' : '';
+  if (t && !bad) setTimeout(function () { m.style.display = 'none'; }, 4000);
+}
+function run(fn, args, ok, ng) {
+  google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { msg('エラー: ' + (e && e.message || e), true); if (ng) ng(); })[fn].apply(null, args);
+}
+function ask(text, ok) {
+  $('mtext').textContent = text; $('modal').style.display = 'flex';
+  $('mok').onclick = function () { $('modal').style.display = 'none'; ok(); };
+  $('mng').onclick = function () { $('modal').style.display = 'none'; };
+}
+
+// ================= 応募者情報の入力部品 (応募者入力 と 黒服画面で共用) =================
+var PREFS = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'];
+var HK_CITIES = ['千歳市', '札幌市', '恵庭市', '北広島市', '苫小牧市', '江別市', '石狩市', '小樽市', 'その他'];
+var WARDS = ['中央区', '北区', '東区', '白石区', '豊平区', '南区', '西区', '厚別区', '手稲区', '清田区'];
+function pad2(n) { return ('0' + n).slice(-2); }
+function tlabel(m) { var h = Math.floor(m / 60); return (h >= 24 ? '翌' + (h - 24) : h) + ':' + pad2(m % 60); }
+var TIMES = (function () { var a = []; for (var m = 17 * 60; m <= 27 * 60; m += 30) a.push(tlabel(m)); return a; })();
+var T_START = ['Open'].concat(TIMES), T_END = ['Last'].concat(TIMES);
+function sel(id, opts, val, ph) {
+  var h = '<select id="' + id + '">' + (ph != null ? '<option value="">' + ph + '</option>' : '');
+  var found = false;
+  opts.forEach(function (o) { var s = o === val; if (s) found = true; h += '<option' + (s ? ' selected' : '') + '>' + esc(o) + '</option>'; });
+  if (val && !found && ph != null) h += '<option selected>' + esc(val) + '</option>';
+  return h + '</select>';
+}
+function fld(key, label, inner, req) {
+  return '<div class="q" id="w_' + key + '"><label class="t">' + label + (req ? ' <span class="req">*</span>' : '') + '</label>' + inner + '<div class="ferr" id="e_' + key + '"></div></div>';
+}
+function inp(id, type, val, extra) { return '<input id="' + id + '" type="' + type + '" value="' + esc(val) + '" ' + (extra || '') + '>'; }
+function socialId(v) { // 保存済みの URL から ID を取り出すのではなく、そのまま表示 (URL を貼っても可)
+  return v || '';
+}
+
+function infoSecs(a, req) {
+  var by = '', bm = '', bd = '';
+  var bm_ = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.birth || '');
+  if (bm_) { by = bm_[1]; bm = String(+bm_[2]); bd = String(+bm_[3]); }
+  var Y = new Date().getFullYear(), years = [];
+  for (var y = Y - 16; y >= Y - 60; y--) years.push(String(y));
+  var months = [], days = [];
+  for (var i = 1; i <= 12; i++) months.push(String(i));
+  for (i = 1; i <= 31; i++) days.push(String(i));
+  var pref = a.pref || '北海道', city = a.city || '', cs = '', ward = '', cityo = '';
+  var mw = /^札幌市(.+区)$/.exec(city);
+  if (mw) { cs = '札幌市'; ward = mw[1]; }
+  else if (pref === '北海道') { if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') cs = city; else if (city) { cs = 'その他'; cityo = city; } }
+  else cityo = city;
+  var S = [];
+  var h = fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"'), req);
+  h += fld('name', '氏名', inp('f_name', 'text', a.name), req);
+  h += fld('birth', '生年月日', '<div class="row3">' + sel('f_by', years, by, '年') + sel('f_bm', months, bm, '月') + sel('f_bd', days, bd, '日') + '<b id="f_age" style="min-width:70px"></b></div>', req);
+  S.push({ t: '基本情報', h: h });
+  h = fld('tel', 'TEL', inp('f_tel', 'tel', a.tel, 'inputmode="tel" autocomplete="off" placeholder="090-1234-5678"'), req);
+  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"'), req);
+  S.push({ t: '連絡先', h: h });
+  h = fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', (a.zip || '').replace(/\D/g, ''), 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', false);
+  h += fld('pref', '都道府県', sel('f_pref', PREFS, pref), req);
+  h += fld('city', '市区町村', sel('f_city', HK_CITIES, cs, '選択') + '<div style="margin-top:6px">' + sel('f_ward', WARDS, ward, '区を選択') + '</div><div style="margin-top:6px">' + inp('f_cityo', 'text', cityo, 'placeholder="市区町村を入力"') + '</div>', req);
+  h += fld('town', '町名・番地', inp('f_town', 'text', a.town), req);
+  h += fld('building', '建物名・部屋番号 (任意)', inp('f_building', 'text', a.building), 0);
+  S.push({ t: '住所', h: h });
+  h = fld('genWish', 'お店でのお名前（源氏名）の希望 (任意)', inp('f_gen', 'text', a.genWish || '', 'autocomplete="off"'), 0);
+  h += fld('genWishYomi', '読み方 (カタカナ・源氏名を書いたら必須)', inp('f_geny', 'text', a.genWishYomi || '', 'autocomplete="off"') + '<div class="small" id="gen_warn" style="color:#b06000"></div>', 0);
+  h += '<div class="small">出勤できる曜日の時間を選んでください。出ない曜日は「--」のままにしてください。</div>';
+  WEEK.forEach(function (w, i) {
+    var v = a['wd' + i] || '', tr = / 送迎希望$/.test(v), p = v.replace(/ 送迎希望$/, '').split('～');
+    h += '<div class="day" id="w_wd' + i + '"><b class="big">' + w + '</b><div class="times">' +
+      '<div class="tc"><div class="pl">開始</div>' + sel('d_s' + i, T_START, p[0] || '', '--') + '</div>' +
+      '<div class="tc"><div class="pl">終了</div>' + sel('d_e' + i, T_END, p[1] || '', '--') + '</div>' +
+      '<div class="tc"><div class="pl">送迎</div>' + sel('d_r' + i, ['希望'], tr ? '希望' : '', '--') + '</div>' +
+      (i > 0 ? '<button type="button" class="sm" id="d_c' + i + '">上の曜日と同じ</button>' : '') + '</div></div>';
+  });
+  h += '<div class="q" id="w_wk"><label class="t">シフトについて</label><div id="wdx_box">' + chipsHtml(['不定期', '未定'], a.wdx ? [a.wdx] : [], 's') +
+    '</div><div class="small">シフトを固定できるCAST・出勤が多いCASTの方が、時給が優遇される場合があります</div><div class="ferr" id="e_wk"></div></div>';
+  S.push({ t: '出勤希望', h: h });
+  h = fld('insta', 'Instagram (ID・@なし、またはURL)', inp('f_insta', 'text', a.insta, 'autocapitalize="off" autocomplete="off"'), 0);
+  h += fld('tiktok', 'TikTok (ID・@なし、またはURL)', inp('f_tiktok', 'text', a.tiktok, 'autocapitalize="off" autocomplete="off"'), 0);
+  h += fld('sns', 'その他SNS', inp('f_sns', 'text', a.sns), 0);
+  S.push({ t: 'SNS', h: h });
+  return S;
+}
+function infoHtml(a, req) {
+  return infoSecs(a, req).map(function (s) { return '<div class="sec"><h3>' + s.t + '</h3>' + s.h + '</div>'; }).join('');
+}
+function kata(s) { return s.replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); }
+function fmtTel(v) {
+  var d = v.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 7) return d.slice(0, 3) + '-' + d.slice(3);
+  return d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+}
+function ageOf(y, m, d) {
+  var t = new Date(), a = t.getFullYear() - y;
+  if (t.getMonth() + 1 < m || (t.getMonth() + 1 === m && t.getDate() < d)) a--;
+  return a;
+}
+function syncAge() {
+  var y = +$('f_by').value, m = +$('f_bm').value, d = +$('f_bd').value, el = $('f_age');
+  if (!y || !m || !d) { el.textContent = ''; return; }
+  var a = ageOf(y, m, d); el.textContent = '満' + a + '歳'; el.style.color = a < 18 ? '#c00' : '#000';
+  if (a < 18) setErr('birth', '18歳未満の方は登録できません'); else setErr('birth', '');
+}
+function syncCity() {
+  var hk = $('f_pref').value === '北海道', c = $('f_city').value;
+  $('f_city').style.display = hk ? '' : 'none';
+  $('f_ward').parentNode.style.display = hk && c === '札幌市' ? '' : 'none';
+  $('f_cityo').parentNode.style.display = !hk || c === 'その他' ? '' : 'none';
+}
+function setErr(key, text) {
+  var e = $('e_' + key), w = $('w_' + key);
+  if (e) e.textContent = text || '';
+  if (w) { if (text) w.classList.add('bad'); else w.classList.remove('bad'); }
+}
+function infoBind() {
+  var fu = $('f_furigana');
+  var conv = function () { var v = kata(fu.value); if (v !== fu.value) fu.value = v; };
+  fu.addEventListener('input', function (e) { if (!e.isComposing) conv(); });
+  fu.addEventListener('compositionend', conv);
+  $('f_tel').addEventListener('input', function () { this.value = fmtTel(this.value); });
+  ['f_by', 'f_bm', 'f_bd'].forEach(function (id) { $(id).onchange = syncAge; });
+  $('f_pref').onchange = syncCity; $('f_city').onchange = syncCity;
+  syncCity(); syncAge();
+  var z = $('f_zip');
+  z.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 7);
+    if (this.value.length === 7) lookupZip(this.value);
+    else $('zipst').textContent = '';
+  });
+  WEEK.forEach(function (w, i) {
+    $('d_s' + i).onchange = function () {
+      if (!this.value) { setSel('d_e' + i, ''); setSel('d_r' + i, ''); } else if (!$('d_e' + i).value) setSel('d_e' + i, 'Last');
+    };
+    $('d_e' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_e' + i, ''); };
+    $('d_r' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_r' + i, ''); };
+    if (i > 0) $('d_c' + i).onclick = function () {
+      ['s', 'e', 'r'].forEach(function (k) { setSel('d_' + k + i, $('d_' + k + (i - 1)).value); });
+    };
+  });
+  var gy = $('f_geny'), gconv = function () { var v = kata(gy.value); if (v !== gy.value) gy.value = v; };
+  gy.addEventListener('input', function (e) { if (!e.isComposing) gconv(); });
+  gy.addEventListener('compositionend', gconv);
+  gy.addEventListener('change', function () {
+    gconv();
+    var y = gy.value.trim(), w = $('gen_warn');
+    if (!y) { w.textContent = ''; return; }
+    google.script.run.withSuccessHandler(function (r) {
+      if (gy.value.trim() !== y) return;
+      w.textContent = r ? '同じ読みのお名前の方が在籍しています。別のお名前も考えておいてください' : '';
+    }).checkGenName(y);
+  });
+}
+function setSel(id, v) {
+  var s = $(id);
+  if (v && !Array.prototype.some.call(s.options, function (o) { return o.value === v || o.text === v; })) { var o = document.createElement('option'); o.text = v; s.add(o); }
+  s.value = v;
+}
+function lookupZip(z) {
+  $('zipst').textContent = '住所を検索中...';
+  google.script.run.withSuccessHandler(function (r) {
+    if ($('f_zip').value !== z) return;
+    if (!r) { $('zipst').textContent = '自動入力できませんでした。手入力してください。'; return; }
+    $('zipst').textContent = '住所を自動入力しました (修正できます)';
+    if (PREFS.indexOf(r.pref) >= 0) setSel('f_pref', r.pref);
+    var city = r.city, m = /^札幌市(.+区)$/.exec(city);
+    $('f_cityo').value = '';
+    if (r.pref === '北海道') {
+      if (m) { setSel('f_city', '札幌市'); setSel('f_ward', m[1]); }
+      else if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') setSel('f_city', city);
+      else { setSel('f_city', 'その他'); $('f_cityo').value = city; }
+    } else $('f_cityo').value = city;
+    $('f_town').value = r.town || '';
+    syncCity(); setErr('zip', ''); setErr('pref', ''); setErr('city', ''); setErr('town', '');
+  }).withFailureHandler(function () { $('zipst').textContent = '自動入力できませんでした。手入力してください。'; }).lookupZip(z);
+}
+function socialUrl(v, base) {
+  v = (v || '').trim();
+  if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  return base + v.replace(/^@/, '');
+}
+function infoCollect() {
+  var d = {};
+  d.furigana = kata($('f_furigana').value.trim()); d.name = $('f_name').value.trim();
+  var y = $('f_by').value, m = $('f_bm').value, dd = $('f_bd').value;
+  d.birth = (y && m && dd) ? y + '-' + pad2(m) + '-' + pad2(dd) : '';
+  d.tel = fmtTel($('f_tel').value); d.email = $('f_email').value.trim();
+  var z = $('f_zip').value.replace(/\D/g, '');
+  d.zip = z.length === 7 ? z.slice(0, 3) + '-' + z.slice(3) : z;
+  d.pref = $('f_pref').value;
+  var city;
+  if (d.pref === '北海道') {
+    var c = $('f_city').value;
+    city = c === '札幌市' ? '札幌市' + $('f_ward').value : c === 'その他' ? $('f_cityo').value.trim() : c;
+  } else city = $('f_cityo').value.trim();
+  d.city = city; d.town = $('f_town').value.trim(); d.building = $('f_building').value.trim();
+  d.address = d.pref + d.city + d.town + d.building;
+  WEEK.forEach(function (w, i) {
+    var st = $('d_s' + i).value, en = $('d_e' + i).value, rd = $('d_r' + i).value;
+    d['wd' + i] = st ? st + '～' + (en || 'Last') + (rd ? ' 送迎希望' : '') : '';
+  });
+  var wx = document.querySelector('#wdx_box .chip.on');
+  d.wdx = wx ? wx.getAttribute('data-v') : '';
+  d.genWish = $('f_gen').value.trim(); d.genWishYomi = kata($('f_geny').value.trim());
+  d.insta = socialUrl($('f_insta').value, 'https://www.instagram.com/');
+  d.tiktok = socialUrl($('f_tiktok').value, 'https://www.tiktok.com/@');
+  d.sns = $('f_sns').value.trim();
+  return d;
+}
+// strict=true: 応募者入力 (必須あり) / false: 黒服画面 (形式の確認だけ)
+function infoValidate(d, strict) {
+  var errs = [];
+  function e(k, t) { errs.push([k, t]); }
+  if (strict) {
+    if (!d.furigana) e('furigana', 'フリガナを入力してください');
+    if (!d.name) e('name', '氏名を入力してください');
+    if (!d.birth) e('birth', '生年月日を選んでください');
+    if (!d.tel) e('tel', 'TELを入力してください');
+    if (!d.email) e('email', 'Emailを入力してください');
+    if (d.genWish && !d.genWishYomi) e('genWishYomi', '源氏名の読み方（カタカナ）を入力してください');
+    if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
+    if (!d.town) e('town', '町名・番地を入力してください');
+  }
+  if (d.birth) {
+    var p = d.birth.split('-');
+    if (ageOf(+p[0], +p[1], +p[2]) < 18) e('birth', '18歳未満の方は登録できません');
+  }
+  if (d.tel && d.tel.replace(/\D/g, '').length < 10) e('tel', 'TELの桁数が足りません');
+  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) e('email', 'Emailの形式が正しくありません');
+  if (d.zip && d.zip.replace(/\D/g, '').length !== 7) e('zip', '郵便番号は7桁です');
+  if (d.pref === '北海道' && $('f_city').value === '札幌市' && !$('f_ward').value) e('city', '区を選んでください');
+  if (strict) {
+    var any = false;
+    WEEK.forEach(function (w, i) { if (d['wd' + i]) any = true; });
+    if (!any && !d.wdx) e('wk', '出勤できる曜日を選ぶか、「不定期」「未定」を選んでください');
+  }
+  return errs;
+}
+function showErrors(errs) {
+  document.querySelectorAll('.ferr').forEach(function (x) { x.textContent = ''; });
+  document.querySelectorAll('.bad').forEach(function (x) { x.classList.remove('bad'); });
+  errs.forEach(function (x) { setErr(x[0], x[1]); });
+  if (errs.length) { var w = $('w_' + errs[0][0]); if (w) w.scrollIntoView({ block: 'center' }); msg('入力を確認してください', true); }
+}
+
+// ================= 選択式の質問部品 (応募者入力 / 黒服画面で共用) =================
+function qid(c) { return 'cq_' + c.f + '_' + c.qi; }
+function splitNote(s) {
+  s = s || '';
+  var i = s.lastIndexOf('補足: ');
+  if (i >= 0 && (i === 0 || s.charAt(i - 1) === ' ')) return [s.slice(0, i).trim(), s.slice(i + 4)];
+  return [s.trim(), ''];
+}
+function decodeQ(c, s) {
+  var sn = splitNote(s), m = sn[0], vals = [];
+  if (c.parts.length > 1) {
+    var seg = m ? m.split(' / ') : [];
+    c.parts.forEach(function (p) {
+      var v = '';
+      seg.forEach(function (x) { if (x.indexOf(p.l + ': ') === 0) v = x.slice(p.l.length + 2); });
+      vals.push(p.k === 'm' ? (v ? v.split('、') : []) : v);
+    });
+  } else vals.push(c.parts[0].k === 'm' ? (m ? m.split('、') : []) : m);
+  return { vals: vals, note: sn[1] };
+}
+function chipsHtml(opts, arr, mode) {
+  var o = opts.slice();
+  arr.forEach(function (x) { if (o.indexOf(x) < 0) o.push(x); });
+  return '<div class="chips" data-m="' + mode + '">' + o.map(function (v) {
+    return '<button type="button" class="chip' + (arr.indexOf(v) >= 0 ? ' on' : '') + '" data-v="' + esc(v) + '">' + esc(v) + '</button>';
+  }).join('') + '</div>';
+}
+function selHtml(opts, v) {
+  var f = false, h = '<select class="ps"><option value="">選択</option>';
+  opts.forEach(function (o) { var s = o === v; if (s) f = true; h += '<option' + (s ? ' selected' : '') + '>' + esc(o) + '</option>'; });
+  if (v && !f) h += '<option selected>' + esc(v) + '</option>';
+  return h + '</select>';
+}
+function qHtml(c, s) {
+  var d = decodeQ(c, s), h = '<div class="q cqb" id="' + qid(c) + '"' + (c.showIf ? ' data-si="' + c.showIf.f + ':' + c.showIf.qi + '" data-sv="' + esc(c.showIf.v) + '"' : '') + '><label class="t">' + esc(c.label) + '</label>';
+  c.parts.forEach(function (p, pi) {
+    var v = d.vals[pi];
+    h += '<div class="pt" data-pi="' + pi + '">' + (p.l ? '<div class="pl">' + esc(p.l) + '</div>' : '');
+    if (p.k === 'm') h += chipsHtml(p.o, v, 'm');
+    else if (p.k === 's') h += chipsHtml(p.blank ? ['未入力'].concat(p.o) : p.o, v ? [v] : (p.blank ? ['未入力'] : []), 's');
+    else if (p.k === 'sel') h += selHtml(p.o, v);
+    else h += '<input type="text" class="pt_t" value="' + esc(v) + '">';
+    h += '</div>';
+  });
+  if (c.note) h += '<input type="text" class="nt" placeholder="補足 (あれば)" value="' + esc(d.note) + '">';
+  return h + '</div>';
+}
+function qRead(c) {
+  var w = $(qid(c)), out = [];
+  if (!w) return null;
+  c.parts.forEach(function (p, pi) {
+    var pt = w.querySelector('.pt[data-pi="' + pi + '"]'), v;
+    if (p.k === 'sel') v = pt.querySelector('select').value;
+    else if (p.k === 't') v = pt.querySelector('input').value.trim();
+    else {
+      var on = [].map.call(pt.querySelectorAll('.chip.on'), function (b) { return b.getAttribute('data-v'); });
+      v = p.k === 'm' ? on.join('、') : (on[0] || '');
+      if (v === '未入力') v = ''; // 「未入力」ボタンは空欄と同じ
+    }
+    out.push(v);
+  });
+  var s = c.parts.length > 1 ? c.parts.map(function (p, i) { return out[i] ? p.l + ': ' + out[i] : ''; }).filter(Boolean).join(' / ') : out[0];
+  var n = c.note ? w.querySelector('.nt').value.trim() : '';
+  return n ? (s ? s + ' ' : '') + '補足: ' + n : s;
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.chip');
+  if (!b) return;
+  var box = b.parentNode;
+  if (box.getAttribute('data-m') === 'x') return;
+  if (box.getAttribute('data-m') === 's') {
+    var was = b.classList.contains('on');
+    [].forEach.call(box.children, function (x) { x.classList.remove('on'); });
+    if (!was) b.classList.add('on');
+  } else b.classList.toggle('on');
+  syncShow();
+});
+function syncShow() {
+  if ($('jdbox')) { var jo = document.querySelector('#jchips .chip.on'); $('jdbox').style.display = jo && jo.getAttribute('data-v') === '1日体験' ? '' : 'none'; }
+  [].forEach.call(document.querySelectorAll('[data-si]'), function (w) {
+    var c = CASTQ.filter(function (x) { return x.f + ':' + x.qi === w.getAttribute('data-si'); })[0];
+    w.style.display = qRead(c) === w.getAttribute('data-sv') ? '' : 'none';
+  });
+}
+function castBlocks(page, vals) {
+  return CASTQ.filter(function (c) { return c.page === page; }).map(function (c) { return qHtml(c, vals[c.f + ':' + c.qi]); }).join('');
+}
+function castAll() { var m = {}; CASTQ.forEach(function (c) { var s = qRead(c); if (s) m[c.f + ':' + c.qi] = s; }); return m; }
+
+// ================= ページ送り =================
+var PG = { i: 0, pages: [], opt: {} };
+function pagerInit(box, pages, opt) {
+  PG = { i: 0, pages: pages, opt: opt };
+  $(box).innerHTML = '<div id="prog" class="prog"></div>' + pages.map(function (p, i) {
+    return '<div class="pg" id="pg' + i + '" style="display:none"><h2>' + esc(p.t) + '</h2>' + p.h + '</div>';
+  }).join('') + '<div class="bar nav"><button id="pb">戻る</button>' + (opt.extra || '') + '<button class="pri" id="pn">次へ</button></div>';
+  if (opt.bind) opt.bind();
+  $('pb').onclick = function () { pgGo(PG.i - 1); };
+  $('pn').onclick = function () {
+    var er = opt.check ? opt.check(PG.i) : [];
+    showErrors(er);
+    if (er.length) return;
+    pgGo(PG.i + 1);
+  };
+  pgGo(0);
+}
+function pgGo(i) {
+  if (i < 0 || i >= PG.pages.length) return;
+  PG.i = i;
+  PG.pages.forEach(function (p, k) { $('pg' + k).style.display = k === i ? 'block' : 'none'; });
+  var n = PG.pages.length;
+  $('prog').textContent = (i + 1) + '/' + n + '　' + PG.pages[i].t;
+  $('prog').style.setProperty('--w', Math.round((i + 1) / n * 100) + '%');
+  $('pb').style.visibility = i ? 'visible' : 'hidden';
+  $('pn').style.display = i === n - 1 ? 'none' : '';
+  msg('');
+  syncShow();
+  if (PG.opt.onShow) PG.opt.onShow(i);
+  window.scrollTo(0, 0);
+}
+
+// ================= まとめ表示 (確認ページ・黒服画面のカード) =================
+var CARD_KEYS = ['jikyu:3', 'jikyu:4', 'jikyu:12', 'jikyu:6', 'jikyu:7', 'jikyu:8', 'jikyu:9', 'jikyu:11', 'kyujin:2', 'kyujin:5'];
+function summaryHtml(full) {
+  var d = infoCollect(), cast = castAll(), rows = [];
+  var age = '';
+  if (d.birth) { var p = d.birth.split('-'); age = '　満' + ageOf(+p[0], +p[1], +p[2]) + '歳'; }
+  rows.push(['氏名', (d.furigana ? d.furigana + '　' : '') + d.name + age]);
+  rows.push(['生年月日', d.birth]);
+  rows.push(['TEL / Email', d.tel + (d.email ? ' / ' + d.email : '')]);
+  rows.push(['住所', (d.zip ? '〒' + d.zip + ' ' : '') + d.address]);
+  var wd = [];
+  WEEK.forEach(function (w, i) { if (d['wd' + i]) wd.push(w + ' ' + d['wd' + i]); });
+  if (d.wdx) wd.push(d.wdx);
+  rows.push(['出勤希望', wd.join('　')]);
+  if (d.genWish) rows.push(['源氏名希望', d.genWish + (d.genWishYomi ? ' (' + d.genWishYomi + ')' : '')]);
+  rows.push(['SNS', [d.insta, d.tiktok, d.sns].filter(Boolean).join('　')]);
+  CASTQ.forEach(function (c) {
+    var k = c.f + ':' + c.qi;
+    if (cast[k] && (full || CARD_KEYS.indexOf(k) >= 0)) rows.push([c.label, cast[k]]);
+  });
+  return '<div class="sum">' + rows.filter(function (r) { return r[1] && String(r[1]).trim(); }).map(function (r) {
+    return '<div class="sr"><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></div>';
+  }).join('') + '</div>';
+}
+
+// ================= 応募者入力 (本人・iPad) =================
+var PAGE_OF = { furigana: 0, name: 0, birth: 0, tel: 0, email: 0, zip: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, consent: 6 };
+function showApply() {
+  var S = infoSecs({}, 1), bykey = {};
+  S.forEach(function (s) { bykey[s.t] = s.h; });
+  var pages = [
+    { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' +
+      ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
+    { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) },
+    { t: 'お店選び', h: castBlocks('shop', {}) },
+    { t: 'あなたについて', h: castBlocks('me', {}) },
+    { t: '出勤希望', h: bykey['出勤希望'] },
+    { t: 'SNS', h: bykey['SNS'] },
+    { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div>' +
+      '<div class="q" id="w_consent"><label class="opt big"><input type="checkbox" id="consent">上記に同意します <span class="req">*</span></label><div class="ferr" id="e_consent"></div></div>' },
+    { t: '確認', h: '<div class="small">内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。</div><div id="sumbox"></div><button class="pri big" id="sub" style="width:100%">送信</button>' }
+  ];
+  pagerInit('app', pages, {
+    bind: infoBind,
+    check: function (i) { return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
+    onShow: function (i) { if (i === 7) $('sumbox').innerHTML = summaryHtml(true); }
+  });
+  $('sub').onclick = submitApply;
+}
+function applyErrs() {
+  var d = infoCollect(), errs = infoValidate(d, true);
+  if (!$('consent').checked) errs.push(['consent', '個人情報の取り扱いへの同意にチェックしてください']);
+  return errs;
+}
+function submitApply() {
+  var errs = applyErrs();
+  if (errs.length) {
+    var pg = 7; errs.forEach(function (e) { pg = Math.min(pg, PAGE_OF[e[0]] == null ? 7 : PAGE_OF[e[0]]); });
+    pgGo(pg); showErrors(errs); return;
+  }
+  var d = infoCollect();
+  d.consent = true; d.cast = castAll();
+  $('sub').disabled = true;
+  run('submitApplicant', [d], function () {
+    msg('');
+    $('app').innerHTML = '<h2 class="big">入力ありがとうございました。</h2><p class="big">スタッフにお声がけください。</p>';
+    window.scrollTo(0, 0);
+  }, function () { $('sub').disabled = false; });
+}
+
+showApply();
+</script></body></html>
