@@ -8,6 +8,9 @@ button,.btn{font-size:18px;min-height:48px;padding:8px 16px;margin:2px;border:1p
 button.pri,.btn.pri{background:#1a56db;color:#fff;border-color:#1a56db}
 button.warn{background:#fff0f0;border-color:#c00}
 button.sm{min-height:44px;font-size:16px}
+button:disabled{opacity:.45}
+.spin{display:inline-block;width:1em;height:1em;margin-right:.5em;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spn .8s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
 input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],input[type=time],input[type=number],select,textarea{width:100%;box-sizing:border-box;font-size:18px;min-height:48px;padding:8px;border:1px solid #aaa;border-radius:8px;background:#fff}
 textarea{min-height:90px}
 .q{margin:16px 0;padding-bottom:6px;border-bottom:1px solid #eee}
@@ -151,6 +154,8 @@ function socialId(v) { // 保存済みの URL から ID を取り出すのでは
   return v || '';
 }
 
+var HEIGHTS = (function () { var r = ['139cm以下']; for (var v = 140; v <= 185; v++) r.push(v + 'cm'); r.push('186cm以上'); return r; })();
+var WEIGHTS = (function () { var r = ['34kg以下']; for (var v = 35; v <= 60; v++) r.push(v + 'kg'); return r; })(); // 上限は 60kg (日野さん指示)
 function infoSecs(a, req) {
   var by = '', bm = '', bd = '';
   var bm_ = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.birth || '');
@@ -166,21 +171,23 @@ function infoSecs(a, req) {
   else if (pref === '北海道') { if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') cs = city; else if (city) { cs = 'その他'; cityo = city; } }
   else cityo = city;
   var S = [];
-  var h = fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"'), req);
+  var h = req ? '' : fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"'), 0); // 応募者入力では聞かない (2026-10-29)
   h += fld('name', '氏名', inp('f_name', 'text', a.name), req);
   h += fld('birth', '生年月日', '<div class="row3">' + sel('f_by', years, by, '年') + sel('f_bm', months, bm, '月') + sel('f_bd', days, bd, '日') + '<b id="f_age" style="min-width:70px"></b></div>', req);
+  h += fld('height', '身長', sel('f_height', HEIGHTS, a.height || '', '選択'), req);
+  h += fld('weight', '体重', sel('f_weight', WEIGHTS, a.weight || '', '選択'), req);
   S.push({ t: '基本情報', h: h });
   h = fld('tel', 'TEL', inp('f_tel', 'tel', a.tel, 'inputmode="tel" autocomplete="off" placeholder="090-1234-5678"'), req);
-  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"'), req);
+  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"') + (req ? '<div class="small">メールアドレスが違うと登録できません。iPhone の iCloud メールや Android の Gmail など、お手持ちのスマホで受信できるアドレスを記入してください。</div>' : ''), req);
   S.push({ t: '連絡先', h: h });
-  h = fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', (a.zip || '').replace(/\D/g, ''), 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', false);
+  h = req ? '' : fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', (a.zip || '').replace(/\D/g, ''), 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', false);
   h += fld('pref', '都道府県', sel('f_pref', PREFS, pref), req);
   h += fld('city', '市区町村', sel('f_city', HK_CITIES, cs, '選択') + '<div style="margin-top:6px">' + sel('f_ward', WARDS, ward, '区を選択') + '</div><div style="margin-top:6px">' + inp('f_cityo', 'text', cityo, 'placeholder="市区町村を入力"') + '</div>', req);
   h += fld('town', '町名・番地', inp('f_town', 'text', a.town), req);
   h += fld('building', '建物名・部屋番号 (任意)', inp('f_building', 'text', a.building), 0);
   S.push({ t: '住所', h: h });
-  h = fld('genWish', 'お店でのお名前（源氏名）の希望 (任意)', inp('f_gen', 'text', a.genWish || '', 'autocomplete="off"'), 0);
-  h += fld('genWishYomi', '読み方 (カタカナ・源氏名を書いたら必須)', inp('f_geny', 'text', a.genWishYomi || '', 'autocomplete="off"') + '<div class="small" id="gen_warn" style="color:#b06000"></div>', 0);
+  h = fld('genWish', 'お店でのお名前（源氏名）の希望', inp('f_gen', 'text', a.genWish || '', 'autocomplete="off"'), req);
+  h += fld('genWishYomi', '読み方 (カタカナ)', inp('f_geny', 'text', a.genWishYomi || '', 'autocomplete="off"') + (req ? '<button type="button" class="sm" id="gen_chk" style="margin-top:6px">確認</button>' : '') + '<div class="small" id="gen_warn" style="color:#b06000;font-weight:bold"></div>', req);
   h += '<div class="small">出勤できる曜日の時間を選んでください。出ない曜日は「--」のままにしてください。</div>';
   WEEK.forEach(function (w, i) {
     var v = a['wd' + i] || '', tr = / 送迎希望$/.test(v), p = v.replace(/ 送迎希望$/, '').split('～');
@@ -233,15 +240,17 @@ function setErr(key, text) {
 }
 function infoBind() {
   var fu = $('f_furigana');
-  var conv = function () { var v = kata(fu.value); if (v !== fu.value) fu.value = v; };
-  fu.addEventListener('input', function (e) { if (!e.isComposing) conv(); });
-  fu.addEventListener('compositionend', conv);
+  if (fu) {
+    var conv = function () { var v = kata(fu.value); if (v !== fu.value) fu.value = v; };
+    fu.addEventListener('input', function (e) { if (!e.isComposing) conv(); });
+    fu.addEventListener('compositionend', conv);
+  }
   $('f_tel').addEventListener('input', function () { this.value = fmtTel(this.value); });
   ['f_by', 'f_bm', 'f_bd'].forEach(function (id) { $(id).onchange = syncAge; });
   $('f_pref').onchange = syncCity; $('f_city').onchange = syncCity;
   syncCity(); syncAge();
   var z = $('f_zip');
-  z.addEventListener('input', function () {
+  if (z) z.addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 7);
     if (this.value.length === 7) lookupZip(this.value);
     else $('zipst').textContent = '';
@@ -259,15 +268,47 @@ function infoBind() {
   var gy = $('f_geny'), gconv = function () { var v = kata(gy.value); if (v !== gy.value) gy.value = v; };
   gy.addEventListener('input', function (e) { if (!e.isComposing) gconv(); });
   gy.addEventListener('compositionend', gconv);
-  gy.addEventListener('change', function () {
-    gconv();
-    var y = gy.value.trim(), w = $('gen_warn');
-    if (!y) { w.textContent = ''; return; }
-    google.script.run.withSuccessHandler(function (r) {
-      if (gy.value.trim() !== y) return;
-      w.textContent = r ? '同じ読みのお名前の方が在籍しています。別のお名前も考えておいてください' : '';
-    }).checkGenName(y);
-  });
+  // 応募者入力: 「確認」ボタンで在籍と照合し、OK になるまで「次へ」を押せない。書き換えたら取り消す。黒服画面: 欄を離れた時に警告だけ
+  function genStore() { return String(castAll()['kyujin:5'] || '').replace(/希望無し/g, ''); }
+  function genKey() { return gy.value.trim() + '|' + $('f_gen').value.trim() + '|' + genStore(); }
+  function genReset() { GEN_OK = ''; $('gen_warn').textContent = ''; syncNext(); }
+  if (MODE === 'apply') {
+    gy.addEventListener('input', genReset); $('f_gen').addEventListener('input', genReset);
+    $('gen_chk').onclick = function () {
+      var w = $('gen_warn'), g = $('f_gen').value.trim(), y, k;
+      gconv(); y = gy.value.trim(); k = genKey();
+      GEN_OK = '';
+      if (!g || !y) { w.style.color = '#c00'; w.textContent = '源氏名と読み方（カタカナ）を入力してください'; syncNext(); return; }
+      if (!/^[ァ-ヶー\s　]+$/.test(y)) { w.style.color = '#c00'; w.textContent = '読み方はカタカナで入力してください'; syncNext(); return; }
+      w.style.color = '#555'; w.textContent = '照合中…'; $('gen_chk').disabled = true; syncNext();
+      google.script.run.withSuccessHandler(function (r) {
+        $('gen_chk').disabled = false;
+        if (genKey() !== k) return; // 照合中に書き換えられた
+        if (r && r.length) { w.style.color = '#c00'; w.textContent = GEN_MSG; }
+        else { GEN_OK = k; w.style.color = '#1a7f37'; w.textContent = '使えます'; }
+        syncNext();
+      }).withFailureHandler(function () {
+        $('gen_chk').disabled = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください'; syncNext();
+      }).findGenDup(y, genStore(), g);
+    };
+    GEN_KEY = genKey;
+  } else {
+    gy.addEventListener('change', function () {
+      gconv();
+      var y = gy.value.trim(), w = $('gen_warn');
+      if (!y) { w.textContent = ''; return; }
+      google.script.run.withSuccessHandler(function (r) {
+        if (gy.value.trim() !== y) return;
+        w.textContent = r && r.length ? '同じ読みのお名前の方が在籍しています（' + r.join('、') + '）。別のお名前も考えておいてください' : '';
+      }).findGenDup(y, '', $('f_gen').value.trim());
+    });
+  }
+}
+var GEN_OK = '', GEN_KEY = null, GEN_PAGE = 4, GEN_MSG = '同じお名前の方が在籍しています。別のお名前を入力してください';
+// 応募者入力の源氏名ページは、照合 OK になるまで「次へ」を押せない
+function syncNext() {
+  var pn = $('pn'); if (!pn) return;
+  pn.disabled = MODE === 'apply' && PG.i === GEN_PAGE && !!GEN_KEY && GEN_OK !== GEN_KEY();
 }
 function setSel(id, v) {
   var s = $(id);
@@ -300,11 +341,11 @@ function socialUrl(v, base) {
 }
 function infoCollect() {
   var d = {};
-  d.furigana = kata($('f_furigana').value.trim()); d.name = $('f_name').value.trim();
+  d.furigana = $('f_furigana') ? kata($('f_furigana').value.trim()) : ''; d.name = $('f_name').value.trim(); d.height = $('f_height').value; d.weight = $('f_weight').value;
   var y = $('f_by').value, m = $('f_bm').value, dd = $('f_bd').value;
   d.birth = (y && m && dd) ? y + '-' + pad2(m) + '-' + pad2(dd) : '';
   d.tel = fmtTel($('f_tel').value); d.email = $('f_email').value.trim();
-  var z = $('f_zip').value.replace(/\D/g, '');
+  var z = $('f_zip') ? $('f_zip').value.replace(/\D/g, '') : '';
   d.zip = z.length === 7 ? z.slice(0, 3) + '-' + z.slice(3) : z;
   d.pref = $('f_pref').value;
   var city;
@@ -331,12 +372,16 @@ function infoValidate(d, strict) {
   var errs = [];
   function e(k, t) { errs.push([k, t]); }
   if (strict) {
-    if (!d.furigana) e('furigana', 'フリガナを入力してください');
     if (!d.name) e('name', '氏名を入力してください');
+    if (!d.height) e('height', '身長を選んでください');
+    if (!d.weight) e('weight', '体重を選んでください');
     if (!d.birth) e('birth', '生年月日を選んでください');
     if (!d.tel) e('tel', 'TELを入力してください');
     if (!d.email) e('email', 'Emailを入力してください');
-    if (d.genWish && !d.genWishYomi) e('genWishYomi', '源氏名の読み方（カタカナ）を入力してください');
+    if (!d.genWish) e('genWish', '源氏名を入力してください');
+    if (!d.genWishYomi) e('genWishYomi', '源氏名の読み方（カタカナ）を入力してください');
+    else if (!/^[ァ-ヶー\s　]+$/.test(d.genWishYomi)) e('genWishYomi', '読み方はカタカナで入力してください');
+    if (MODE === 'apply' && GEN_KEY && GEN_OK !== GEN_KEY()) e('genWishYomi', '源氏名の「確認」ボタンを押して、照合してください');
     if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
     if (!d.town) e('town', '町名・番地を入力してください');
   }
@@ -389,6 +434,46 @@ function chipsHtml(opts, arr, mode) {
     return '<button type="button" class="chip' + (arr.indexOf(v) >= 0 ? ' on' : '') + '" data-v="' + esc(v) + '">' + esc(v) + '</button>';
   }).join('') + '</div>';
 }
+// ================= プルダウン + 手入力 (時給・保証期間) =================
+// 手入力に数字を入れたらプルダウンを「--」に、プルダウンを選んだら手入力を空にする。保存するのは入っている方の 1 つの値
+var MAN = {
+  yen: { re: /^([\d,]+)円?$/, fmt: function (n) { return String(n).replace(/\B(?=(\d{3})+$)/g, ',') + '円'; }, unit: '円' },
+  mon: { re: /^(\d+)ヶ月$/, fmt: function (n) { return n + 'ヶ月'; }, unit: 'ヶ月' }
+};
+// 保存済みの値 v を プルダウン(s) / 手入力(m) / 選択肢にない文字(x) に振り分ける
+function manSplit(kind, v, opts) {
+  v = String(v == null ? '' : v);
+  if (!v) return { s: '', m: '', x: '' };
+  if (opts.indexOf(v) >= 0) return { s: v, m: '', x: '' };
+  var r = MAN[kind].re.exec(v);
+  if (r) return { s: '', m: r[1].replace(/,/g, ''), x: '' };
+  return { s: v, m: '', x: v };
+}
+function manJoin(kind, s, m) {
+  m = String(m || '').replace(/\D/g, '');
+  return m && Number(m) > 0 ? MAN[kind].fmt(Number(m)) : s;
+}
+function pairHtml(kind, opts, v, selAttrs, manAttrs) {
+  var p = manSplit(kind, v, opts);
+  return '<div class="mpair" data-kind="' + kind + '" style="display:flex;gap:6px;align-items:center"><select ' + selAttrs + ' style="flex:1"><option value="">--</option>' +
+    opts.map(function (o) { return '<option' + (o === p.s ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') +
+    (p.x ? '<option selected>' + esc(p.x) + '</option>' : '') + '</select>' +
+    '<input type="text" inputmode="numeric" class="man" ' + (manAttrs || '') + ' placeholder="手入力" value="' + esc(p.m) + '" style="width:7em"><span>' + MAN[kind].unit + '</span></div>';
+}
+function pairVal(w) { // w = .mpair 要素
+  return manJoin(w.getAttribute('data-kind'), w.querySelector('select').value, w.querySelector('.man').value);
+}
+document.addEventListener('input', function (e) {
+  var t = e.target;
+  if (!t.classList || !t.classList.contains('man')) return;
+  t.value = t.value.replace(/\D/g, '');
+  if (t.value) t.parentNode.querySelector('select').value = '';
+});
+document.addEventListener('change', function (e) {
+  var w = e.target.closest && e.target.closest('.mpair');
+  if (w && e.target.tagName === 'SELECT' && e.target.value) w.querySelector('.man').value = '';
+});
+
 function selHtml(opts, v) {
   var f = false, h = '<select class="ps"><option value="">選択</option>';
   opts.forEach(function (o) { var s = o === v; if (s) f = true; h += '<option' + (s ? ' selected' : '') + '>' + esc(o) + '</option>'; });
@@ -402,7 +487,7 @@ function qHtml(c, s) {
     h += '<div class="pt" data-pi="' + pi + '">' + (p.l ? '<div class="pl">' + esc(p.l) + '</div>' : '');
     if (p.k === 'm') h += chipsHtml(p.o, v, 'm');
     else if (p.k === 's') h += chipsHtml(p.blank ? ['未入力'].concat(p.o) : p.o, v ? [v] : (p.blank ? ['未入力'] : []), 's');
-    else if (p.k === 'sel') h += selHtml(p.o, v);
+    else if (p.k === 'sel') h += p.man ? pairHtml(p.man, p.o, v, 'class="ps"') : selHtml(p.o, v);
     else h += '<input type="text" class="pt_t" value="' + esc(v) + '">';
     h += '</div>';
   });
@@ -414,7 +499,7 @@ function qRead(c) {
   if (!w) return null;
   c.parts.forEach(function (p, pi) {
     var pt = w.querySelector('.pt[data-pi="' + pi + '"]'), v;
-    if (p.k === 'sel') v = pt.querySelector('select').value;
+    if (p.k === 'sel') v = p.man ? pairVal(pt.querySelector('.mpair')) : pt.querySelector('select').value;
     else if (p.k === 't') v = pt.querySelector('input').value.trim();
     else {
       var on = [].map.call(pt.querySelectorAll('.chip.on'), function (b) { return b.getAttribute('data-v'); });
@@ -479,6 +564,8 @@ function pgGo(i) {
   $('pn').style.display = i === n - 1 ? 'none' : '';
   msg('');
   syncShow();
+  syncNext();
+  if (MODE === 'apply' && $('pn')) $('pn').textContent = PG.pages[i].t === '同意' ? '同意して次へ' : '次へ';
   if (PG.opt.onShow) PG.opt.onShow(i);
   window.scrollTo(0, 0);
 }
@@ -490,7 +577,9 @@ function summaryHtml(full) {
   var age = '';
   if (d.birth) { var p = d.birth.split('-'); age = '　満' + ageOf(+p[0], +p[1], +p[2]) + '歳'; }
   rows.push(['氏名', (d.furigana ? d.furigana + '　' : '') + d.name + age]);
+  if ($('slot_d') && $('slot_d').value) rows.push(['希望面接日時', slotText($('slot_d').value, $('slot_t').value)]);
   rows.push(['生年月日', d.birth]);
+  rows.push(['身長 / 体重', [d.height, d.weight].filter(Boolean).join(' / ')]);
   rows.push(['TEL / Email', d.tel + (d.email ? ' / ' + d.email : '')]);
   rows.push(['住所', (d.zip ? '〒' + d.zip + ' ' : '') + d.address]);
   var wd = [];
@@ -509,7 +598,7 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF = { furigana: 0, name: 0, birth: 0, tel: 0, email: 0, zip: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, consent: 6 };
+var PAGE_OF = { name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
   var done = false;
@@ -535,36 +624,119 @@ function showApply() {
     { t: 'あなたについて', h: castBlocks('me', {}) },
     { t: '出勤希望', h: bykey['出勤希望'] },
     { t: 'SNS', h: bykey['SNS'] },
-    { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div>' +
-      '<div class="q" id="w_consent"><label class="opt big"><input type="checkbox" id="consent">上記に同意します <span class="req">*</span></label><div class="ferr" id="e_consent"></div></div>' },
-    { t: '確認', h: '<div class="small">内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。</div><div id="sumbox"></div><button class="pri big" id="sub" style="width:100%">送信</button>' }
+    { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' },
+    { t: '確認', h: '<div class="small">内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。</div><div id="sumbox"></div>' +
+      '<div class="q" id="w_photo"><label class="t">面接写真（本人確認用・身分証との照合に使います） <span class="req">*</span></label>' +
+      '<div class="small">保存お願いします（無加工で、身分証と照合できるように撮影をお願いします。）</div>' +
+      '<input type="file" id="photoin" accept="image/*" capture="user" style="display:none">' +
+      '<button type="button" class="sm" id="photobtn">カメラを起動</button>' +
+      '<div><img id="photoprev" alt="" style="display:none;max-width:100%;max-height:320px;margin-top:8px;border-radius:6px"></div>' +
+      '<div class="small" id="photost"></div><div class="ferr" id="e_photo"></div></div>' +
+      '<div class="q" id="w_slot"><label class="t">希望面接日時 <span class="req">*</span></label>' +
+      '<div class="small">空いている日時から選んでください（今から1時間以内の時間は選べません）。</div>' +
+      '<div class="row3" style="margin-top:6px"><select id="slot_d"><option value="">日付を選択</option></select><select id="slot_t"><option value="">時刻を選択</option></select></div>' +
+      '<div class="small" id="slotst"></div><div class="ferr" id="e_slot"></div></div>' +
+      '<button class="pri big" id="sub" style="width:100%">送信</button><div id="sendst" style="color:#c00;font-weight:bold;margin-top:8px"></div>' }
   ];
   pagerInit('app', pages, {
     bind: infoBind,
-    check: function (i) { return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
-    onShow: function (i) { if (i === 7) $('sumbox').innerHTML = summaryHtml(true); }
+    check: function (i) { if (i === 6) CONSENTED = true; return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
+    onShow: function (i) { if (i === 7) { $('sumbox').innerHTML = summaryHtml(true); loadSlots(); } }
   });
   $('sub').onclick = submitApply;
+  $('slot_d').onchange = function () { fillTimes(); };
+  $('photobtn').onclick = function () { $('photoin').click(); };
+  $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
+}
+// 希望面接日時: 選んだお店 (希望無しなら全店) の空き枠をサーバから取る。取り直した時は前の選択を残す
+var SLOTS = [], DOW = ['日', '月', '火', '水', '木', '金', '土'];
+function slotDate(d) { var p = d.split('-'); return +p[1] + '/' + +p[2] + '(' + DOW[new Date(+p[0], p[1] - 1, +p[2]).getDay()] + ')'; }
+function slotTime(t) { return +t.split(':')[0] < 16 ? '翌' + t : t; }
+function slotText(d, t) { return slotDate(d) + ' ' + slotTime(t); }
+function slotStore() { return String(castAll()['kyujin:5'] || '').replace(/希望無し/g, ''); }
+function loadSlots() {
+  var st = $('slotst'), pd = $('slot_d').value, pt = $('slot_t').value;
+  st.style.color = '#555'; st.textContent = '空き状況を確認中…';
+  google.script.run.withSuccessHandler(function (r) {
+    SLOTS = r || [];
+    var ds = []; SLOTS.forEach(function (x) { if (ds.indexOf(x.date) < 0) ds.push(x.date); });
+    $('slot_d').innerHTML = '<option value="">日付を選択</option>' + ds.map(function (d) { return '<option value="' + d + '">' + slotDate(d) + '</option>'; }).join('');
+    if (ds.indexOf(pd) >= 0) $('slot_d').value = pd;
+    fillTimes(pt);
+    st.textContent = ds.length ? '' : '現在、選べる空き枠がありません。スタッフにお知らせください。';
+  }).withFailureHandler(function () { st.style.color = '#c00'; st.textContent = '空き状況を取得できませんでした。しばらくして、もう一度このページを開いてください'; }).getSlots(slotStore());
+}
+function fillTimes(keep) {
+  var d = $('slot_d').value;
+  $('slot_t').innerHTML = '<option value="">時刻を選択</option>' + SLOTS.filter(function (x) { return x.date === d; }).map(function (x) { return '<option value="' + x.time + '">' + slotTime(x.time) + '</option>'; }).join('');
+  if (keep) $('slot_t').value = keep;
+}
+// 面接写真: 撮影 → 長辺 1280px の JPEG に縮小 → すぐ Drive へアップロード (成功するまで「送信」は押せない)。撮り直しは同じボタン
+var PHOTO = '', PHOTO_ID = '', CONSENTED = false;
+function photoPick(f) {
+  if (!f) return;
+  var im = new Image(), u = URL.createObjectURL(f);
+  im.onload = function () {
+    var k = Math.min(1, 1280 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
+    c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    PHOTO = c.toDataURL('image/jpeg', 0.85); PHOTO_ID = '';
+    URL.revokeObjectURL(u);
+    $('photoprev').src = PHOTO; $('photoprev').style.display = 'block';
+    $('photobtn').textContent = '撮り直す';
+    setErr('photo', '');
+    var st = $('photost'), mine = PHOTO;
+    st.style.color = '#555'; st.textContent = '写真をアップロード中…'; $('sub').disabled = true; $('photobtn').disabled = true;
+    google.script.run.withSuccessHandler(function (id) {
+      $('photobtn').disabled = false;
+      if (PHOTO !== mine) return; // アップロード中に撮り直された
+      PHOTO_ID = id; $('sub').disabled = false;
+      st.style.color = '#1a7f37'; st.textContent = '写真をアップロードしました。よければ「送信」を押してください。';
+    }).withFailureHandler(function (e) {
+      $('photobtn').disabled = false;
+      if (PHOTO !== mine) return;
+      st.style.color = '#c00'; st.textContent = 'アップロードに失敗しました。もう一度撮影してください: ' + (e && e.message || e);
+    }).uploadPhoto(mine);
+  };
+  im.onerror = function () { URL.revokeObjectURL(u); setErr('photo', '写真を読み込めませんでした。もう一度撮影してください'); };
+  im.src = u;
 }
 function applyErrs() {
   var d = infoCollect(), errs = infoValidate(d, true);
-  if (!$('consent').checked) errs.push(['consent', '個人情報の取り扱いへの同意にチェックしてください']);
+  if (!CONSENTED) errs.push(['consent', '個人情報の取り扱いへの同意が必要です']);
+  if (!PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
+  if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
   return errs;
 }
+var SENDING = false;
 function submitApply() {
+  if (SENDING) return; // 2 回押しで二重登録しない
   var errs = applyErrs();
   if (errs.length) {
     var pg = 7; errs.forEach(function (e) { pg = Math.min(pg, PAGE_OF[e[0]] == null ? 7 : PAGE_OF[e[0]]); });
-    pgGo(pg); showErrors(errs); return;
+    pgGo(pg); showErrors(errs);
+    if ($('sendst')) $('sendst').textContent = '入力が足りない所があります: ' + errs.map(function (e) { return e[1]; }).join(' / ');
+    return;
   }
   var d = infoCollect();
-  d.consent = true; d.cast = castAll();
+  d.consent = true; d.cast = castAll(); d.photoId = PHOTO_ID;
+  d.slot = { date: $('slot_d').value, time: $('slot_t').value };
+  SENDING = true;
   $('sub').disabled = true;
-  run('submitApplicant', [d], function () {
+  $('sub').innerHTML = '<span class="spin"></span>送信中…';
+  $('sendst').textContent = '';
+  // 写真はアップロード済み (file ID)。サーバが写真を確かめられた時だけ申込みを確定する
+  google.script.run.withSuccessHandler(function () {
     msg('');
-    $('app').innerHTML = '<h2 class="big">入力ありがとうございました。</h2><p class="big">スタッフにお声がけください。</p>';
+    $('app').innerHTML = '<h2 style="font-size:28px;line-height:1.6;margin-top:40px">お疲れ様でした。<br>情報を店舗へ送信しました。<br>このページは閉じてください。</h2>' +
+      '<p class="small" style="color:#1a7f37">面接写真を保存しました。</p>';
     window.scrollTo(0, 0);
-  }, function () { $('sub').disabled = false; });
+  }).withFailureHandler(function (e) {
+    SENDING = false; $('sub').disabled = false; $('sub').textContent = '送信';
+    var t = '送信できませんでした: ' + (e && e.message || e);
+    $('sendst').textContent = t; msg(t, true);
+    loadSlots();
+  }).submitApplicant(d);
 }
 
 startApply();
