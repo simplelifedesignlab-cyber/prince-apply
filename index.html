@@ -208,6 +208,10 @@ function socialId(v) { // 保存済みの URL から ID を取り出すのでは
 
 var HEIGHTS = (function () { var r = ['139cm以下']; for (var v = 140; v <= 185; v++) r.push(v + 'cm'); r.push('186cm以上'); return r; })();
 var WEIGHTS = (function () { var r = ['34kg以下']; for (var v = 35; v <= 60; v++) r.push(v + 'kg'); return r; })(); // 上限は 60kg (日野さん指示)
+var MBTIS = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP', 'わからない'];
+var BUSTS = ['Aカップ', 'Bカップ', 'Cカップ', 'Dカップ', 'Eカップ', 'Fカップ', 'Gカップ', 'Hカップ以上', 'わからない'];
+var HEALTH = [['hDisease', '持病'], ['hBase', '基礎疾患'], ['hMental', '精神疾患'], ['hAllergy', 'アレルギー']];
+function healthSplit(v) { var m = /^あり: ?(.*)$/.exec(v || ''); return m ? ['あり', m[1]] : [v === 'なし' ? 'なし' : '', '']; }
 function infoSecs(a, req) {
   var by = '', bm = '', bd = '';
   var bm_ = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.birth || '');
@@ -228,6 +232,9 @@ function infoSecs(a, req) {
   h += fld('birth', '生年月日', '<div class="row3">' + sel('f_by', years, by, '年') + sel('f_bm', months, bm, '月') + sel('f_bd', days, bd, '日') + '<b id="f_age" style="min-width:70px"></b></div>', req);
   h += fld('height', '身長', sel('f_height', HEIGHTS, a.height || '', '選択'), req);
   h += fld('weight', '体重', sel('f_weight', WEIGHTS, a.weight || '', '選択'), req);
+  h += fld('bust', 'バスト (任意)', sel('f_bust', BUSTS, a.bust || '', '選択'), 0);
+  h += fld('mbti', 'MBTI (任意)', sel('f_mbti', MBTIS, a.mbti || '', '選択'), 0);
+  h += fld('honseki', '本籍地 (任意・都道府県)', sel('f_honseki', PREFS, a.honseki || '', '選択'), 0);
   S.push({ t: '基本情報', h: h });
   h = fld('tel', 'TEL', inp('f_tel', 'tel', a.tel, 'inputmode="tel" autocomplete="off" placeholder="090-1234-5678"'), req);
   h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"') + (req ? '<div class="small">メールアドレスが違うと登録できません。iPhone の iCloud メールや Android の Gmail など、お手持ちのスマホで受信できるアドレスを記入してください。</div>' : ''), req);
@@ -256,6 +263,24 @@ function infoSecs(a, req) {
   h += fld('tiktok', 'TikTok (ID・@なし、またはURL)', inp('f_tiktok', 'text', a.tiktok, 'autocapitalize="off" autocomplete="off"'), 0);
   h += fld('sns', 'その他SNS', inp('f_sns', 'text', a.sns), 0);
   S.push({ t: 'SNS', h: h });
+  h = '<div class="small">これまでのお店について、わかる範囲で記入してください（任意）。</div>';
+  [1, 2].forEach(function (n) {
+    h += '<h4 style="margin:12px 0 4px">経歴' + n + '</h4>' +
+      fld('c' + n + 'Store', '所属店舗', inp('f_c' + n + 'Store', 'text', a['c' + n + 'Store'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Period', '期間 (例: 2024年4月〜2025年3月)', inp('f_c' + n + 'Period', 'text', a['c' + n + 'Period'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Sales', '売上', inp('f_c' + n + 'Sales', 'text', a['c' + n + 'Sales'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Wage', '時給 / 日給', inp('f_c' + n + 'Wage', 'text', a['c' + n + 'Wage'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Shift', 'シフト', inp('f_c' + n + 'Shift', 'text', a['c' + n + 'Shift'], 'autocomplete="off"'), 0);
+  });
+  S.push({ t: '経歴', h: h });
+  h = '<div class="small">あてはまるものを選んでください。「あり」の場合は内容も記入してください。</div>';
+  HEALTH.forEach(function (x) {
+    var p = healthSplit(a[x[0]]);
+    h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), req) +
+      fld(x[0] + 'T', x[1] + ' 「あり」の内容', inp('f_' + x[0] + 'T', 'text', p[1], 'autocomplete="off"'), 0);
+  });
+  h += fld('hAgree', '同意', '<label class="opt"><input type="checkbox" id="f_hAgree"' + (a.hAgree ? ' checked' : '') + '> 上記内容の項目に偽りなく回答しました</label>', req);
+  S.push({ t: '健康状態チェック', h: h });
   return S;
 }
 function infoHtml(a, req) {
@@ -417,6 +442,13 @@ function infoCollect() {
   d.insta = socialUrl($('f_insta').value, 'https://www.instagram.com/');
   d.tiktok = socialUrl($('f_tiktok').value, 'https://www.tiktok.com/@');
   d.sns = $('f_sns').value.trim();
+  d.bust = $('f_bust').value; d.mbti = $('f_mbti').value; d.honseki = $('f_honseki').value;
+  [1, 2].forEach(function (n) { ['Store', 'Period', 'Sales', 'Wage', 'Shift'].forEach(function (k) { d['c' + n + k] = $('f_c' + n + k).value.trim(); }); });
+  HEALTH.forEach(function (x) {
+    var v = $('f_' + x[0]).value, t = $('f_' + x[0] + 'T').value.trim();
+    d[x[0]] = v === 'あり' ? 'あり: ' + t : v;
+  });
+  d.hAgree = $('f_hAgree').checked ? '1' : '';
   return d;
 }
 // strict=true: 応募者入力 (必須あり) / false: 黒服画面 (形式の確認だけ)
@@ -436,6 +468,11 @@ function infoValidate(d, strict) {
     if (MODE === 'apply' && GEN_KEY && GEN_OK !== GEN_KEY()) e('genWishYomi', '源氏名の「確認」ボタンを押して、照合してください');
     if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
     if (!d.town) e('town', '町名・番地を入力してください');
+    HEALTH.forEach(function (x) {
+      if (!d[x[0]]) e(x[0], x[1] + 'を選んでください');
+      else if (d[x[0]] === 'あり: ') e(x[0] + 'T', x[1] + 'の内容を記入してください');
+    });
+    if (!d.hAgree) e('hAgree', '回答への同意にチェックしてください');
   }
   if (d.birth) {
     var p = d.birth.split('-');
@@ -640,6 +677,9 @@ function summaryHtml(full) {
   WEEK.forEach(function (w, i) { if (d['wd' + i]) wd.push(w + ' ' + d['wd' + i]); });
   if (d.wdx) wd.push(d.wdx);
   rows.push(['出勤希望', wd.join('　')]);
+  rows.push(['本籍地 / バスト / MBTI', [d.honseki, d.bust, d.mbti].filter(Boolean).join(' / ')]);
+  [1, 2].forEach(function (n) { rows.push(['経歴' + n, [d['c' + n + 'Store'], d['c' + n + 'Period'], d['c' + n + 'Sales'], d['c' + n + 'Wage'], d['c' + n + 'Shift']].filter(Boolean).join(' / ')]); });
+  if (d.hDisease) rows.push(['健康状態', HEALTH.map(function (x) { return x[1] + ': ' + d[x[0]]; }).join('　')]);
   if (d.genWish) rows.push(['源氏名希望', d.genWish + (d.genWishYomi ? ' (' + d.genWishYomi + ')' : '')]);
   rows.push(['SNS', [d.insta, d.tiktok, d.sns].filter(Boolean).join('　')]);
   CASTQ.forEach(function (c) {
@@ -652,7 +692,7 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
+var PAGE_OF = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, hDisease: 3, hDiseaseT: 3, hBase: 3, hBaseT: 3, hMental: 3, hMentalT: 3, hAllergy: 3, hAllergyT: 3, hAgree: 3, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
   var done = false;
@@ -678,9 +718,9 @@ function showApply() {
   var pages = [
     { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
       ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
-    { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) },
+    { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) + '<div class="sec"><h3>経歴</h3>' + bykey['経歴'] + '</div>' },
     { t: 'お店選び', h: castBlocks('shop', {}, true) },
-    { t: 'あなたについて', h: castBlocks('me', {}) },
+    { t: 'あなたについて', h: castBlocks('me', {}) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
     { t: '出勤希望', h: bykey['出勤希望'] },
     { t: 'SNS', h: bykey['SNS'] },
     { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' },
@@ -772,7 +812,7 @@ function applyErrs() {
 }
 // ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
 // 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
-var RQ_KEYS = ['store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['store', 'wk', 'photo', 'slot'], RQ_ON = false;
+var RQ_KEYS = ['hDisease', 'hBase', 'hMental', 'hAllergy', 'hAgree', 'store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['store', 'wk', 'photo', 'slot'], RQ_ON = false;
 function rqInit() {
   document.body.classList.add('ap');
   RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
