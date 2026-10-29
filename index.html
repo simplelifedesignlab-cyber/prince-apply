@@ -9,6 +9,11 @@ button.pri,.btn.pri{background:#1a56db;color:#fff;border-color:#1a56db}
 button.warn{background:#fff0f0;border-color:#c00}
 button.sm{min-height:44px;font-size:16px}
 button:disabled{opacity:.45}
+.ap .req{color:#d00;font-weight:bold;font-size:1.15em}
+.ap .rq.empty input.pk,.ap .rq.empty select.pk{background:#ffe4ec;border:1px solid #f08fb0}
+.ap .rq.blk.empty{background:#ffe4ec;border-radius:8px}
+.ap .bad input.pk,.ap .bad select.pk,.ap .bad.blk{border:2px solid #d00}
+.ap .bad input,.ap .bad select{border-color:#d00}
 .spin{display:inline-block;width:1em;height:1em;margin-right:.5em;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spn .8s linear infinite}
 @keyframes spn{to{transform:rotate(360deg)}}
 input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],input[type=time],input[type=number],select,textarea{width:100%;box-sizing:border-box;font-size:18px;min-height:48px;padding:8px;border:1px solid #aaa;border-radius:8px;background:#fff}
@@ -566,6 +571,7 @@ function pgGo(i) {
   syncShow();
   syncNext();
   draftSave();
+  if (typeof rqPaint === 'function') rqPaint();
   if (MODE === 'apply' && $('pn')) $('pn').textContent = PG.pages[i].t === '同意' ? '同意して次へ' : '次へ';
   if (PG.opt.onShow) PG.opt.onShow(i);
   window.scrollTo(0, 0);
@@ -649,6 +655,7 @@ function showApply() {
   $('photobtn').onclick = function () { $('photoin').click(); };
   $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
   draftInit();
+  rqInit();
 }
 // 希望面接日時: 選んだお店 (希望無しなら全店) の空き枠をサーバから取る。取り直した時は前の選択を残す
 var SLOTS = [], DOW = ['日', '月', '火', '水', '木', '金', '土'];
@@ -709,6 +716,34 @@ function applyErrs() {
   if (!PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
   if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
   return errs;
+}
+// ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
+// 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
+var RQ_KEYS = ['name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['wk', 'photo', 'slot'], RQ_ON = false;
+function rqInit() {
+  document.body.classList.add('ap');
+  RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
+  ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, function () { setTimeout(rqPaint, 0); }); });
+  RQ_ON = true; rqPaint();
+}
+function rqPaint() {
+  if (!RQ_ON) return;
+  var bad = {};
+  try {
+    applyErrs().forEach(function (e) {
+      // 「確認ボタンを押す」「アップロード待ち」は未入力ではないのでピンクにしない
+      if (/確認」ボタン|お待ちください/.test(e[1])) return;
+      bad[e[0]] = 1;
+    });
+  } catch (x) { return; }
+  RQ_KEYS.forEach(function (k) {
+    var w = $('w_' + k); if (!w) return;
+    w.classList[bad[k] ? 'add' : 'remove']('empty');
+    [].forEach.call(w.querySelectorAll('input:not([type=file]):not([type=hidden]), select'), function (c) {
+      var empty = c.value.trim() === '' && c.offsetParent !== null;
+      c.classList[empty ? 'add' : 'remove']('pk');
+    });
+  });
 }
 // ================= 入力の途中保存 (下書き・応募者画面だけ) =================
 // 入力のたびにブラウザの localStorage へ保存し、開き直したら復元して続きのページから再開する。写真と面接枠は復元しない。
