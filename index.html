@@ -565,6 +565,7 @@ function pgGo(i) {
   msg('');
   syncShow();
   syncNext();
+  draftSave();
   if (MODE === 'apply' && $('pn')) $('pn').textContent = PG.pages[i].t === '同意' ? '同意して次へ' : '次へ';
   if (PG.opt.onShow) PG.opt.onShow(i);
   window.scrollTo(0, 0);
@@ -647,6 +648,7 @@ function showApply() {
   $('slot_d').onchange = function () { fillTimes(); };
   $('photobtn').onclick = function () { $('photoin').click(); };
   $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
+  draftInit();
 }
 // 希望面接日時: 選んだお店 (希望無しなら全店) の空き枠をサーバから取る。取り直した時は前の選択を残す
 var SLOTS = [], DOW = ['日', '月', '火', '水', '木', '金', '土'];
@@ -708,6 +710,51 @@ function applyErrs() {
   if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
   return errs;
 }
+// ================= 入力の途中保存 (下書き・応募者画面だけ) =================
+// 入力のたびにブラウザの localStorage へ保存し、開き直したら復元して続きのページから再開する。写真と面接枠は復元しない。
+// 個人情報が端末に残るので 24 時間で期限切れ (開いたときに消す)。送信成功で消す。localStorage が使えなくても普通に動く
+var DRAFT_KEY = 'prince_apply_draft_v1', DRAFT_TTL = 24 * 3600 * 1000, DRAFT_ON = false, DRAFT_T = 0;
+function draftLs(fn) { try { return fn(window.localStorage); } catch (e) { return null; } } // 使えない (プライベートモードなど) ときは何もしない
+function draftFields() {
+  return [].filter.call(document.querySelectorAll('#app input, #app select, #app textarea'), function (el) {
+    return el.type !== 'file' && el.type !== 'button' && ['slot_d', 'slot_t'].indexOf(el.id) < 0;
+  });
+}
+function draftSave() {
+  if (!DRAFT_ON) return;
+  clearTimeout(DRAFT_T);
+  DRAFT_T = setTimeout(function () {
+    if (!DRAFT_ON) return;
+    var f = draftFields().map(function (el) { return el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value; });
+    var c = [].map.call(document.querySelectorAll('#app .chips'), function (box) {
+      return [].filter.call(box.children, function (b) { return b.classList.contains('on'); }).map(function (b) { return b.getAttribute('data-v'); });
+    });
+    draftLs(function (ls) { ls.setItem(DRAFT_KEY, JSON.stringify({ t: Date.now(), p: PG.i, f: f, c: c })); });
+  }, 300);
+}
+function draftClear() {
+  DRAFT_ON = false; clearTimeout(DRAFT_T);
+  draftLs(function (ls) { ls.removeItem(DRAFT_KEY); });
+}
+function draftInit() {
+  var raw = draftLs(function (ls) { return ls.getItem(DRAFT_KEY); }), dr = null;
+  try { dr = raw ? JSON.parse(raw) : null; } catch (e) { dr = null; }
+  var fs = draftFields(), boxes = document.querySelectorAll('#app .chips');
+  // 期限切れ・画面の作りが変わった下書きは捨てる
+  if (dr && (!dr.t || Date.now() - dr.t > DRAFT_TTL || !dr.f || dr.f.length !== fs.length || !dr.c || dr.c.length !== boxes.length)) { draftLs(function (ls) { ls.removeItem(DRAFT_KEY); }); dr = null; }
+  if (dr) {
+    fs.forEach(function (el, i) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!dr.f[i]; else el.value = dr.f[i]; });
+    [].forEach.call(boxes, function (box, i) {
+      [].forEach.call(box.children, function (b) { b.classList[dr.c[i].indexOf(b.getAttribute('data-v')) >= 0 ? 'add' : 'remove']('on'); });
+    });
+    syncCity(); syncAge(); syncShow();
+    pgGo(Math.max(0, Math.min(dr.p || 0, 6))); // 同意ページ (6) まで。それより先は同意を押し直してもらう
+  }
+  $('app').insertAdjacentHTML('beforeend', '<div class="small" style="text-align:center;margin:16px 0 24px"><a href="#" id="draft_reset">入力を最初からやり直す</a></div>');
+  $('draft_reset').onclick = function (e) { e.preventDefault(); draftClear(); location.reload(); };
+  DRAFT_ON = true;
+  ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, draftSave); });
+}
 var SENDING = false;
 function submitApply() {
   if (SENDING) return; // 2 回押しで二重登録しない
@@ -727,6 +774,7 @@ function submitApply() {
   $('sendst').textContent = '';
   // 写真はアップロード済み (file ID)。サーバが写真を確かめられた時だけ申込みを確定する
   google.script.run.withSuccessHandler(function () {
+    draftClear();
     msg('');
     $('app').innerHTML = '<h2 style="font-size:28px;line-height:1.6;margin-top:40px">お疲れ様でした。<br>情報を店舗へ送信しました。<br>このページは閉じてください。</h2>' +
       '<p class="small" style="color:#1a7f37">面接写真を保存しました。</p>';
