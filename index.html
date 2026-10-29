@@ -536,8 +536,8 @@ function syncShow() {
     w.style.display = qRead(c) === w.getAttribute('data-sv') ? '' : 'none';
   });
 }
-function castBlocks(page, vals) {
-  return CASTQ.filter(function (c) { return c.page === page; }).map(function (c) { return qHtml(c, vals[c.f + ':' + c.qi]); }).join('');
+function castBlocks(page, vals, noStore) { // noStore = 応募者画面: 「応募するお店」は最初のページへ移したので、ここでは出さない
+  return CASTQ.filter(function (c) { return c.page === page && !(noStore && c.f === 'kyujin' && c.qi === 5); }).map(function (c) { return qHtml(c, vals[c.f + ':' + c.qi]); }).join('');
 }
 function castAll() { var m = {}; CASTQ.forEach(function (c) { var s = qRead(c); if (s) m[c.f + ':' + c.qi] = s; }); return m; }
 
@@ -605,7 +605,7 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF = { name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
+var PAGE_OF = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
   var done = false;
@@ -620,14 +620,19 @@ function startApply() {
   setTimeout(function () { go(null); }, 4000);
   try { google.script.run.withSuccessHandler(go).withFailureHandler(function () { go(null); }).getStores(); } catch (e) { go(null); }
 }
+// 応募者画面の最初のページの一番上に出す「応募するお店」(必須)。値は今までどおり cast の kyujin:5
+function storeBlock() {
+  var c = CASTQ.filter(function (x) { return x.f === 'kyujin' && x.qi === 5; })[0];
+  return '<div id="w_store">' + qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>') + '<div class="ferr" id="e_store"></div></div>';
+}
 function showApply() {
   var S = infoSecs({}, 1), bykey = {};
   S.forEach(function (s) { bykey[s.t] = s.h; });
   var pages = [
-    { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' +
+    { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
       ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
     { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) },
-    { t: 'お店選び', h: castBlocks('shop', {}) },
+    { t: 'お店選び', h: castBlocks('shop', {}, true) },
     { t: 'あなたについて', h: castBlocks('me', {}) },
     { t: '出勤希望', h: bykey['出勤希望'] },
     { t: 'SNS', h: bykey['SNS'] },
@@ -713,13 +718,14 @@ function photoPick(f) {
 function applyErrs() {
   var d = infoCollect(), errs = infoValidate(d, true);
   if (!CONSENTED) errs.push(['consent', '個人情報の取り扱いへの同意が必要です']);
+  if (!castAll()['kyujin:5']) errs.push(['store', '応募するお店を選んでください']);
   if (!PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
   if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
   return errs;
 }
 // ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
 // 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
-var RQ_KEYS = ['name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['wk', 'photo', 'slot'], RQ_ON = false;
+var RQ_KEYS = ['store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['store', 'wk', 'photo', 'slot'], RQ_ON = false;
 function rqInit() {
   document.body.classList.add('ap');
   RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
