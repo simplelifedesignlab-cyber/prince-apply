@@ -17,6 +17,11 @@ header p{margin:2px 0 0;font-size:16px;opacity:.95}
 .card h2{margin:0 0 8px;font-size:18px;color:var(--priD)}
 label.t{display:block;font-size:16px;font-weight:600;margin:10px 0 4px}
 select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10px;border:1px solid #cfd3d8;border-radius:10px;background:#fff;font-family:inherit}
+.sub{margin:8px 0 0;padding:8px 10px;background:#f6f8f7;border-radius:10px}
+.sub label.t{margin:6px 0 4px;font-size:15px}
+.sub input[type=text]{margin-top:6px}
+.hint{margin:6px 0 0;font-size:14px;color:#555}
+.prio{display:inline-block;margin:6px 0 0;padding:2px 10px;font-size:14px;font-weight:700;color:#fff;background:#e8710a;border-radius:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{min-height:44px;font-size:16px;padding:6px 14px;border:1px solid #cfd3d8;border-radius:22px;background:#fff;color:#222;font-family:inherit;cursor:pointer}
 .chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
@@ -107,6 +112,25 @@ function chip(label, on, fn) {
   return b;
 }
 
+function mkSel(opts, cur, blankLabel, onchg) {
+  var sel = el('select');
+  if (blankLabel != null) { var b = el('option', '', blankLabel); b.value = ''; sel.appendChild(b); }
+  opts.forEach(function (o) { var op = el('option', '', o); op.value = o; if (o === cur) op.selected = true; sel.appendChild(op); });
+  sel.onchange = function () { onchg(sel.value); };
+  return sel;
+}
+function isT(s) { return /^\d\d:\d\d$/.test(s); }
+function mins(s) { return Number(s.slice(0, 2)) * 60 + Number(s.slice(3)); }
+function hhmm(m) { return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + m % 60).slice(-2); }
+// ヘアメイクの候補: 出勤が時刻なら 2 時間前〜30 分前の 30 分刻み。それ以外は全時間帯
+function hairChoices(d) {
+  if (!isT(d.shift)) return data.hairOpts;
+  var t = mins(d.shift), a = [];
+  for (var m = t - 120; m <= t - 30; m += 30) { var h = hhmm(m); if (data.hairOpts.indexOf(h) >= 0) a.push(h); }
+  if (d.hairTime && a.indexOf(d.hairTime) < 0) a.unshift(d.hairTime);
+  return a.length ? a : data.hairOpts;
+}
+
 function render() {
   var box = document.getElementById('days');
   box.innerHTML = '';
@@ -122,6 +146,11 @@ function render() {
     });
     sel.onchange = function () { d.shift = sel.value; render(); };
     card.appendChild(sel);
+
+    if (isT(d.shift)) {
+      card.appendChild(el('label', 't', '退勤の希望'));
+      card.appendChild(mkSel(data.leaveOpts, d.leave || data.leaveOpts[0], null, function (v) { d.leave = v; }));
+    }
 
     card.appendChild(el('label', 't', '予定'));
     while (d.plans.length < 2) d.plans.push({ k: data.planKinds[0], n: '' }); // 空の行を最初から 2 つ出す
@@ -146,7 +175,49 @@ function render() {
       ch.appendChild(chip('送迎 帰り ' + (d.back ? 'あり' : 'なし'), d.back, function () { d.back = !d.back; }));
       ch.appendChild(chip('ヘアメイク ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
       card.appendChild(ch);
+
+      if (d.go) {
+        var s1 = el('div', 'sub');
+        s1.appendChild(el('label', 't', '迎えの場所'));
+        s1.appendChild(mkSel(data.pickOpts.map(function (o) { return o; }), d.pick || '自宅', null, function (v) { d.pick = v; render(); }));
+        if ((d.pick || '自宅') === 'その他') {
+          var po = el('input'); po.type = 'text'; po.maxLength = 40; po.placeholder = '場所を書いてください'; po.value = d.pickOther || '';
+          po.oninput = function () { d.pickOther = po.value; };
+          s1.appendChild(po);
+        } else if ((d.pick || '自宅') === '自宅') s1.appendChild(el('p', 'hint', '登録してある住所に迎えに行きます'));
+        s1.appendChild(el('label', 't', '到着の希望時刻'));
+        s1.appendChild(mkSel(data.arriveOpts, d.arrive || (isT(d.shift) ? d.shift : ''), isT(d.shift) ? null : '出勤時刻に合わせる', function (v) { d.arrive = v; }));
+        card.appendChild(s1);
+      }
+      if (d.back) {
+        var s2 = el('div', 'sub');
+        s2.appendChild(el('label', 't', '帰りの送り先'));
+        s2.appendChild(mkSel(data.dropOpts, d.drop || '自宅', null, function (v) { d.drop = v; render(); }));
+        if ((d.drop || '自宅') === 'その他') {
+          var dof = el('input'); dof.type = 'text'; dof.maxLength = 40; dof.placeholder = '送り先を書いてください'; dof.value = d.dropOther || '';
+          dof.oninput = function () { d.dropOther = dof.value; };
+          s2.appendChild(dof);
+        }
+        var ac = el('div', 'chips'); ac.style.marginTop = '8px';
+        ac.appendChild(chip('アフター ' + (d.after ? 'あり' : 'なし'), d.after, function () { d.after = !d.after; }));
+        s2.appendChild(ac);
+        if (d.after) s2.appendChild(el('p', 'hint', 'アフターの日は 3:00 までの帰りになります'));
+        card.appendChild(s2);
+      }
+      if (d.hair) {
+        var s3 = el('div', 'sub');
+        s3.appendChild(el('label', 't', 'ヘアメイクの希望時間'));
+        s3.appendChild(mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; }));
+        var hasPlan = d.plans.some(function (p) { return String(p.n || '').trim(); });
+        if (hasPlan) { s3.appendChild(el('span', 'prio', '優先')); s3.appendChild(el('p', 'hint', '同伴・来店予定の日は優先で入れます')); }
+        card.appendChild(s3);
+      }
     }
+
+    card.appendChild(el('label', 't', '連絡(キャンセル・変更など)'));
+    var nt = el('input'); nt.type = 'text'; nt.maxLength = 100; nt.placeholder = '店に伝えたいことがあれば'; nt.value = d.note || '';
+    nt.oninput = function () { d.note = nt.value; };
+    card.appendChild(nt);
     box.appendChild(card);
   });
 }
@@ -160,6 +231,7 @@ document.getElementById('save').onclick = function () {
   btn.disabled = true; btn.textContent = '保存中…'; msg.className = ''; msg.textContent = '';
   var payload = data.days.map(function (d) {
     return { date: d.date, shift: d.shift, go: d.go, back: d.back, hair: d.hair,
+      leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note,
       plans: d.plans.filter(function (p) { return String(p.n || '').trim(); }) };
   });
   google.script.run.withSuccessHandler(function () {
