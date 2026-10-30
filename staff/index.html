@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#06C755">
+<title>黒服ポータル</title>
+<style>
+:root{--pri:#06C755;--priD:#048a3c;--priL:#e6f9ee;--pink:#ff6fa5;--pinkL:#ffe9f1}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.5;background:#F5F6F8;color:#222;overflow-wrap:anywhere}
+header{background:var(--pri);color:#fff;padding:12px 16px;position:sticky;top:0;z-index:5}
+header .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header h1{margin:0;font-size:19px;flex:1}
+#back{min-height:44px;font-size:16px;font-weight:700;background:#fff;color:var(--priD);border:0;border-radius:22px;padding:6px 14px;font-family:inherit;cursor:pointer}
+.wrap{max-width:640px;margin:0 auto;padding:12px 12px 60px}
+.upd{font-size:13px;color:#777;text-align:center;margin:14px 0}
+.big{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;margin:0 0 12px;border:0;border-radius:16px;background:#fff;color:#222;box-shadow:0 1px 4px rgba(0,0,0,.1);font-family:inherit;cursor:pointer;text-align:left;padding:10px 18px;border-left:10px solid var(--pri);text-decoration:none}
+.big small{display:block;font-size:14px;font-weight:400;color:#777}
+.big.pk{border-left-color:var(--pink)}
+.stores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 12px}
+.st{min-height:60px;font-size:18px;font-weight:700;border:2px solid var(--pri);border-radius:14px;background:#fff;color:var(--priD);font-family:inherit;cursor:pointer}
+.st.on{background:var(--pri);color:#fff}
+.card{background:#fff;border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.nav{display:flex;align-items:center;gap:8px;margin:8px 0}
+.nav .t{flex:1;text-align:center;font-weight:700;font-size:17px}
+.nb{min-height:44px;min-width:60px;font-size:16px;font-weight:700;border:1px solid #cfd3d8;border-radius:12px;background:#fff;font-family:inherit;cursor:pointer}
+.tabs{display:flex;gap:8px;margin:8px 0}
+.tab{flex:1;min-height:48px;font-size:17px;font-weight:700;border:2px solid var(--pink);border-radius:12px;background:#fff;color:#c2336a;font-family:inherit;cursor:pointer}
+.tab.on{background:var(--pink);color:#fff}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:8px 0}
+.dy{min-height:56px;font-size:14px;border:1px solid #cfd3d8;border-radius:10px;background:#fff;font-family:inherit;cursor:pointer;line-height:1.3}
+.dy.on{background:var(--pri);color:#fff;border-color:var(--pri);font-weight:700}
+.sc{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid #e1e4e8;padding:4px 3px;text-align:center;white-space:nowrap}
+th{background:var(--priL);position:sticky;top:0}
+td.nm{text-align:left;position:sticky;left:0;background:#fff;font-weight:700;max-width:92px;overflow:hidden;text-overflow:ellipsis}
+.c-off{background:#e0e0e0;color:#777}.c-und{background:#fff3b0}.c-on{background:#d8f7e3;font-weight:700}
+.c-miss{outline:2px solid #e53935;outline-offset:-2px;color:#e53935;font-weight:700}
+tr.sum td{background:var(--pinkL);font-weight:700}
+.row{display:flex;justify-content:space-between;gap:8px;padding:10px 4px;border-bottom:1px solid #eee;font-size:17px}
+.row:last-child{border:0}
+.row .s{font-size:14px;color:#666}
+.pri{background:var(--pinkL)}
+.tag{display:inline-block;background:var(--pink);color:#fff;border-radius:10px;padding:0 8px;font-size:13px;font-weight:700;margin-left:6px}
+.cnt{font-size:20px;font-weight:700;color:var(--priD);margin:6px 0}
+.bars{display:flex;align-items:flex-end;gap:2px;height:130px;margin:10px 0 2px;border-bottom:2px solid #ccc}
+.bar{flex:1;background:var(--pri);min-width:3px;border-radius:3px 3px 0 0}
+.bl{display:flex;justify-content:space-between;font-size:12px;color:#777}
+.msg{padding:30px 10px;text-align:center;font-size:18px;color:#666}
+.err{color:#d93025}
+.rk{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #eee;font-size:18px}
+.rk b{width:34px;height:34px;border-radius:50%;background:var(--priL);color:var(--priD);display:flex;align-items:center;justify-content:center;flex:none}
+.rk:nth-child(-n+3) b{background:var(--pink);color:#fff}
+.rk span{flex:1}.rk em{font-style:normal;font-weight:700}
+</style></head><body>
+<header><div class="in"><h1 id="ttl">黒服ポータル</h1><button id="back" hidden>← TOP</button></div></header>
+<div class="wrap" id="app"></div>
+<script>
+var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
+var INTERVIEW = 'https://script.google.com/macros/s/AKfycbwLAO53cj-BLqrkvFgpoJyUT-Lw0Voj-5WJjdo5aS5wFjGL7IUJgxlcG5FdVU_Hv3xS/exec?mode=staff';
+var STORES = [{id:'RegentClub千歳',s:'RC千歳'},{id:'328',s:'328'},{id:'WAVE千歳',s:'WAVE千歳'},{id:'花もみじ千歳',s:'花もみじ千歳'}];
+var $ = function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function api(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[]})})
+    .then(function(r){return r.json();}).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'取得に失敗しました');return j.result;});
+}
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+var store = lsGet('staffStore'); if(!STORES.some(function(s){return s.id===store;})) store=null;
+var seq = 0; // 古い応答を捨てる
+function pad(n){return ('0'+n).slice(-2);}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2],12);}
+function monday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate(),12);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+var weekStart = ymd(monday(new Date()));
+var selDay = ymd(new Date());
+var month = ymd(new Date()).slice(0,7);
+var rankTab = 'sales';
+
+var VIEWS = {
+  roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
+  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}
+};
+function go(v){location.hash=v||'';}
+function route(){
+  var v=location.hash.replace('#','');
+  $('back').hidden=!VIEWS[v];
+  if(!VIEWS[v]){$('ttl').textContent='黒服ポータル';top_();return;}
+  $('ttl').textContent=VIEWS[v].t;
+  var el=$('app');
+  el.innerHTML='<div class="stores" id="stores"></div><div id="body"></div><div class="upd" id="upd"></div>';
+  $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('');
+  [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
+  if(!store){$('body').innerHTML='<div class="msg">店舗を選んでください</div>';return;}
+  $('body').innerHTML='<div class="msg">読み込み中...</div>';
+  VIEWS[v].run();
+}
+$('back').onclick=function(){go('');};
+window.addEventListener('hashchange',route);
+
+function top_(){
+  $('app').innerHTML=
+    '<button class="big" data-v="roster">在籍一覧<small>キャストの名簿</small></button>'+
+    '<button class="big" data-v="shift">シフト管理<small>1週間の出勤表</small></button>'+
+    '<button class="big" data-v="trans">送迎管理<small>行き・帰りの一覧</small></button>'+
+    '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
+    '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
+    '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
+    '<a class="big" href="'+INTERVIEW+'" target="_blank" rel="noopener">面接管理<small>面接の画面を開く</small></a>'+
+    '<div class="upd">黒服ポータル</div>';
+  [].forEach.call(document.querySelectorAll('button.big'),function(b){b.onclick=function(){go(b.getAttribute('data-v'));};});
+}
+function fin(my,res,html){ if(my!==seq)return; $('body').innerHTML=html; $('upd').textContent='最終更新 '+(res&&res.updated||''); }
+function fail(my,e){ if(my!==seq)return; $('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>'; }
+function yen(n){return Number(n||0).toLocaleString('ja-JP')+'円';}
+
+function vRoster(){
+  var my=++seq;
+  api('getRoster',[store]).then(function(r){
+    var h='<div class="cnt">'+r.count+'人</div><div class="card">'+(r.casts.length?r.casts.map(function(c){
+      return '<div class="row"><span>'+(c.ban?'<b>'+esc(c.ban)+'</b> ':'')+esc(c.gen)+'</span><span class="s">'+(c.joined?esc(c.joined)+'〜':'')+(c.weekly?' 週'+esc(c.weekly):'')+'</span></div>';
+    }).join(''):'<div class="msg">在籍はいません</div>')+'</div>';
+    fin(my,r,h);
+  }).catch(function(e){fail(my,e);});
+}
+
+var DOWS=['日','月','火','水','木','金','土'];
+function weekNav(then){
+  return '<div class="nav"><button class="nb" id="pw">← 前</button><div class="t" id="wt"></div><button class="nb" id="nw">次 →</button></div>';
+}
+function bindWeek(w){
+  var a=parse(w.weekStart),b=parse(w.days[6].date);
+  $('wt').textContent=(a.getMonth()+1)+'/'+a.getDate()+' 〜 '+(b.getMonth()+1)+'/'+b.getDate();
+  function mv(n){var d=parse(weekStart);d.setDate(d.getDate()+n);weekStart=ymd(d);selDay=weekStart;route();}
+  $('pw').onclick=function(){mv(-7);};$('nw').onclick=function(){mv(7);};
+}
+function loadWeek(render){
+  var my=++seq;
+  api('getWeek',[store,weekStart]).then(function(w){ if(my!==seq)return; fin(my,w,weekNav()+render(w)); bindWeek(w); bindDays(w);}).catch(function(e){fail(my,e);});
+}
+function bindDays(w){
+  [].forEach.call(document.querySelectorAll('.dy'),function(b){b.onclick=function(){selDay=b.getAttribute('data-d');route();};});
+}
+function dayBtns(w){
+  if(!w.days.some(function(d){return d.date===selDay;})) selDay=w.days[0].date;
+  return '<div class="days">'+w.days.map(function(d){return '<button class="dy'+(d.date===selDay?' on':'')+'" data-d="'+d.date+'">'+esc(d.label)+'<br>'+d.dow+'</button>';}).join('')+'</div>';
+}
+
+function vShift(){
+  loadWeek(function(w){
+    var sums=w.days.map(function(){return 0;}), miss=0;
+    var rows=w.casts.map(function(c){
+      var tds=w.days.map(function(d,i){
+        var x=c.days[d.date], s=x?x.shift:'';
+        if(!s){ if(!c.submitted){return '<td class="c-miss">未</td>';} return '<td></td>'; }
+        if(s==='休み')return '<td class="c-off">休</td>';
+        if(s==='未定')return '<td class="c-und">未定</td>';
+        sums[i]++; return '<td class="c-on">'+esc(s)+'</td>';
+      }).join('');
+      if(!c.submitted)miss++;
+      return '<tr><td class="nm">'+esc(c.gen)+'</td>'+tds+'</tr>';
+    }).join('');
+    var head='<tr><th>名前</th>'+w.days.map(function(d){return '<th>'+esc(d.label)+'<br>'+d.dow+'</th>';}).join('')+'</tr>';
+    var sum='<tr class="sum"><td class="nm">出勤人数</td>'+sums.map(function(n){return '<td>'+n+'</td>';}).join('')+'</tr>';
+    return (miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
+      '<div class="card sc"><table>'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+
+      '<div class="upd">赤枠＝未提出　黄＝未定　灰＝休み</div>';
+  });
+}
+function exText(x,skipKeys){
+  if(!x||!x.ex)return '';
+  return Object.keys(x.ex).filter(function(k){return !skipKeys||skipKeys.indexOf(k)<0;}).map(function(k){return esc(k)+' '+esc(x.ex[k]);}).join(' / ');
+}
+function vTrans(){
+  loadWeek(function(w){
+    function list(key,label){
+      var arr=w.casts.filter(function(c){var x=c.days[selDay];return x&&x[key];});
+      var areas={};
+      arr.forEach(function(c){var x=c.days[selDay];var a=x.ex&&(x.ex['方面']||x.ex['乗車市町村']);if(a)areas[a]=(areas[a]||0)+1;});
+      var sm=Object.keys(areas).length?'<div class="s" style="font-size:14px;color:#666">'+Object.keys(areas).map(function(a){return esc(a)+' '+areas[a]+'人';}).join(' / ')+'</div>':'';
+      return '<div class="card"><div class="cnt">'+label+' '+arr.length+'人</div>'+sm+
+        (arr.length?arr.map(function(c){var x=c.days[selDay];return '<div class="row"><span>'+esc(c.gen)+'</span><span class="s">'+esc(x.shift||'')+(exText(x)?'<br>'+exText(x):'')+'</span></div>';}).join(''):'<div class="msg" style="padding:12px">なし</div>')+'</div>';
+    }
+    return dayBtns(w)+list('go','行き')+list('back','帰り');
+  });
+}
+function vHair(){
+  loadWeek(function(w){
+    var arr=w.casts.filter(function(c){var x=c.days[selDay];return x&&x.hair;}).map(function(c){var x=c.days[selDay];return {c:c,x:x,p:!!(x.plan||x.planN>0)};});
+    arr.sort(function(a,b){return (b.p?1:0)-(a.p?1:0);});
+    return dayBtns(w)+'<div class="card"><div class="cnt">'+arr.length+'人　'+yen(arr.length*1000)+'</div>'+
+      (arr.length?arr.map(function(o){return '<div class="row'+(o.p?' pri':'')+'"><span>'+esc(o.c.gen)+(o.p?'<span class="tag">優先</span>':'')+'</span><span class="s">'+esc(o.x.shift||'')+(o.x.plan?'<br>'+esc(o.x.plan):'')+(exText(o.x)?'<br>'+exText(o.x):'')+'</span></div>';}).join(''):'<div class="msg" style="padding:12px">なし</div>')+'</div>'+
+      '<div class="upd">同伴・来店予定がある人が上（優先）</div>';
+  });
+}
+function monthNav(){return '<div class="nav"><button class="nb" id="pm">← 前</button><div class="t" id="mt"></div><button class="nb" id="nm">次 →</button></div>';}
+function bindMonth(){
+  var p=month.split('-');$('mt').textContent=p[0]+'年'+(+p[1])+'月';
+  function mv(n){var y=+p[0],m=+p[1]+n;while(m<1){m+=12;y--;}while(m>12){m-=12;y++;}month=y+'-'+pad(m);route();}
+  $('pm').onclick=function(){mv(-1);};$('nm').onclick=function(){mv(1);};
+}
+function notReady(r){return '<div class="msg">'+esc(r.message||'データ取込準備中')+'</div>';}
+function imp(r){return r.lastImport?'　最終取込日 '+esc(r.lastImport):'';}
+function vSales(){
+  var my=++seq;
+  api('getSales',[store,month]).then(function(r){
+    if(my!==seq)return;
+    var h=monthNav();
+    if(!r.ready){h+=notReady(r);}
+    else{
+      var mx=Math.max.apply(null,r.daily.map(function(d){return d.sales;}).concat([1]));
+      h+='<div class="card"><div class="cnt">合計 '+yen(r.total)+'</div>'+
+        (r.daily.length?'<div class="bars">'+r.daily.map(function(d){return '<div class="bar" title="'+esc(d.date)+' '+yen(d.sales)+'" style="height:'+Math.max(2,Math.round(d.sales/mx*100))+'%"></div>';}).join('')+'</div><div class="bl"><span>'+esc(r.daily[0].date.slice(5))+'</span><span>'+esc(r.daily[r.daily.length-1].date.slice(5))+'</span></div>':'<div class="msg">この月のデータはありません</div>')+'</div>'+
+        '<div class="card sc"><table><tr><th>名前</th><th>売上</th><th>本数</th><th>同伴</th></tr>'+
+        r.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">'+imp(r)+'</div>';
+    }
+    $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
+  }).catch(function(e){fail(my,e);});
+}
+function vRank(){
+  var my=++seq;
+  api('getRank',[store,month]).then(function(r){
+    if(my!==seq)return;
+    var h=monthNav();
+    if(!r.ready){h+=notReady(r);}
+    else{
+      var T=[['sales','売上'],['cnt','本数'],['douhan','同伴']];
+      h+='<div class="tabs">'+T.map(function(t){return '<button class="tab'+(t[0]===rankTab?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
+      var l=r[rankTab]||[];
+      h+='<div class="card">'+(l.length?l.map(function(c,i){return '<div class="rk"><b>'+(i+1)+'</b><span>'+esc(c.gen)+'</span><em>'+(rankTab==='sales'?yen(c.v):c.v)+'</em></div>';}).join(''):'<div class="msg">データはありません</div>')+'</div><div class="upd">'+imp(r)+'</div>';
+    }
+    $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
+    [].forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){rankTab=b.getAttribute('data-t');route();};});
+  }).catch(function(e){fail(my,e);});
+}
+route();
+</script></body></html>
