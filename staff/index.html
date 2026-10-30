@@ -63,15 +63,16 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 .rk:nth-child(-n+3) b{background:var(--pink);color:#fff}
 .rk span{flex:1}.rk em{font-style:normal;font-weight:700}
 .lk{cursor:pointer}tr.lk td.nm{color:#c2336a}
-.mail{background:#fff;border-radius:6px;margin:10px 0;box-shadow:0 0 0 12px #FBF3F5;font-weight:300;color:#4A3F44}
-.mh{text-align:center;padding:24px 24px 14px;font-size:13px;letter-spacing:.2em;color:#D9879E}
-.mg{padding:0 24px 22px;font-size:15px}
-.mr{padding:18px 24px;border-top:1px solid #F1E1E6}
-.ml{font-size:12px;letter-spacing:.08em;color:#9C8D93}
-.mb{font-size:30px;line-height:40px;color:#D9879E;padding-top:4px}
-.mc{font-size:14px}
-.mn{padding:16px 24px 22px;font-size:10px;color:#C9BCC1;border-top:1px solid #F1E1E6}
-.pg{height:3px;background:#F6E8EC;margin-top:10px}.pg i{display:block;height:3px;background:#E8A0B4}
+.hd{display:flex;align-items:baseline;justify-content:space-between;margin:12px 4px 4px}.hd b{font-size:22px}.hd span{font-size:14px;color:#777}
+.sec{background:#fff;border-radius:14px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden}
+.sec h3{margin:0;padding:9px 14px;font-size:14px;color:#c2336a;background:var(--pinkL)}
+.li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-top:1px solid #f1f1f1;font-size:16px}
+.li span small{display:block;font-size:12px;color:#888}
+.li b{white-space:nowrap}
+.li.tot{background:#fafafa}.li.tot b{color:#c2336a}
+.li.big2 b{font-size:24px;color:#c2336a}
+.sec.net h3{background:var(--pink);color:#fff}
+details.pay{margin:10px 0}details.pay summary{cursor:pointer;font-weight:700;padding:10px 4px;color:#c2336a}
 </style></head><body>
 <header><div class="in"><h1 id="ttl">黒服ポータル</h1><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
@@ -100,7 +101,7 @@ var rankTab = 'sales';
 
 var VIEWS = {
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
-  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'売上のお知らせ',run:vCast}
+  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}
 };
 var selCast = lsGet('staffCast') || '';
 function openCast(g){selCast=g;lsSet('staffCast',g);go('cast');}
@@ -255,11 +256,51 @@ function vSales(){
       if(!hasSt)notes+='<div class="note">店舗売上のデータがまだありません (小計のみ表示)</div>';
       if(r.subMonthOnly)notes+='<div class="note">この店の小計は月合計のみで、日別がありません。店舗売上は日別で表示しています</div>';
       h+='<div class="card">'+sum+chart+notes+'</div>'+
+        (r.storePay?'<details class="pay"><summary>給与計算の店合計を見る</summary>'+paySecs(r.storePay)+'</details>':'')+
         '<div class="card sc"><table><tr><th>名前</th><th>売上</th><th>本数</th><th>同伴</th></tr>'+
-        r.casts.map(function(c){return '<tr class="lk" data-g="'+esc(c.gen)+'"><td class="nm">'+esc(c.gen)+' ›</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">名前を押すと、その人の売上のお知らせ (メールと同じ内容)'+imp(r)+'</div>';
+        r.casts.map(function(c){return '<tr class="lk" data-g="'+esc(c.gen)+'"><td class="nm">'+esc(c.gen)+' ›</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">名前を押すと、その人の明細'+imp(r)+'</div>';
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();bindCasts();
   }).catch(function(e){fail(my,e);});
+}
+// ---- 明細の部品: sec(見出し, 行) / 行 = {l:見出し, v:値, s:補足, t:合計行, big:大きく} ----
+function sec(title,rows,cls){
+  return '<div class="sec'+(cls?' '+cls:'')+'"><h3>'+esc(title)+'</h3>'+rows.map(function(x){
+    return '<div class="li'+(x.t?' tot':'')+(x.big?' big2':'')+'"><span>'+esc(x.l)+(x.s?'<small>'+esc(x.s)+'</small>':'')+'</span><b>'+esc(x.v)+'</b></div>';
+  }).join('')+'</div>';
+}
+function yn(n){return '¥'+Math.round(Number(n||0)).toLocaleString('ja-JP');}
+// 給与計算の項目 -> 表示。件数・時間・率は円にしない
+var PAY_ORDER=['勤務','売上・指名','バック','支給','控除'];
+var PAY_TOT=['日給計','バック計','総支給額','控除額'];
+function payVal(sec,l,v){
+  if(l==='%')return Math.round(v*100)+'%';
+  if(l==='出勤')return v+'日';
+  if(l==='H'||/time$/.test(l))return v+'時間';
+  if(sec==='売上・指名'&&l!=='売上')return v+'件';
+  return yn(v);
+}
+function payLabel(sec,l){
+  if(/^[ABC]$/.test(l))return (sec==='バック'?'バック ':'件数 ')+l;
+  if(l==='H')return '時間';
+  if(l==='控除額')return '控除の合計';
+  if(l==='%')return '%（給与計算の%列）';
+  return l;
+}
+function paySecs(items){
+  var g={},net=null;
+  items.forEach(function(x){ if(x[1]==='差引支給額'){net=x[2];return;} (g[x[0]]=g[x[0]]||[]).push({l:payLabel(x[0],x[1]),v:payVal(x[0],x[1],x[2]),t:PAY_TOT.indexOf(x[1])>=0}); });
+  var h=PAY_ORDER.filter(function(k){return g[k];}).map(function(k){return sec(k,g[k]);}).join('');
+  if(net!=null)h+=sec('差引支給額',[{l:'今月の時点',v:yn(net),big:1}],'net');
+  return h;
+}
+// 途中集計 (18 時のメールと同じ数字) を、明細と同じ部品で
+function progSec(r){
+  if(r.monthOnly)return sec('今月の進み具合',[{l:r.m+'月の合計',v:yn(r.total),s:'この店は月の合計だけで、日別がありません',big:1}]);
+  var md=r.m+'/'+r.d, rows=[{l:'今月の合計',s:r.m+'/1〜'+md,v:yn(r.total),big:1},{l:'最新日の売上',s:md,v:r.yesterday==null?'お休み':yn(r.yesterday)}];
+  rows.push(r.ratio==null?{l:'先月とくらべて',s:'先月の同じ期間のデータがありません',v:'—'}:{l:'先月とくらべて',s:r.pm+'/1〜'+r.pm+'/'+r.pd+' '+yn(r.prevTotal),v:(r.ratio>=100?'↑ ':'↓ ')+Math.round(r.ratio)+'%'});
+  if(r.goal){var rm=Math.max(0,Math.round(r.goal-r.total));rows.push({l:'目標 '+yn(r.goal),s:rm>0?'あと '+yn(rm):'達成',v:Math.round(r.total/r.goal*100)+'%'});}
+  return sec('今月の進み具合',rows);
 }
 function vRank(){
   var my=++seq;
@@ -286,23 +327,8 @@ function vCast(){
     var h=monthNav();
     if(!r.ready){h+=notReady(r);}
     else{
-      // 18 時の売上メール (SalesMail.js) と同じ並び・色
-      function yn(n){return '¥'+Math.round(Number(n||0)).toLocaleString('ja-JP');}
-      function mr(label,big,sub){return '<div class="mr"><div class="ml">'+esc(label)+'</div><div class="mb">'+esc(big)+'</div>'+(sub?'<div class="ml">'+esc(sub)+'</div>':'')+'</div>';}
-      var shop=(STORES.filter(function(s){return s.id===r.store;})[0]||{}).s||r.store, body='';
-      if(r.monthOnly){
-        body=mr(r.m+'月の合計',yn(r.total),'この店は月の合計だけで、日別の売上はありません');
-      }else{
-        var md=r.m+'/'+r.d, period=r.m+'/1〜'+md, up=r.ratio!=null&&r.ratio>=100, down=r.ratio!=null&&r.ratio<100;
-        var rt=r.ratio==null?'—':(up?'↑ ':'↓ ')+Math.round(r.ratio)+'%';
-        var df=r.ratio==null?'先月の同じ期間のデータがありません':(up?'+':'')+Math.round(r.ratio-100)+'%　先月の同期間 '+yn(r.prevTotal);
-        body=mr('売上　'+md,r.yesterday==null?'お休み':yn(r.yesterday),'')+mr('今月の合計　'+period,yn(r.total),'')+mr('先月とくらべて',rt,df);
-        if(r.goal){var pc=Math.round(r.total/r.goal*100),rm=Math.max(0,Math.round(r.goal-r.total));
-          body+='<div class="mr"><div class="ml">'+r.m+'月の目標 '+esc(yn(r.goal))+'　達成率 '+pc+'%</div><div class="mb" style="font-size:20px">'+(rm>0?'目標まで あと'+esc(yn(rm)):'目標を達成しました。')+'</div><div class="pg"><i style="width:'+Math.min(100,pc)+'%"></i></div></div>';}
-        if(up||down)body+='<div class="mr mc">'+(up?'先月より伸びています。':'今月はここから伸ばしていきましょう。')+'</div>';
-        body+='<div class="mn">※売上 = '+md+' 1日分 ／ 今月の合計 = '+period+' ／ 先月とくらべて = 先月の同じ期間 ('+r.pm+'/1〜'+r.pm+'/'+r.pd+') との比</div>';
-      }
-      h+='<div class="mail"><div class="mh">✦　'+esc(shop)+'</div><div class="mg">'+esc(r.gen)+' さん</div>'+body+'</div><div class="upd">'+imp(r)+'</div>';
+      var shop=(STORES.filter(function(s){return s.id===r.store;})[0]||{}).s||r.store;
+      h+='<div class="hd"><b>'+esc(r.gen)+'</b><span>'+esc(shop)+'　'+r.m+'月</span></div>'+progSec(r)+(r.pay?paySecs(r.pay):'<div class="note">給与明細はまだありません'+(r.store==='328'?' (328 の給与計算はパスワード付きで読めません)':'')+'</div>')+'<div class="upd">'+imp(r)+'</div>';
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
   }).catch(function(e){fail(my,e);});
