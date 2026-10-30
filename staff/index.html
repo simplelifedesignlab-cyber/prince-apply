@@ -62,6 +62,7 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 .rk b{width:34px;height:34px;border-radius:50%;background:var(--priL);color:var(--priD);display:flex;align-items:center;justify-content:center;flex:none}
 .rk:nth-child(-n+3) b{background:var(--pink);color:#fff}
 .rk span{flex:1}.rk em{font-style:normal;font-weight:700}
+.lk{cursor:pointer}tr.lk td.nm{color:#c2336a}
 </style></head><body>
 <header><div class="in"><h1 id="ttl">黒服ポータル</h1><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
@@ -90,12 +91,16 @@ var rankTab = 'sales';
 
 var VIEWS = {
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
-  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}
+  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}
 };
+var selCast = lsGet('staffCast') || '';
+function openCast(g){selCast=g;lsSet('staffCast',g);go('cast');}
+function bindCasts(){[].forEach.call(document.querySelectorAll('[data-g]'),function(el){el.onclick=function(){openCast(el.getAttribute('data-g'));};});}
 function go(v){location.hash=v||'';}
 function route(){
   var v=location.hash.replace('#','');
   $('back').hidden=!VIEWS[v];
+  $('back').textContent=v==='cast'?'← 売上':'← TOP';
   if(!VIEWS[v]){$('ttl').textContent='黒服ポータル';top_();return;}
   $('ttl').textContent=VIEWS[v].t;
   var el=$('app');
@@ -106,7 +111,7 @@ function route(){
   $('body').innerHTML='<div class="msg">読み込み中...</div>';
   VIEWS[v].run();
 }
-$('back').onclick=function(){go('');};
+$('back').onclick=function(){go(location.hash==='#cast'?'sales':'');};
 window.addEventListener('hashchange',route);
 
 function top_(){
@@ -242,9 +247,9 @@ function vSales(){
       if(r.subMonthOnly)notes+='<div class="note">この店の小計は月合計のみで、日別がありません。店舗売上は日別で表示しています</div>';
       h+='<div class="card">'+sum+chart+notes+'</div>'+
         '<div class="card sc"><table><tr><th>名前</th><th>売上</th><th>本数</th><th>同伴</th></tr>'+
-        r.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">'+imp(r)+'</div>';
+        r.casts.map(function(c){return '<tr class="lk" data-g="'+esc(c.gen)+'"><td class="nm">'+esc(c.gen)+' ›</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">名前を押すと明細'+imp(r)+'</div>';
     }
-    $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
+    $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();bindCasts();
   }).catch(function(e){fail(my,e);});
 }
 function vRank(){
@@ -257,10 +262,42 @@ function vRank(){
       var T=[['sales','売上'],['cnt','本数'],['douhan','同伴']];
       h+='<div class="tabs">'+T.map(function(t){return '<button class="tab'+(t[0]===rankTab?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
       var l=r[rankTab]||[];
-      h+='<div class="card">'+(l.length?l.map(function(c,i){return '<div class="rk"><b>'+(i+1)+'</b><span>'+esc(c.gen)+'</span><em>'+(rankTab==='sales'?yen(c.v):c.v)+'</em></div>';}).join(''):'<div class="msg">データはありません</div>')+'</div><div class="upd">'+imp(r)+'</div>';
+      h+='<div class="card">'+(l.length?l.map(function(c,i){return '<div class="rk lk" data-g="'+esc(c.gen)+'"><b>'+(i+1)+'</b><span>'+esc(c.gen)+'</span><em>'+(rankTab==='sales'?yen(c.v):c.v)+'</em></div>';}).join(''):'<div class="msg">データはありません</div>')+'</div><div class="upd">'+imp(r)+'</div>';
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
     [].forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){rankTab=b.getAttribute('data-t');route();};});
+    bindCasts();
+  }).catch(function(e){fail(my,e);});
+}
+function vCast(){
+  var my=++seq;
+  if(!selCast){$('body').innerHTML='<div class="msg">売上管理で名前を押してください</div>';return;}
+  api('getCast',[store,month,selCast]).then(function(r){
+    if(my!==seq)return;
+    var h=monthNav();
+    if(!r.ready){h+=notReady(r);}
+    else{
+      var t=r.total,p=r.prevTotal;
+      function yn(n){return '¥'+Number(n||0).toLocaleString('ja-JP');}
+      var cmp='';
+      if(p&&p.sales){var d=t.sales-p.sales;cmp='<div class="note">先月 '+yn(p.sales)+'　→　'+(d>=0?'+':'−')+yn(Math.abs(d))+'（'+Math.round(t.sales/p.sales*100)+'%）</div>';}
+      else if(p)cmp='<div class="note">先月のデータはありません</div>';
+      function kv(k,v){return '<div class="row"><span>'+k+'</span><b>'+v+'</b></div>';}
+      h+='<div class="card"><div class="cnt">'+esc(r.gen)+'</div><div class="sm">売上 '+yn(t.sales)+'</div>'+cmp+'</div>'+
+        '<div class="card">'+kv('出勤',t.att+'日')+kv('本数',t.cnt)+kv('本指',t.hon)+kv('場内',t.jou)+kv('同伴',t.douhan)+
+        kv('1日あたり売上',t.att?yn(Math.round(t.sales/t.att)):'-')+'</div>';
+      var dl=r.daily.filter(function(d){return /^\d{4}-\d{2}-\d{2}$/.test(d.date);});
+      if(dl.length){
+        var mx=Math.max.apply(null,dl.map(function(d){return d.sales;}).concat([1]));
+        h+='<div class="card"><div class="bars">'+dl.map(function(d){return '<div class="bar" style="background:var(--pink);height:'+(d.sales?Math.max(2,Math.round(d.sales/mx*100)):0)+'%" title="'+esc(d.date.slice(5))+' '+yn(d.sales)+'"></div>';}).join('')+'</div>'+
+          '<div class="bl"><span>'+esc(dl[0].slice(5))+'</span><span>'+esc(dl[dl.length-1].slice(5))+'</span></div></div>'+
+          '<div class="card sc"><table><tr><th>日付</th><th>売上</th><th>本数</th><th>本指</th><th>場内</th><th>同伴</th></tr>'+
+          dl.map(function(d){var x=parse(d.date);return '<tr><td>'+(x.getMonth()+1)+'/'+x.getDate()+'('+DOWS[x.getDay()]+')</td><td>'+yen(d.sales)+'</td><td>'+d.cnt+'</td><td>'+d.hon+'</td><td>'+d.jou+'</td><td>'+d.douhan+'</td></tr>';}).join('')+'</table></div>';
+      }else if(r.daily.length){h+='<div class="note">この店は月合計だけで、日別の明細はありません</div>';}
+      else{h+='<div class="msg">この月の売上はありません</div>';}
+      h+='<div class="upd">'+imp(r)+'</div>';
+    }
+    $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
   }).catch(function(e){fail(my,e);});
 }
 route();
