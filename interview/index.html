@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Prince 面接画面</title><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500&display=swap">
+<style>
+body{font-family:sans-serif;margin:0 auto;padding:12px;max-width:760px;font-size:18px;line-height:1.5}
+button,.btn{font-size:18px;min-height:48px;padding:8px 16px;margin:2px;border:1px solid #888;border-radius:8px;background:#f4f4f4;color:#000;text-decoration:none;display:inline-block;box-sizing:border-box}
+button.pri,.btn.pri{background:#1a56db;color:#fff;border-color:#1a56db}
+button.warn{background:#fff0f0;border-color:#c00}
+button.sm{min-height:44px;font-size:16px}
+button:disabled{opacity:.45}
+.ap .req{color:#d00;font-weight:bold;font-size:1.15em}
+.ap .rq.empty input.pk,.ap .rq.empty select.pk{background:#ffe4ec;border:1px solid #f08fb0}
+.ap .rq.blk.empty{background:#ffe4ec;border-radius:8px}
+.ap .bad input.pk,.ap .bad select.pk,.ap .bad.blk{border:2px solid #d00}
+.ap .bad input,.ap .bad select{border-color:#d00}
+.spin{display:inline-block;width:1em;height:1em;margin-right:.5em;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spn .8s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
+input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],input[type=time],input[type=number],select,textarea{width:100%;box-sizing:border-box;font-size:18px;min-height:48px;padding:8px;border:1px solid #aaa;border-radius:8px;background:#fff}
+textarea{min-height:90px}
+.q{margin:16px 0;padding-bottom:6px;border-bottom:1px solid #eee}
+.q label.t{display:block;font-weight:bold;white-space:pre-wrap;margin-bottom:4px}
+.req{color:#c00}
+.opt{display:block;padding:8px 0;min-height:44px}
+.opt input{margin-right:8px;transform:scale(1.5)}
+.opt .oth{width:70%;display:inline-block;margin-left:6px}
+.item{padding:12px;border:1px solid #ccc;border-radius:8px;margin:8px 0;cursor:pointer}
+.small{color:#666;font-size:14px}
+.tabs button.on{background:#333;color:#fff}
+#msg{position:sticky;top:0;background:#fff8c5;padding:8px;display:none;white-space:pre-wrap;z-index:5}
+#msg.err{background:#ffd6d6}
+.bar{position:sticky;bottom:0;background:#fff;padding:8px 0;border-top:1px solid #ccc}
+.sec{border:1px solid #bbb;border-radius:10px;padding:8px 14px;margin:16px 0}
+.sec h3{margin:6px 0;padding-bottom:4px;border-bottom:2px solid #1a56db}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.row3{display:flex;gap:6px;align-items:center}
+.row3 select{flex:1}
+.ferr{color:#c00;font-size:15px;min-height:0}
+.bad input,.bad select{background:#ffd6d6}
+.day{margin:8px 0;padding:6px 0;border-bottom:1px dotted #ccc}
+.times{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.times select{flex:1;min-width:100px}
+.consent{border:1px solid #999;border-radius:6px;padding:8px 12px;background:#fafafa;white-space:pre-wrap;font-size:15px;max-height:260px;overflow:auto}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;background:#e8eefc;font-weight:bold}
+.big{font-size:22px}
+#modal{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:9}
+#modal div{background:#fff;border-radius:10px;padding:18px;max-width:420px;margin:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0}
+.chip{min-height:44px;margin:0;padding:6px 16px;border-radius:22px;font-size:17px;background:#fff}
+.chip.on{background:#1a56db;color:#fff;border-color:#1a56db}
+.pl{font-size:15px;color:#555;margin:10px 0 2px}
+.nt{margin-top:8px;font-size:16px}
+.nav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.prog{padding:8px 12px;border-radius:8px;font-weight:bold;margin-bottom:8px}
+.sum .sr{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #eee}
+.sum .sr b{min-width:8em;max-width:8em;font-size:15px}
+.sum .sr span{flex:1;word-break:break-all}
+.card{border:2px solid #1a56db;border-radius:10px;padding:8px 12px;margin:8px 0;cursor:pointer}
+
+:root{--pri:#1a73e8;--priL:#e8f0fe;--priD:#174ea6}
+body{font-family:'Noto Sans JP','Roboto',sans-serif;background:#f0f4f9;color:#202124;font-size:16px;max-width:680px;padding:12px 16px 90px}
+.q,.sec{background:#fff;border:0;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:16px 18px;margin:12px 0}
+.sec .q{box-shadow:none;padding:8px 0;margin:8px 0}
+.sec h3{border:0;color:var(--priD);font-size:17px;margin:0 0 4px}
+.pg>h2{background:#fff;border-top:10px solid var(--pri);border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:18px;margin:8px 0;font-size:22px}
+.item,.card{border:0;background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15)}
+.card{outline:2px solid var(--priL)}
+input[type=text],input[type=date],input[type=tel],input[type=email],input[type=url],select,textarea{border:1px solid #80868b;border-radius:8px;background:#fff;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:0;border:2px solid var(--pri);padding:7px}
+button,.btn{font-family:inherit;border:0;background:transparent;color:var(--pri);border-radius:20px;font-weight:500}
+button.pri,.btn.pri{background:var(--pri);color:#fff;border-radius:24px;padding:8px 28px}
+button.warn{background:#fce8e6;color:#c5221f}
+.chip{border:1px solid #dadce0;background:#fff;color:#3c4043;border-radius:16px;min-height:40px;font-weight:400}
+.chip.on{background:var(--priL);border-color:var(--priL);color:var(--priD);font-weight:500}
+.chip.on::before{content:'\2713\00a0'}
+.prog{background:none!important;position:relative;padding:0 0 12px;font-size:14px;color:#5f6368}
+.prog::before,.prog::after{content:'';position:absolute;left:0;bottom:0;height:4px;border-radius:2px}
+.prog::before{right:0;background:#dadce0}.prog::after{width:var(--w,0);background:var(--pri)}
+.bar{background:rgba(240,244,249,.96);border:0;padding:10px 0}
+.sum .sr,.day{border:0}
+.badge{background:var(--priL);color:var(--priD)}
+.consent{border:0;background:#f8f9fa}
+.ferr{color:#d93025}
+.tc{flex:1;min-width:96px}
+.times{align-items:flex-end}
+@media(min-width:0){.tdate{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:8px 0}.tdate input{width:auto;min-height:44px}
+.tcard{background:#fff;border-radius:14px;box-shadow:0 1px 2px rgba(60,64,67,.15);padding:12px 16px;margin:10px 0}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin:8px 0;font-size:15px}.tg span{display:block;color:#5f6368;font-size:12px}
+.tb{display:flex;flex-wrap:wrap;gap:2px}}
+#demobar{position:sticky;top:0;z-index:20;background:#fef7e0;color:#7a4f01;padding:8px 12px;border-radius:0 0 12px 12px;font-size:14px;text-align:center}
+#demobar a{color:#1a73e8}
+
+/* ===== 2026-10-29 見た目の整理: 応募者画面 = LINE 風(緑 #06C755) / 黒服画面 = 同系統の落ち着いた緑・画面幅に応じた配置 ===== */
+html{-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+img{max-width:100%}
+body{--pri:#06C755;--priL:#e6f9ee;--priD:#2f6f4f;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#F5F6F8;line-height:1.6;overflow-wrap:anywhere}
+button,.btn{min-height:44px}
+button.pri,.btn.pri{background:var(--pri);color:#fff}
+.chip{min-height:44px}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+#modal div{max-height:90vh;overflow:auto;width:calc(100% - 24px)}
+#modal{padding:12px}
+.row3{flex-wrap:wrap}
+.row3 select{min-width:0}
+.sec h3{color:var(--priD)}
+body:not(.ap) h2{color:#2f4f3f}
+/* 応募者画面 */
+body.ap{--priD:#048a3c;color:#222;font-size:16px;max-width:560px;padding:12px 16px 100px}
+.ap .q,.ap .sec{border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.ap .sec .q{box-shadow:none}
+.ap .pg>h2{border-top:0;border-left:6px solid var(--pri);border-radius:12px;font-size:20px;font-weight:700;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.ap input[type=text],.ap input[type=date],.ap input[type=tel],.ap input[type=email],.ap input[type=url],.ap select,.ap textarea{font-size:16px;min-height:48px;border:1px solid #d5d8dd;border-radius:12px}
+.ap input:focus,.ap select:focus,.ap textarea:focus{border:2px solid var(--pri);padding:7px}
+.ap .q label.t{font-weight:700;font-size:16px}
+.ap .prog{position:sticky;top:0;z-index:4;background:#F5F6F8!important;padding:10px 0 14px;font-size:15px;font-weight:700;color:#444}
+.ap .prog::before,.ap .prog::after{height:6px;border-radius:3px}
+.ap .prog::before{background:#dfe2e6}
+.ap .bar{background:rgba(245,246,248,.96);gap:10px}
+.ap .nav button{flex:1;min-height:52px;margin:0;border-radius:12px;font-size:17px;font-weight:700}
+.ap #pn,.ap button.pri{background:var(--pri);color:#fff;border-radius:12px;padding:8px 16px}
+.ap #pb{background:#fff;border:2px solid var(--pri);color:#048a3c}
+.ap #pb[style*="hidden"]{display:none}
+.ap #sub{min-height:54px;width:100%;border-radius:12px;font-size:18px}
+.ap .consent{background:#fff;border:1px solid #e3e5e8;border-radius:12px;font-size:15px}
+.ap #photobtn,.ap #gen_chk{background:#fff;border:2px solid var(--pri);color:#048a3c;border-radius:12px;width:100%;min-height:48px;margin:6px 0 0}
+.ap .done{background:#fff;border-radius:16px;padding:32px 20px;margin-top:40px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.ap .done .ck{width:64px;height:64px;border-radius:50%;background:var(--pri);color:#fff;font-size:36px;line-height:64px;margin:0 auto 16px}
+.ap .done h2{margin:0 0 12px}
+/* 黒服画面: 幅に応じて */
+@media(min-width:600px){body:not(.ap){max-width:880px;padding-left:24px;padding-right:24px}}
+@media(min-width:1024px){
+  body:not(.ap){max-width:1200px}
+  #lst{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}
+  .grid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:600px){body:not(.ap){padding-left:12px;padding-right:12px}}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head><body>
+<div id="msg"></div>
+<div id="modal"><div><p id="mtext"></p><button class="pri" id="mok">OK</button><button id="mng">キャンセル</button></div></div>
+<div id="app">読み込み中...</div>
+<script>
+// google.script.run 互換 shim: GAS の doPost へ fetch (Cookie なし・プリフライトなし)。黒服用の鍵は ?k= -> localStorage
+(function () {
+  var EXEC = "https://script.google.com/macros/s/AKfycbwLAO53cj-BLqrkvFgpoJyUT-Lw0Voj-5WJjdo5aS5wFjGL7IUJgxlcG5FdVU_Hv3xS/exec", KEY = '';
+  try {
+    var u = new URL(location.href), k0 = u.searchParams.get('k');
+    if (k0) { localStorage.setItem('ivKey', k0); u.searchParams.delete('k'); history.replaceState(null, '', u.pathname + u.search + u.hash); }
+    KEY = localStorage.getItem('ivKey') || '';
+  } catch (e) {}
+  function post(fn, args) {
+    return fetch(EXEC, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args, k: KEY }) })
+      .then(function (r) { return r.json(); });
+  }
+  function call(fn, args, ok, ng) {
+    post(fn, args).then(function (j) {
+      if (j && j.needKey) {
+        var k = window.prompt('黒服用のキーを入力してください');
+        if (!k) throw new Error('黒服用のキーが必要です');
+        KEY = k.trim();
+        return post(fn, args).then(function (j2) {
+          if (j2 && j2.needKey) { try { localStorage.removeItem('ivKey'); } catch (e) {} throw new Error('キーが違います'); }
+          try { localStorage.setItem('ivKey', KEY); } catch (e) {}
+          return j2;
+        });
+      }
+      return j;
+    }).then(function (j) { if (j && j.ok) { if (ok) ok(j.result); } else throw new Error(j && j.error || '送信に失敗しました'); })
+      .catch(function (e) { if (ng) ng(e); else console.error(e); });
+  }
+  function make(ok, ng) {
+    return new Proxy({}, { get: function (t, k) {
+      if (k === 'withSuccessHandler') return function (f) { return make(f, ng); };
+      if (k === 'withFailureHandler') return function (f) { return make(ok, f); };
+      return function () { call(String(k), Array.prototype.slice.call(arguments), ok, ng); };
+    } });
+  }
+  window.google = { script: { run: make(null, null) } };
+})();
+</script>
+<script>
+var MODE = (function(){var m=new URLSearchParams(location.search).get('mode');return m==='staff'||m==='tainyu'||m==='reject'?m:'apply';})(), BASE = (location.origin+location.pathname), CONSENT = ["個人情報取り扱い同意書", "私は、個人情報の取り扱いについて、以下の事項を確認のうえ、同意します。", "", "1、個人情報の利用目的について", "取得した個人情報を以下の目的で使用し、それ以外の目的で利用することが無いことをお約束いたします。", "1.新規店舗open時などの際のお声かけ。", "2.当社営業店舗の入店活動に関わるご連絡など。", "3", "", "2、第三者への個人情報の提供に関して", "取得した個人情報は、あらかじめご本人の同意を得てある場合、または法律上公的機関への届出・提出が", "必要な場合を除いて第三者への開示や提供をしません。", "", "3、個人情報の開示・訂正・削除について", "取得した個人情報の内容の訂正や変更、追加または削除の要求あった場合には、必ずご本人であることを", "確認し、すみやかに対応します。"];
+if (MODE === 'apply') document.body.classList.add('ap'); // 応募者画面だけ LINE 風の見た目
+var CASTQ = [{"f": "jikyu", "qi": 3, "page": "work", "label": "ナイトワークの経歴", "parts": [{"k": "s", "o": ["未経験", "体験のみ経験あり", "３か月以内", "3～6か月以内", "6か月～1年以内", "１年以上", "3年以上", "5年以上", "10年以上"]}]}, {"f": "jikyu", "qi": 4, "page": "work", "label": "直近で働いていた業態", "parts": [{"k": "s", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 5, "page": "work", "label": "今までに働いたことがある業態 (すべて)", "parts": [{"k": "m", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 6, "page": "work", "label": "ブランク (お仕事をしていない期間)", "parts": [{"k": "sel", "o": ["なし", "〜3ヶ月", "3〜6ヶ月", "6ヶ月〜1年", "1年以上"]}], "note": true}, {"f": "jikyu", "qi": 12, "page": "work", "label": "直近のお店の名前 (体験のみでもOK)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 14, "page": "work", "label": "そのお店の時給・給与", "parts": [{"l": "給与の形", "k": "sel", "o": ["時給のみ", "時給＋バック", "完全歩合", "体験時給のみ", "わからない"]}, {"l": "時給", "k": "sel", "o": ["1,000円", "1,100円", "1,200円", "1,300円", "1,400円", "1,500円", "1,600円", "1,700円", "1,800円", "1,900円", "2,000円", "2,100円", "2,200円", "2,300円", "2,400円", "2,500円", "2,600円", "2,700円", "2,800円", "2,900円", "3,000円", "3,100円", "3,200円", "3,300円", "3,400円", "3,500円", "3,600円", "3,700円", "3,800円", "3,900円", "4,000円", "4,100円", "4,200円", "4,300円", "4,400円", "4,500円", "4,600円", "4,700円", "4,800円", "4,900円", "5,000円", "5,100円", "5,200円", "5,300円", "5,400円", "5,500円", "5,600円", "5,700円", "5,800円", "5,900円", "6,000円", "6,100円", "6,200円", "6,300円", "6,400円", "6,500円", "6,600円", "6,700円", "6,800円", "6,900円", "7,000円", "7,100円", "7,200円", "7,300円", "7,400円", "7,500円", "7,600円", "7,700円", "7,800円", "7,900円", "8,000円", "8,100円", "8,200円", "8,300円", "8,400円", "8,500円", "8,600円", "8,700円", "8,800円", "8,900円", "9,000円", "9,100円", "9,200円", "9,300円", "9,400円", "9,500円", "9,600円", "9,700円", "9,800円", "9,900円", "10,000円", "10,000円より上", "わからない"]}], "note": true}, {"f": "jikyu", "qi": 15, "page": "work", "label": "指名本数と売上 (月)", "parts": [{"l": "指名本数", "k": "sel", "o": ["0本", "1〜5本", "6〜10本", "11〜20本", "21本以上"]}, {"l": "月の売上", "k": "sel", "o": ["〜30万円", "30〜50万円", "50〜100万円", "100〜200万円", "200万円以上", "わからない"]}]}, {"f": "jikyu", "qi": 16, "page": "work", "label": "お客様の特徴 (当てはまるものすべて)", "parts": [{"k": "m", "o": ["特定の一人のお客様が沢山来店してくれている", "特定の一人のお客様が高額会計だ", "複数のお客様がある程度のペースで毎月来店される", "地元のお客様が多い", "地方（道内のお客様が多い）", "地方（道外のお客様が多い）", "サラリーマンが多い", "経営者が多い（社長 役員）", "自営業の方が多い", "20代のお客様が多い", "30代のお客様が多い", "40代のお客様が多い", "50代のお客様が多い", "60代以上のお客様が多い", "1名で来られるお客様が多い", "基本は複数名でいらっしゃるお客様が大半だ", "接待で使われることが多い", "旅行の方が多い", "出張の方が多い", "未経験又は始めたばかりなのでまだわからない", "その他"]}], "note": true}, {"f": "jikyu", "qi": 18, "page": "work", "label": "直近のお店について", "parts": [{"l": "良かった点", "k": "m", "o": ["給料・バックが良い", "お客様が良い", "女の子の仲が良い", "黒服・店長が良い", "働きやすいシフト", "送迎がある", "ノルマがない", "特になし"]}, {"l": "辞めた理由", "k": "m", "o": ["給料・バック", "人間関係", "黒服・店長の対応", "ノルマ・罰金", "シフトの自由度", "お客様の質", "送迎がない", "店の方針", "引っ越し・生活の変化", "体調", "他のお店に移りたい", "在籍中", "集客が少なかった", "早上がりが多かった", "出勤調整が多かった", "その他"]}], "note": true}, {"f": "jikyu", "qi": 20, "page": "work", "label": "直近のお店の店長・担当黒服の名前 (わかる範囲)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 22, "page": "work", "label": "CASTとして頑張りたいポイント (複数可)", "parts": [{"k": "m", "o": ["LINE・連絡をマメにする", "誕生日・記念日のお祝い", "お客様の話を覚える", "同伴・アフターをする", "SNSで発信する", "接客を勉強する", "身だしなみ・美容を磨く", "清潔感", "言葉遣い", "聞き上手になる", "話しすぎない", "時間を守る", "お客様を否定しない", "距離感に気を付ける", "指名を増やしたい", "接客を教わりたい", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 7, "page": "shop", "label": "お店選びで重要視すること (複数可)", "parts": [{"k": "m", "o": ["時給", "お店の雰囲気", "女の子の仲の良さ", "フリーのお客様の多さ", "送迎", "日払い", "ノルマがない", "シフトの融通", "その他"]}], "note": true}, {"f": "jikyu", "qi": 8, "page": "shop", "label": "希望の時給", "hint": "※体験の際は、必ずしも希望通りの時給にはなりません。", "parts": [{"k": "sel", "o": ["2,000円", "2,500円", "3,000円", "3,500円", "4,000円", "4,500円", "5,000円", "5,500円", "6,000円", "6,000円より上", "相談したい"]}]}, {"f": "jikyu", "qi": 9, "page": "shop", "label": "その時給が欲しい理由", "parts": [{"k": "m", "o": ["生活費", "借金返済", "貯金", "学費", "目標がある", "前のお店と同じ以上", "その他"]}], "note": true}, {"f": "jikyu", "qi": 11, "page": "shop", "label": "当店への期待・要望 (複数可)", "parts": [{"k": "m", "o": ["シフトを融通してほしい", "子供がいるので配慮してほしい", "送迎がほしい", "日払いがいい", "ノルマなしがいい", "未経験から教えてほしい", "特になし", "その他"]}], "note": true}, {"f": "kyujin", "qi": 2, "page": "shop", "label": "応募したきっかけ", "parts": [{"k": "s", "o": ["紹介", "求人サイト・ホームページ", "スカウト", "SNS", "知人の口コミ", "その他"]}]}, {"f": "kyujin", "qi": 3, "page": "shop", "label": "紹介者のお名前・会社名", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "紹介"}}, {"f": "kyujin", "qi": 4, "page": "shop", "label": "見た求人媒体の名前", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "求人サイト・ホームページ"}}, {"f": "kyujin", "qi": 6, "page": "shop", "label": "面接に来るまでに見たもの (すべて)", "parts": [{"k": "m", "o": ["ホームページ", "Googleマップ", "インスタグラム", "TikTok", "バイトル", "ポケパラ", "ナイツネット", "その他"]}], "note": true}, {"f": "kyujin", "qi": 5, "page": "shop", "label": "応募するお店", "parts": [{"k": "s", "o": ["RegentClub千歳", "328", "WAVE千歳", "花もみじ千歳", "希望無し", "その他"]}]}, {"f": "kyujin", "qi": 8, "page": "shop", "label": "他のお店ではなく当店を選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地・通いやすさ", "送迎", "日払い", "知人の紹介", "求人の内容", "その他"]}], "note": true}, {"f": "kyujin", "qi": 9, "page": "shop", "label": "求人やSNSで重要視した点 (複数可)", "parts": [{"k": "m", "o": ["内装が綺麗", "更衣室が綺麗・広いなど", "時給が高い", "可愛い子がいる", "ＳＮＳでよく出てくる 有名かどうか", "有名じゃない知名度が低いほうがいい", "お店の理念 会社理念", "店長やスタッフの顔がわかる", "女の子がぎすぎすしてなさそう", "女性スタッフがいる", "自分が成長できる環境かどうか", "自身の働くペースと折り合いがつくか（出勤少なくてもＯＫなど）", "日払いができる", "単純に友達が働いてた", "知人の口コミで", "その他"]}], "note": true}, {"f": "kyujin", "qi": 11, "page": "shop", "label": "上で選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["しっかり稼ぎたい", "働きやすさ", "安心して働きたい", "自分を成長させたい", "人間関係", "通いやすさ", "その他"]}], "note": true}, {"f": "kyujin", "qi": 12, "page": "shop", "label": "他に応募中のお店", "parts": [{"l": "応募中", "k": "s", "o": ["ない", "ある"]}, {"l": "店名", "k": "t"}, {"l": "気になる理由", "k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地", "送迎", "日払い", "その他"]}]}, {"f": "kyujin", "qi": 13, "page": "shop", "label": "そのお店を見つけたきっかけ", "parts": [{"k": "s", "o": ["求人サイト", "SNS", "知人の口コミ", "スカウト", "Googleマップ", "通りがかり", "その他"]}], "note": true}, {"f": "kyujin", "qi": 14, "page": "shop", "label": "特に気になった言葉 (求人やSNSの中で)", "parts": [{"k": "t"}]}, {"f": "app", "qi": "alcohol", "page": "me", "label": "お酒", "parts": [{"k": "s", "o": ["飲める", "普通", "飲めない"]}]}, {"f": "jikyu", "qi": 24, "page": "me", "label": "他のお仕事の経験 (夜のお仕事以外)", "parts": [{"k": "m", "o": ["飲食・接客", "販売", "事務", "医療・介護", "美容", "工場・軽作業", "学生", "なし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 25, "page": "me", "label": "資格・趣味", "parts": [{"l": "資格", "k": "m", "o": ["美容系", "医療・介護系", "語学系", "運転免許", "なし", "その他"]}, {"l": "趣味", "k": "m", "o": ["音楽", "映画・ドラマ", "旅行", "スポーツ", "ゲーム", "料理", "ファッション・美容", "お酒", "その他"]}], "note": true}, {"f": "jikyu", "qi": 26, "page": "me", "label": "将来の夢・目標 (複数可)", "parts": [{"k": "m", "o": ["貯金", "独立・開業", "旅行", "美容整形", "資格取得", "家族のため", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 27, "page": "me", "label": "日本語以外で話せる言語", "parts": [{"k": "m", "o": ["英語", "韓国語", "中国語", "日本語のみ", "その他"]}], "note": true}, {"f": "jikyu", "qi": 28, "page": "me", "label": "(日本語のみ以外を選んだ方) どの程度使えますか", "parts": [{"k": "s", "o": ["日常会話ができる", "聞き取りはできる", "単語のみ", "勉強中"]}]}, {"f": "jikyu", "qi": 29, "page": "me", "label": "(任意) お子さん・パートナーはいますか", "parts": [{"k": "s", "o": ["旦那 あり 子供 なし", "子供のみ", "異性のパートナー", "無し", "その他"]}], "note": true}, {"f": "jikyu", "qi": 30, "page": "me", "label": "(任意) そのパートナーはこのお仕事に協力的ですか", "parts": [{"k": "s", "o": ["協力的", "条件つきでOK", "あまり協力的でない", "いない"]}], "note": true}, {"f": "app", "qi": "parent", "page": "me", "label": "(任意) 親は、このお仕事に応募することを知っていますか", "parts": [{"k": "s", "o": ["知っている", "内緒", "その他"]}], "note": true}], CAST_PAGES = [["work", "これまでのお仕事"], ["shop", "お店選び"], ["me", "あなたについて"]], STAFFQ = [{"f": "jikyu", "qi": 10, "label": "意欲の確認", "parts": [{"l": "週4以上の出勤", "k": "s", "o": ["できる", "相談", "できない"]}, {"l": "同伴", "k": "s", "o": ["できる", "相談", "できない"]}, {"l": "アフター", "k": "s", "o": ["できる", "相談", "できない"]}, {"l": "連絡先交換", "k": "s", "o": ["できる", "相談", "できない"]}], "note": true}, {"f": "jikyu", "qi": 31, "label": "面接担当者の所感", "parts": [{"l": "所感", "k": "s", "o": ["即戦力として期待", "期待できる", "普通", "懸念あり"]}, {"l": "特記", "k": "m", "o": ["見た目", "話し方・マナー", "意欲", "勤務条件", "経験・実績", "特になし"]}], "note": true}, {"f": "taiken", "qi": 31, "label": "その他気になった事 (キャスト主観)", "parts": [{"k": "m", "o": ["緊張していた", "楽しそうだった", "不安がある様子", "やる気が高い", "特になし"]}], "note": true}, {"f": "taiken", "qi": 32, "label": "その他気になった事 (従業員主観)", "parts": [{"k": "m", "o": ["接客が良い", "見た目が良い", "雰囲気が合う", "遅刻・時間に不安", "マナーに不安", "特になし"]}], "note": true}, {"f": "taiken", "qi": 33, "label": "総合評価 (点数)", "parts": [{"k": "s", "blank": true, "o": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}]}, {"f": "taiken", "qi": 34, "label": "総合評価まとめ (一言)", "parts": [{"k": "t"}]}, {"f": "taiken", "qi": 36, "label": "クロージング", "parts": [{"l": "結果", "k": "s", "o": ["入店決定", "検討中", "見送り"]}, {"l": "提示時給", "k": "sel", "o": ["2,000円", "2,500円", "3,000円", "3,500円", "4,000円", "4,500円", "5,000円", "5,500円", "6,000円", "6,000円より上", "相談したい"], "man": "yen"}], "note": true}, {"f": "taiken", "qi": 37, "label": "その条件にした理由 / 不採用の理由", "parts": [{"k": "m", "o": ["即戦力として期待", "見た目が良い", "接客が良い", "意欲が高い", "経験が少ない", "条件が合わない", "マナー・態度に懸念", "その他"]}], "note": true}];
+var OTHER = '__OTHER__', WEEK = ['月', '火', '水', '木', '金', '土', '日'];
+var B = null, CUR = null, TAB = null, VALS = {}, LIST = [];
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+}
+function msg(t, bad) {
+  var m = $('msg'); m.style.display = t ? 'block' : 'none'; m.textContent = t || ''; m.className = bad ? 'err' : '';
+  if (t && !bad) setTimeout(function () { m.style.display = 'none'; }, 4000);
+}
+function run(fn, args, ok, ng) {
+  google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { msg('エラー: ' + (e && e.message || e), true); if (ng) ng(); })[fn].apply(null, args);
+}
+function ask(text, ok) {
+  $('mtext').textContent = text; $('modal').style.display = 'flex';
+  $('mok').onclick = function () { $('modal').style.display = 'none'; ok(); };
+  $('mng').onclick = function () { $('modal').style.display = 'none'; };
+}
+
+// ================= 応募者情報の入力部品 (応募者入力 と 黒服画面で共用) =================
+var PREFS = ['北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県', '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県', '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県', '岐阜県', '静岡県', '愛知県', '三重県', '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県', '鳥取県', '島根県', '岡山県', '広島県', '山口県', '徳島県', '香川県', '愛媛県', '高知県', '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'];
+var HK_CITIES = ['千歳市', '札幌市', '恵庭市', '北広島市', '苫小牧市', '江別市', '石狩市', '小樽市', 'その他'];
+var WARDS = ['中央区', '北区', '東区', '白石区', '豊平区', '南区', '西区', '厚別区', '手稲区', '清田区'];
+function pad2(n) { return ('0' + n).slice(-2); }
+function tlabel(m) { var h = Math.floor(m / 60); return (h >= 24 ? '翌' + (h - 24) : h) + ':' + pad2(m % 60); }
+var TIMES = (function () { var a = []; for (var m = 19 * 60; m <= 27 * 60; m += 30) a.push(tlabel(m)); return a; })();
+var T_START = TIMES, T_END = ['Last'].concat(TIMES);
+function sel(id, opts, val, ph) {
+  var h = '<select id="' + id + '">' + (ph != null ? '<option value="">' + ph + '</option>' : '');
+  var found = false;
+  opts.forEach(function (o) { var s = o === val; if (s) found = true; h += '<option' + (s ? ' selected' : '') + '>' + esc(o) + '</option>'; });
+  if (val && !found && ph != null) h += '<option selected>' + esc(val) + '</option>';
+  return h + '</select>';
+}
+function fld(key, label, inner, req) {
+  return '<div class="q" id="w_' + key + '"><label class="t">' + label + (req ? ' <span class="req">*</span>' : '') + '</label>' + inner + '<div class="ferr" id="e_' + key + '"></div></div>';
+}
+function inp(id, type, val, extra) { return '<input id="' + id + '" type="' + type + '" value="' + esc(val) + '" ' + (extra || '') + '>'; }
+function socialId(v) { // 保存済みの URL から ID を取り出すのではなく、そのまま表示 (URL を貼っても可)
+  return v || '';
+}
+
+var HEIGHTS = (function () { var r = ['139cm以下']; for (var v = 140; v <= 185; v++) r.push(v + 'cm'); r.push('186cm以上'); return r; })();
+var WEIGHTS = (function () { var r = ['34kg以下']; for (var v = 35; v <= 60; v++) r.push(v + 'kg'); return r; })(); // 上限は 60kg (日野さん指示)
+var MBTIS = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP', 'わからない'];
+var BUSTS = ['Aカップ', 'Bカップ', 'Cカップ', 'Dカップ', 'Eカップ', 'Fカップ', 'Gカップ', 'Hカップ以上', 'わからない'];
+var HEALTH = [['hDisease', '持病'], ['hBase', '基礎疾患'], ['hMental', '精神疾患'], ['hAllergy', 'アレルギー']];
+function healthSplit(v) { var m = /^あり: ?(.*)$/.exec(v || ''); return m ? ['あり', m[1]] : [v === 'なし' ? 'なし' : '', '']; }
+function infoSecs(a, req) {
+  var by = '', bm = '', bd = '';
+  var bm_ = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.birth || '');
+  if (bm_) { by = bm_[1]; bm = String(+bm_[2]); bd = String(+bm_[3]); }
+  var Y = new Date().getFullYear(), years = [];
+  for (var y = Y - 16; y >= Y - 60; y--) years.push(String(y));
+  var months = [], days = [];
+  for (var i = 1; i <= 12; i++) months.push(String(i));
+  for (i = 1; i <= 31; i++) days.push(String(i));
+  var pref = a.pref || '北海道', city = a.city || '', cs = '', ward = '', cityo = '';
+  var mw = /^札幌市(.+区)$/.exec(city);
+  if (mw) { cs = '札幌市'; ward = mw[1]; }
+  else if (pref === '北海道') { if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') cs = city; else if (city) { cs = 'その他'; cityo = city; } }
+  else cityo = city;
+  var S = [];
+  var h = req ? '' : fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"'), 0); // 応募者入力では聞かない (2026-10-29)
+  h += fld('name', '氏名', inp('f_name', 'text', a.name), req);
+  h += fld('birth', '生年月日', '<div class="row3">' + sel('f_by', years, by, '年') + sel('f_bm', months, bm, '月') + sel('f_bd', days, bd, '日') + '<b id="f_age" style="min-width:70px"></b></div>', req);
+  h += fld('height', '身長', sel('f_height', HEIGHTS, a.height || '', '選択'), req);
+  h += fld('weight', '体重', sel('f_weight', WEIGHTS, a.weight || '', '選択'), req);
+  h += fld('bust', 'バスト (任意)', sel('f_bust', BUSTS, a.bust || '', '選択'), 0);
+  h += fld('mbti', 'MBTI (任意)', sel('f_mbti', MBTIS, a.mbti || '', '選択'), 0);
+  h += fld('honseki', '本籍地 (任意・都道府県)', sel('f_honseki', PREFS, a.honseki || '', '選択'), 0);
+  S.push({ t: '基本情報', h: h });
+  h = fld('tel', 'TEL', inp('f_tel', 'tel', a.tel, 'inputmode="tel" autocomplete="off" placeholder="090-1234-5678"'), req);
+  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"') + (req ? '<div class="small">メールアドレスが違うと登録できません。iPhone の iCloud メールや Android の Gmail など、お手持ちのスマホで受信できるアドレスを記入してください。</div>' : ''), req);
+  S.push({ t: '連絡先', h: h });
+  h = req ? '' : fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', (a.zip || '').replace(/\D/g, ''), 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', false);
+  h += fld('pref', '都道府県', sel('f_pref', PREFS, pref), req);
+  h += fld('city', '市区町村', sel('f_city', HK_CITIES, cs, '選択') + '<div style="margin-top:6px">' + sel('f_ward', WARDS, ward, '区を選択') + '</div><div style="margin-top:6px">' + inp('f_cityo', 'text', cityo, 'placeholder="市区町村を入力"') + '</div>', req);
+  h += fld('town', '町名・番地', inp('f_town', 'text', a.town), req);
+  h += fld('building', '建物名・部屋番号 (任意)', inp('f_building', 'text', a.building), 0);
+  S.push({ t: '住所', h: h });
+  h = fld('genWish', 'お店でのお名前（源氏名）の希望', inp('f_gen', 'text', a.genWish || '', 'autocomplete="off"'), req);
+  h += fld('genWishYomi', '読み方 (カタカナ)', inp('f_geny', 'text', a.genWishYomi || '', 'autocomplete="off"') + (req ? '<button type="button" class="sm" id="gen_chk" style="margin-top:6px">確認</button>' : '') + '<div class="small" id="gen_warn" style="color:#b06000;font-weight:bold"></div>', req);
+  h += '<div class="small">出勤できる曜日の時間を選んでください。出ない曜日は「--」のままにしてください。</div>';
+  WEEK.forEach(function (w, i) {
+    var v = a['wd' + i] || '', tr = / 送迎希望$/.test(v), p = v.replace(/ 送迎希望$/, '').split('～');
+    h += '<div class="day" id="w_wd' + i + '"><b class="big">' + w + '</b><div class="times">' +
+      '<div class="tc"><div class="pl">開始</div>' + sel('d_s' + i, T_START, p[0] || '', '--') + '</div>' +
+      '<div class="tc"><div class="pl">終了</div>' + sel('d_e' + i, T_END, p[1] || '', '--') + '</div>' +
+      '<div class="tc"><div class="pl">送迎</div>' + sel('d_r' + i, ['希望'], tr ? '希望' : '', '--') + '</div>' +
+      (i > 0 ? '<button type="button" class="sm" id="d_c' + i + '">上の曜日と同じ</button>' : '') + '</div></div>';
+  });
+  h += '<div class="q" id="w_wk"><label class="t">シフトについて</label><div id="wdx_box">' + chipsHtml(['不定期', '未定'], a.wdx ? [a.wdx] : [], 's') +
+    '</div><div class="small">シフトを固定できるCAST・出勤が多いCASTの方が、時給が優遇される場合があります</div><div class="ferr" id="e_wk"></div></div>';
+  S.push({ t: '出勤希望', h: h });
+  h = fld('insta', 'Instagram (ID・@なし、またはURL)', inp('f_insta', 'text', a.insta, 'autocapitalize="off" autocomplete="off"'), 0);
+  h += fld('tiktok', 'TikTok (ID・@なし、またはURL)', inp('f_tiktok', 'text', a.tiktok, 'autocapitalize="off" autocomplete="off"'), 0);
+  h += fld('sns', 'その他SNS', inp('f_sns', 'text', a.sns), 0);
+  S.push({ t: 'SNS', h: h });
+  h = '<div class="small">これまでのお店について、わかる範囲で記入してください（任意）。</div>';
+  [1, 2].forEach(function (n) {
+    h += '<h4 style="margin:12px 0 4px">経歴' + n + '</h4>' +
+      fld('c' + n + 'Store', '所属店舗', inp('f_c' + n + 'Store', 'text', a['c' + n + 'Store'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Period', '期間 (例: 2024年4月〜2025年3月)', inp('f_c' + n + 'Period', 'text', a['c' + n + 'Period'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Sales', '売上', inp('f_c' + n + 'Sales', 'text', a['c' + n + 'Sales'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Wage', '時給 / 日給', inp('f_c' + n + 'Wage', 'text', a['c' + n + 'Wage'], 'autocomplete="off"'), 0) +
+      fld('c' + n + 'Shift', 'シフト', inp('f_c' + n + 'Shift', 'text', a['c' + n + 'Shift'], 'autocomplete="off"'), 0);
+  });
+  S.push({ t: '経歴', h: h });
+  h = '<div class="small">あてはまるものを選んでください。「あり」の場合は内容も記入してください。</div>';
+  HEALTH.forEach(function (x) {
+    var p = healthSplit(a[x[0]]);
+    h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), req) +
+      fld(x[0] + 'T', x[1] + ' 「あり」の内容', inp('f_' + x[0] + 'T', 'text', p[1], 'autocomplete="off"'), 0);
+  });
+  h += fld('hAgree', '同意', '<label class="opt"><input type="checkbox" id="f_hAgree"' + (a.hAgree ? ' checked' : '') + '> 上記内容の項目に偽りなく回答しました</label>', req);
+  S.push({ t: '健康状態チェック', h: h });
+  return S;
+}
+function infoHtml(a, req) {
+  return infoSecs(a, req).map(function (s) { return '<div class="sec"><h3>' + s.t + '</h3>' + s.h + '</div>'; }).join('');
+}
+function kata(s) { return s.replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); }
+function fmtTel(v) {
+  var d = v.replace(/\D/g, '').slice(0, 11);
+  if (d.length <= 3) return d;
+  if (d.length <= 7) return d.slice(0, 3) + '-' + d.slice(3);
+  return d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+}
+function ageOf(y, m, d) {
+  var t = new Date(), a = t.getFullYear() - y;
+  if (t.getMonth() + 1 < m || (t.getMonth() + 1 === m && t.getDate() < d)) a--;
+  return a;
+}
+function syncAge() {
+  var y = +$('f_by').value, m = +$('f_bm').value, d = +$('f_bd').value, el = $('f_age');
+  if (!y || !m || !d) { el.textContent = ''; return; }
+  var a = ageOf(y, m, d); el.textContent = '満' + a + '歳'; el.style.color = a < 18 ? '#c00' : '#000';
+  if (a < 18) setErr('birth', '18歳未満の方は登録できません'); else setErr('birth', '');
+}
+function syncCity() {
+  var hk = $('f_pref').value === '北海道', c = $('f_city').value;
+  $('f_city').style.display = hk ? '' : 'none';
+  $('f_ward').parentNode.style.display = hk && c === '札幌市' ? '' : 'none';
+  $('f_cityo').parentNode.style.display = !hk || c === 'その他' ? '' : 'none';
+}
+function setErr(key, text) {
+  var e = $('e_' + key), w = $('w_' + key);
+  if (e) e.textContent = text || '';
+  if (w) { if (text) w.classList.add('bad'); else w.classList.remove('bad'); }
+}
+function infoBind() {
+  var fu = $('f_furigana');
+  if (fu) {
+    var conv = function () { var v = kata(fu.value); if (v !== fu.value) fu.value = v; };
+    fu.addEventListener('input', function (e) { if (!e.isComposing) conv(); });
+    fu.addEventListener('compositionend', conv);
+  }
+  $('f_tel').addEventListener('input', function () { this.value = fmtTel(this.value); });
+  ['f_by', 'f_bm', 'f_bd'].forEach(function (id) { $(id).onchange = syncAge; });
+  $('f_pref').onchange = syncCity; $('f_city').onchange = syncCity;
+  syncCity(); syncAge();
+  var z = $('f_zip');
+  if (z) z.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 7);
+    if (this.value.length === 7) lookupZip(this.value);
+    else $('zipst').textContent = '';
+  });
+  WEEK.forEach(function (w, i) {
+    $('d_s' + i).onchange = function () {
+      if (!this.value) { setSel('d_e' + i, ''); setSel('d_r' + i, ''); } else if (!$('d_e' + i).value) setSel('d_e' + i, 'Last');
+    };
+    $('d_e' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_e' + i, ''); };
+    $('d_r' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_r' + i, ''); };
+    if (i > 0) $('d_c' + i).onclick = function () {
+      ['s', 'e', 'r'].forEach(function (k) { setSel('d_' + k + i, $('d_' + k + (i - 1)).value); });
+    };
+  });
+  var gy = $('f_geny'), gconv = function () { var v = kata(gy.value); if (v !== gy.value) gy.value = v; };
+  gy.addEventListener('input', function (e) { if (!e.isComposing) gconv(); });
+  gy.addEventListener('compositionend', gconv);
+  // 応募者入力: 「確認」ボタンで在籍と照合し、OK になるまで「次へ」を押せない。書き換えたら取り消す。黒服画面: 欄を離れた時に警告だけ
+  function genStore() { return String(castAll()['kyujin:5'] || '').replace(/希望無し/g, ''); }
+  function genKey() { return gy.value.trim() + '|' + $('f_gen').value.trim() + '|' + genStore(); }
+  function genReset() { GEN_OK = ''; $('gen_warn').textContent = ''; syncNext(); }
+  if (MODE === 'apply') {
+    gy.addEventListener('input', genReset); $('f_gen').addEventListener('input', genReset);
+    $('gen_chk').onclick = function () {
+      var w = $('gen_warn'), g = $('f_gen').value.trim(), y, k;
+      gconv(); y = gy.value.trim(); k = genKey();
+      GEN_OK = '';
+      if (!g || !y) { w.style.color = '#c00'; w.textContent = '源氏名と読み方（カタカナ）を入力してください'; syncNext(); return; }
+      if (!/^[ァ-ヶー\s　]+$/.test(y)) { w.style.color = '#c00'; w.textContent = '読み方はカタカナで入力してください'; syncNext(); return; }
+      w.style.color = '#555'; w.textContent = '照合中…'; $('gen_chk').disabled = true; syncNext();
+      google.script.run.withSuccessHandler(function (r) {
+        $('gen_chk').disabled = false;
+        if (genKey() !== k) return; // 照合中に書き換えられた
+        if (r && r.length) { w.style.color = '#c00'; w.textContent = GEN_MSG; }
+        else { GEN_OK = k; w.style.color = '#1a7f37'; w.textContent = '使えます'; }
+        syncNext();
+      }).withFailureHandler(function () {
+        $('gen_chk').disabled = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください'; syncNext();
+      }).findGenDup(y, genStore(), g);
+    };
+    GEN_KEY = genKey;
+  } else {
+    gy.addEventListener('change', function () {
+      gconv();
+      var y = gy.value.trim(), w = $('gen_warn');
+      if (!y) { w.textContent = ''; return; }
+      google.script.run.withSuccessHandler(function (r) {
+        if (gy.value.trim() !== y) return;
+        w.textContent = r && r.length ? '同じ読みのお名前の方が在籍しています（' + r.join('、') + '）。別のお名前も考えておいてください' : '';
+      }).findGenDup(y, '', $('f_gen').value.trim());
+    });
+  }
+}
+var GEN_OK = '', GEN_KEY = null, GEN_PAGE = 4, GEN_MSG = '同じお名前の方が在籍しています。別のお名前を入力してください';
+// 応募者入力の源氏名ページは、照合 OK になるまで「次へ」を押せない
+function syncNext() {
+  var pn = $('pn'); if (!pn) return;
+  pn.disabled = false; // 以前は未照合の間グレーにして押せなくしていたが、理由が見えず先へ進めない人が出た (2026-10-30)。未照合は「次へ」を押した時に applyErrs の案内を出す
+}
+function setSel(id, v) {
+  var s = $(id);
+  if (v && !Array.prototype.some.call(s.options, function (o) { return o.value === v || o.text === v; })) { var o = document.createElement('option'); o.text = v; s.add(o); }
+  s.value = v;
+}
+function lookupZip(z) {
+  $('zipst').textContent = '住所を検索中...';
+  google.script.run.withSuccessHandler(function (r) {
+    if ($('f_zip').value !== z) return;
+    if (!r) { $('zipst').textContent = '自動入力できませんでした。手入力してください。'; return; }
+    $('zipst').textContent = '住所を自動入力しました (修正できます)';
+    if (PREFS.indexOf(r.pref) >= 0) setSel('f_pref', r.pref);
+    var city = r.city, m = /^札幌市(.+区)$/.exec(city);
+    $('f_cityo').value = '';
+    if (r.pref === '北海道') {
+      if (m) { setSel('f_city', '札幌市'); setSel('f_ward', m[1]); }
+      else if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') setSel('f_city', city);
+      else { setSel('f_city', 'その他'); $('f_cityo').value = city; }
+    } else $('f_cityo').value = city;
+    $('f_town').value = r.town || '';
+    syncCity(); setErr('zip', ''); setErr('pref', ''); setErr('city', ''); setErr('town', '');
+  }).withFailureHandler(function () { $('zipst').textContent = '自動入力できませんでした。手入力してください。'; }).lookupZip(z);
+}
+function socialUrl(v, base) {
+  v = (v || '').trim();
+  if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  return base + v.replace(/^@/, '');
+}
+function infoCollect() {
+  var d = {};
+  d.furigana = $('f_furigana') ? kata($('f_furigana').value.trim()) : ''; d.name = $('f_name').value.trim(); d.height = $('f_height').value; d.weight = $('f_weight').value;
+  var y = $('f_by').value, m = $('f_bm').value, dd = $('f_bd').value;
+  d.birth = (y && m && dd) ? y + '-' + pad2(m) + '-' + pad2(dd) : '';
+  d.tel = fmtTel($('f_tel').value); d.email = $('f_email').value.trim();
+  var z = $('f_zip') ? $('f_zip').value.replace(/\D/g, '') : '';
+  d.zip = z.length === 7 ? z.slice(0, 3) + '-' + z.slice(3) : z;
+  d.pref = $('f_pref').value;
+  var city;
+  if (d.pref === '北海道') {
+    var c = $('f_city').value;
+    city = c === '札幌市' ? '札幌市' + $('f_ward').value : c === 'その他' ? $('f_cityo').value.trim() : c;
+  } else city = $('f_cityo').value.trim();
+  d.city = city; d.town = $('f_town').value.trim(); d.building = $('f_building').value.trim();
+  d.address = d.pref + d.city + d.town + d.building;
+  WEEK.forEach(function (w, i) {
+    var st = $('d_s' + i).value, en = $('d_e' + i).value, rd = $('d_r' + i).value;
+    d['wd' + i] = st ? st + '～' + (en || 'Last') + (rd ? ' 送迎希望' : '') : '';
+  });
+  var wx = document.querySelector('#wdx_box .chip.on');
+  d.wdx = wx ? wx.getAttribute('data-v') : '';
+  d.genWish = $('f_gen').value.trim(); d.genWishYomi = kata($('f_geny').value.trim());
+  d.insta = socialUrl($('f_insta').value, 'https://www.instagram.com/');
+  d.tiktok = socialUrl($('f_tiktok').value, 'https://www.tiktok.com/@');
+  d.sns = $('f_sns').value.trim();
+  d.bust = $('f_bust').value; d.mbti = $('f_mbti').value; d.honseki = $('f_honseki').value;
+  [1, 2].forEach(function (n) { ['Store', 'Period', 'Sales', 'Wage', 'Shift'].forEach(function (k) { d['c' + n + k] = $('f_c' + n + k).value.trim(); }); });
+  HEALTH.forEach(function (x) {
+    var v = $('f_' + x[0]).value, t = $('f_' + x[0] + 'T').value.trim();
+    d[x[0]] = v === 'あり' ? 'あり: ' + t : v;
+  });
+  d.hAgree = $('f_hAgree').checked ? '1' : '';
+  return d;
+}
+// strict=true: 応募者入力 (必須あり) / false: 黒服画面 (形式の確認だけ)
+function infoValidate(d, strict) {
+  var errs = [];
+  function e(k, t) { errs.push([k, t]); }
+  if (strict) {
+    if (!d.name) e('name', '氏名を入力してください');
+    if (!d.height) e('height', '身長を選んでください');
+    if (!d.weight) e('weight', '体重を選んでください');
+    if (!d.birth) e('birth', '生年月日を選んでください');
+    if (!d.tel) e('tel', 'TELを入力してください');
+    if (!d.email) e('email', 'Emailを入力してください');
+    if (!d.genWish) e('genWish', '源氏名を入力してください');
+    if (!d.genWishYomi) e('genWishYomi', '源氏名の読み方（カタカナ）を入力してください');
+    else if (!/^[ァ-ヶー\s　]+$/.test(d.genWishYomi)) e('genWishYomi', '読み方はカタカナで入力してください');
+    if (MODE === 'apply' && GEN_KEY && GEN_OK !== GEN_KEY()) e('genWishYomi', '源氏名の「確認」ボタンを押して、照合してください');
+    if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
+    if (!d.town) e('town', '町名・番地を入力してください');
+    HEALTH.forEach(function (x) {
+      if (!d[x[0]]) e(x[0], x[1] + 'を選んでください');
+      else if (d[x[0]] === 'あり: ') e(x[0] + 'T', x[1] + 'の内容を記入してください');
+    });
+    if (!d.hAgree) e('hAgree', '回答への同意にチェックしてください');
+  }
+  if (d.birth) {
+    var p = d.birth.split('-');
+    if (ageOf(+p[0], +p[1], +p[2]) < 18) e('birth', '18歳未満の方は登録できません');
+  }
+  if (d.tel && d.tel.replace(/\D/g, '').length < 10) e('tel', 'TELの桁数が足りません');
+  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) e('email', 'Emailの形式が正しくありません');
+  if (d.zip && d.zip.replace(/\D/g, '').length !== 7) e('zip', '郵便番号は7桁です');
+  if (d.pref === '北海道' && $('f_city').value === '札幌市' && !$('f_ward').value) e('city', '区を選んでください');
+  if (strict) {
+    var any = false;
+    WEEK.forEach(function (w, i) { if (d['wd' + i]) any = true; });
+    if (!any && !d.wdx) e('wk', '出勤できる曜日を選ぶか、「不定期」「未定」を選んでください');
+  }
+  return errs;
+}
+function showErrors(errs) {
+  document.querySelectorAll('.ferr').forEach(function (x) { x.textContent = ''; });
+  document.querySelectorAll('.bad').forEach(function (x) { x.classList.remove('bad'); });
+  errs.forEach(function (x) { setErr(x[0], x[1]); });
+  if (errs.length) { var w = $('w_' + errs[0][0]); if (w) w.scrollIntoView({ block: 'center' }); msg('入力を確認してください', true); }
+}
+
+// ================= 選択式の質問部品 (応募者入力 / 黒服画面で共用) =================
+function qid(c) { return 'cq_' + c.f + '_' + c.qi; }
+function splitNote(s) {
+  s = s || '';
+  var i = s.lastIndexOf('補足: ');
+  if (i >= 0 && (i === 0 || s.charAt(i - 1) === ' ')) return [s.slice(0, i).trim(), s.slice(i + 4)];
+  return [s.trim(), ''];
+}
+function decodeQ(c, s) {
+  var sn = splitNote(s), m = sn[0], vals = [];
+  if (c.parts.length > 1) {
+    var seg = m ? m.split(' / ') : [];
+    c.parts.forEach(function (p) {
+      var v = '';
+      seg.forEach(function (x) { if (x.indexOf(p.l + ': ') === 0) v = x.slice(p.l.length + 2); });
+      vals.push(p.k === 'm' ? (v ? v.split('、') : []) : v);
+    });
+  } else vals.push(c.parts[0].k === 'm' ? (m ? m.split('、') : []) : m);
+  return { vals: vals, note: sn[1] };
+}
+function chipsHtml(opts, arr, mode) {
+  var o = opts.slice();
+  arr.forEach(function (x) { if (o.indexOf(x) < 0) o.push(x); });
+  return '<div class="chips" data-m="' + mode + '">' + o.map(function (v) {
+    return '<button type="button" class="chip' + (arr.indexOf(v) >= 0 ? ' on' : '') + '" data-v="' + esc(v) + '">' + esc(v) + '</button>';
+  }).join('') + '</div>';
+}
+// ================= プルダウン + 手入力 (時給・保証期間) =================
+// 手入力に数字を入れたらプルダウンを「--」に、プルダウンを選んだら手入力を空にする。保存するのは入っている方の 1 つの値
+var MAN = {
+  yen: { re: /^([\d,]+)円?$/, fmt: function (n) { return String(n).replace(/\B(?=(\d{3})+$)/g, ',') + '円'; }, unit: '円' },
+  mon: { re: /^(\d+)ヶ月$/, fmt: function (n) { return n + 'ヶ月'; }, unit: 'ヶ月' }
+};
+// 保存済みの値 v を プルダウン(s) / 手入力(m) / 選択肢にない文字(x) に振り分ける
+function manSplit(kind, v, opts) {
+  v = String(v == null ? '' : v);
+  if (!v) return { s: '', m: '', x: '' };
+  if (opts.indexOf(v) >= 0) return { s: v, m: '', x: '' };
+  var r = MAN[kind].re.exec(v);
+  if (r) return { s: '', m: r[1].replace(/,/g, ''), x: '' };
+  return { s: v, m: '', x: v };
+}
+function manJoin(kind, s, m) {
+  m = String(m || '').replace(/\D/g, '');
+  return m && Number(m) > 0 ? MAN[kind].fmt(Number(m)) : s;
+}
+function pairHtml(kind, opts, v, selAttrs, manAttrs) {
+  var p = manSplit(kind, v, opts);
+  return '<div class="mpair" data-kind="' + kind + '" style="display:flex;gap:6px;align-items:center"><select ' + selAttrs + ' style="flex:1"><option value="">--</option>' +
+    opts.map(function (o) { return '<option' + (o === p.s ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') +
+    (p.x ? '<option selected>' + esc(p.x) + '</option>' : '') + '</select>' +
+    '<input type="text" inputmode="numeric" class="man" ' + (manAttrs || '') + ' placeholder="手入力" value="' + esc(p.m) + '" style="width:7em"><span>' + MAN[kind].unit + '</span></div>';
+}
+function pairVal(w) { // w = .mpair 要素
+  return manJoin(w.getAttribute('data-kind'), w.querySelector('select').value, w.querySelector('.man').value);
+}
+document.addEventListener('input', function (e) {
+  var t = e.target;
+  if (!t.classList || !t.classList.contains('man')) return;
+  t.value = t.value.replace(/\D/g, '');
+  if (t.value) t.parentNode.querySelector('select').value = '';
+});
+document.addEventListener('change', function (e) {
+  var w = e.target.closest && e.target.closest('.mpair');
+  if (w && e.target.tagName === 'SELECT' && e.target.value) w.querySelector('.man').value = '';
+});
+
+function selHtml(opts, v) {
+  var f = false, h = '<select class="ps"><option value="">選択</option>';
+  opts.forEach(function (o) { var s = o === v; if (s) f = true; h += '<option' + (s ? ' selected' : '') + '>' + esc(o) + '</option>'; });
+  if (v && !f) h += '<option selected>' + esc(v) + '</option>';
+  return h + '</select>';
+}
+function qHtml(c, s) {
+  var d = decodeQ(c, s), h = '<div class="q cqb" id="' + qid(c) + '"' + (c.showIf ? ' data-si="' + c.showIf.f + ':' + c.showIf.qi + '" data-sv="' + esc(c.showIf.v) + '"' : '') + '><label class="t">' + esc(c.label) + '</label>' + (c.hint ? '<div class="small">' + esc(c.hint) + '</div>' : '');
+  c.parts.forEach(function (p, pi) {
+    var v = d.vals[pi];
+    h += '<div class="pt" data-pi="' + pi + '">' + (p.l ? '<div class="pl">' + esc(p.l) + '</div>' : '');
+    if (p.k === 'm') h += chipsHtml(p.o, v, 'm');
+    else if (p.k === 's') h += chipsHtml(p.blank ? ['未入力'].concat(p.o) : p.o, v ? [v] : (p.blank ? ['未入力'] : []), 's');
+    else if (p.k === 'sel') h += p.man ? pairHtml(p.man, p.o, v, 'class="ps"') : selHtml(p.o, v);
+    else h += '<input type="text" class="pt_t" value="' + esc(v) + '">';
+    h += '</div>';
+  });
+  if (c.note) h += '<input type="text" class="nt" placeholder="補足 (あれば)" value="' + esc(d.note) + '">';
+  return h + '</div>';
+}
+function qRead(c) {
+  var w = $(qid(c)), out = [];
+  if (!w) return null;
+  c.parts.forEach(function (p, pi) {
+    var pt = w.querySelector('.pt[data-pi="' + pi + '"]'), v;
+    if (p.k === 'sel') v = p.man ? pairVal(pt.querySelector('.mpair')) : pt.querySelector('select').value;
+    else if (p.k === 't') v = pt.querySelector('input').value.trim();
+    else {
+      var on = [].map.call(pt.querySelectorAll('.chip.on'), function (b) { return b.getAttribute('data-v'); });
+      v = p.k === 'm' ? on.join('、') : (on[0] || '');
+      if (v === '未入力') v = ''; // 「未入力」ボタンは空欄と同じ
+    }
+    out.push(v);
+  });
+  var s = c.parts.length > 1 ? c.parts.map(function (p, i) { return out[i] ? p.l + ': ' + out[i] : ''; }).filter(Boolean).join(' / ') : out[0];
+  var n = c.note ? w.querySelector('.nt').value.trim() : '';
+  return n ? (s ? s + ' ' : '') + '補足: ' + n : s;
+}
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.chip');
+  if (!b) return;
+  var box = b.parentNode;
+  if (box.getAttribute('data-m') === 'x') return;
+  if (box.getAttribute('data-m') === 's') {
+    var was = b.classList.contains('on');
+    [].forEach.call(box.children, function (x) { x.classList.remove('on'); });
+    if (!was) b.classList.add('on');
+  } else b.classList.toggle('on');
+  syncShow();
+});
+function syncShow() {
+  if ($('jdbox')) { var jo = document.querySelector('#jchips .chip.on'); $('jdbox').style.display = jo && jo.getAttribute('data-v') === '後日体入' ? '' : 'none'; }
+  [].forEach.call(document.querySelectorAll('[data-si]'), function (w) {
+    var c = CASTQ.filter(function (x) { return x.f + ':' + x.qi === w.getAttribute('data-si'); })[0];
+    w.style.display = qRead(c) === w.getAttribute('data-sv') ? '' : 'none';
+  });
+}
+function castBlocks(page, vals, noStore) { // noStore = 応募者画面: 「応募するお店」は最初のページへ移したので、ここでは出さない
+  return CASTQ.filter(function (c) { return c.page === page && !(noStore && c.f === 'kyujin' && c.qi === 5); }).map(function (c) { return qHtml(c, vals[c.f + ':' + c.qi]); }).join('');
+}
+function castAll() { var m = {}; CASTQ.forEach(function (c) { var s = qRead(c); if (s) m[c.f + ':' + c.qi] = s; }); return m; }
+
+// ================= ページ送り =================
+var PG = { i: 0, pages: [], opt: {} };
+function pagerInit(box, pages, opt) {
+  PG = { i: 0, pages: pages, opt: opt };
+  $(box).innerHTML = '<div id="prog" class="prog"></div>' + pages.map(function (p, i) {
+    return '<div class="pg" id="pg' + i + '" style="display:none"><h2>' + esc(p.t) + '</h2>' + p.h + '</div>';
+  }).join('') + '<div class="bar nav"><button id="pb">戻る</button>' + (opt.extra || '') + '<button class="pri" id="pn">次へ</button></div>';
+  if (opt.bind) opt.bind();
+  $('pb').onclick = function () { pgGo(PG.i - 1); };
+  $('pn').onclick = function () {
+    var er = opt.check ? opt.check(PG.i) : [];
+    showErrors(er);
+    if (er.length) return;
+    pgGo(PG.i + 1);
+  };
+  pgGo(0);
+}
+function pgGo(i) {
+  if (i < 0 || i >= PG.pages.length) return;
+  PG.i = i;
+  PG.pages.forEach(function (p, k) { $('pg' + k).style.display = k === i ? 'block' : 'none'; });
+  var n = PG.pages.length;
+  $('prog').textContent = (i + 1) + (MODE === 'apply' ? ' / ' : '/') + n + '　' + PG.pages[i].t;
+  $('prog').style.setProperty('--w', Math.round((i + 1) / n * 100) + '%');
+  $('pb').style.visibility = i ? 'visible' : 'hidden';
+  $('pn').style.display = i === n - 1 ? 'none' : '';
+  msg('');
+  syncShow();
+  syncNext();
+  draftSave();
+  if (typeof rqPaint === 'function') rqPaint();
+  if (MODE === 'apply' && $('pn')) $('pn').textContent = PG.pages[i].t === '同意' ? '同意して次へ' : '次へ';
+  if (PG.opt.onShow) PG.opt.onShow(i);
+  window.scrollTo(0, 0);
+}
+
+// ================= まとめ表示 (確認ページ・黒服画面のカード) =================
+var CARD_KEYS = ['jikyu:3', 'jikyu:4', 'jikyu:12', 'jikyu:6', 'jikyu:7', 'jikyu:8', 'jikyu:9', 'jikyu:11', 'kyujin:2', 'kyujin:5'];
+function summaryHtml(full) {
+  var d = infoCollect(), cast = castAll(), rows = [];
+  var age = '';
+  if (d.birth) { var p = d.birth.split('-'); age = '　満' + ageOf(+p[0], +p[1], +p[2]) + '歳'; }
+  rows.push(['氏名', (d.furigana ? d.furigana + '　' : '') + d.name + age]);
+  if ($('slot_d') && $('slot_d').value) rows.push(['希望面接日時', slotText($('slot_d').value, $('slot_t').value)]);
+  rows.push(['生年月日', d.birth]);
+  rows.push(['身長 / 体重', [d.height, d.weight].filter(Boolean).join(' / ')]);
+  rows.push(['TEL / Email', d.tel + (d.email ? ' / ' + d.email : '')]);
+  rows.push(['住所', (d.zip ? '〒' + d.zip + ' ' : '') + d.address]);
+  var wd = [];
+  WEEK.forEach(function (w, i) { if (d['wd' + i]) wd.push(w + ' ' + d['wd' + i]); });
+  if (d.wdx) wd.push(d.wdx);
+  rows.push(['出勤希望', wd.join('　')]);
+  rows.push(['本籍地 / バスト / MBTI', [d.honseki, d.bust, d.mbti].filter(Boolean).join(' / ')]);
+  [1, 2].forEach(function (n) { rows.push(['経歴' + n, [d['c' + n + 'Store'], d['c' + n + 'Period'], d['c' + n + 'Sales'], d['c' + n + 'Wage'], d['c' + n + 'Shift']].filter(Boolean).join(' / ')]); });
+  if (d.hDisease) rows.push(['健康状態', HEALTH.map(function (x) { return x[1] + ': ' + d[x[0]]; }).join('　')]);
+  if (d.genWish) rows.push(['源氏名希望', d.genWish + (d.genWishYomi ? ' (' + d.genWishYomi + ')' : '')]);
+  rows.push(['SNS', [d.insta, d.tiktok, d.sns].filter(Boolean).join('　')]);
+  CASTQ.forEach(function (c) {
+    var k = c.f + ':' + c.qi;
+    if (cast[k] && (full || CARD_KEYS.indexOf(k) >= 0)) rows.push([c.label, cast[k]]);
+  });
+  return '<div class="sum">' + rows.filter(function (r) { return r[1] && String(r[1]).trim(); }).map(function (r) {
+    return '<div class="sr"><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></div>';
+  }).join('') + '</div>';
+}
+
+// ================= 応募者入力 (本人・iPad) =================
+var PAGE_OF = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, hDisease: 3, hDiseaseT: 3, hBase: 3, hBaseT: 3, hMental: 3, hMentalT: 3, hAllergy: 3, hAllergyT: 3, hAgree: 3, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
+// 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
+function startApply() {
+  var done = false;
+  function go(names) {
+    if (done) return; done = true;
+    if (names && names.length) {
+      var c = CASTQ.filter(function (x) { return x.f === 'kyujin' && x.qi === 5; })[0];
+      if (c) c.parts[0].o = names.concat(['希望無し']);
+    }
+    showApply();
+  }
+  setTimeout(function () { go(null); }, 4000);
+  try { google.script.run.withSuccessHandler(go).withFailureHandler(function () { go(null); }).getStores(); } catch (e) { go(null); }
+}
+// 応募者画面の最初のページの一番上に出す「応募するお店」(必須)。値は今までどおり cast の kyujin:5
+function storeBlock() {
+  var c = CASTQ.filter(function (x) { return x.f === 'kyujin' && x.qi === 5; })[0];
+  return '<div id="w_store">' + qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>') + '<div class="ferr" id="e_store"></div></div>';
+}
+function showApply() {
+  var S = infoSecs({}, 1), bykey = {};
+  S.forEach(function (s) { bykey[s.t] = s.h; });
+  var pages = [
+    { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
+      ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
+    { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) + '<div class="sec"><h3>経歴</h3>' + bykey['経歴'] + '</div>' },
+    { t: 'お店選び', h: castBlocks('shop', {}, true) },
+    { t: 'あなたについて', h: castBlocks('me', {}) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
+    { t: '出勤希望', h: bykey['出勤希望'] },
+    { t: 'SNS', h: bykey['SNS'] },
+    { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' },
+    { t: '確認', h: '<div class="small">内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。</div><div id="sumbox"></div>' +
+      '<div class="q" id="w_photo"><label class="t">面接写真（本人確認用・身分証との照合に使います） <span class="req">*</span></label>' +
+      '<div class="small">保存お願いします（無加工で、身分証と照合できるように撮影をお願いします。）</div>' +
+      '<input type="file" id="photoin" accept="image/*" capture="user" style="display:none">' +
+      '<button type="button" class="sm" id="photobtn">カメラを起動</button>' +
+      '<div><img id="photoprev" alt="" style="display:none;max-width:100%;max-height:320px;margin-top:8px;border-radius:6px"></div>' +
+      '<div class="small" id="photost"></div><div class="ferr" id="e_photo"></div></div>' +
+      '<div class="q" id="w_slot"><label class="t">希望面接日時 <span class="req">*</span></label>' +
+      '<div class="small">空いている日時から選んでください（今から1時間以内の時間は選べません）。</div>' +
+      '<div class="row3" style="margin-top:6px"><select id="slot_d"><option value="">日付を選択</option></select><select id="slot_t"><option value="">時刻を選択</option></select></div>' +
+      '<div class="small" id="slotst"></div><div class="ferr" id="e_slot"></div></div>' +
+      '<button class="pri big" id="sub" style="width:100%">送信</button><div id="sendst" style="color:#c00;font-weight:bold;margin-top:8px"></div>' }
+  ];
+  pagerInit('app', pages, {
+    bind: infoBind,
+    check: function (i) { if (i === 6) CONSENTED = true; return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
+    onShow: function (i) { if (i === 7) { $('sumbox').innerHTML = summaryHtml(true); loadSlots(); } }
+  });
+  $('sub').onclick = submitApply;
+  $('slot_d').onchange = function () { fillTimes(); };
+  $('photobtn').onclick = function () { $('photoin').click(); };
+  $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
+  draftInit();
+  rqInit();
+}
+// 希望面接日時: 選んだお店 (希望無しなら全店) の空き枠をサーバから取る。取り直した時は前の選択を残す
+var SLOTS = [], DOW = ['日', '月', '火', '水', '木', '金', '土'];
+function slotDate(d) { var p = d.split('-'); return +p[1] + '/' + +p[2] + '(' + DOW[new Date(+p[0], p[1] - 1, +p[2]).getDay()] + ')'; }
+function slotTime(t) { return +t.split(':')[0] < 16 ? '翌' + t : t; }
+function slotText(d, t) { return slotDate(d) + ' ' + slotTime(t); }
+function slotStore() { return String(castAll()['kyujin:5'] || '').replace(/希望無し/g, ''); }
+function loadSlots() {
+  var st = $('slotst'), pd = $('slot_d').value, pt = $('slot_t').value;
+  st.style.color = '#555'; st.textContent = '空き状況を確認中…';
+  google.script.run.withSuccessHandler(function (r) {
+    SLOTS = r || [];
+    var ds = []; SLOTS.forEach(function (x) { if (ds.indexOf(x.date) < 0) ds.push(x.date); });
+    $('slot_d').innerHTML = '<option value="">日付を選択</option>' + ds.map(function (d) { return '<option value="' + d + '">' + slotDate(d) + '</option>'; }).join('');
+    if (ds.indexOf(pd) >= 0) $('slot_d').value = pd;
+    fillTimes(pt);
+    st.textContent = ds.length ? '' : '現在、選べる空き枠がありません。スタッフにお知らせください。';
+  }).withFailureHandler(function () { st.style.color = '#c00'; st.textContent = '空き状況を取得できませんでした。しばらくして、もう一度このページを開いてください'; }).getSlots(slotStore());
+}
+function fillTimes(keep) {
+  var d = $('slot_d').value;
+  $('slot_t').innerHTML = '<option value="">時刻を選択</option>' + SLOTS.filter(function (x) { return x.date === d; }).map(function (x) { return '<option value="' + x.time + '">' + slotTime(x.time) + '</option>'; }).join('');
+  if (keep) $('slot_t').value = keep;
+}
+// 面接写真: 撮影 → 長辺 1280px の JPEG に縮小 → すぐ Drive へアップロード (成功するまで「送信」は押せない)。撮り直しは同じボタン
+var PHOTO = '', PHOTO_ID = '', CONSENTED = false;
+function photoPick(f) {
+  if (!f) return;
+  var im = new Image(), u = URL.createObjectURL(f);
+  im.onload = function () {
+    var k = Math.min(1, 1280 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
+    c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    PHOTO = c.toDataURL('image/jpeg', 0.85); PHOTO_ID = '';
+    URL.revokeObjectURL(u);
+    $('photoprev').src = PHOTO; $('photoprev').style.display = 'block';
+    $('photobtn').textContent = '撮り直す';
+    setErr('photo', '');
+    var st = $('photost'), mine = PHOTO;
+    st.style.color = '#555'; st.textContent = '写真をアップロード中…'; $('sub').disabled = true; $('photobtn').disabled = true;
+    google.script.run.withSuccessHandler(function (id) {
+      $('photobtn').disabled = false;
+      if (PHOTO !== mine) return; // アップロード中に撮り直された
+      PHOTO_ID = id; $('sub').disabled = false;
+      st.style.color = '#1a7f37'; st.textContent = '写真をアップロードしました。よければ「送信」を押してください。';
+    }).withFailureHandler(function (e) {
+      $('photobtn').disabled = false;
+      if (PHOTO !== mine) return;
+      st.style.color = '#c00'; st.textContent = 'アップロードに失敗しました。もう一度撮影してください: ' + (e && e.message || e);
+    }).uploadPhoto(mine);
+  };
+  im.onerror = function () { URL.revokeObjectURL(u); setErr('photo', '写真を読み込めませんでした。もう一度撮影してください'); };
+  im.src = u;
+}
+function applyErrs() {
+  var d = infoCollect(), errs = infoValidate(d, true);
+  if (!CONSENTED) errs.push(['consent', '個人情報の取り扱いへの同意が必要です']);
+  if (!castAll()['kyujin:5']) errs.push(['store', '応募するお店を選んでください']);
+  if (!PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
+  if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
+  return errs;
+}
+// ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
+// 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
+var RQ_KEYS = ['hDisease', 'hBase', 'hMental', 'hAllergy', 'hAgree', 'store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['store', 'wk', 'photo', 'slot'], RQ_ON = false;
+function rqInit() {
+  document.body.classList.add('ap');
+  RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
+  ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, function () { setTimeout(rqPaint, 0); }); });
+  RQ_ON = true; rqPaint();
+}
+function rqPaint() {
+  if (!RQ_ON) return;
+  var bad = {};
+  try {
+    applyErrs().forEach(function (e) {
+      // 「確認ボタンを押す」「アップロード待ち」は未入力ではないのでピンクにしない
+      if (/確認」ボタン|お待ちください/.test(e[1])) return;
+      bad[e[0]] = 1;
+    });
+  } catch (x) { return; }
+  RQ_KEYS.forEach(function (k) {
+    var w = $('w_' + k); if (!w) return;
+    w.classList[bad[k] ? 'add' : 'remove']('empty');
+    [].forEach.call(w.querySelectorAll('input:not([type=file]):not([type=hidden]), select'), function (c) {
+      var empty = c.value.trim() === '' && c.offsetParent !== null;
+      c.classList[empty ? 'add' : 'remove']('pk');
+    });
+  });
+}
+// ================= 入力の途中保存 (下書き・応募者画面だけ) =================
+// 入力のたびにブラウザの localStorage へ保存し、開き直したら復元して続きのページから再開する。写真と面接枠は復元しない。
+// 個人情報が端末に残るので 24 時間で期限切れ (開いたときに消す)。送信成功で消す。localStorage が使えなくても普通に動く
+var DRAFT_KEY = 'prince_apply_draft_v1', DRAFT_TTL = 24 * 3600 * 1000, DRAFT_ON = false, DRAFT_T = 0;
+function draftLs(fn) { try { return fn(window.localStorage); } catch (e) { return null; } } // 使えない (プライベートモードなど) ときは何もしない
+function draftFields() {
+  return [].filter.call(document.querySelectorAll('#app input, #app select, #app textarea'), function (el) {
+    return el.type !== 'file' && el.type !== 'button' && ['slot_d', 'slot_t'].indexOf(el.id) < 0;
+  });
+}
+function draftSave() {
+  if (!DRAFT_ON) return;
+  clearTimeout(DRAFT_T);
+  DRAFT_T = setTimeout(function () {
+    if (!DRAFT_ON) return;
+    var f = draftFields().map(function (el) { return el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value; });
+    var c = [].map.call(document.querySelectorAll('#app .chips'), function (box) {
+      return [].filter.call(box.children, function (b) { return b.classList.contains('on'); }).map(function (b) { return b.getAttribute('data-v'); });
+    });
+    draftLs(function (ls) { ls.setItem(DRAFT_KEY, JSON.stringify({ t: Date.now(), p: PG.i, f: f, c: c })); });
+  }, 300);
+}
+function draftClear() {
+  DRAFT_ON = false; clearTimeout(DRAFT_T);
+  draftLs(function (ls) { ls.removeItem(DRAFT_KEY); });
+}
+function draftInit() {
+  var raw = draftLs(function (ls) { return ls.getItem(DRAFT_KEY); }), dr = null;
+  try { dr = raw ? JSON.parse(raw) : null; } catch (e) { dr = null; }
+  var fs = draftFields(), boxes = document.querySelectorAll('#app .chips');
+  // 期限切れ・画面の作りが変わった下書きは捨てる
+  if (dr && (!dr.t || Date.now() - dr.t > DRAFT_TTL || !dr.f || dr.f.length !== fs.length || !dr.c || dr.c.length !== boxes.length)) { draftLs(function (ls) { ls.removeItem(DRAFT_KEY); }); dr = null; }
+  if (dr) {
+    fs.forEach(function (el, i) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!dr.f[i]; else el.value = dr.f[i]; });
+    [].forEach.call(boxes, function (box, i) {
+      [].forEach.call(box.children, function (b) { b.classList[dr.c[i].indexOf(b.getAttribute('data-v')) >= 0 ? 'add' : 'remove']('on'); });
+    });
+    syncCity(); syncAge(); syncShow();
+    pgGo(Math.max(0, Math.min(dr.p || 0, 6))); // 同意ページ (6) まで。それより先は同意を押し直してもらう
+  }
+  $('app').insertAdjacentHTML('beforeend', '<div class="small" style="text-align:center;margin:16px 0 24px"><a href="#" id="draft_reset">入力を最初からやり直す</a></div>');
+  $('draft_reset').onclick = function (e) { e.preventDefault(); draftClear(); location.reload(); };
+  DRAFT_ON = true;
+  ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, draftSave); });
+}
+var SENDING = false;
+function submitApply() {
+  if (SENDING) return; // 2 回押しで二重登録しない
+  var errs = applyErrs();
+  if (errs.length) {
+    var pg = 7; errs.forEach(function (e) { pg = Math.min(pg, PAGE_OF[e[0]] == null ? 7 : PAGE_OF[e[0]]); });
+    pgGo(pg); showErrors(errs);
+    if ($('sendst')) $('sendst').textContent = '入力が足りない所があります: ' + errs.map(function (e) { return e[1]; }).join(' / ');
+    return;
+  }
+  var d = infoCollect();
+  d.consent = true; d.cast = castAll(); d.photoId = PHOTO_ID;
+  d.slot = { date: $('slot_d').value, time: $('slot_t').value };
+  SENDING = true;
+  $('sub').disabled = true;
+  $('sub').innerHTML = '<span class="spin"></span>送信中…';
+  $('sendst').textContent = '';
+  // 写真はアップロード済み (file ID)。サーバが写真を確かめられた時だけ申込みを確定する
+  google.script.run.withSuccessHandler(function () {
+    draftClear();
+    msg('');
+    $('app').innerHTML = '<div class="done"><div class="ck">&#10003;</div><h2 style="font-size:24px;line-height:1.6">お疲れ様でした。<br>情報を店舗へ送信しました。<br>このページは閉じてください。</h2>' +
+      '<p class="small" style="color:#048a3c">面接写真を保存しました。</p></div>';
+    window.scrollTo(0, 0);
+  }).withFailureHandler(function (e) {
+    SENDING = false; $('sub').disabled = false; $('sub').textContent = '送信';
+    var t = '送信できませんでした: ' + (e && e.message || e);
+    $('sendst').textContent = t; msg(t, true);
+    loadSlots();
+  }).submitApplicant(d);
+}
+
+// ================= スタッフ用 =================
+var KROWS = { 'ア': 'アイウエオァィゥェォ', 'カ': 'カキクケコ', 'サ': 'サシスセソ', 'タ': 'タチツテトッ', 'ナ': 'ナニヌネノ', 'ハ': 'ハヒフヘホ', 'マ': 'マミムメモ', 'ヤ': 'ヤユヨャュョ', 'ラ': 'ラリルレロ', 'ワ': 'ワヲンヰヱ' };
+var ROW = '';
+function kn(s) { return String(s || '').replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); }); }
+function rowOf(f) {
+  var c = kn(f).normalize('NFD').charAt(0);
+  for (var r in KROWS) if (KROWS[r].indexOf(c) >= 0) return r;
+  return '';
+}
+function startStaff() {
+  google.script.run.withSuccessHandler(function (b) { B = b; B.t0 = Date.now(); B.choices.jikyu = YEN; ['wageA', 'wageB', 'wageC', 'wageD'].forEach(function (k) { B.choices[k] = YEN; }); B.choices.hosho = ['なし'].concat(YEN, ['その他']); if (MODE === 'tainyu') showTainyu(''); else showList(); })
+    .withFailureHandler(function (e) { $('app').textContent = '起動エラー: ' + e.message; }).getBoot();
+}
+var YEN = (function () { var a = []; for (var v = 2000; v <= 6000; v += 500) a.push(String(v).replace(/(\d)(\d{3})$/, '$1,$2') + '円'); return a.concat(['6,000円より上']); })();
+function showList() {
+  CUR = null; ROW = '';
+  $('app').innerHTML = '<h2>応募者一覧</h2><div class="small"><a href="' + esc(BASE) + '" target="_top">応募者入力画面を開く</a>　<a href="#" id="totn">体入管理へ</a>　<a href="#" id="qrb">応募者用QR</a>　<a href="' + esc(B.ssUrl) + '" target="_blank">記録シート</a></div>' +
+    '<div class="chips" id="rows" data-m="x">' + Object.keys(KROWS).concat(['全部']).map(function (r) { return '<button type="button" class="chip rowb' + (r === '全部' ? ' on' : '') + '" data-r="' + r + '">' + r + '</button>'; }).join('') + '</div>' +
+    '<select id="sf" style="width:auto;margin-top:8px"><option value="">状態: すべて</option>' + B.statuses.map(function (s) { return '<option' + (s === 'クロージング' ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +
+    '<input type="text" id="flt" placeholder="名前で検索 (本名・源氏名・フリガナ / ひらがな可)"><div id="lst">読み込み中...</div>';
+  $('totn').onclick = function (e) { e.preventDefault(); showTainyu(''); };
+  $('qrb').onclick = function (e) { e.preventDefault(); showQr(); };
+  $('flt').oninput = renderList; $('sf').onchange = renderList;
+  [].forEach.call(document.querySelectorAll('.rowb'), function (b) {
+    b.onclick = function (e) {
+      e.stopPropagation();
+      ROW = b.getAttribute('data-r') === '全部' ? '' : b.getAttribute('data-r');
+      [].forEach.call(document.querySelectorAll('.rowb'), function (x) { x.classList.toggle('on', x === b); });
+      renderList();
+    };
+  });
+  run('listApplicants', [], function (l) { LIST = l; renderList(); });
+}
+// 応募者用 QR: 応募者入力専用アプリの URL を端末内で QR にする (外部 API は使わない)
+function showQr() {
+  if (!B.applyUrl) { msg('応募者用URLが未設定です', true); return; }
+  var o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:center;justify-content:center';
+  o.innerHTML = '<div style="background:#fff;color:#000;padding:20px;border-radius:12px;max-width:340px;text-align:center"><h3 style="margin:0 0 8px">応募者用QR</h3>' +
+    '<div id="qrbox" style="display:inline-block;padding:8px;background:#fff"></div>' +
+    '<p class="small" style="word-break:break-all;user-select:all">' + esc(B.applyUrl) + '</p>' +
+    '<button class="pri" id="qrcp">URLをコピー (LINE送付用)</button><button id="qrx">閉じる</button></div>';
+  document.body.appendChild(o);
+  if (window.QRCode) new QRCode($('qrbox'), { text: B.applyUrl, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  else $('qrbox').textContent = 'QRを作れませんでした。URLをコピーしてください';
+  $('qrx').onclick = function () { document.body.removeChild(o); };
+  $('qrcp').onclick = function () {
+    var done = function () { msg('URLをコピーしました'); };
+    var fb = function () {
+      var t = document.createElement('textarea'); t.value = B.applyUrl; document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); done(); } catch (x) { msg('コピーできませんでした。URLを長押しで選んでください', true); }
+      document.body.removeChild(t);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(B.applyUrl).then(done, fb); else fb();
+  };
+}
+// 段階の色 (スプレッドシートの行の色と同じ)
+var STC = { '一日体験予定': '#fff2cc', '1日体験': '#fff2cc', '再体験': '#fff2cc', '一日体験予定・保留': '#d9d9d9', 'クロージング': '#cfe2f3', 'クロージング・保留': '#d9d9d9', '保留': '#d9d9d9', '採用': '#d9ead3' };
+function isClosing(st) { return st === 'クロージング' || st === 'クロージング・保留'; }
+function isPlan(st) { return st === '一日体験予定' || st === '1日体験' || st === '再体験'; }
+function renderList() {
+  if (!$('flt')) return;
+  var f = kn(($('flt').value || '').trim()), s = $('sf').value;
+  var l = LIST.filter(function (a) {
+    if (a.status === '不採用') return false; // 不採用は「お断り」タブへ移るので一覧には出さない
+    if (s === 'クロージング' ? !isClosing(a.status) : s === '一日体験予定' ? !isPlan(a.status) : s && a.status !== s) return false;
+    if (ROW && rowOf(a.furigana || a.genWishYomi) !== ROW) return false;
+    return !f || kn(a.name + a.furigana + a.genWishYomi + a.gen + a.id).indexOf(f) >= 0;
+  });
+  $('lst').innerHTML = l.length ? l.map(function (a) {
+    return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + (STC[a.status] || '#fff') + '"><b>' + esc(a.name) + ' / ' + esc(a.gen) + '</b> <span class="badge">' + esc(a.status) + '</span>' + (a.rank ? ' ランク' + esc(a.rank) : '') +
+      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + esc(a.store) + '　更新 ' + esc(a.updated) + '</div>' + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
+  }).join('') : '<div class="small">該当なし</div>';
+  [].forEach.call(document.querySelectorAll('.item'), function (e) { e.onclick = function () { var id = e.getAttribute('data-id'); if (isClosing(e.getAttribute('data-st'))) { FROM = ''; showClosing(id); } else openApplicant(id); }; });
+  [].forEach.call(document.querySelectorAll('.clb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); FROM = ''; showClosing(b.getAttribute('data-id')); }; });
+}
+
+var FROM = '', TDATE = '';
+function openApplicant(id) {
+  $('app').innerHTML = '読み込み中...';
+  run('getApplicant', [id], function (r) {
+    CUR = r; VALS = {};
+    B.forms.forEach(function (f) {
+      var s = r.forms[f.key];
+      VALS[f.key] = s ? s.values : f.q.map(function () { return ''; });
+    });
+    showApplicant();
+  });
+}
+
+var STAFF = [['gen', '源氏名', 'text'], ['genYomi', '源氏名の読み (カタカナ)', 'text'], ['jikyu', '1日体験時給', 'choice'], ['hosho', '入店時保証', 'choice'],
+  ['hoshoTerm', '保証期間', 'choice'], ['sougeiGo', '送迎出勤時', 'choice'], ['sougeiBack', '送迎退勤時', 'choice'],
+  ['photo', '宣材撮影', 'choice'], ['publish', '掲載箇所', 'choice'],
+  ['wageA', '時給A', 'choice'], ['wageB', '時給B', 'choice'], ['wageC', '時給C', 'choice'], ['wageD', '時給D', 'choice'], ['wageNote', '時給の備考', 'text']]; // 身分証 (idDoc) は「追加ヒアリング」ページの面接担当者の下
+var OTHERS = ['idDoc'];
+var MANK = { jikyu: 'yen', hosho: 'yen', hoshoTerm: 'mon', wageA: 'yen', wageB: 'yen', wageC: 'yen', wageD: 'yen' }; // プルダウン + 手入力の欄
+
+function shiftHtml(a) {
+  var h = '<div class="small" style="margin-top:12px">出勤日・時間 (面接で決めた曜日ごとの出勤時間。出ない曜日は「--」)</div>';
+  WEEK.forEach(function (w, i) {
+    var p = String(a['ds' + i] || '').split('～');
+    h += '<div class="day"><b class="big">' + w + '</b><div class="times"><div class="tc"><div class="pl">開始</div>' + sel('s_ds' + i, T_START, p[0] || '', '--') +
+      '</div><div class="tc"><div class="pl">終了</div>' + sel('e_ds' + i, T_END, p[1] || '', '--') + '</div></div></div>';
+  });
+  return h;
+}
+function fieldHtml(k, label, type, v) {
+  var h = '<div class="q" id="w_' + k + '"><label class="t">' + label + '</label>';
+  if (type === 'choice' && MANK[k]) {
+    h += pairHtml(MANK[k], B.choices[k], v, 'data-k="' + k + '"');
+  } else if (type === 'choice') {
+    var isOth = /^その他/.test(v) && B.choices[k].indexOf('その他') >= 0;
+    var known = B.choices[k].indexOf(v) >= 0 || isOth || !v;
+    h += '<select data-k="' + k + '"><option value="">選択</option>' + B.choices[k].map(function (o) {
+      return '<option' + ((o === v || (o === 'その他' && isOth)) ? ' selected' : '') + '>' + esc(o) + '</option>';
+    }).join('') + (known ? '' : '<option selected>' + esc(v) + '</option>') + '</select>';
+    if (OTHERS.indexOf(k) >= 0) h += '<input type="text" data-ko="' + k + '" placeholder="その他の内容" style="margin-top:4px;display:' + (isOth ? 'block' : 'none') + '" value="' + esc(isOth ? v.replace(/^その他:?\s*/, '') : '') + '">';
+  } else h += '<input type="' + type + '" data-k="' + k + '" value="' + esc(v) + '">';
+  return h + '<div class="ferr" id="e_' + k + '"></div></div>';
+}
+var CLOSE_QI = [31, 32, 36, 37]; // 「その他気になった事」2 つ + クロージング 2 つ = 次のページ (part='close')
+function taikenHtml(part) {
+  var f = B.forms.filter(function (x) { return x.key === 'taiken'; })[0], v = VALS.taiken, h = '';
+  var sq = STAFFQ.filter(function (c) { return c.f === 'taiken'; });
+  f.q.forEach(function (q, i) {
+    if (i < 2 || q.t === WHYT) return;
+    if ((CLOSE_QI.indexOf(i) >= 0) !== (part === 'close')) return;
+    var c = sq.filter(function (x) { return x.qi === i; })[0];
+    if (c) { h += qHtml(c, v[i]); return; }
+    if (q.ty !== 'c') return;
+    var opts = q.opts.map(function (o) { return o === OTHER ? 'その他' : o; }), hasNote = f.q[i + 1] && f.q[i + 1].t === WHYT;
+    var sn = splitNote(v[i]);
+    var num = q.opts.every(function (o) { return o === OTHER || /^[0-9.]+$/.test(o); }); // 数字の評価・ランクは「未入力」を先頭に足し、既定にする
+    if (num) opts = ['未入力'].concat(opts);
+    h += '<div class="q tcb" id="tc_' + i + '"><label class="t">' + esc(q.t) + '</label>' + chipsHtml(opts, sn[0] ? [sn[0]] : (num ? ['未入力'] : []), 's') +
+      '<input type="text" class="nt" id="tn_' + i + '" placeholder="' + (hasNote ? 'どんな所が？ (補足・任意)' : '補足 (あれば)') + '" value="' + esc(hasNote ? v[i + 1] : sn[1]) + '"></div>';
+  });
+  return h;
+}
+var WHYT = 'どんな所が評価又はきになったきになったか記述してください';
+function judgeDates() {
+  var d0 = today(), o = [], dn = ['日', '月', '火', '水', '木', '金', '土'];
+  for (var i = 1; i <= 30; i++) {
+    var s = ymdAdd(d0, i), p = s.split('-');
+    o.push('<option value="' + s + '">' + (+p[1]) + '/' + (+p[2]) + '(' + dn[new Date(+p[0], p[1] - 1, +p[2]).getDay()] + ')' + '</option>');
+  }
+  return '<select id="jdate">' + o.join('') + '</select>';
+}
+function judgeDone(m) {
+  paintHead();
+  $('pgwrap').innerHTML = '<div class="q"><h2>保存しました</h2><p>' + esc(m) + '</p><button class="pri big" id="tolst" style="width:100%">最初の一覧に戻る</button>' +
+    '<button id="tocl" style="width:100%">体入管理へ</button></div>';
+  $('tolst').onclick = function () { FROM = ''; showList(); };
+  $('tocl').onclick = function () { FROM = 'tainyu'; showTainyu(''); };
+  window.scrollTo(0, 0);
+}
+function showApplicant() {
+  var a = CUR.a, vals = {};
+  B.forms.forEach(function (f) { f.q.forEach(function (q, i) { vals[f.key + ':' + i] = VALS[f.key][i]; }); });
+  CASTQ.forEach(function (c) { if (c.f === 'app') vals['app:' + c.qi] = a[c.qi] || ''; });
+  var hs = '<button id="back">← 一覧</button><h2 id="ttl"></h2><div class="small">' + esc(a.id) + '</div><div>状態: <span class="badge" id="stb"></span>　<span id="rk"></span></div><div id="pgwrap"></div>';
+  $('app').innerHTML = hs;
+  var edit = infoHtml(a, 0) + CAST_PAGES.map(function (p) { return '<div class="sec"><h3>' + esc(p[1]) + '</h3>' + castBlocks(p[0], vals) + '</div>'; }).join('');
+  var jq = STAFFQ.filter(function (c) { return c.f === 'jikyu'; });
+  var pages = [
+    { t: 'CAST回答の確認', h: '<div class="card" id="card"></div><div class="small">カードをタップすると、内容を修正できます。</div><div id="edit1" style="display:none">' + edit + '</div>' },
+    { t: '追加ヒアリング', h: fieldHtml('interviewer', '面接担当者', 'text', a.interviewer) + fieldHtml('idDoc', '身分証 <span class="req">*</span>', 'choice', a.idDoc) +
+        fieldHtml('idChecker', '年齢確認者', 'text', a.idChecker) + fieldHtml('idDate', '年齢確認日', 'date', a.idDate) + fieldHtml('voice', '声色', 'choice', a.voice) +
+        fieldHtml('explainer', '入店説明者', 'text', a.explainer) + fieldHtml('explainDate', '入店説明日', 'date', a.explainDate) +
+        jq.map(function (c) { return qHtml(c, vals['jikyu:' + c.qi]); }).join('') },
+    { t: '条件決定', h: '<div class="grid">' + STAFF.map(function (t) { return fieldHtml(t[0], t[1], t[2], t[0] === 'gen' ? (a.gen || a.genWish) : t[0] === 'genYomi' ? (a.genYomi || a.genWishYomi) : a[t[0]]); }).join('') + '</div><div class="q"><label class="t">メモ</label><textarea data-k="memo">' + esc(a.memo) + '</textarea></div>' },
+    { t: '体験入店チェック', h: taikenHtml('main') },
+    { t: 'クロージング・その他', h: taikenHtml('close') },
+    { t: '面接終了 お疲れ様でした', h: '<div class="q"><div class="chips" id="jchips" data-m="s">' +
+        ['当日体入', '後日体入', '保留（後日連絡）', 'お断り（翌日18時に自動メール）'].map(function (v) { return '<button type="button" class="chip big" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
+        '<div id="jdbox" style="display:none"><div class="pl">体験日 (明日以降を選べます)</div>' + judgeDates() + '</div></div>' +
+        '<button class="pri big" id="jsave" style="width:100%">保存</button>' }
+  ];
+  pagerInit('pgwrap', pages, {
+    extra: '<button id="isv">一時保存</button>',
+    check: function (i) { return i === 1 && !document.querySelector('[data-k="idDoc"]').value ? [['idDoc', '身分証を選んでください']] : []; },
+    bind: function () {
+      infoBind();
+      [].forEach.call(document.querySelectorAll('select[data-k]'), function (s) {
+        s.onchange = function () { var o = document.querySelector('[data-ko="' + s.getAttribute('data-k') + '"]'); if (o) o.style.display = s.value === 'その他' ? 'block' : 'none'; };
+      });
+      $('card').onclick = function () { var e = $('edit1'); e.style.display = e.style.display === 'none' ? 'block' : 'none'; };
+      $('back').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+      var gk = document.querySelector('[data-k="genYomi"]');
+      if (gk) gk.addEventListener('input', function (e) { if (!e.isComposing) { var v = kata(gk.value); if (v !== gk.value) gk.value = v; } });
+      $('isv').onclick = function () { saveAll(null, function () { msg('一時保存しました ' + (CUR.a.updated || '')); }); };
+      $('jsave').onclick = function () {
+        var on = document.querySelector('#jchips .chip.on');
+        if (!on) { msg('「当日体入」「後日体入」「保留」「お断り」のどれかを選んでください', true); return; }
+        if (!document.querySelector('[data-k="idDoc"]').value) { pgGo(1); showErrors([['idDoc', '身分証を選んでください']]); return; }
+        var v = on.getAttribute('data-v'), kind = v === '当日体入' ? 'today' : v === '後日体入' ? 'later' : v.indexOf('保留') === 0 ? 'hold' : 'reject';
+        var act = kind === 'today' || kind === 'later' ? 'taiken' : kind, date = kind === 'today' ? today() : kind === 'later' ? $('jdate').value : '';
+        if (kind === 'later' && (!date || date <= today())) { msg('後日体入は明日以降の日付を選んでください', true); return; }
+        var label = kind === 'today' ? '当日体入 (' + date + ')' : kind === 'later' ? '後日体入 (' + date + ')' : kind === 'hold' ? '保留 (後日連絡)' : 'お断り (不採用にして、翌日' + B.rejectSend + '時にお断りメールを自動送信予約)';
+        ask('「' + label + '」で保存します。よろしいですか？', function () {
+          $('jsave').disabled = true;
+          var fail = function () { $('jsave').disabled = false; };
+          saveAll('all', function () {
+            run(kind === 'reject' ? 'judgeReject' : 'setJudgement', kind === 'reject' ? [CUR.a.id] : [CUR.a.id, act, date], function (r) {
+              CUR.a.status = r.status; CUR.a.judged = r.judged;
+              if (kind === 'reject') CUR.a.rejState = r.rejState;
+              if (act !== 'taiken') { judgeDone(r.message); return; }
+              CUR.hasT = true; // 体入管理の行ができたので、体験入店チェックの内容を書く
+              saveAll('all', function () { judgeDone(r.message); }, fail);
+            }, fail);
+          }, fail);
+        });
+      };
+      paintHead();
+    },
+    onShow: function (i) { if (i === 0) $('card').innerHTML = summaryHtml(false) + (a.ivAt ? '<div class="small">面接日時: ' + esc(slotText(a.ivAt.split(' ')[0], a.ivAt.split(' ')[1] || '') + (a.ivStore ? '　' + a.ivStore : '')) + '</div>' : '') + (a.faceUrl ? '<div class="small"><a href="' + esc(a.faceUrl) + '" target="_blank">面接写真を開く</a></div>' : ''); }
+  });
+}
+function paintHead() {
+  var a = CUR.a;
+  $('ttl').textContent = a.name + ' / ' + a.gen; $('stb').textContent = a.status + (a.judged ? ' (' + a.judged + ')' : '');
+  $('rk').textContent = a.rank ? '採用ランク: ' + a.rank : '';
+}
+function collectAll() {
+  var d = infoCollect();
+  [].forEach.call(document.querySelectorAll('#app [data-k]'), function (e) {
+    var k = e.getAttribute('data-k'), v = e.value;
+    var pr = e.closest('.mpair');
+    if (pr) v = pairVal(pr);
+    if (v === 'その他' && OTHERS.indexOf(k) >= 0) { var o = document.querySelector('[data-ko="' + k + '"]').value.trim(); v = o ? 'その他: ' + o : 'その他'; }
+    d[k] = v;
+  });
+  CASTQ.forEach(function (c) { if (c.f === 'app' && $(qid(c))) d[c.qi] = qRead(c) || ''; });
+  return d;
+}
+function today() { var t = new Date(); return t.getFullYear() + '-' + pad2(t.getMonth() + 1) + '-' + pad2(t.getDate()); }
+function buildVals(fk, d) {
+  var f = B.forms.filter(function (x) { return x.key === fk; })[0], v = VALS[fk].slice();
+  CASTQ.concat(STAFFQ).forEach(function (c) { if (c.f === fk) { var s = qRead(c); if (s != null) v[c.qi] = s; } });
+  if (fk === 'taiken') f.q.forEach(function (q, i) {
+    var el = $('tc_' + i);
+    if (!el) return;
+    var on = el.querySelector('.chip.on'), val = on ? on.getAttribute('data-v') : '', n = $('tn_' + i).value.trim();
+    if (val === '未入力') val = '';
+    if (f.q[i + 1] && f.q[i + 1].t === WHYT) { v[i] = val; v[i + 1] = n; } else v[i] = n && val ? val + ' 補足: ' + n : val;
+  });
+  if (!v[0]) v[0] = today();
+  v[1] = d.interviewer || '';
+  if (fk === 'jikyu') {
+    var k = function (n) { return qRead(CASTQ.filter(function (c) { return c.f === 'kyujin' && c.qi === n; })[0]) || ''; };
+    var s = k(3) ? '紹介: ' + k(3) : k(4) ? '求人: ' + k(4) : k(2);
+    v[2] = s || v[2];
+  }
+  return v;
+}
+function hasContent(fk, v) { return v.some(function (x, i) { return i >= 2 && String(x || '').trim(); }); }
+// complete: null = 途中保存 / 'all' = 面接内容と体験入店チェックを完了として保存 (判定ページ)。ng = 失敗時に呼ぶ
+function saveAll(complete, done, ng) {
+  var d = collectAll(), errs = infoValidate(d, false);
+  showErrors(errs);
+  if (errs.length) { pgGo(0); $('edit1').style.display = 'block'; if (ng) ng(); return; }
+  var keys = ['jikyu', 'kyujin', 'taiken'];
+  run('saveApplicant', [CUR.a.id, d], function (at) {
+    for (var k in d) CUR.a[k] = d[k];
+    CUR.a.updated = at;
+    (function next(i) {
+      if (i >= keys.length) { paintHead(); done(); return; }
+      var fk = keys[i], v = buildVals(fk, d), prev = CUR.forms[fk];
+      if (!prev && !hasContent(fk, v)) return next(i + 1);
+      if (fk === 'taiken' && !prev && !CUR.hasT) return next(i + 1); // 体入管理の行 (=1日体験の判定) がまだ無い間は、体験入店チェックを書けない
+      var comp = complete === 'all' || !!(prev && prev.done);
+      run('saveForm', [CUR.a.id, fk, v, comp], function (r) {
+        VALS[fk] = v; CUR.forms[fk] = { values: v, done: r.done, at: r.at };
+        CUR.a.rank = r.rank; CUR.a.updated = r.at;
+        next(i + 1);
+      }, ng);
+    })(0);
+  }, ng);
+}
+
+// ================= クロージング画面 (入店 / 保留・検討 / お断り) =================
+function parseReasons(s) {
+  var o = { sel: [], other: '' };
+  String(s || '').split(' / ').forEach(function (x) { if (!x) return; if (x.indexOf('その他: ') === 0) o.other = x.slice(5); else o.sel.push(x); });
+  return o;
+}
+function chosen(boxId) { return [].map.call(document.querySelectorAll('#' + boxId + ' .chip.on'), function (b) { return b.getAttribute('data-v'); }); }
+function jstNow() { return (B.jstMin + Math.floor((Date.now() - B.t0) / 60000)) % 1440; }
+function showClosing(id) {
+  $('app').innerHTML = '読み込み中...';
+  run('getApplicant', [id], function (r) {
+    CUR = r;
+    var a = r.a, cut = B.rejectCutoff, late = jstNow() >= cut * 60;
+    var isHold = a.status === 'クロージング・保留' || a.status === '保留';
+    var rs = parseReasons(isHold ? a.holdReason : ''), rj = parseReasons(a.rejReason);
+    var stores = B.choices.store, home = a.ivStore || (stores.indexOf(a.store) >= 0 ? a.store : '');
+    var storeSel = function (cid) {
+      return '<select id="' + cid + '"><option value="">店舗を選択</option>' + stores.map(function (o) { return '<option' + (o === home ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>';
+    };
+    var h = '<button id="back">← 戻る</button><h2>クロージング</h2><div style="background:' + (STC[a.status] || '#fff') + ';padding:6px 10px;border-radius:8px"><b id="cl_name">' + esc(a.gen || a.genWish || a.name) + '</b>　<span class="small">' + esc(a.name) + '</span> <span class="badge" id="clst">' + esc(a.status) + '</span></div><div class="small">' + esc(a.id) + '　' + esc(a.email) + '</div>';
+    h += '<div class="sec"><h3>採用を打診</h3>' +
+      '<div class="q"><label class="t">時給</label>' + pairHtml('yen', B.yen, a.hireWage, 'id="cl_wage"') + '</div>' +
+      '<div class="q"><label class="t">保証期間</label>' + pairHtml('mon', B.choices.hoshoTerm, a.hoshoTerm, 'id="cl_term"') + '</div>' +
+      '<div class="q"><label class="t">その他</label>' + inp('cl_note', 'text', a.hireNote) + '</div>' +
+      '<div class="q"><label class="t">源氏名の変更 (念のため)</label>' + inp('cl_gen', 'text', a.gen || a.genWish, 'autocomplete="off"') +
+      '<div class="pl">フリガナ</div>' + inp('cl_geny', 'text', a.genYomi || a.genWishYomi, 'autocomplete="off"') + '</div></div>';
+    h += '<div class="sec"><h3>結果 (どれか 1 つ)</h3><div class="chips" id="clkind" data-m="s">' +
+      ['入店', '再体入', '保留', 'お断り'].map(function (v) { return '<button type="button" class="chip big" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
+      '<div class="kp" data-k="入店" style="display:none"><div class="q"><label class="t">入店する店舗 (初期値 = 面接店舗)</label>' + storeSel('cl_st_hire') + '</div>' +
+        shiftHtml(a) + '<div class="q"><label class="t">入店時休暇予定</label>' + inp('cl_leave', 'text', a.leavePlan) + '</div></div>' +
+      '<div class="kp" data-k="再体入" style="display:none"><div class="q"><label class="t">再体入する店舗</label>' + storeSel('cl_st_re') + '</div>' +
+        '<div class="q"><label class="t">日程</label><input type="date" id="cl_date" min="' + today() + '" value="' + ymdAdd(today(), 1) + '"></div>' +
+        '<div class="small">決定すると面接管理の「一日体験予定」(黄色) に戻ります。</div></div>' +
+      '<div class="kp" data-k="保留" style="display:none"><div id="cl_hold">' + chipsHtml(['お相手から保留', '時給面', '勤怠面'], rs.sel, 'm') + '</div>' +
+        '<div class="q"><label class="t">その他</label>' + inp('cl_hold_o', 'text', rs.other) + '</div><div class="small">クロージングに「保留」(灰色) で残ります。一覧から開くとこの画面に戻れます。</div></div>' +
+      '<div class="kp" data-k="お断り" style="display:none"><div id="cl_rej">' + chipsHtml(['接客態度', '勤務態度', '時給面'], rj.sel, 'm') + '</div>' +
+        '<div class="q"><label class="t">その他</label>' + inp('cl_rej_o', 'text', rj.other) + '</div>' +
+        '<div class="q"><label class="t">お断りメール自動送信</label><div class="chips" id="cl_mail" data-m="s"><button type="button" class="chip on" data-v="ON">ON</button><button type="button" class="chip" data-v="OFF">OFF</button></div>' +
+        '<div class="small">ON の時は面接時のメール宛てに、翌日' + B.rejectSend + '時に送信予約します (' + cut + '時を過ぎると予約されません)。</div>' +
+        (late ? '<div class="ferr" style="display:block">' + cut + '時を過ぎているため、ON でも予約されません</div>' : '') +
+        (a.rejState ? '<div class="small">お断りメール: ' + esc(a.rejState) + (a.rejSched ? '（送信予定 ' + esc(a.rejSched) + '）' : '') + '</div>' : '') + '</div></div>' +
+      '<button class="pri big" id="cl_go" style="width:100%">決定</button></div>';
+    $('app').innerHTML = h;
+    $('back').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+    var gy = $('cl_geny');
+    gy.addEventListener('input', function (e) { if (!e.isComposing) { var v = kata(gy.value); if (v !== gy.value) gy.value = v; } });
+    var kindNow = function () { var on = document.querySelector('#clkind .chip.on'); return on ? on.getAttribute('data-v') : ''; };
+    var showKind = function () { var k = kindNow(); [].forEach.call(document.querySelectorAll('.kp'), function (p) { p.style.display = p.getAttribute('data-k') === k ? '' : 'none'; }); };
+    $('clkind').addEventListener('click', function () { setTimeout(showKind, 0); });
+    if (isHold) { document.querySelector('#clkind .chip[data-v="保留"]').classList.add('on'); showKind(); }
+    var KMAP = { '入店': 'hire', '再体入': 'retaiken', '保留': 'hold', 'お断り': 'reject' };
+    $('cl_go').onclick = function () {
+      var k = kindNow();
+      if (!k) { msg('「入店」「再体入」「保留」「お断り」のどれかを選んでください', true); return; }
+      var d = { kind: KMAP[k], wage: pairVal($('cl_wage').parentNode), term: pairVal($('cl_term').parentNode), note: $('cl_note').value.trim(), gen: $('cl_gen').value.trim(), genYomi: kata($('cl_geny').value.trim()) };
+      if (k === '入店') {
+        if (!d.wage) { msg('時給を選んでください', true); return; }
+        if (!d.gen) { msg('源氏名を入力してください', true); return; }
+        if (!d.genYomi) { msg('フリガナを入力してください', true); return; }
+        d.store = $('cl_st_hire').value;
+        if (!d.store) { msg('入店する店舗を選んでください', true); return; }
+        d.leave = $('cl_leave').value.trim();
+        d.ds = WEEK.map(function (w, i) { return $('s_ds' + i).value ? $('s_ds' + i).value + '～' + ($('e_ds' + i).value || 'Last') : ''; });
+      } else if (k === '再体入') {
+        d.store = $('cl_st_re').value; d.date = $('cl_date').value;
+        if (!d.store) { msg('再体入する店舗を選んでください', true); return; }
+        if (!d.date || d.date < today()) { msg('再体入の日程は今日以降を選んでください', true); return; }
+      } else if (k === '保留') { d.reasons = chosen('cl_hold'); d.other = $('cl_hold_o').value.trim(); }
+      else { d.reasons = chosen('cl_rej'); d.other = $('cl_rej_o').value.trim(); d.mail = document.querySelector('#cl_mail .chip.on').getAttribute('data-v') === 'ON'; }
+      var label = k === '入店' ? '「入店」で決定します。在籍シートへ入力されます' : k === '再体入' ? '「再体入」(' + d.store + ' ' + d.date + ') にします' : k === '保留' ? '「保留」にします' : '「お断り」にします (メール自動送信 ' + (d.mail ? 'ON' : 'OFF') + ')。「お断り」タブへ移ります';
+      var go = function () {
+        $('cl_go').disabled = true;
+        run('closeDecide', [id, d], function (x) {
+          $('app').innerHTML = '<div class="q"><h2>決定しました</h2><p>' + esc(x.message) + '</p><button class="pri big" id="cl_ok" style="width:100%">一覧に戻る</button></div>';
+          $('cl_ok').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+          window.scrollTo(0, 0);
+        }, function () { $('cl_go').disabled = false; });
+      };
+      if (k === '入店') run('findGenDup', [d.genYomi, d.store], function (dd) {
+        if (dd && dd.length) ask('同じ店舗（' + dd.join('、') + '）に同じ読みの源氏名の在籍者がいます。それでも入店で決定しますか？', go);
+        else ask(label + '。よろしいですか？', go);
+      }); else ask(label + '。よろしいですか？', go);
+    };
+  });
+}
+
+// ================= 体入管理画面 (?mode=tainyu) =================
+function ymdAdd(d, n) { var p = d.split('-'), t = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]) + n); return t.getFullYear() + '-' + pad2(t.getMonth() + 1) + '-' + pad2(t.getDate()); }
+function showTainyu(date) {
+  CUR = null; FROM = 'tainyu';
+  $('app').innerHTML = '<h2>体入管理</h2><div class="small"><a href="#" id="tolist">応募者一覧へ</a></div>' +
+    '<div class="tdate"><button id="tprev" type="button">← 前日</button><input type="date" id="tdt"><button id="tnext" type="button">翌日 →</button><button id="ttoday" type="button">今日</button></div>' +
+    '<div id="tcards">読み込み中...</div>';
+  $('tolist').onclick = function (e) { e.preventDefault(); FROM = ''; showList(); };
+  var load = function (d) { TDATE = d; showTainyu(d); };
+  run('listTainyu', [date || ''], function (r) {
+    TDATE = r.date; $('tdt').value = r.date;
+    $('tdt').onchange = function () { if ($('tdt').value) load($('tdt').value); };
+    $('tprev').onclick = function () { load(ymdAdd(r.date, -1)); };
+    $('tnext').onclick = function () { load(ymdAdd(r.date, 1)); };
+    $('ttoday').onclick = function () { load(''); };
+    $('tcards').innerHTML = r.cards.length ? r.cards.map(function (c, i) {
+      return '<div class="tcard" data-i="' + i + '" style="background:' + (STC[c.status] || '#fff') + '"><div class="th"><b>' + esc(c.name) + '</b>' + (c.gen ? ' / ' + esc(c.gen) : '') + ' <span class="badge tst">' + esc(c.status) + '</span> <span class="small">' + esc(c.count) + '回目</span></div>' +
+        '<div class="tg"><div><span>面接日</span>' + esc(c.interviewDate) + '</div><div><span>体入日</span>' + esc(c.date) + '</div>' +
+        '<div><span>体入時給</span>' + esc(c.jikyu || '-') + '</div><div><span>身分証</span>' + esc(c.idDoc || '-') + '</div>' +
+        '<div><span>生年月日</span>' + esc(c.birth) + (c.age >= 0 ? '（' + c.age + '歳）' : '') + '</div>' +
+        '<div><span>TEL</span>' + (c.tel ? '<a href="tel:' + esc(c.tel.replace(/[^0-9+]/g, '')) + '" target="_top">' + esc(c.tel) + '</a>' : '-') + '</div></div>' +
+        '<div class="tb">' + (isPlan(c.status) || c.status === '一日体験予定・保留' ? '<button class="pri big" data-a="came" type="button">来た</button><button class="big" data-a="noshow" type="button">来なかった</button>' : isClosing(c.status) ? '<button class="pri big" data-a="close" type="button">クロージング画面を開く</button>' : '') + '<button data-a="detail" type="button">詳細</button></div></div>';
+    }).join('') : '<div class="small">この日の体入はありません</div>';
+    [].forEach.call(document.querySelectorAll('.tcard'), function (el) {
+      var c = r.cards[Number(el.getAttribute('data-i'))];
+      [].forEach.call(el.querySelectorAll('[data-a]'), function (b) {
+        b.onclick = function () {
+          var act = b.getAttribute('data-a');
+          if (act === 'detail') { FROM = 'tainyu'; openApplicant(c.id); return; }
+          if (act === 'close') { FROM = 'tainyu'; showClosing(c.id); return; }
+          var came = act === 'came';
+          ask(came ? c.name + ' さんが「来た」にします。クロージングに移ります。よろしいですか？' : c.name + ' さんが「来なかった」にします。面接管理に「一日体験予定・保留」(灰色) で残ります。よろしいですか？', function () {
+            run('markArrival', [c.id, came], function (j) { msg(j.message); showTainyu(TDATE); });
+          });
+        };
+      });
+    });
+  });
+}
+
+// ================= お断りメール停止画面 (?mode=reject) =================
+function showReject() {
+  $('app').innerHTML = '<h2>お断りメールの停止</h2><div class="small">送信予定の「予約済」を止められます。止めたメールは「再開」で戻せます。</div><div id="rj">読み込み中...</div>';
+  run('listRejects', [], function (r) {
+    $('rj').innerHTML = r.length ? r.map(function (c, i) {
+      var stopped = c.state === '停止';
+      return '<div class="tcard"><div class="th"><b>' + esc(c.name) + '</b> <span class="badge">' + esc(c.state) + '</span></div>' +
+        '<div class="tg"><div><span>店舗</span>' + esc(c.store || '-') + '</div><div><span>送信予定</span>' + esc(String(c.sched).slice(0, 16)) + '</div>' +
+        '<div><span>Email</span>' + esc(c.email || '-') + '</div><div><span>理由</span>' + esc(c.reason || '-') + '</div></div>' +
+        '<div class="tb"><button type="button" data-i="' + i + '" class="' + (stopped ? 'pri' : 'warn') + '">' + (stopped ? '再開' : 'メールを停止') + '</button></div></div>';
+    }).join('') : '<div class="small">送信予定のお断りメールはありません</div>';
+    [].forEach.call(document.querySelectorAll('#rj button[data-i]'), function (b) {
+      var c = r[Number(b.getAttribute('data-i'))], stopped = c.state === '停止';
+      b.onclick = function () {
+        ask(c.name + ' さんへのお断りメールを' + (stopped ? '再開' : '停止') + 'します。よろしいですか？', function () {
+          run('setRejectState', [c.id, stopped ? 'resume' : 'stop'], function () { msg(stopped ? '再開しました' : '停止しました'); showReject(); });
+        });
+      };
+    });
+  });
+}
+
+if (MODE === 'staff' || MODE === 'tainyu') startStaff(); else if (MODE === 'reject') showReject(); else startApply();
+</script></body></html>
