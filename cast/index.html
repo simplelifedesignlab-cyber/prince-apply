@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--pri:#06C755;--priD:#048a3c;--priL:#e6f9ee}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.6;background:#F5F6F8;color:#222;overflow-wrap:anywhere}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 120px}
+header{background:var(--pri);color:#fff;padding:16px 16px 14px}
+header .in{max-width:560px;margin:0 auto}
+header h1{margin:0;font-size:20px}
+header p{margin:2px 0 0;font-size:16px;opacity:.95}
+.note{margin:14px 0;font-size:16px;color:#555}
+.card{background:#fff;border-radius:14px;padding:14px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card.rest{background:#f0f0f0}
+.card h2{margin:0 0 8px;font-size:18px;color:var(--priD)}
+label.t{display:block;font-size:16px;font-weight:600;margin:10px 0 4px}
+select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10px;border:1px solid #cfd3d8;border-radius:10px;background:#fff;font-family:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;font-size:16px;padding:6px 14px;border:1px solid #cfd3d8;border-radius:22px;background:#fff;color:#222;font-family:inherit;cursor:pointer}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.plan{display:flex;gap:6px;align-items:center;margin:6px 0}
+.plan select{flex:0 0 112px;width:112px}
+.plan input{flex:1;min-width:0}
+.plan .sama{flex:0 0 auto;font-size:16px}
+.add{margin-top:6px;min-height:44px;font-size:16px;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:6px 14px;font-family:inherit;cursor:pointer}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -2px 6px rgba(0,0,0,.1);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:560px;margin:0 auto}
+#save{width:100%;min-height:48px;font-size:18px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:12px;font-family:inherit;cursor:pointer}
+#save:disabled{opacity:.6}
+#msg{min-height:24px;text-align:center;font-size:16px;margin-bottom:6px}
+#msg.ok{color:var(--priD)}#msg.ng{color:#d93025}
+#load{padding:40px 0;text-align:center}
+</style></head>
+<body>
+<header><div class="in"><h1 id="gen">シフト入力</h1><p id="store"></p></div></header>
+<div class="wrap">
+  <div id="load">読み込み中…</div>
+  <div id="main" hidden>
+    <p class="note">日ごとに出勤・予定・送迎を入力して、いちばん下の「保存」を押してください。このページはあなた専用です。他の人に教えないでください。</p>
+    <div id="days"></div>
+  </div>
+</div>
+<div class="bar" id="bar" hidden><div class="in"><div id="msg"></div><button id="save">保存</button></div></div>
+<script>
+// google.script.run 互換 shim: GAS の doPost へ fetch (Cookie なし・プリフライトなし)
+(function () {
+  var EXEC = "https://script.google.com/macros/s/AKfycbzfib_u_lyJfa_fI58kyvWd2kTL85WKmTTES4HMST7sQoKeon1yjTsHnjrtUElo1PAc/exec";
+  function call(fn, args, ok, ng) {
+    fetch(EXEC, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (j && j.ok) { if (ok) ok(j.result); } else throw new Error(j && j.error || '送信に失敗しました'); })
+      .catch(function (e) { if (ng) ng(e); else console.error(e); });
+  }
+  function make(ok, ng) {
+    return new Proxy({}, { get: function (t, k) {
+      if (k === 'withSuccessHandler') return function (f) { return make(f, ng); };
+      if (k === 'withFailureHandler') return function (f) { return make(ok, f); };
+      return function () { call(String(k), Array.prototype.slice.call(arguments), ok, ng); };
+    } });
+  }
+  window.google = { script: { run: make(null, null) } };
+})();
+</script>
+<script>
+var TOKEN = (new URLSearchParams(location.search).get('t') || '');
+var data = null;
+
+function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function init() {
+  var slow = setTimeout(function () { var l = document.getElementById('load'); if (!l.hidden) l.textContent = '読み込みに時間がかかっています。開き直してください。'; }, 20000);
+  google.script.run.withSuccessHandler(function (r) {
+    clearTimeout(slow);
+    if (!r || !r.ok) { document.body.innerHTML = '<p style="padding:48px 20px;text-align:center">このページは使えません。お店にお問い合わせください</p>'; return; }
+    data = r;
+    document.getElementById('gen').textContent = r.gen + ' さん';
+    document.getElementById('store').textContent = r.store;
+    document.getElementById('load').hidden = true;
+    document.getElementById('main').hidden = false;
+    document.getElementById('bar').hidden = false;
+    render();
+  }).withFailureHandler(function (e) {
+    clearTimeout(slow);
+    document.getElementById('load').textContent = '読み込めませんでした。時間をおいて開き直してください。 (' + (e && e.message ? e.message : e) + ')';
+  }).getPage(TOKEN);
+}
+
+function chip(label, on, fn) {
+  var b = el('button', 'chip' + (on ? ' on' : ''), label);
+  b.type = 'button';
+  b.onclick = function () { fn(); render(); };
+  return b;
+}
+
+function render() {
+  var box = document.getElementById('days');
+  box.innerHTML = '';
+  data.days.forEach(function (d) {
+    var rest = d.shift === '休み';
+    var card = el('div', 'card' + (rest ? ' rest' : ''));
+    card.appendChild(el('h2', '', d.label));
+
+    card.appendChild(el('label', 't', '出勤'));
+    var sel = el('select');
+    [''].concat(data.shiftOpts).forEach(function (o) {
+      var op = el('option', '', o === '' ? '選んでください' : o); op.value = o; if (o === d.shift) op.selected = true; sel.appendChild(op);
+    });
+    sel.onchange = function () { d.shift = sel.value; render(); };
+    card.appendChild(sel);
+
+    card.appendChild(el('label', 't', '予定'));
+    while (d.plans.length < 2) d.plans.push({ k: data.planKinds[0], n: '' }); // 空の行を最初から 2 つ出す
+    d.plans.forEach(function (p, i) {
+      var row = el('div', 'plan');
+      var k = el('select');
+      data.planKinds.forEach(function (o) { var op = el('option', '', o); op.value = o; if (o === p.k) op.selected = true; k.appendChild(op); });
+      k.onchange = function () { p.k = k.value; };
+      var n = el('input'); n.type = 'text'; n.maxLength = 30; n.placeholder = 'お客様の名前'; n.value = p.n || '';
+      n.oninput = function () { p.n = n.value; };
+      row.appendChild(k); row.appendChild(n); row.appendChild(el('span', 'sama', '様'));
+      card.appendChild(row);
+    });
+    var add = el('button', 'add', '＋ 予定を追加'); add.type = 'button';
+    add.onclick = function () { d.plans.push({ k: data.planKinds[0], n: '' }); render(); };
+    card.appendChild(add);
+
+    if (!rest) {
+      card.appendChild(el('label', 't', '送迎・ヘアメイク'));
+      var ch = el('div', 'chips');
+      ch.appendChild(chip('送迎 行き(朝) ' + (d.go ? 'あり' : 'なし'), d.go, function () { d.go = !d.go; }));
+      ch.appendChild(chip('送迎 帰り ' + (d.back ? 'あり' : 'なし'), d.back, function () { d.back = !d.back; }));
+      ch.appendChild(chip('ヘアメイク ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
+      card.appendChild(ch);
+    }
+    box.appendChild(card);
+  });
+}
+
+// 画面の入力は再描画しても保持される (data に持つ)。空の予定行は保存しない (サーバー側でも除く)
+var saving = false;
+document.getElementById('save').onclick = function () {
+  if (saving) return;
+  saving = true;
+  var btn = this, msg = document.getElementById('msg');
+  btn.disabled = true; btn.textContent = '保存中…'; msg.className = ''; msg.textContent = '';
+  var payload = data.days.map(function (d) {
+    return { date: d.date, shift: d.shift, go: d.go, back: d.back, hair: d.hair,
+      plans: d.plans.filter(function (p) { return String(p.n || '').trim(); }) };
+  });
+  google.script.run.withSuccessHandler(function () {
+    saving = false; btn.disabled = false; btn.textContent = '保存';
+    msg.className = 'ok'; msg.textContent = '保存しました';
+    data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim(); }); });
+    render();
+  }).withFailureHandler(function (e) {
+    saving = false; btn.disabled = false; btn.textContent = '保存';
+    msg.className = 'ng'; msg.textContent = '保存できませんでした。もう一度押してください。 (' + (e && e.message ? e.message : e) + ')';
+  }).savePage(TOKEN, payload);
+};
+init();
+</script>
+</body></html>
