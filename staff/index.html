@@ -36,7 +36,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{border:1px solid #e1e4e8;padding:4px 3px;text-align:center;white-space:nowrap}
 th{background:var(--priL);position:sticky;top:0}
 td.nm{text-align:left;position:sticky;left:0;background:#fff;font-weight:700;max-width:92px;overflow:hidden;text-overflow:ellipsis}
-.c-off{background:#e0e0e0;color:#777}.c-und{background:#fff3b0}.c-on{background:#d8f7e3;font-weight:700}
+.c-abs{background:#f8c9c9;color:#b71c1c;font-weight:700}.c-off{background:#e0e0e0;color:#777}.c-und{background:#fff3b0}.c-on{background:#d8f7e3;font-weight:700}
 .c-miss{outline:2px solid #e53935;outline-offset:-2px;color:#e53935;font-weight:700}
 tr.sum td{background:var(--pinkL);font-weight:700}
 .row{display:flex;justify-content:space-between;gap:8px;padding:10px 4px;border-bottom:1px solid #eee;font-size:17px}
@@ -178,10 +178,11 @@ function vShift(){
     var rows=w.casts.map(function(c){
       var tds=w.days.map(function(d,i){
         var x=c.days[d.date], s=x?x.shift:'';
+        if(x&&x.absent)return '<td class="c-abs">欠</td>';
         if(!s){ if(!c.submitted){return '<td class="c-miss">未</td>';} return '<td></td>'; }
         if(s==='休み')return '<td class="c-off">休</td>';
         if(s==='未定')return '<td class="c-und">未定</td>';
-        sums[i]++; return '<td class="c-on">'+esc(s)+'</td>';
+        sums[i]++; return '<td class="c-on">'+esc(s)+(x.att?' ✔':'')+'</td>';
       }).join('');
       if(!c.submitted)miss++;
       return '<tr><td class="nm">'+esc(c.gen)+'</td>'+tds+'</tr>';
@@ -190,7 +191,7 @@ function vShift(){
     var sum='<tr class="sum"><td class="nm">出勤人数</td>'+sums.map(function(n){return '<td>'+n+'</td>';}).join('')+'</tr>';
     return (miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
       '<div class="card sc"><table>'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+
-      '<div class="upd">赤枠＝未提出　黄＝未定　灰＝休み</div>';
+      '<div class="upd">赤枠＝未提出　黄＝未定　灰＝休み　赤＝当欠　✔＝出勤済み</div>';
   });
 }
 function exText(x,skipKeys){
@@ -200,7 +201,7 @@ function exText(x,skipKeys){
 function vTrans(){
   loadWeek(function(w){
     function list(key,label){
-      var arr=w.casts.filter(function(c){var x=c.days[selDay];return x&&x[key];});
+      var arr=w.casts.filter(function(c){var x=c.days[selDay];return x&&x[key]&&!x.absent;});
       var areas={};
       arr.forEach(function(c){var x=c.days[selDay];var a=x.ex&&(x.ex['方面']||x.ex['乗車市町村']);if(a)areas[a]=(areas[a]||0)+1;});
       var sm=Object.keys(areas).length?'<div class="s" style="font-size:14px;color:#666">'+Object.keys(areas).map(function(a){return esc(a)+' '+areas[a]+'人';}).join(' / ')+'</div>':'';
