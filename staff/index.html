@@ -283,13 +283,26 @@ function payVal(sec,l,v){
 function payLabel(sec,l){
   if(/^[ABC]$/.test(l))return (sec==='バック'?'バック ':'件数 ')+l;
   if(l==='H')return '時間';
-  if(l==='控除額')return '控除の合計';
-  if(l==='%')return '%（給与計算の%列）';
+  if(/^[A-D]time$/.test(l))return '時間'+l.charAt(0);
+  if(l==='控除額')return '経費の小計';
+  if(l==='%')return '給料÷売上';
   return l;
 }
+// 控除: 経費 (共済費・送迎費など) -> 経費の小計 (= Excel の控除額) -> 厚生費・所得税・前渡金 -> 差し引く合計 (= 総支給額 − 差引支給額)
+var PAY_AFTER=/^(厚生費|所得税|前渡金)/;
 function paySecs(items){
-  var g={},net=null;
-  items.forEach(function(x){ if(x[1]==='差引支給額'){net=x[2];return;} (g[x[0]]=g[x[0]]||[]).push({l:payLabel(x[0],x[1]),v:payVal(x[0],x[1],x[2]),t:PAY_TOT.indexOf(x[1])>=0}); });
+  var g={},net=null,gross=null;
+  items.forEach(function(x){
+    if(x[1]==='差引支給額'){net=x[2];return;}
+    if(x[1]==='総支給額')gross=x[2];
+    (g[x[0]]=g[x[0]]||[]).push({l:payLabel(x[0],x[1]),v:payVal(x[0],x[1],x[2]),t:PAY_TOT.indexOf(x[1])>=0,raw:x[1]});
+  });
+  if(g['控除']){
+    var c=g['控除'],sub=c.filter(function(x){return x.raw==='控除額';});
+    var ex=c.filter(function(x){return x.raw!=='控除額'&&!PAY_AFTER.test(x.raw);}),af=c.filter(function(x){return PAY_AFTER.test(x.raw);});
+    g['控除']=ex.concat(sub,af);
+    if(gross!=null&&net!=null)g['控除'].push({l:'差し引く合計',v:yn(gross-net),t:1});
+  }
   var h=PAY_ORDER.filter(function(k){return g[k];}).map(function(k){return sec(k,g[k]);}).join('');
   if(net!=null)h+=sec('差引支給額',[{l:'今月の時点',v:yn(net),big:1}],'net');
   return h;
