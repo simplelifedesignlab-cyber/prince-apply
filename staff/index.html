@@ -47,6 +47,14 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 .cnt{font-size:20px;font-weight:700;color:var(--priD);margin:6px 0}
 .bars{display:flex;align-items:flex-end;gap:2px;height:130px;margin:10px 0 2px;border-bottom:2px solid #ccc}
 .bar{flex:1;background:var(--pri);min-width:3px;border-radius:3px 3px 0 0}
+.grp{flex:1;display:flex;align-items:flex-end;gap:1px;height:100%;min-width:0}
+.grp .bar{min-width:1px;border-radius:2px 2px 0 0}
+.grp .b1{background:var(--pri)}.grp .b2{background:var(--pink)}
+.lg{display:flex;gap:14px;font-size:13px;color:#555;margin:8px 0 0}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.sm{font-size:16px;font-weight:700;margin:2px 0;line-height:1.7}
+.sm span{white-space:nowrap}
+.note{font-size:12px;color:#777;margin:6px 0 0}
 .bl{display:flex;justify-content:space-between;font-size:12px;color:#777}
 .msg{padding:30px 10px;text-align:center;font-size:18px;color:#666}
 .err{color:#d93025}
@@ -59,7 +67,7 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 <div class="wrap" id="app"></div>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
-var INTERVIEW = 'https://script.google.com/macros/s/AKfycbwLAO53cj-BLqrkvFgpoJyUT-Lw0Voj-5WJjdo5aS5wFjGL7IUJgxlcG5FdVU_Hv3xS/exec?mode=staff';
+var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
 var STORES = [{id:'RegentClub千歳',s:'RC千歳'},{id:'328',s:'328'},{id:'WAVE千歳',s:'WAVE千歳'},{id:'花もみじ千歳',s:'花もみじ千歳'}];
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -211,9 +219,28 @@ function vSales(){
     var h=monthNav();
     if(!r.ready){h+=notReady(r);}
     else{
-      var mx=Math.max.apply(null,r.daily.map(function(d){return d.sales;}).concat([1]));
-      h+='<div class="card"><div class="cnt">合計 '+yen(r.total)+'</div>'+
-        (r.daily.length?'<div class="bars">'+r.daily.map(function(d){return '<div class="bar" title="'+esc(d.date)+' '+yen(d.sales)+'" style="height:'+Math.max(2,Math.round(d.sales/mx*100))+'%"></div>';}).join('')+'</div><div class="bl"><span>'+esc(r.daily[0].date.slice(5))+'</span><span>'+esc(r.daily[r.daily.length-1].date.slice(5))+'</span></div>':'<div class="msg">この月のデータはありません</div>')+'</div>'+
+      var sdm={},sbm={},ds={};
+      (r.storeDaily||[]).forEach(function(d){sdm[d.date]=d.sales;ds[d.date]=1;});
+      r.daily.forEach(function(d){sbm[d.date]=d.sales;ds[d.date]=1;});
+      var dl=Object.keys(ds).sort(),hasSt=r.storeTotal!=null;
+      var mx=Math.max.apply(null,dl.map(function(k){return Math.max(sdm[k]||0,sbm[k]||0);}).concat([1]));
+      function yn(n){return '¥'+Number(n||0).toLocaleString('ja-JP');}
+      function bh(v,c){return '<div class="bar '+c+'" style="height:'+(v?Math.max(2,Math.round(v/mx*100)):0)+'%"></div>';}
+      var sum=hasSt?'<div class="sm"><span>店舗売上 '+yn(r.storeTotal)+'</span> / <span>小計 '+yn(r.subTotal)+'</span> / <span>差 '+yn(r.storeTotal-r.subTotal)+'</span></div>':'<div class="cnt">小計 '+yn(r.subTotal)+'</div>';
+      var chart='<div class="msg">この月のデータはありません</div>';
+      if(dl.length){
+        chart='<div class="bars">'+dl.map(function(k){
+          var t=esc(k.slice(5))+'  店舗売上 '+yn(sdm[k])+' / 小計 '+yn(sbm[k]);
+          var g='<div class="grp" title="'+t+'">';
+          if(hasSt)g+=bh(sdm[k],'b1');
+          g+=bh(sbm[k],'b2');
+          return g+'</div>';}).join('')+'</div><div class="bl"><span>'+esc(dl[0].slice(5))+'</span><span>'+esc(dl[dl.length-1].slice(5))+'</span></div>'+
+          '<div class="lg">'+(hasSt?'<span><i style="background:var(--pri)"></i>店舗売上</span>':'')+'<span><i style="background:var(--pink)"></i>小計</span></div>';
+      }
+      var notes='';
+      if(!hasSt)notes+='<div class="note">店舗売上のデータがまだありません (小計のみ表示)</div>';
+      if(r.subMonthOnly)notes+='<div class="note">この店の小計は月合計のみで、日別がありません。店舗売上は日別で表示しています</div>';
+      h+='<div class="card">'+sum+chart+notes+'</div>'+
         '<div class="card sc"><table><tr><th>名前</th><th>売上</th><th>本数</th><th>同伴</th></tr>'+
         r.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">'+imp(r)+'</div>';
     }
