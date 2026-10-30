@@ -63,6 +63,15 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 .rk:nth-child(-n+3) b{background:var(--pink);color:#fff}
 .rk span{flex:1}.rk em{font-style:normal;font-weight:700}
 .lk{cursor:pointer}tr.lk td.nm{color:#c2336a}
+.mail{background:#fff;border-radius:6px;margin:10px 0;box-shadow:0 0 0 12px #FBF3F5;font-weight:300;color:#4A3F44}
+.mh{text-align:center;padding:24px 24px 14px;font-size:13px;letter-spacing:.2em;color:#D9879E}
+.mg{padding:0 24px 22px;font-size:15px}
+.mr{padding:18px 24px;border-top:1px solid #F1E1E6}
+.ml{font-size:12px;letter-spacing:.08em;color:#9C8D93}
+.mb{font-size:30px;line-height:40px;color:#D9879E;padding-top:4px}
+.mc{font-size:14px}
+.mn{padding:16px 24px 22px;font-size:10px;color:#C9BCC1;border-top:1px solid #F1E1E6}
+.pg{height:3px;background:#F6E8EC;margin-top:10px}.pg i{display:block;height:3px;background:#E8A0B4}
 </style></head><body>
 <header><div class="in"><h1 id="ttl">黒服ポータル</h1><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
@@ -91,7 +100,7 @@ var rankTab = 'sales';
 
 var VIEWS = {
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
-  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}
+  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'売上のお知らせ',run:vCast}
 };
 var selCast = lsGet('staffCast') || '';
 function openCast(g){selCast=g;lsSet('staffCast',g);go('cast');}
@@ -247,7 +256,7 @@ function vSales(){
       if(r.subMonthOnly)notes+='<div class="note">この店の小計は月合計のみで、日別がありません。店舗売上は日別で表示しています</div>';
       h+='<div class="card">'+sum+chart+notes+'</div>'+
         '<div class="card sc"><table><tr><th>名前</th><th>売上</th><th>本数</th><th>同伴</th></tr>'+
-        r.casts.map(function(c){return '<tr class="lk" data-g="'+esc(c.gen)+'"><td class="nm">'+esc(c.gen)+' ›</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">名前を押すと明細'+imp(r)+'</div>';
+        r.casts.map(function(c){return '<tr class="lk" data-g="'+esc(c.gen)+'"><td class="nm">'+esc(c.gen)+' ›</td><td>'+yen(c.sales)+'</td><td>'+c.cnt+'</td><td>'+c.douhan+'</td></tr>';}).join('')+'</table></div><div class="upd">名前を押すと、その人の売上のお知らせ (メールと同じ内容)'+imp(r)+'</div>';
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();bindCasts();
   }).catch(function(e){fail(my,e);});
@@ -277,25 +286,23 @@ function vCast(){
     var h=monthNav();
     if(!r.ready){h+=notReady(r);}
     else{
-      var t=r.total,p=r.prevTotal;
-      function yn(n){return '¥'+Number(n||0).toLocaleString('ja-JP');}
-      var cmp='';
-      if(p&&p.sales){var d=t.sales-p.sales;cmp='<div class="note">先月 '+yn(p.sales)+'　→　'+(d>=0?'+':'−')+yn(Math.abs(d))+'（'+Math.round(t.sales/p.sales*100)+'%）</div>';}
-      else if(p)cmp='<div class="note">先月のデータはありません</div>';
-      function kv(k,v){return '<div class="row"><span>'+k+'</span><b>'+v+'</b></div>';}
-      h+='<div class="card"><div class="cnt">'+esc(r.gen)+'</div><div class="sm">売上 '+yn(t.sales)+'</div>'+cmp+'</div>'+
-        '<div class="card">'+kv('出勤',t.att+'日')+kv('本数',t.cnt)+kv('本指',t.hon)+kv('場内',t.jou)+kv('同伴',t.douhan)+
-        kv('1日あたり売上',t.att?yn(Math.round(t.sales/t.att)):'-')+'</div>';
-      var dl=r.daily.filter(function(d){return /^\d{4}-\d{2}-\d{2}$/.test(d.date);});
-      if(dl.length){
-        var mx=Math.max.apply(null,dl.map(function(d){return d.sales;}).concat([1]));
-        h+='<div class="card"><div class="bars">'+dl.map(function(d){return '<div class="bar" style="background:var(--pink);height:'+(d.sales?Math.max(2,Math.round(d.sales/mx*100)):0)+'%" title="'+esc(d.date.slice(5))+' '+yn(d.sales)+'"></div>';}).join('')+'</div>'+
-          '<div class="bl"><span>'+esc(dl[0].slice(5))+'</span><span>'+esc(dl[dl.length-1].slice(5))+'</span></div></div>'+
-          '<div class="card sc"><table><tr><th>日付</th><th>売上</th><th>本数</th><th>本指</th><th>場内</th><th>同伴</th></tr>'+
-          dl.map(function(d){var x=parse(d.date);return '<tr><td>'+(x.getMonth()+1)+'/'+x.getDate()+'('+DOWS[x.getDay()]+')</td><td>'+yen(d.sales)+'</td><td>'+d.cnt+'</td><td>'+d.hon+'</td><td>'+d.jou+'</td><td>'+d.douhan+'</td></tr>';}).join('')+'</table></div>';
-      }else if(r.daily.length){h+='<div class="note">この店は月合計だけで、日別の明細はありません</div>';}
-      else{h+='<div class="msg">この月の売上はありません</div>';}
-      h+='<div class="upd">'+imp(r)+'</div>';
+      // 18 時の売上メール (SalesMail.js) と同じ並び・色
+      function yn(n){return '¥'+Math.round(Number(n||0)).toLocaleString('ja-JP');}
+      function mr(label,big,sub){return '<div class="mr"><div class="ml">'+esc(label)+'</div><div class="mb">'+esc(big)+'</div>'+(sub?'<div class="ml">'+esc(sub)+'</div>':'')+'</div>';}
+      var shop=(STORES.filter(function(s){return s.id===r.store;})[0]||{}).s||r.store, body='';
+      if(r.monthOnly){
+        body=mr(r.m+'月の合計',yn(r.total),'この店は月の合計だけで、日別の売上はありません');
+      }else{
+        var md=r.m+'/'+r.d, period=r.m+'/1〜'+md, up=r.ratio!=null&&r.ratio>=100, down=r.ratio!=null&&r.ratio<100;
+        var rt=r.ratio==null?'—':(up?'↑ ':'↓ ')+Math.round(r.ratio)+'%';
+        var df=r.ratio==null?'先月の同じ期間のデータがありません':(up?'+':'')+Math.round(r.ratio-100)+'%　先月の同期間 '+yn(r.prevTotal);
+        body=mr('売上　'+md,r.yesterday==null?'お休み':yn(r.yesterday),'')+mr('今月の合計　'+period,yn(r.total),'')+mr('先月とくらべて',rt,df);
+        if(r.goal){var pc=Math.round(r.total/r.goal*100),rm=Math.max(0,Math.round(r.goal-r.total));
+          body+='<div class="mr"><div class="ml">'+r.m+'月の目標 '+esc(yn(r.goal))+'　達成率 '+pc+'%</div><div class="mb" style="font-size:20px">'+(rm>0?'目標まで あと'+esc(yn(rm)):'目標を達成しました。')+'</div><div class="pg"><i style="width:'+Math.min(100,pc)+'%"></i></div></div>';}
+        if(up||down)body+='<div class="mr mc">'+(up?'先月より伸びています。':'今月はここから伸ばしていきましょう。')+'</div>';
+        body+='<div class="mn">※売上 = '+md+' 1日分 ／ 今月の合計 = '+period+' ／ 先月とくらべて = 先月の同じ期間 ('+r.pm+'/1〜'+r.pm+'/'+r.pd+') との比</div>';
+      }
+      h+='<div class="mail"><div class="mh">✦　'+esc(shop)+'</div><div class="mg">'+esc(r.gen)+' さん</div>'+body+'</div><div class="upd">'+imp(r)+'</div>';
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
   }).catch(function(e){fail(my,e);});
