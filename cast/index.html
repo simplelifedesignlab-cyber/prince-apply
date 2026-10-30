@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta charset="utf-8">
+<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta name="apple-mobile-web-app-title" content="シフト入力"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#06C755"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root{--pri:#06C755;--priD:#048a3c;--priL:#e6f9ee}
@@ -32,12 +32,25 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 #msg{min-height:24px;text-align:center;font-size:16px;margin-bottom:6px}
 #msg.ok{color:var(--priD)}#msg.ng{color:#d93025}
 #load{padding:40px 0;text-align:center}
+.a2hs{border:2px solid var(--pri);position:relative;padding-right:44px}
+.a2hs h2{font-size:17px}
+.a2hs p{margin:4px 0;font-size:16px}
+.a2hs .x{position:absolute;top:6px;right:6px;min-width:44px;min-height:44px;border:0;background:none;font-size:15px;color:#555;font-family:inherit;cursor:pointer}
+.a2hs .go{margin:6px 0 2px;min-height:44px;font-size:16px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:6px 18px;font-family:inherit;cursor:pointer}
 </style></head>
 <body>
 <header><div class="in"><h1 id="gen">シフト入力</h1><p id="store"></p></div></header>
 <div class="wrap">
   <div id="load">読み込み中…</div>
   <div id="main" hidden>
+    <div class="card a2hs" id="a2hs" hidden>
+      <button type="button" class="x" id="a2hsX" aria-label="閉じる">閉じる</button>
+      <h2>ホーム画面に追加してください</h2>
+      <p>次からすぐ開けるように、ホーム画面に追加してください。</p>
+      <p id="a2hsIos">iPhone(Safari): 下の共有ボタン(□↑)を押して「ホーム画面に追加」→「追加」</p>
+      <p id="a2hsAnd">Android(Chrome): 右上の「︙」を押して「ホーム画面に追加」</p>
+      <button type="button" class="go" id="a2hsGo" hidden>追加する</button>
+    </div>
     <p class="note">日ごとに出勤・予定・送迎を入力して、いちばん下の「保存」を押してください。このページはあなた専用です。他の人に教えないでください。</p>
     <div id="days"></div>
   </div>
@@ -64,7 +77,7 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 })();
 </script>
 <script>
-var TOKEN = (new URLSearchParams(location.search).get('t') || '');
+var TOKEN = (function(){var t=new URLSearchParams(location.search).get('t');try{if(t)localStorage.setItem('castKey',t);else t=localStorage.getItem('castKey');}catch(e){}return t||'';})();
 var data = null;
 
 function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -159,6 +172,30 @@ document.getElementById('save').onclick = function () {
     msg.className = 'ng'; msg.textContent = '保存できませんでした。もう一度押してください。 (' + (e && e.message ? e.message : e) + ')';
   }).savePage(TOKEN, payload);
 };
+// ホーム画面への追加案内: 端末に合う方だけ出す。閉じたら覚える。ホーム画面から開いた時は出さない
+(function () {
+  var card = document.getElementById('a2hs');
+  var standalone = navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  var closed = false;
+  try { closed = localStorage.getItem('a2hsClosed') === '1'; } catch (e) {}
+  if (standalone || closed) return;
+  var ua = navigator.userAgent || '';
+  var and = /Android/.test(ua);
+  var ios = !and && (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+  document.getElementById('a2hsIos').hidden = and && !ios;
+  document.getElementById('a2hsAnd').hidden = ios && !and;
+  card.hidden = false;
+  document.getElementById('a2hsX').onclick = function () {
+    card.hidden = true;
+    try { localStorage.setItem('a2hsClosed', '1'); } catch (e) {}
+  };
+  window.addEventListener('beforeinstallprompt', function (ev) {
+    ev.preventDefault();
+    var go = document.getElementById('a2hsGo');
+    go.hidden = false;
+    go.onclick = function () { go.hidden = true; ev.prompt(); };
+  });
+})();
 init();
 </script>
 </body></html>
