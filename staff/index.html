@@ -74,8 +74,29 @@ tr.sum td{background:var(--pinkL);font-weight:700}
 .li.big2 b{font-size:24px;color:#1F2A44}
 .sec.net h3{background:var(--pink);color:#fff}
 details.pay{margin:10px 0}details.pay summary{cursor:pointer;font-weight:700;padding:10px 4px;color:#1F2A44}
+/* ===== 2026-10-31 スタイリッシュ案: 白と細線・影なし・小さめの角丸 ===== */
+header{padding:10px 16px 12px}
+header .ht{flex:1;min-width:0}
+header .en{font-size:10px;letter-spacing:.32em;color:#AEB7CC;line-height:1.4}
+header h1{font-size:16px;font-weight:500;letter-spacing:.06em}
+#back{border-radius:4px;font-size:14px;font-weight:500;min-height:40px}
+.card,.sec{border-radius:6px;box-shadow:none;border:1px solid #E3E6EC}
+.sec h3{font-size:11px;font-weight:500;letter-spacing:.14em;color:#5A6275}
+.st{border-radius:4px;border-width:1px;font-weight:500}
+.tab{border-radius:4px;border-width:1px;font-weight:500}
+.nb,.dy{border-radius:4px}
+th{font-size:11px;letter-spacing:.14em;color:#5A6275;font-weight:500}
+th,td{border-color:#E3E6EC}
+.row,.rk,.li{border-color:#EEF0F4}
+.upd{color:#8A92A6}
+#app{counter-reset:menu}
+.big{counter-increment:menu;position:relative;min-height:64px!important;font-size:16px!important;font-weight:500;margin:0!important;width:100%!important;border:0;border-bottom:1px solid #EEF0F4;border-radius:0;box-shadow:none;background:#fff;padding:10px 44px 10px 56px}
+:not(.big)+.big{border-top:1px solid #EEF0F4}
+.big small{font-size:12px;color:#5A6275}
+.big::before{content:counter(menu,decimal-leading-zero);position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:11px;color:#8A92A6;letter-spacing:.06em}
+.big::after{content:"";position:absolute;right:22px;top:50%;width:7px;height:7px;border-top:1px solid #8A92A6;border-right:1px solid #8A92A6;transform:translateY(-50%) rotate(45deg)}
 </style></head><body>
-<header><div class="in"><h1 id="ttl">黒服ポータル</h1><button id="back" hidden>← TOP</button></div></header>
+<header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";

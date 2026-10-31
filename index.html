@@ -141,6 +141,68 @@ body.ap{--pri:#E8578A;--priL:#FFF0F5;--priD:#C2336A;background:#FFFFFF;color:#33
   .grid{grid-template-columns:1fr 1fr 1fr}
 }
 @media(max-width:600px){body:not(.ap){padding-left:12px;padding-right:12px}}
+/* ===== 2026-10-31 スタイリッシュ案: 応募者=白地+細線+下線入力 / 黒服=紺+白+細罫線 ===== */
+/* --- 応募者 (.ap) --- */
+body.ap{color:#1A1A1A;font-weight:400}
+.ap .q,.ap .sec{background:transparent;border:0;border-bottom:1px solid #F3DCE5;border-radius:0;box-shadow:none;padding:20px 0;margin:0}
+.ap .sec .q{border:0;padding:12px 0;margin:0}
+.ap .sec h3{font-size:11px;font-weight:500;letter-spacing:.28em;color:#B02A5E;margin:0 0 6px}
+.ap .pg>h2{background:transparent;border:0;box-shadow:none;border-radius:0;padding:8px 0 16px;margin:0;font-size:26px;font-weight:300;letter-spacing:.06em;color:#1A1A1A}
+.ap .pg>h2::before{content:"APPLICATION";display:block;font-size:11px;font-weight:500;letter-spacing:.28em;color:#B02A5E;margin-bottom:8px}
+.ap .q label.t{font-weight:500;font-size:15px}
+.ap .small,.ap .pl{color:#6B6B6B}
+.ap .prog{font-size:12px;font-weight:500;letter-spacing:.1em;color:#B02A5E;padding:10px 0 14px}
+.ap .prog::before,.ap .prog::after{height:2px;border-radius:0}
+.ap .prog::before{background:#F3DCE5}
+.ap .prog::after{background:#E8578A}
+.ap input[type=text],.ap input[type=date],.ap input[type=tel],.ap input[type=email],.ap input[type=url],.ap input[type=time],.ap input[type=number],.ap select{border:0;border-bottom:1px solid #E9C6D4;border-radius:0;background:transparent;min-height:48px;height:48px;font-size:17px;padding:8px 0}
+.ap textarea{border:1px solid #E9C6D4;border-radius:6px;background:transparent;font-size:17px;padding:10px}
+.ap input:focus,.ap select:focus{border:0;border-bottom:1px solid #B02A5E;padding:8px 0;outline:0}
+.ap textarea:focus{border:1px solid #B02A5E;padding:10px}
+.ap .rq.empty input.pk,.ap .rq.empty select.pk{background:#FFF7FA;border:0;border-bottom:1px solid #F08FB0}
+.ap .rq.blk.empty{background:#FFF7FA;border-radius:0}
+.ap .bad input.pk,.ap .bad select.pk{border:0;border-bottom:2px solid #D00;background:#FFF1F1}
+.ap .bad input,.ap .bad select{border-color:#D00}
+.ap .bad.blk{border:2px solid #D00}
+.ap .ferr{color:#D00}
+.ap .chip{border:1px solid #E9C6D4;border-radius:999px;background:#fff;min-height:46px;font-weight:400;color:#1A1A1A;padding:6px 18px}
+.ap .chip.on{background:#B02A5E;border-color:#B02A5E;color:#fff;font-weight:500}
+.ap .bar{border-top:1px solid #F3DCE5}
+.ap .nav button,.ap #pn,.ap button.pri,.ap #sub{min-height:56px;height:56px;border-radius:999px;font-size:16px;font-weight:500;letter-spacing:.2em;padding:8px 16px}
+.ap #pn,.ap button.pri,.ap #sub{background:#B02A5E;color:#fff;border:0}
+.ap #pb{background:#fff;border:1px solid #E9C6D4;color:#B02A5E;font-weight:400}
+.ap #photobtn,.ap #gen_chk{border:1px solid #E9C6D4;border-radius:999px;color:#B02A5E;background:#fff;font-weight:400}
+.ap .consent{background:#fff;border:1px solid #F3DCE5;border-radius:4px;font-size:15px}
+.ap .badge{background:#FFF7FA;color:#B02A5E}
+.ap .done{background:transparent;border:0;box-shadow:none;border-radius:0;padding:64px 12px 48px;margin-top:24px}
+.ap .done::before{content:"THANK YOU";display:block;font-size:11px;font-weight:500;letter-spacing:.32em;color:#B02A5E;margin-bottom:28px}
+.ap .done .ck{width:48px;height:48px;line-height:46px;font-size:22px;background:transparent;border:1px solid #B02A5E;color:#B02A5E;margin:0 auto 28px}
+.ap .done h2{font-weight:300;letter-spacing:.06em;padding-bottom:28px;margin-bottom:24px;border-bottom:1px solid #E9C6D4}
+/* --- 黒服 (.ap 以外) --- */
+body:not(.ap){background:#F4F5F7;color:#111}
+body:not(.ap) h2{font-weight:500;letter-spacing:.04em}
+body:not(.ap) .small,body:not(.ap) .pl{color:#5A6275}
+body:not(.ap) .q,body:not(.ap) .sec,body:not(.ap) .item,body:not(.ap) .card,body:not(.ap) .tcard,body:not(.ap) .pg>h2{border-radius:6px;box-shadow:none;border:1px solid #E3E6EC;outline:0}
+body:not(.ap) .sec .q{border:0}
+body:not(.ap) .pg>h2{border-top:3px solid #1F2A44;font-size:18px;font-weight:500}
+body:not(.ap) .sec h3{font-size:11px;font-weight:500;letter-spacing:.14em;color:#5A6275}
+body:not(.ap) input[type=text],body:not(.ap) input[type=date],body:not(.ap) input[type=tel],body:not(.ap) input[type=email],body:not(.ap) input[type=url],body:not(.ap) input[type=time],body:not(.ap) input[type=number],body:not(.ap) select,body:not(.ap) textarea{border:1px solid #C3C8D1;border-radius:4px}
+body:not(.ap) input:focus,body:not(.ap) select:focus,body:not(.ap) textarea:focus{border:1px solid #1F2A44;padding:8px;outline:0}
+body:not(.ap) button,body:not(.ap) .btn{border-radius:4px}
+body:not(.ap) button.pri,body:not(.ap) .btn.pri{background:#1F2A44;color:#fff;border-radius:4px;padding:8px 24px}
+body:not(.ap) .chip{border-radius:4px}
+body:not(.ap) .prog::before,body:not(.ap) .prog::after{height:2px;border-radius:0}
+body:not(.ap) .prog::after{background:#1F2A44}
+body:not(.ap) .tabs button{background:transparent;color:#5A6275;border-radius:0;border-bottom:2px solid transparent}
+body:not(.ap) .tabs button.on{background:transparent;color:#1F2A44;font-weight:700;border-bottom:2px solid #1F2A44}
+body:not(.ap) .item{background:#fff!important}
+body:not(.ap) .badge{border-radius:3px;font-size:12px;font-weight:500;padding:1px 8px;background:#fff;border:1px solid #C3C8D1;color:#111}
+body:not(.ap) .item[data-st="面接中"] .badge{background:#fff;border:1px solid #1F2A44;color:#1F2A44}
+body:not(.ap) .item[data-st="一日体験予定"] .badge,body:not(.ap) .item[data-st="1日体験"] .badge,body:not(.ap) .item[data-st="再体験"] .badge{background:#E6E9F0;border-color:#E6E9F0;color:#1F2A44}
+body:not(.ap) .item[data-st="クロージング"] .badge{background:#1F2A44;border-color:#1F2A44;color:#fff}
+body:not(.ap) .item[data-st="保留"] .badge,body:not(.ap) .item[data-st="一日体験予定・保留"] .badge,body:not(.ap) .item[data-st="クロージング・保留"] .badge{background:#EEE;border-color:#EEE;color:#111}
+body:not(.ap) .item[data-st="採用"] .badge{background:#111;border-color:#111;color:#fff}
+body:not(.ap) .item[data-st="不採用"] .badge{background:#F4CCCC;border-color:#F4CCCC;color:#7A1F1F}
 </style></head><body>
 <div id="msg"></div>
 <div id="modal"><div><p id="mtext"></p><button class="pri" id="mok">OK</button><button id="mng">キャンセル</button></div></div>
