@@ -2,8 +2,8 @@
   "name": "シフト入力",
   "short_name": "シフト入力",
   "display": "standalone",
-  "background_color": "#F5F6F8",
-  "theme_color": "#06C755",
+  "background_color": "#FFFFFF",
+  "theme_color": "#E8578A",
   "icons": [
     {
       "src": "icon-192.png",

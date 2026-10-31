@@ -91,11 +91,11 @@ button.warn{background:#fce8e6;color:#c5221f}
 #demobar{position:sticky;top:0;z-index:20;background:#fef7e0;color:#7a4f01;padding:8px 12px;border-radius:0 0 12px 12px;font-size:14px;text-align:center}
 #demobar a{color:#1a73e8}
 
-/* ===== 2026-10-29 見た目の整理: 応募者画面 = LINE 風(緑 #06C755) / 黒服画面 = 同系統の落ち着いた緑・画面幅に応じた配置 ===== */
+/* ===== 2026-10-31 配色: 応募者画面 = ピンク×白(.ap) / 黒服画面 = 濃いネイビー・白・黒(ビジネス風)・画面幅に応じた配置 ===== */
 html{-webkit-text-size-adjust:100%}
 *{box-sizing:border-box}
 img{max-width:100%}
-body{--pri:#06C755;--priL:#e6f9ee;--priD:#2f6f4f;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:#F5F6F8;line-height:1.6;overflow-wrap:anywhere}
+body{--pri:#1F2A44;--priL:#E6E9F0;--priD:#2E4372;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;background:#F4F5F7;color:#111;line-height:1.6;overflow-wrap:anywhere}
 button,.btn{min-height:44px}
 button.pri,.btn.pri{background:var(--pri);color:#fff}
 .chip{min-height:44px}
@@ -105,27 +105,32 @@ button.pri,.btn.pri{background:var(--pri);color:#fff}
 .row3{flex-wrap:wrap}
 .row3 select{min-width:0}
 .sec h3{color:var(--priD)}
-body:not(.ap) h2{color:#2f4f3f}
+body:not(.ap) h2{color:#1F2A44}
+body:not(.ap) .tabs button.on{background:#1F2A44;color:#fff}
+body:not(.ap) input[type=text],body:not(.ap) input[type=date],body:not(.ap) input[type=tel],body:not(.ap) input[type=email],body:not(.ap) input[type=url],body:not(.ap) select,body:not(.ap) textarea{border-color:#C3C8D1}
 /* 応募者画面 */
-body.ap{--priD:#048a3c;color:#222;font-size:16px;max-width:560px;padding:12px 16px 100px}
-.ap .q,.ap .sec{border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.ap .sec .q{box-shadow:none}
-.ap .pg>h2{border-top:0;border-left:6px solid var(--pri);border-radius:12px;font-size:20px;font-weight:700;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.ap input[type=text],.ap input[type=date],.ap input[type=tel],.ap input[type=email],.ap input[type=url],.ap select,.ap textarea{font-size:16px;min-height:48px;border:1px solid #d5d8dd;border-radius:12px}
+body.ap{--pri:#E8578A;--priL:#FFF0F5;--priD:#C2336A;background:#FFFFFF;color:#333;font-size:16px;max-width:560px;padding:12px 16px 100px}
+.ap .q,.ap .sec{border-radius:12px;border:1px solid #F6D3E0;box-shadow:0 1px 4px rgba(232,87,138,.08)}
+.ap .sec .q{box-shadow:none;border:0}
+.ap .pg>h2{border-top:0;border-left:6px solid var(--pri);border-radius:12px;font-size:20px;font-weight:700;padding:14px 16px;color:#C2336A;background:#FFF0F5;box-shadow:0 1px 4px rgba(232,87,138,.08)}
+.ap input[type=text],.ap input[type=date],.ap input[type=tel],.ap input[type=email],.ap input[type=url],.ap select,.ap textarea{font-size:16px;min-height:48px;border:1px solid #F6D3E0;border-radius:12px}
 .ap input:focus,.ap select:focus,.ap textarea:focus{border:2px solid var(--pri);padding:7px}
 .ap .q label.t{font-weight:700;font-size:16px}
-.ap .prog{position:sticky;top:0;z-index:4;background:#F5F6F8!important;padding:10px 0 14px;font-size:15px;font-weight:700;color:#444}
+.ap .small,.ap .pl{color:#888}
+.ap .chip{border-color:#F6D3E0}
+.ap .chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.ap .prog{position:sticky;top:0;z-index:4;background:#FFFFFF!important;padding:10px 0 14px;font-size:15px;font-weight:700;color:#C2336A}
 .ap .prog::before,.ap .prog::after{height:6px;border-radius:3px}
-.ap .prog::before{background:#dfe2e6}
-.ap .bar{background:rgba(245,246,248,.96);gap:10px}
+.ap .prog::before{background:#F6D3E0}
+.ap .bar{background:rgba(255,255,255,.96);border-top:1px solid #F6D3E0;gap:10px}
 .ap .nav button{flex:1;min-height:52px;margin:0;border-radius:12px;font-size:17px;font-weight:700}
 .ap #pn,.ap button.pri{background:var(--pri);color:#fff;border-radius:12px;padding:8px 16px}
-.ap #pb{background:#fff;border:2px solid var(--pri);color:#048a3c}
+.ap #pb{background:#fff;border:2px solid var(--pri);color:#C2336A}
 .ap #pb[style*="hidden"]{display:none}
 .ap #sub{min-height:54px;width:100%;border-radius:12px;font-size:18px}
-.ap .consent{background:#fff;border:1px solid #e3e5e8;border-radius:12px;font-size:15px}
-.ap #photobtn,.ap #gen_chk{background:#fff;border:2px solid var(--pri);color:#048a3c;border-radius:12px;width:100%;min-height:48px;margin:6px 0 0}
-.ap .done{background:#fff;border-radius:16px;padding:32px 20px;margin-top:40px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.ap .consent{background:#fff;border:1px solid #F6D3E0;border-radius:12px;font-size:15px}
+.ap #photobtn,.ap #gen_chk{background:#fff;border:2px solid var(--pri);color:#C2336A;border-radius:12px;width:100%;min-height:48px;margin:6px 0 0}
+.ap .done{background:#fff;border-radius:16px;padding:32px 20px;margin-top:40px;text-align:center;border:1px solid #F6D3E0;box-shadow:0 1px 4px rgba(232,87,138,.08)}
 .ap .done .ck{width:64px;height:64px;border-radius:50%;background:var(--pri);color:#fff;font-size:36px;line-height:64px;margin:0 auto 16px}
 .ap .done h2{margin:0 0 12px}
 /* 黒服画面: 幅に応じて */
@@ -614,7 +619,7 @@ document.addEventListener('click', function (e) {
   syncShow();
 });
 function syncShow() {
-  if ($('jdbox')) { var jo = document.querySelector('#jchips .chip.on'); $('jdbox').style.display = jo && jo.getAttribute('data-v') === '1日体験' ? '' : 'none'; }
+  if ($('jdbox')) { var jo = document.querySelector('#jchips .chip.on'); $('jdbox').style.display = jo && jo.getAttribute('data-v') === '後日体入' ? '' : 'none'; }
   [].forEach.call(document.querySelectorAll('[data-si]'), function (w) {
     var c = CASTQ.filter(function (x) { return x.f + ':' + x.qi === w.getAttribute('data-si'); })[0];
     w.style.display = qRead(c) === w.getAttribute('data-sv') ? '' : 'none';
@@ -905,7 +910,7 @@ function submitApply() {
     draftClear();
     msg('');
     $('app').innerHTML = '<div class="done"><div class="ck">&#10003;</div><h2 style="font-size:24px;line-height:1.6">お疲れ様でした。<br>情報を店舗へ送信しました。<br>このページは閉じてください。</h2>' +
-      '<p class="small" style="color:#048a3c">面接写真を保存しました。</p></div>';
+      '<p class="small" style="color:#C2336A">面接写真を保存しました。</p></div>';
     window.scrollTo(0, 0);
   }).withFailureHandler(function (e) {
     SENDING = false; $('sub').disabled = false; $('sub').textContent = '送信';

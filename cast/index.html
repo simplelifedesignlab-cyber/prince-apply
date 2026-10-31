@@ -1,36 +1,37 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta name="apple-mobile-web-app-title" content="シフト入力"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#06C755"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta charset="utf-8">
+<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta name="apple-mobile-web-app-title" content="シフト入力"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#E8578A"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
-:root{--pri:#06C755;--priD:#048a3c;--priL:#e6f9ee}
+:root{--pri:#E8578A;--priD:#C2336A;--priL:#FFF0F5;--line:#F6D3E0}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;font-size:16px;line-height:1.6;background:#F5F6F8;color:#222;overflow-wrap:anywhere}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:16px;line-height:1.6;background:#FFFFFF;color:#333;overflow-wrap:anywhere}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px 120px}
-header{background:var(--pri);color:#fff;padding:16px 16px 14px}
+header{background:var(--priL);color:var(--priD);padding:16px 16px 14px;border-bottom:2px solid var(--pri)}
 header .in{max-width:560px;margin:0 auto}
 header h1{margin:0;font-size:20px}
-header p{margin:2px 0 0;font-size:16px;opacity:.95}
-.note{margin:14px 0;font-size:16px;color:#555}
-.card{background:#fff;border-radius:14px;padding:14px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.card.rest{background:#f0f0f0}
+header p{margin:2px 0 0;font-size:16px;color:#888}
+.note{margin:14px 0;font-size:16px;color:#888}
+.card{background:#fff;border-radius:14px;padding:14px;margin:12px 0;border:1px solid var(--line);box-shadow:0 1px 3px rgba(232,87,138,.08)}
+.card.rest{background:#FAF5F7}
 .card h2{margin:0 0 8px;font-size:18px;color:var(--priD)}
 label.t{display:block;font-size:16px;font-weight:600;margin:10px 0 4px}
-select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10px;border:1px solid #cfd3d8;border-radius:10px;background:#fff;font-family:inherit}
-.sub{margin:8px 0 0;padding:8px 10px;background:#f6f8f7;border-radius:10px}
+select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-family:inherit}
+.sub{margin:8px 0 0;padding:8px 10px;background:var(--priL);border-radius:10px}
 .sub label.t{margin:6px 0 4px;font-size:15px}
 .sub input[type=text]{margin-top:6px}
-.hint{margin:6px 0 0;font-size:14px;color:#555}
+.hint{margin:6px 0 0;font-size:14px;color:#888}
 .prio{display:inline-block;margin:6px 0 0;padding:2px 10px;font-size:14px;font-weight:700;color:#fff;background:#e8710a;border-radius:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{min-height:44px;font-size:16px;padding:6px 14px;border:1px solid #cfd3d8;border-radius:22px;background:#fff;color:#222;font-family:inherit;cursor:pointer}
+.chip{min-height:44px;font-size:16px;padding:6px 14px;border:1px solid var(--line);border-radius:22px;background:#fff;color:#333;font-family:inherit;cursor:pointer}
 .chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
 .plan{display:flex;gap:6px;align-items:center;margin:6px 0}
 .plan select{flex:0 0 112px;width:112px}
 .plan input{flex:1;min-width:0}
 .plan .sama{flex:0 0 auto;font-size:16px}
 .add{margin-top:6px;min-height:44px;font-size:16px;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:6px 14px;font-family:inherit;cursor:pointer}
-.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;box-shadow:0 -2px 6px rgba(0,0,0,.1);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 6px rgba(232,87,138,.08);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .bar .in{max-width:560px;margin:0 auto}
 #save{width:100%;min-height:48px;font-size:18px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:12px;font-family:inherit;cursor:pointer}
 #save:disabled{opacity:.6}
@@ -40,7 +41,7 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .a2hs{border:2px solid var(--pri);position:relative;padding-right:44px}
 .a2hs h2{font-size:17px}
 .a2hs p{margin:4px 0;font-size:16px}
-.a2hs .x{position:absolute;top:6px;right:6px;min-width:44px;min-height:44px;border:0;background:none;font-size:15px;color:#555;font-family:inherit;cursor:pointer}
+.a2hs .x{position:absolute;top:6px;right:6px;min-width:44px;min-height:44px;border:0;background:none;font-size:15px;color:#888;font-family:inherit;cursor:pointer}
 .a2hs .go{margin:6px 0 2px;min-height:44px;font-size:16px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:6px 18px;font-family:inherit;cursor:pointer}
 </style></head>
 <body>
