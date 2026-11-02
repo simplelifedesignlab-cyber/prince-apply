@@ -95,6 +95,25 @@ th,td{border-color:#E3E6EC}
 .big small{font-size:12px;color:#5A6275}
 .big::before{content:counter(menu,decimal-leading-zero);position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:11px;color:#8A92A6;letter-spacing:.06em}
 .big::after{content:"";position:absolute;right:22px;top:50%;width:7px;height:7px;border-top:1px solid #8A92A6;border-right:1px solid #8A92A6;transform:translateY(-50%) rotate(45deg)}
+.pg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px}
+.pg-f{min-height:56px;border:1px solid #C3C8D1;border-radius:4px;background:#fff;font:inherit;font-size:15px;cursor:pointer;color:#1F2A44;padding:6px}
+.pg-f.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.pg-f small{display:block;font-size:11px;opacity:.7}
+.pg-ph{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+.pg-p{aspect-ratio:1/1;border:2px solid transparent;border-radius:4px;background:#EEF0F4;padding:0;overflow:hidden;cursor:pointer;font:inherit;font-size:11px;color:#5A6275}
+.pg-p img{width:100%;height:100%;object-fit:cover;display:block}
+.pg-p.on{border-color:var(--pri);box-shadow:0 0 0 2px var(--pri)}
+.pg-in{padding:12px}
+.pg-ta{width:100%;min-height:110px;font:inherit;font-size:16px;padding:10px;border:1px solid #C3C8D1;border-radius:4px;resize:vertical;background:#fff;color:#111}
+.pg-b{display:block;width:100%;min-height:48px;font:inherit;font-size:16px;font-weight:500;border:1px solid var(--pri);border-radius:4px;background:var(--pri);color:#fff;cursor:pointer;margin-top:10px}
+.pg-b.sub{background:#fff;color:var(--priD)}
+.pg-b:disabled{opacity:.5;cursor:default}
+.pg-msg{padding:10px 12px;margin:8px 0;border:1px solid #E3E6EC;border-radius:4px;background:#fff;font-size:15px}
+.pg-msg.err{color:#d93025;border-color:#d93025}
+.pg-cnt{font-size:12px;color:#8A92A6;text-align:right}
+.pg-tx{white-space:pre-wrap;font-size:15px;padding:10px 12px}
+.dv td.dvc{min-width:44px;height:46px;cursor:pointer;font-size:18px}.dv td.cand{color:#B9C0CE;font-weight:400}
+.pg-row{display:flex;gap:8px;padding:0 12px 12px}.pg-row .pg-b{margin-top:0}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
@@ -142,7 +161,7 @@ var rankTab = 'sales';
 
 var VIEWS = {
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
-  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}
+  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}, post:{t:'投稿生成',run:vPost}
 };
 var selCast = lsGet('staffCast') || '';
 function openCast(g){selCast=g;lsSet('staffCast',g);go('cast');}
@@ -173,6 +192,7 @@ function top_(){
     '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
     '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
     '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
+    '<button class="big" data-v="post">投稿生成<small>お知らせ文を作ってストック</small></button>'+
     '<a class="big" href="'+INTERVIEW+'" target="_blank" rel="noopener">面接管理<small>面接の画面を開く</small></a>'+
     '<div class="upd">黒服ポータル</div>';
   [].forEach.call(document.querySelectorAll('button.big'),function(b){b.onclick=function(){go(b.getAttribute('data-v'));};});
@@ -249,8 +269,28 @@ function vTrans(){
       return '<div class="card"><div class="cnt">'+label+' '+arr.length+'人</div>'+sm+
         (arr.length?arr.map(function(c){var x=c.days[selDay];return '<div class="row"><span>'+esc(c.gen)+'</span><span class="s">'+esc(x.shift||'')+(exText(x)?'<br>'+exText(x):'')+'</span></div>';}).join(''):'<div class="msg" style="padding:12px">なし</div>')+'</div>';
     }
-    return dayBtns(w)+list('go','行き')+list('back','帰り');
+    setTimeout(function(){loadDrv(w.weekStart);},0);
+    return dayBtns(w)+list('go','行き')+list('back','帰り')+'<div class="hd"><b>ドライバー出勤</b><span>○を押す／もう一度で取消　薄い○＝送迎予定にいる日 (押して確定)</span></div><div class="card sc dv" id="drv"><div class="msg" style="padding:12px">読み込み中...</div></div>';
   });
+}
+// ドライバー出勤の週表 (月〜土)。○ = 出勤 (送迎の週払いの元)。薄い○ = 送迎予定にその人がいる日 (候補)
+function loadDrv(ws){
+  var my=seq;
+  api('getDriverWeek',[ws]).then(function(r){
+    if(my!==seq||!$('drv'))return;
+    if(!r.drivers.length){$('drv').innerHTML='<div class="msg" style="padding:12px">ドライバーが未登録です (ドライバータブの 有効 にチェック)</div>';return;}
+    $('drv').innerHTML='<table><tr><th>名前</th>'+r.days.map(function(d){return '<th>'+esc(d.label)+'<br>'+d.dow+'</th>';}).join('')+'<th>計</th></tr>'+
+      r.drivers.map(function(dr){
+        return '<tr><td class="nm">'+esc(dr.name)+(dr.car?'<br><small style="font-weight:400;color:#777">'+esc(dr.car)+'</small>':'')+'</td>'+
+          r.days.map(function(d){var x=dr.days[d.date];return '<td class="dvc'+(x.on?' c-on':'')+(x.candidate?' cand':'')+'" data-d="'+d.date+'" data-n="'+esc(dr.name)+'" data-o="'+(x.on?1:0)+'">'+(x.on||x.candidate?'○':'')+'</td>';}).join('')+
+          '<td><b>'+dr.count+'</b></td></tr>';
+      }).join('')+'</table>';
+    [].forEach.call(document.querySelectorAll('.dvc'),function(td){td.onclick=function(){
+      if(td.getAttribute('data-busy'))return;
+      td.setAttribute('data-busy','1');td.style.opacity='.5';
+      api('setDriverDay',[td.getAttribute('data-d'),td.getAttribute('data-n'),td.getAttribute('data-o')!=='1']).then(function(){loadDrv(ws);}).catch(function(e){td.removeAttribute('data-busy');td.style.opacity='';window.alert(e.message||e);});
+    };});
+  }).catch(function(e){if(my===seq&&$('drv'))$('drv').innerHTML='<div class="msg err" style="padding:12px">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
 function vHair(){
   loadWeek(function(w){
@@ -387,6 +427,159 @@ function vCast(){
     }
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
   }).catch(function(e){fail(my,e);});
+}
+// ---- 投稿生成 (2026-11-02・設計書 12 節) ①フォルダ ②写真 ③ひとこと ④生成 ⑤ストック。別タブでストック一覧 ----
+var P = null;
+function pFresh(tab){return {store:store,tab:tab||'new',folders:null,folder:'',photos:null,photoTotal:0,photoId:'',photoName:'',note:'',text:'',cut:false,busy:'',msg:'',err:false,stock:null};}
+function pMsg(m,err){P.msg=m;P.err=!!err;}
+function vPost(){
+  if(!P||P.store!==store)P=pFresh(P&&P.tab);
+  pRender();
+  if(P.tab==='new'&&!P.folders)pLoadFolders();
+  if(P.tab==='stock')pLoadStock();
+}
+// 非同期の応答は、画面の状態 (P) が変わっていたら捨てる
+function pRun(label,fn,done){
+  var me=P; if(me.busy)return;
+  me.busy=label; me.msg=''; pRender();
+  fn().then(function(r){ if(me!==P)return; me.busy=''; done(r); pRender(); })
+    .catch(function(e){ if(me!==P)return; me.busy=''; pMsg(e.message||String(e),true); pRender(); });
+}
+function pLoadFolders(){
+  var me=P;
+  api('getPostFolders',[store]).then(function(r){ if(me!==P)return; me.folders=r; pRender(); })
+    .catch(function(e){ if(me!==P)return; me.folders=[]; pMsg('フォルダを読めませんでした: '+(e.message||e),true); pRender(); });
+}
+function pLoadPhotos(){
+  var me=P, f=me.folder; me.photos=null;
+  api('getPostPhotos',[store,f]).then(function(r){ if(me!==P||me.folder!==f)return; me.photos=r.photos; me.photoTotal=r.total; pRender(); })
+    .catch(function(e){ if(me!==P||me.folder!==f)return; me.photos=[]; pMsg('写真を読めませんでした: '+(e.message||e),true); pRender(); });
+}
+function pLoadStock(){
+  var me=P; me.stock=null;
+  api('listPosts',[store]).then(function(r){ if(me!==P)return; me.stock=r.posts; pRender(); })
+    .catch(function(e){ if(me!==P)return; me.stock=[]; pMsg('ストックを読めませんでした: '+(e.message||e),true); pRender(); });
+}
+function pNewHtml(){
+  var b=!!P.busy, h='';
+  h+='<div class="sec"><h3>① フォルダ</h3>';
+  if(!P.folders)h+='<div class="msg">読み込み中...</div>';
+  else h+='<div class="pg-grid">'+P.folders.map(function(f){return '<button class="pg-f'+(f.name===P.folder?' on':'')+'" data-pf="'+esc(f.name)+'"'+(b?' disabled':'')+'>'+esc(f.name)+'<small>'+f.count+'枚</small></button>';}).join('')+'</div>';
+  h+='</div>';
+  if(!P.folder)return h;
+  h+='<div class="sec"><h3>② 写真 (選ばなくても作れます)</h3>';
+  if(!P.photos)h+='<div class="msg">読み込み中...</div>';
+  else{
+    h+=P.photos.length?'<div class="pg-ph">'+P.photos.map(function(p){
+      var ok=/^data:image\//.test(p.thumb||'');
+      return '<button class="pg-p'+(p.id===P.photoId?' on':'')+'" data-pp="'+esc(p.id)+'" title="'+esc(p.name)+'"'+(b?' disabled':'')+'>'+(ok?'<img alt="'+esc(p.name)+'" src="'+esc(p.thumb)+'">':esc(p.name))+'</button>';
+    }).join('')+'</div>':'<div class="msg" style="padding:16px">このフォルダに写真はありません</div>';
+    if(P.photoTotal>P.photos.length)h+='<div class="note" style="padding:0 12px">新しい順に '+P.photos.length+' 枚を表示 (全 '+P.photoTotal+' 枚)</div>';
+  }
+  h+='<div class="pg-in"><label class="pg-b sub" style="text-align:center;line-height:46px;margin-top:0'+(b?';opacity:.5':'')+'">その場で写真を追加<input type="file" id="pfile" accept="image/*" hidden'+(b?' disabled':'')+'></label>'+
+    (P.photoName?'<div class="note">選択中: '+esc(P.photoName)+'</div>':'')+'</div></div>';
+  h+='<div class="sec"><h3>③ ひとこと</h3><div class="pg-in"><textarea class="pg-ta" id="pnote" maxlength="500" placeholder="例: 今夜はハロウィンイベント。コスプレで接客します"'+(b?' disabled':'')+'>'+esc(P.note)+'</textarea></div></div>';
+  h+='<div class="sec"><h3>④ 生成・手直し</h3><div class="pg-in"><button class="pg-b" id="pgen" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='gen'?'生成中... (30秒ほどかかります)':(P.text?'やり直す':'文章を生成'))+'</button>';
+  if(P.text)h+='<textarea class="pg-ta" id="ptext" style="min-height:220px;margin-top:10px"'+(b?' disabled':'')+'>'+esc(P.text)+'</textarea><div class="pg-cnt" id="pcnt">'+P.text.length+' / 1500字</div>';
+  h+='</div></div>';
+  if(P.text)h+='<div class="sec"><h3>⑤ ストック</h3><div class="pg-in"><button class="pg-b" id="psave" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='save'?'保存中...':'ストックに入れる')+'</button><div class="note">メインランダム以外は、使った写真を「使用済」フォルダへ移します</div></div></div>';
+  return h;
+}
+function pStockHtml(){
+  if(!P.stock)return '<div class="msg">読み込み中...</div>';
+  if(!P.stock.length)return '<div class="msg">ストックはまだありません</div>';
+  return P.stock.map(function(s,i){
+    return '<div class="sec"><h3>'+esc(s.created)+'　'+esc(s.folder)+'　['+esc(s.state)+']</h3>'+
+      (s.photo?'<div class="note" style="padding:6px 12px 0">写真 '+esc(s.photo)+'</div>':'')+
+      (s.note?'<div class="note" style="padding:2px 12px 0">ひとこと: '+esc(s.note)+'</div>':'')+
+      '<div class="pg-tx">'+esc(s.text)+'</div>'+
+      (s.gbp?'<div class="note" style="padding:0 12px 6px">GBP: '+esc(s.gbp)+'</div>':'')+
+      (s.memo?'<div class="note" style="padding:0 12px 6px">'+esc(s.memo)+'</div>':'')+
+      '<div class="pg-row"><button class="pg-b sub" data-pc="'+i+'"'+(P.busy?' disabled':'')+'>本文コピー</button>'+(s.state==='ストック'?'<button class="pg-b sub" data-px="'+i+'"'+(P.busy?' disabled':'')+'>取消</button>':'')+'</div></div>';
+  }).join('');
+}
+function pRender(){
+  var h='<div class="tabs"><button class="tab'+(P.tab==='new'?' on':'')+'" data-pt="new">作成</button><button class="tab'+(P.tab==='stock'?' on':'')+'" data-pt="stock">ストック一覧</button></div>';
+  if(P.msg)h+='<div class="pg-msg'+(P.err?' err':'')+'">'+esc(P.msg)+'</div>';
+  h+=P.tab==='new'?pNewHtml():pStockHtml();
+  $('body').innerHTML=h; $('upd').textContent='';
+  pBind();
+}
+function pOn(sel,fn){[].forEach.call(document.querySelectorAll(sel),fn);}
+function pBind(){
+  pOn('[data-pt]',function(b){b.onclick=function(){ if(P.busy)return; P.tab=b.getAttribute('data-pt'); P.msg=''; if(P.tab==='stock')P.stock=null; vPost(); };});
+  pOn('[data-pf]',function(b){b.onclick=function(){
+    var f=b.getAttribute('data-pf'); if(P.busy||f===P.folder)return;
+    P.folder=f; P.photoId=''; P.photoName=''; P.text=''; P.msg=''; pRender(); pLoadPhotos();
+  };});
+  pOn('[data-pp]',function(b){b.onclick=function(){
+    var id=b.getAttribute('data-pp'); if(P.busy)return;
+    if(P.photoId===id){P.photoId='';P.photoName='';}
+    else{P.photoId=id;var ph=(P.photos||[]).filter(function(p){return p.id===id;})[0];P.photoName=ph?ph.name:'';}
+    pRender();
+  };});
+  var n=$('pnote'); if(n)n.oninput=function(){P.note=n.value;};
+  var t=$('ptext'); if(t)t.oninput=function(){P.text=t.value;$('pcnt').textContent=t.value.length+' / 1500字';};
+  var f=$('pfile'); if(f)f.onchange=function(){ if(f.files&&f.files[0])pUpload(f.files[0]); f.value=''; };
+  var g=$('pgen'); if(g)g.onclick=pGen;
+  var s=$('psave'); if(s)s.onclick=pSave;
+  pOn('[data-pc]',function(b){b.onclick=function(){
+    var s0=P.stock[+b.getAttribute('data-pc')]; if(!s0)return;
+    pCopy(s0.text).then(function(){b.textContent='コピーしました';setTimeout(function(){b.textContent='本文コピー';},1500);}).catch(function(){pMsg('コピーできませんでした。本文を長押しして選んでください',true);pRender();});
+  };});
+  pOn('[data-px]',function(b){b.onclick=function(){
+    var s0=P.stock[+b.getAttribute('data-px')]; if(!s0||P.busy)return;
+    if(!window.confirm('このストックを取り消しますか？'))return;
+    pRun('cancel',function(){return api('cancelPost',[s0.id]);},function(){pMsg('取り消しました',false);P.stock=null;pLoadStock();});
+  };});
+}
+function pCopy(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(text);
+  return new Promise(function(ok,ng){
+    var ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy')?ok():ng(); }catch(e){ng(e);} document.body.removeChild(ta);
+  });
+}
+function pGen(){
+  if(!P.folder)return;
+  var me=P; if(me.busy)return;
+  me.busy='gen'; me.msg=''; pRender();
+  api('generatePost',[store,P.folder,P.photoId,P.note]).then(function(r){
+    if(me!==P)return; me.busy=''; me.text=r.text; me.cut=!!r.cut; pMsg(r.cut?'1500字を超えたため途中で切りました。手直ししてください':'',r.cut); pRender();
+  }).catch(function(e){ if(me!==P)return; me.busy=''; pMsg(e.message||String(e),true); pRender(); });
+}
+function pSave(){
+  var text=P.text.trim();
+  if(!text){pMsg('本文が空です',true);pRender();return;}
+  if(text.length>1500){pMsg('本文は1500字までです (今 '+text.length+' 字)',true);pRender();return;}
+  var folder=P.folder, pid=P.photoId, note=P.note;
+  pRun('save',function(){return api('savePost',[store,folder,pid,note,text]);},function(r){
+    P.text=''; P.note=''; P.photoId=''; P.photoName=''; pMsg('ストックに入れました'+(r.warn?' ('+r.warn+')':''),!!r.warn);
+    if(folder!=='メインランダム'){P.folders=null;pLoadFolders();pLoadPhotos();}
+  });
+}
+// 端末で長辺 1600px の JPEG に縮小してから送る (interview の写真処理と同じ canvas 方式)
+function pResize(file){
+  return new Promise(function(ok,ng){
+    var url=URL.createObjectURL(file), im=new Image();
+    im.onload=function(){
+      var k=Math.min(1,1600/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(im.naturalWidth*k)); c.height=Math.max(1,Math.round(im.naturalHeight*k));
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url);
+      ok(c.toDataURL('image/jpeg',0.85));
+    };
+    im.onerror=function(){URL.revokeObjectURL(url);ng(new Error('この写真は読めませんでした (JPEG か PNG を選んでください)'));};
+    im.src=url;
+  });
+}
+function pUpload(file){
+  var folder=P.folder; if(!folder||P.busy)return;
+  var me=P; me.busy='up'; me.msg='写真を送っています...'; pRender();
+  pResize(file).then(function(d){return api('uploadPostPhoto',[store,folder,d,file.name]).then(function(r){return {r:r,d:d};});}).then(function(x){
+    if(me!==P)return; me.busy='';
+    if(me.folder===folder){ me.photos=[{id:x.r.id,name:x.r.name,thumb:x.d}].concat(me.photos||[]); me.photoTotal=(me.photoTotal||0)+1; me.photoId=x.r.id; me.photoName=x.r.name; }
+    pMsg('写真を追加しました',false); pRender();
+  }).catch(function(e){ if(me!==P)return; me.busy=''; pMsg(e.message||String(e),true); pRender(); });
 }
 route();
 </script></body></html>
