@@ -104,9 +104,28 @@ var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interv
 var STORES = [{id:'RegentClub千歳',s:'RC千歳'},{id:'328',s:'328'},{id:'WAVE千歳',s:'WAVE千歳'},{id:'花もみじ千歳',s:'花もみじ千歳'}];
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// 黒服用の鍵は ?k= -> localStorage (面接画面と同じ ivKey を共有)。2026-11-02
+var KEY='';
+try{
+  var u0=new URL(location.href),k0=u0.searchParams.get('k');
+  if(k0){localStorage.setItem('ivKey',k0);u0.searchParams.delete('k');history.replaceState(null,'',u0.pathname+u0.search+u0.hash);}
+  KEY=localStorage.getItem('ivKey')||'';
+}catch(e){}
+function post_(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();});
+}
 function api(fn,args){
-  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[]})})
-    .then(function(r){return r.json();}).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'取得に失敗しました');return j.result;});
+  return post_(fn,args).then(function(j){
+    if(!j||!j.needKey)return j;
+    var k=window.prompt('黒服用のキーを入力してください');
+    if(!k)throw new Error('黒服用のキーが必要です');
+    KEY=k.trim();
+    return post_(fn,args).then(function(j2){
+      if(j2&&j2.needKey){try{localStorage.removeItem('ivKey');}catch(e){}throw new Error('キーが違います');}
+      try{localStorage.setItem('ivKey',KEY);}catch(e){}
+      return j2;
+    });
+  }).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'取得に失敗しました');return j.result;});
 }
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
