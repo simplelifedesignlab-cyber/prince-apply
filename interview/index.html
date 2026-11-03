@@ -207,6 +207,12 @@ body:not(.ap) .lt{width:100%;border-collapse:collapse;font-size:15px;background:
 body:not(.ap) .lt th{background:#1F2A44;color:#fff;text-align:left;padding:6px 8px;font-weight:500}
 body:not(.ap) .lt td{border-bottom:1px solid #C3C8D1;padding:6px 8px}
 body:not(.ap) .lt .n{text-align:right}
+#w_store .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#w_store .chip:not(.slc){grid-column:1/-1}
+#w_store .chip.slc{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border-radius:14px;font-size:14px}
+#w_store .chip.slc img{display:block;width:100%;height:64px;object-fit:contain;background:#fff;border-radius:8px}
+#w_store .chip.slc.on::before{content:none}
+.rlg{height:22px;vertical-align:middle;background:#fff;border-radius:4px;margin-right:4px}
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script></head><body>
 <div id="msg"></div>
 <div id="modal"><div><p id="mtext"></p><button class="pri" id="mok">OK</button><button id="mng">キャンセル</button></div></div>
@@ -609,6 +615,12 @@ function decodeQ(c, s) {
   } else vals.push(c.parts[0].k === 'm' ? (m ? m.split('、') : []) : m);
   return { vals: vals, note: sn[1] };
 }
+// 店舗ロゴ (prince-apply/logo)。千歳 4 店以外は '' (2026-11-03)
+function logoOf(s) {
+  s = String(s || '');
+  var k = /^(regent|RC)/i.test(s) ? 'regent' : /^328/.test(s) ? '328' : /^wave/i.test(s) ? 'wave' : /^花もみじ/.test(s) ? 'hanamomiji' : '';
+  return k ? 'https://simplelifedesignlab-cyber.github.io/prince-apply/logo/' + k + '.png' : '';
+}
 function chipsHtml(opts, arr, mode) {
   var o = opts.slice();
   arr.forEach(function (x) { if (o.indexOf(x) < 0) o.push(x); });
@@ -803,7 +815,11 @@ function startApply() {
 // 応募者画面の最初のページの一番上に出す「応募するお店」(必須)。値は今までどおり cast の kyujin:5
 function storeBlock() {
   var c = CASTQ.filter(function (x) { return x.f === 'kyujin' && x.qi === 5; })[0];
-  return '<div id="w_store">' + qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>') + '<div class="ferr" id="e_store"></div></div>';
+  var q = qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>').replace(/<button type="button" class="chip( on)?" data-v="([^"]*)">([^<]*)<\/button>/g, function (m, on, v, t) {
+    var u = logoOf(v);
+    return u ? '<button type="button" class="chip slc' + (on || '') + '" data-v="' + v + '"><img src="' + u + '" alt=""><span>' + t + '</span></button>' : m;
+  });
+  return '<div id="w_store">' + q + '<div class="ferr" id="e_store"></div></div>';
 }
 function showApply() {
   var S = infoSecs({}, 1), bykey = {};
@@ -1080,7 +1096,7 @@ function renderList() {
   });
   $('lst').innerHTML = l.length ? l.map(function (a) {
     return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + (STC[a.status] || '#fff') + '"><b>' + esc(a.name) + ' / ' + esc(a.gen) + '</b> <span class="badge">' + esc(a.status) + '</span>' + (a.rank ? ' ランク' + esc(a.rank) : '') +
-      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + esc(a.store) + '　更新 ' + esc(a.updated) + '</div>' + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
+      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + (logoOf(a.store) ? '<img class="rlg" src="' + logoOf(a.store) + '" alt="">' : '') + esc(a.store) + '　更新 ' + esc(a.updated) + '</div>' + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
   }).join('') : '<div class="small">該当なし</div>';
   [].forEach.call(document.querySelectorAll('.item'), function (e) { e.onclick = function () { var id = e.getAttribute('data-id'); if (isClosing(e.getAttribute('data-st'))) { FROM = ''; showClosing(id); } else openApplicant(id); }; });
   [].forEach.call(document.querySelectorAll('.clb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); FROM = ''; showClosing(b.getAttribute('data-id')); }; });

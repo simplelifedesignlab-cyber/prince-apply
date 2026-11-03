@@ -22,6 +22,8 @@ header h1{margin:0;font-size:19px;flex:1}
 .stores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 12px}
 .st{min-height:60px;font-size:18px;font-weight:700;border:2px solid var(--pri);border-radius:14px;background:#fff;color:var(--priD);font-family:inherit;cursor:pointer}
 .st.on{background:var(--pri);color:#fff}
+.st{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px;font-size:15px}
+.st img{display:block;width:100%;height:52px;object-fit:contain;background:#fff;border-radius:8px}
 .card{background:#fff;border-radius:14px;padding:12px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .nav{display:flex;align-items:center;gap:8px;margin:8px 0}
 .nav .t{flex:1;text-align:center;font-weight:700;font-size:17px}
@@ -120,7 +122,7 @@ th,td{border-color:#E3E6EC}
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
-var STORES = [{id:'RegentClub千歳',s:'RC千歳'},{id:'328',s:'328'},{id:'WAVE千歳',s:'WAVE千歳'},{id:'花もみじ千歳',s:'花もみじ千歳'}];
+var STORES = [{id:'RegentClub千歳',s:'RC千歳',l:'regent'},{id:'328',s:'328',l:'328'},{id:'WAVE千歳',s:'WAVE千歳',l:'wave'},{id:'花もみじ千歳',s:'花もみじ千歳',l:'hanamomiji'}];
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 // 黒服用の鍵は ?k= -> localStorage (面接画面と同じ ivKey を共有)。2026-11-02
@@ -175,7 +177,7 @@ function route(){
   $('ttl').textContent=VIEWS[v].t;
   var el=$('app');
   el.innerHTML='<div class="stores" id="stores"></div><div id="body"></div><div class="upd" id="upd"></div>';
-  $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('');
+  $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'"><img src="../logo/'+s.l+'.png" alt=""><span>'+esc(s.s)+'</span></button>';}).join('');
   [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
   if(!store){$('body').innerHTML='<div class="msg">店舗を選んでください</div>';return;}
   $('body').innerHTML='<div class="msg">読み込み中...</div>';
