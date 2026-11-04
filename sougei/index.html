@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>送迎出勤入力</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+:root{--pri:#1F2A44;--priD:#2E4372;--priL:#E6E9F0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:17px;line-height:1.5;background:#F4F5F7;color:#111;overflow-wrap:anywhere}
+header{background:var(--pri);color:#fff;padding:10px 16px 12px}
+header .in{max-width:1100px;margin:0 auto}
+header .en{font-size:10px;letter-spacing:.32em;color:#AEB7CC;line-height:1.4}
+header h1{margin:0;font-size:18px;font-weight:500;letter-spacing:.06em}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 16px 110px}
+.nav{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
+.nb{min-height:56px;min-width:84px;font:inherit;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;cursor:pointer}
+.nb:disabled{opacity:.4;cursor:default}
+.nav input[type=date]{flex:1;min-height:56px;font:inherit;font-size:21px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
+.dr{display:block;width:100%;min-height:78px;text-align:left;font:inherit;padding:10px 14px;border:1px solid #C3C8D1;border-radius:8px;background:#fff;color:#111;cursor:pointer;touch-action:manipulation}
+.dr b{display:block;font-size:20px;line-height:1.3}
+.dr small{display:block;font-size:13px;color:#5A6275}
+.dr .tag{display:inline-block;margin-left:6px;padding:0 7px;font-size:12px;font-weight:700;border:1px solid var(--priD);border-radius:3px;color:var(--priD);vertical-align:2px}
+.dr.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.dr.on small{color:#C8CFDE}
+.dr.on .tag{color:#fff;border-color:#fff}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:2px solid var(--pri);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.bar .t{font-size:20px;font-weight:700}
+.sv{min-height:60px;min-width:190px;font:inherit;font-size:19px;font-weight:700;border:1px solid var(--pri);border-radius:6px;background:var(--pri);color:#fff;cursor:pointer}
+.sv.clean{background:#fff;color:#5A6275;border-color:#C3C8D1}
+.sv:disabled{cursor:default}
+.hd{font-size:12px;font-weight:500;letter-spacing:.14em;color:#5A6275;margin:26px 4px 6px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:16px}
+th,td{border:1px solid #E3E6EC;padding:8px 10px;text-align:right}
+th{background:var(--priL);color:#5A6275;font-weight:500;font-size:13px}
+td:first-child,th:first-child{text-align:left}
+.msg{padding:26px 10px;text-align:center;font-size:18px;color:#666}
+.err{color:#d93025}
+.note{font-size:14px;color:#5A6275;margin:10px 2px}
+.upd{font-size:13px;color:#8A92A6;text-align:center;margin:14px 0}
+</style></head><body>
+<header><div class="in"><div class="en">PRINCE CHITOSE</div><h1>送迎 ドライバー出勤</h1></div></header>
+<div class="wrap">
+  <div class="nav"><button class="nb" id="pd">← 前の日</button><input type="date" id="dt"><button class="nb" id="nd">次の日 →</button></div>
+  <div id="body"><div class="msg">読み込み中...</div></div>
+  <div class="hd" id="wkh">今週の出勤</div>
+  <div id="wk"></div>
+  <div class="upd" id="upd"></div>
+</div>
+<div class="bar"><div class="in"><span class="t" id="cnt"></span><button class="sv clean" id="sv" disabled>保存済み</button></div></div>
+<script>
+var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
+var $ = function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// 送迎用の鍵 sougeiKey (?k= -> localStorage)。黒服の ivKey・美容室の salonKey とは別
+var KEY='';
+try{
+  var u0=new URL(location.href),k0=u0.searchParams.get('k');
+  if(k0){localStorage.setItem('sougeiKey',k0);u0.searchParams.delete('k');history.replaceState(null,'',u0.pathname+u0.search+u0.hash);}
+  KEY=localStorage.getItem('sougeiKey')||'';
+}catch(e){}
+function post_(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();});
+}
+function api(fn,args){
+  return post_(fn,args).then(function(j){
+    if(!j||!j.needKey)return j;
+    var k=window.prompt('送迎用のキーを入力してください');
+    if(!k)throw new Error('送迎用のキーが必要です');
+    KEY=k.trim();
+    return post_(fn,args).then(function(j2){
+      if(j2&&j2.needKey){try{localStorage.removeItem('sougeiKey');}catch(e){}throw new Error('キーが違います');}
+      try{localStorage.setItem('sougeiKey',KEY);}catch(e){}
+      return j2;
+    });
+  }).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'失敗しました');return j.result;});
+}
+function pad(n){return ('0'+n).slice(-2);}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function shift(s,n){var p=s.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]+n,12);return ymd(d);}
+// 営業日: 朝 5 時までは前の日として開く
+function today(){return ymd(new Date(Date.now()-5*3600000));}
+var openDay=today(), day=openDay, cur=null, picks={}, seq=0, saving=false;
+
+function dirty(){return !!cur&&cur.drivers.some(function(x){return !!picks[x.name]!==x.on;});}
+function renderBar(){
+  var n=cur?cur.drivers.filter(function(x){return picks[x.name];}).length:0, d=dirty();
+  $('cnt').textContent='出勤 '+n+' 人';
+  var b=$('sv');
+  b.className='sv'+(d?'':' clean');b.disabled=!d||saving;b.textContent=saving?'保存中...':(d?'保存する':'保存済み');
+}
+function render(){
+  var r=cur;
+  if(!r.drivers.length){$('body').innerHTML='<div class="msg err">ドライバーが未登録です (Prince App の「ドライバー」タブに名前と有効のチェックを入れてください)</div>';}
+  else{
+    $('body').innerHTML='<div class="grid">'+r.drivers.map(function(x,i){
+      return '<button class="dr'+(picks[x.name]?' on':'')+'" data-i="'+i+'" aria-pressed="'+(picks[x.name]?'true':'false')+'"><b>'+esc(x.name)+(x.candidate&&!x.on?'<span class="tag">予定</span>':'')+'</b><small>'+esc(x.car)+'</small></button>';
+    }).join('')+'</div>'+(new Date(day+'T12:00:00').getDay()===0?'<div class="note">日曜の分は週の集計 (月〜土) に入りません</div>':'');
+    [].forEach.call(document.querySelectorAll('.dr'),function(el){el.onclick=function(){
+      var x=r.drivers[+el.getAttribute('data-i')];picks[x.name]=!picks[x.name];
+      el.classList.toggle('on',picks[x.name]);el.setAttribute('aria-pressed',picks[x.name]?'true':'false');renderBar();
+    };});
+  }
+  var w=r.week, p0=w.start.split('-'), q0=w.end.split('-'), tn=0;
+  $('wkh').textContent='今週の出勤 '+(+p0[1])+'/'+(+p0[2])+'(月) 〜 '+(+q0[1])+'/'+(+q0[2])+'(土)';
+  w.list.forEach(function(x){tn+=x.n;});
+  $('wk').innerHTML='<table><tr><th>ドライバー</th><th>出勤日数</th></tr>'+w.list.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+x.n+'</td></tr>';}).join('')+'<tr><td><b>合計</b></td><td><b>'+tn+'</b></td></tr></table>';
+  $('upd').textContent='最終更新 '+r.updated;
+  $('nd').disabled=day>=today();
+  renderBar();
+}
+function setCur(r){cur=r;picks={};r.drivers.forEach(function(x){picks[x.name]=x.on;});render();}
+function load(){
+  var my=++seq;
+  cur=null;renderBar();
+  $('dt').value=day;$('dt').max=today();
+  $('body').innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSougeiDay',[day]).then(function(r){if(my===seq)setCur(r);}).catch(function(e){if(my===seq)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function go(d){
+  if(dirty()&&!window.confirm('保存していない入力があります。消して日付を変えますか？')){$('dt').value=day;return;}
+  day=d;load();
+}
+$('sv').onclick=function(){
+  if(saving||!dirty())return;
+  saving=true;renderBar();
+  var my=seq, names=cur.drivers.filter(function(x){return picks[x.name];}).map(function(x){return x.name;});
+  api('setSougeiDay',[day,names]).then(function(r){saving=false;if(my===seq)setCur(r);}).catch(function(e){saving=false;window.alert('保存できませんでした: '+(e.message||e));renderBar();});
+};
+$('pd').onclick=function(){go(shift(day,-1));};
+$('nd').onclick=function(){go(shift(day,1));};
+$('dt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('dt').value)&&$('dt').value<=today())go($('dt').value);else $('dt').value=day;};
+// iPad を置きっぱなしにしても、次の営業日には今日の画面へ戻す (入力途中なら動かさない)
+setInterval(function(){var t=today();if(t!==openDay&&!dirty()&&!saving){openDay=t;day=t;load();}},60000);
+load();
+</script>
+</body></html>
