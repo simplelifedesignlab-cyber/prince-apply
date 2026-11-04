@@ -194,7 +194,7 @@ function top_(){
     '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
     '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
     '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
-    '<button class="big" data-v="post">投稿生成<small>お知らせ文を作ってストック</small></button>'+
+    '<button class="big" data-v="post">投稿生成<small>お知らせ文を作って投稿予定へ</small></button>'+
     '<a class="big" href="'+INTERVIEW+'" target="_blank" rel="noopener">面接管理<small>面接の画面を開く</small></a>'+
     '<div class="upd">黒服ポータル</div>';
   [].forEach.call(document.querySelectorAll('button.big'),function(b){b.onclick=function(){go(b.getAttribute('data-v'));};});
@@ -430,14 +430,15 @@ function vCast(){
     $('body').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;bindMonth();
   }).catch(function(e){fail(my,e);});
 }
-// ---- 投稿生成 (2026-11-02・設計書 12 節) ①フォルダ ②写真 ③ひとこと ④生成 ⑤ストック。別タブでストック一覧 ----
+// ---- 投稿生成 (2026-11-02・設計書 12 節) ①フォルダ ②写真 ③ひとこと ④生成 ⑤投稿予定。別タブで投稿予定の一覧 ----
 var P = null;
-function pFresh(tab){return {store:store,tab:tab||'new',folders:null,folder:'',photos:null,photoTotal:0,photoId:'',photoName:'',note:'',title:'',text:'',title2:'',text2:'',cut:false,busy:'',msg:'',err:false,stock:null};}
+function pFresh(tab){return {store:store,tab:tab||'new',folders:null,folder:'',photos:null,photoTotal:0,photoId:'',photoName:'',note:'',title:'',text:'',title2:'',text2:'',presets:null,preset:'',cut:false,busy:'',msg:'',err:false,stock:null};}
 function pMsg(m,err){P.msg=m;P.err=!!err;}
 function vPost(){
   if(!P||P.store!==store)P=pFresh(P&&P.tab);
   pRender();
   if(P.tab==='new'&&!P.folders)pLoadFolders();
+  if(P.tab==='new'&&!P.presets){var pm=P;api('getPostPresets',[store]).then(function(r){if(pm!==P)return;pm.presets=r;pRender();}).catch(function(e){if(pm!==P)return;pm.presets=[];pMsg(e.message||String(e),true);pRender();});}
   if(P.tab==='stock')pLoadStock();
 }
 // 非同期の応答は、画面の状態 (P) が変わっていたら捨てる
@@ -460,7 +461,7 @@ function pLoadPhotos(){
 function pLoadStock(){
   var me=P; me.stock=null;
   api('listPosts',[store]).then(function(r){ if(me!==P)return; me.stock=r.posts; pRender(); })
-    .catch(function(e){ if(me!==P)return; me.stock=[]; pMsg('ストックを読めませんでした: '+(e.message||e),true); pRender(); });
+    .catch(function(e){ if(me!==P)return; me.stock=[]; pMsg('投稿予定を読めませんでした: '+(e.message||e),true); pRender(); });
 }
 function pNewHtml(){
   var b=!!P.busy, h='';
@@ -480,19 +481,20 @@ function pNewHtml(){
   }
   h+='<div class="pg-in"><label class="pg-b sub" style="text-align:center;line-height:46px;margin-top:0'+(b?';opacity:.5':'')+'">その場で写真を追加<input type="file" id="pfile" accept="image/*" hidden'+(b?' disabled':'')+'></label>'+
     (P.photoName?'<div class="note">選択中: '+esc(P.photoName)+'</div>':'')+'</div></div>';
-  h+='<div class="sec"><h3>③ ひとこと</h3><div class="pg-in"><textarea class="pg-ta" id="pnote" maxlength="500" placeholder="例: 今夜はハロウィンイベント。コスプレで接客します"'+(b?' disabled':'')+'>'+esc(P.note)+'</textarea></div></div>';
+  var pre=(P.presets||[]).filter(function(x){return x.name===P.preset;})[0];
+  h+='<div class="sec"><h3>③ 内容</h3><div class="pg-in">'+(P.presets?'<div class="pg-row" style="flex-wrap:wrap;padding:0">'+P.presets.map(function(x){return '<button class="chip'+(x.name===P.preset?' on':'')+'" data-pr="'+esc(x.name)+'"'+(b?' disabled':'')+'>'+esc(x.name)+'</button>';}).join('')+'</div>':'<div class="note">読み込み中...</div>')+(pre?'<div class="pg-tx" style="padding:10px 0">'+esc(pre.text)+'</div>':'')+'<div class="note">追加で書きたい内容 (日付・名前など)</div><textarea class="pg-ta" id="pnote" maxlength="500" placeholder="例: 11月15日。さくらさんのバースデー"'+(b?' disabled':'')+'>'+esc(P.note)+'</textarea></div></div>';
   h+='<div class="sec"><h3>④ 生成・手直し</h3><div class="pg-in"><button class="pg-b" id="pgen" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='gen'?'生成中... (30秒ほどかかります)':(P.text?'やり直す':'文章を生成'))+'</button>';
   if(P.text)h+='<div class="note" style="margin-top:10px;font-weight:700">Google</div>';
   if(P.text)h+='<input class="pg-ta" id="ptitle" maxlength="30" placeholder="タイトル (30字まで)" style="min-height:0;margin-top:10px" value="'+esc(P.title)+'"'+(b?' disabled':'')+'>';
   if(P.text)h+='<textarea class="pg-ta" id="ptext" style="min-height:220px;margin-top:10px"'+(b?' disabled':'')+'>'+esc(P.text)+'</textarea><div class="pg-cnt" id="pcnt">'+P.text.length+' / 1500字</div>';
   if(P.text)h+='<div class="note" style="margin-top:14px;font-weight:700">ポータル (キャバキャバ・ポケパラ等)</div><input class="pg-ta" id="ptitle2" maxlength="30" placeholder="タイトル (30字まで)" style="min-height:0;margin-top:10px" value="'+esc(P.title2)+'"'+(b?' disabled':'')+'><textarea class="pg-ta" id="ptext2" style="min-height:220px;margin-top:10px"'+(b?' disabled':'')+'>'+esc(P.text2)+'</textarea><div class="pg-cnt" id="pcnt2">'+P.text2.length+' / 1500字</div>';
   h+='</div></div>';
-  if(P.text)h+='<div class="sec"><h3>⑤ ストック</h3><div class="pg-in"><button class="pg-b" id="psave" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='save'?'保存中...':'ストックに入れる')+'</button><div class="note">メインランダム以外は、使った写真を「使用済」フォルダへ移します</div></div></div>';
+  if(P.text)h+='<div class="sec"><h3>⑤ 内容を確認して OK なら</h3><div class="pg-in"><button class="pg-b" id="psave" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='save'?'保存中...':'OK・投稿予定に移す')+'</button><div class="note">メインランダム以外は、使った写真を「使用済」フォルダへ移します</div></div></div>';
   return h;
 }
 function pStockHtml(){
   if(!P.stock)return '<div class="msg">読み込み中...</div>';
-  if(!P.stock.length)return '<div class="msg">ストックはまだありません</div>';
+  if(!P.stock.length)return '<div class="msg">投稿予定はまだありません</div>';
   return P.stock.map(function(s,i){
     return '<div class="sec"><h3>'+esc(s.created)+'　'+esc(s.folder)+'　['+esc(s.state)+']</h3>'+
       (s.photo?'<div class="note" style="padding:6px 12px 0">写真 '+esc(s.photo)+'</div>':'')+
@@ -500,11 +502,11 @@ function pStockHtml(){
       (s.media?'<div class="note" style="padding:2px 12px 0">媒体: '+esc(s.media)+'</div>':'')+(s.title?'<div class="pg-tx" style="font-weight:700;padding-bottom:0">'+esc(s.title)+'</div>':'')+'<div class="pg-tx">'+esc(s.text)+'</div>'+
       (s.gbp?'<div class="note" style="padding:0 12px 6px">GBP: '+esc(s.gbp)+'</div>':'')+
       (s.memo?'<div class="note" style="padding:0 12px 6px">'+esc(s.memo)+'</div>':'')+
-      '<div class="pg-row"><button class="pg-b sub" data-pc="'+i+'"'+(P.busy?' disabled':'')+'>本文コピー</button>'+(s.state==='ストック'?'<button class="pg-b sub" data-px="'+i+'"'+(P.busy?' disabled':'')+'>取消</button>':'')+'</div></div>';
+      '<div class="pg-row"><button class="pg-b sub" data-pc="'+i+'"'+(P.busy?' disabled':'')+'>本文コピー</button>'+(s.state==='投稿予定'||s.state==='ストック'?'<button class="pg-b sub" data-px="'+i+'"'+(P.busy?' disabled':'')+'>取消</button>':'')+'</div></div>';
   }).join('');
 }
 function pRender(){
-  var h='<div class="tabs"><button class="tab'+(P.tab==='new'?' on':'')+'" data-pt="new">作成</button><button class="tab'+(P.tab==='stock'?' on':'')+'" data-pt="stock">ストック一覧</button></div>';
+  var h='<div class="tabs"><button class="tab'+(P.tab==='new'?' on':'')+'" data-pt="new">作成</button><button class="tab'+(P.tab==='stock'?' on':'')+'" data-pt="stock">投稿予定</button></div>';
   if(P.msg)h+='<div class="pg-msg'+(P.err?' err':'')+'">'+esc(P.msg)+'</div>';
   h+=P.tab==='new'?pNewHtml():pStockHtml();
   $('body').innerHTML=h; $('upd').textContent='';
@@ -524,6 +526,7 @@ function pBind(){
     pRender();
   };});
   var n=$('pnote'); if(n)n.oninput=function(){P.note=n.value;};
+  document.querySelectorAll('[data-pr]').forEach(function(x){x.onclick=function(){var v=x.getAttribute('data-pr');P.preset=P.preset===v?'':v;P.text='';P.title='';P.text2='';P.title2='';pRender();};});
   var ti=$('ptitle'); if(ti)ti.oninput=function(){P.title=ti.value;};
   var ti2=$('ptitle2'); if(ti2)ti2.oninput=function(){P.title2=ti2.value;};
   var t2=$('ptext2'); if(t2)t2.oninput=function(){P.text2=t2.value;$('pcnt2').textContent=t2.value.length+' / 1500字';};
@@ -537,7 +540,7 @@ function pBind(){
   };});
   pOn('[data-px]',function(b){b.onclick=function(){
     var s0=P.stock[+b.getAttribute('data-px')]; if(!s0||P.busy)return;
-    if(!window.confirm('このストックを取り消しますか？'))return;
+    if(!window.confirm('この投稿予定を取り消しますか？'))return;
     pRun('cancel',function(){return api('cancelPost',[s0.id]);},function(){pMsg('取り消しました',false);P.stock=null;pLoadStock();});
   };});
 }
@@ -552,7 +555,7 @@ function pGen(){
   if(!P.folder)return;
   var me=P; if(me.busy)return;
   me.busy='gen'; me.msg=''; pRender();
-  Promise.all([api('generatePost',[store,P.folder,P.photoId,P.note,'Google']),api('generatePost',[store,P.folder,P.photoId,P.note,'ポータル'])]).then(function(rs){
+  Promise.all([api('generatePost',[store,P.folder,P.photoId,P.note,'Google',P.preset]),api('generatePost',[store,P.folder,P.photoId,P.note,'ポータル',P.preset])]).then(function(rs){
     var r=rs[0],r2=rs[1];
     if(me!==P)return; me.busy=''; me.title=r.title||''; me.text=r.text; me.title2=r2.title||''; me.text2=r2.text; r.cut=r.cut||r2.cut; me.cut=!!r.cut; pMsg(r.cut?'1500字を超えたため途中で切りました。手直ししてください':'',r.cut); pRender();
   }).catch(function(e){ if(me!==P)return; me.busy=''; pMsg(e.message||String(e),true); pRender(); });
@@ -563,9 +566,9 @@ function pSave(){
   var text2=P.text2.trim();
   if(!text2){pMsg('ポータルの本文が空です',true);pRender();return;}
   if(text.length>1500||text2.length>1500){pMsg('本文は1500字までです',true);pRender();return;}
-  var folder=P.folder, pid=P.photoId, note=P.note, items=[{media:'Google',title:P.title.trim(),text:text},{media:'ポータル',title:P.title2.trim(),text:text2}];
-  pRun('save',function(){return api('savePost',[store,folder,pid,note,items]);},function(r){
-    P.title=''; P.text=''; P.title2=''; P.text2=''; P.note=''; P.photoId=''; P.photoName=''; pMsg('ストックに入れました'+(r.warn?' ('+r.warn+')':''),!!r.warn);
+  var folder=P.folder, pid=P.photoId, note=P.note, preset=P.preset, items=[{media:'Google',title:P.title.trim(),text:text},{media:'ポータル',title:P.title2.trim(),text:text2}];
+  pRun('save',function(){return api('savePost',[store,folder,pid,note,items,preset]);},function(r){
+    P.preset=''; P.title=''; P.text=''; P.title2=''; P.text2=''; P.note=''; P.photoId=''; P.photoName=''; pMsg('投稿予定に移しました'+(r.warn?' ('+r.warn+')':''),!!r.warn);
     if(folder!=='メインランダム'){P.folders=null;pLoadFolders();pLoadPhotos();}
   });
 }
