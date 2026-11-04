@@ -438,7 +438,7 @@ function vPost(){
   if(!P||P.store!==store)P=pFresh(P&&P.tab);
   pRender();
   if(P.tab==='new'&&!P.folders)pLoadFolders();
-  if(P.tab==='new'&&!P.presets){var pm=P;api('getPostPresets',[store]).then(function(r){if(pm!==P)return;pm.presets=r;pRender();}).catch(function(e){if(pm!==P)return;pm.presets=[];pMsg(e.message||String(e),true);pRender();});}
+  if(!P.presets){var pm=P;api('getPostPresets',[store]).then(function(r){if(pm!==P)return;pm.presets=r;pRender();}).catch(function(e){if(pm!==P)return;pm.presets=[];pMsg(e.message||String(e),true);pRender();});}
   if(P.tab==='stock')pLoadStock();
 }
 // 非同期の応答は、画面の状態 (P) が変わっていたら捨てる
@@ -482,7 +482,7 @@ function pNewHtml(){
   h+='<div class="pg-in"><label class="pg-b sub" style="text-align:center;line-height:46px;margin-top:0'+(b?';opacity:.5':'')+'">その場で写真を追加<input type="file" id="pfile" accept="image/*" hidden'+(b?' disabled':'')+'></label>'+
     (P.photoName?'<div class="note">選択中: '+esc(P.photoName)+'</div>':'')+'</div></div>';
   var pre=(P.presets||[]).filter(function(x){return x.name===P.preset;})[0];
-  h+='<div class="sec"><h3>③ 内容</h3><div class="pg-in">'+(P.presets?'<div class="pg-row" style="flex-wrap:wrap;padding:0">'+P.presets.map(function(x){return '<button class="chip'+(x.name===P.preset?' on':'')+'" data-pr="'+esc(x.name)+'"'+(b?' disabled':'')+'>'+esc(x.name)+'</button>';}).join('')+'</div>':'<div class="note">読み込み中...</div>')+(pre?'<div class="pg-tx" style="padding:10px 0">'+esc(pre.text)+'</div>':'')+'<div class="note">追加で書きたい内容 (日付・名前など)</div><textarea class="pg-ta" id="pnote" maxlength="500" placeholder="例: 11月15日。さくらさんのバースデー"'+(b?' disabled':'')+'>'+esc(P.note)+'</textarea></div></div>';
+  h+='<div class="sec"><h3>③ 内容</h3><div class="pg-in">'+(P.presets?'<div class="pg-row" style="flex-wrap:wrap;padding:0">'+P.presets.map(function(x){return '<button class="pg-b'+(x.name===P.preset?'':' sub')+'" style="width:auto;flex:0 0 auto;margin:0 6px 6px 0;padding:0 12px" data-pr="'+esc(x.name)+'"'+(b?' disabled':'')+'>'+esc(x.name)+'</button>';}).join('')+'</div>':'<div class="note">読み込み中...</div>')+(pre?'<div class="pg-tx" style="padding:10px 0">'+esc(pre.text)+'</div>':'')+'<div class="note">追加で書きたい内容 (日付・名前など)</div><textarea class="pg-ta" id="pnote" maxlength="500" placeholder="例: 11月15日。さくらさんのバースデー"'+(b?' disabled':'')+'>'+esc(P.note)+'</textarea></div></div>';
   h+='<div class="sec"><h3>④ 生成・手直し</h3><div class="pg-in"><button class="pg-b" id="pgen" style="margin-top:0"'+(b?' disabled':'')+'>'+(P.busy==='gen'?'生成中... (30秒ほどかかります)':(P.text?'やり直す':'文章を生成'))+'</button>';
   if(P.text)h+='<div class="note" style="margin-top:10px;font-weight:700">Google</div>';
   if(P.text)h+='<input class="pg-ta" id="ptitle" maxlength="30" placeholder="タイトル (30字まで)" style="min-height:0;margin-top:10px" value="'+esc(P.title)+'"'+(b?' disabled':'')+'>';
