@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>ヘアメイク入力</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+:root{--pri:#1F2A44;--priD:#2E4372;--priL:#E6E9F0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:17px;line-height:1.5;background:#F4F5F7;color:#111;overflow-wrap:anywhere}
+header{background:var(--pri);color:#fff;padding:10px 16px 12px}
+header .in{max-width:1100px;margin:0 auto}
+header .en{font-size:10px;letter-spacing:.32em;color:#AEB7CC;line-height:1.4}
+header h1{margin:0;font-size:18px;font-weight:500;letter-spacing:.06em}
+.wrap{max-width:1100px;margin:0 auto;padding:12px 16px 60px}
+.nav{display:flex;align-items:center;gap:10px;margin:8px 0 14px}
+.nb{min-height:56px;min-width:84px;font:inherit;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;cursor:pointer}
+.nb:disabled{opacity:.4;cursor:default}
+.nav input[type=date]{flex:1;min-height:56px;font:inherit;font-size:21px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px}
+.card{background:#fff;border:1px solid #E3E6EC;border-radius:8px;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.top b{font-size:22px}
+.att{min-height:52px;min-width:110px;font:inherit;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#5A6275;cursor:pointer}
+.att.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #EEF0F4}
+.row .st{font-size:17px;font-weight:500}
+.step{display:flex;align-items:center;gap:6px;flex:none}
+.step button{width:60px;height:56px;font:inherit;font-size:28px;font-weight:700;line-height:1;border:1px solid var(--priD);border-radius:6px;background:#fff;color:var(--priD);cursor:pointer;touch-action:manipulation}
+.step button:active{background:var(--priL)}
+.step .n{width:52px;text-align:center;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.sum{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:2px solid var(--pri)}
+.sum .t{font-size:18px;font-weight:700}
+.sv{min-height:56px;min-width:150px;font:inherit;font-size:18px;font-weight:700;border:1px solid var(--pri);border-radius:6px;background:var(--pri);color:#fff;cursor:pointer}
+.sv.clean{background:#fff;color:#5A6275;border-color:#C3C8D1}
+.sv:disabled{cursor:default}
+.hd{font-size:12px;font-weight:500;letter-spacing:.14em;color:#5A6275;margin:26px 4px 6px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:16px}
+th,td{border:1px solid #E3E6EC;padding:8px 10px;text-align:right}
+th{background:var(--priL);color:#5A6275;font-weight:500;font-size:13px}
+td:first-child,th:first-child{text-align:left}
+.msg{padding:26px 10px;text-align:center;font-size:18px;color:#666}
+.err{color:#d93025}
+.note{font-size:14px;color:#5A6275;margin:6px 2px}
+.upd{font-size:13px;color:#8A92A6;text-align:center;margin:14px 0}
+</style></head><body>
+<header><div class="in"><div class="en">PRINCE CHITOSE</div><h1>ヘアメイク 出勤・人数</h1></div></header>
+<div class="wrap">
+  <div class="nav"><button class="nb" id="pd">← 前の日</button><input type="date" id="dt"><button class="nb" id="nd">次の日 →</button></div>
+  <div id="body"><div class="msg">読み込み中...</div></div>
+  <div class="hd" id="wkh">今週の集計</div>
+  <div id="wk"></div>
+  <div class="upd" id="upd"></div>
+</div>
+<script>
+var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
+var STORES = [{id:'RegentClub千歳',s:'リージェント'},{id:'328',s:'328'},{id:'WAVE千歳',s:'WAVE'},{id:'花もみじ千歳',s:'花もみじ'}];
+var $ = function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// 鍵は美容室アプリと同じ salonKey (?k= -> localStorage)
+var KEY='';
+try{
+  var u0=new URL(location.href),k0=u0.searchParams.get('k');
+  if(k0){localStorage.setItem('salonKey',k0);u0.searchParams.delete('k');history.replaceState(null,'',u0.pathname+u0.search+u0.hash);}
+  KEY=localStorage.getItem('salonKey')||'';
+}catch(e){}
+function post_(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();});
+}
+function api(fn,args){
+  return post_(fn,args).then(function(j){
+    if(!j||!j.needKey)return j;
+    var k=window.prompt('美容室用のキーを入力してください');
+    if(!k)throw new Error('美容室用のキーが必要です');
+    KEY=k.trim();
+    return post_(fn,args).then(function(j2){
+      if(j2&&j2.needKey){try{localStorage.removeItem('salonKey');}catch(e){}throw new Error('キーが違います');}
+      try{localStorage.setItem('salonKey',KEY);}catch(e){}
+      return j2;
+    });
+  }).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'失敗しました');return j.result;});
+}
+function pad(n){return ('0'+n).slice(-2);}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function shift(s,n){var p=s.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]+n,12);return ymd(d);}
+// 営業日: 朝 5 時までは前の日として開く
+function today(){return ymd(new Date(Date.now()-5*3600000));}
+var openDay=today(), day=openDay, cur=null, drafts={}, seq=0, saving=false;
+
+function view(p){return drafts[p.name]||p;}
+function total(v){return STORES.reduce(function(a,s){return a+(v.counts[s.id]||0);},0);}
+function hasDraft(){return Object.keys(drafts).length>0;}
+function render(){
+  var r=cur;
+  if(!r.stylists.length){$('body').innerHTML='<div class="msg err">美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)</div>';}
+  else{
+    $('body').innerHTML='<div class="grid">'+r.stylists.map(function(p,i){
+      var v=view(p), dirty=!!drafts[p.name];
+      return '<div class="card"><div class="top"><b>'+esc(p.name)+'</b><button class="att'+(v.on?' on':'')+'" data-i="'+i+'">'+(v.on?'出勤':'休み')+'</button></div>'+
+        STORES.map(function(s){return '<div class="row"><span class="st">'+esc(s.s)+'</span><span class="step"><button class="mi" data-i="'+i+'" data-s="'+esc(s.id)+'" aria-label="'+esc(s.s)+' を 1 減らす">−</button><span class="n">'+(v.counts[s.id]||0)+'</span><button class="pl" data-i="'+i+'" data-s="'+esc(s.id)+'" aria-label="'+esc(s.s)+' を 1 増やす">+</button></span></div>';}).join('')+
+        '<div class="sum"><span class="t">合計 '+total(v)+' 人</span><button class="sv'+(dirty?'':' clean')+'" data-i="'+i+'"'+(dirty?'':' disabled')+'>'+(dirty?'保存する':(p.saved?'保存済み':'未入力'))+'</button></div></div>';
+    }).join('')+'</div>'+(new Date(day+'T12:00:00').getDay()===0?'<div class="note">日曜の分は週の集計 (月〜土) に入りません</div>':'');
+  }
+  var w=r.week, p0=w.start.split('-'), q0=w.end.split('-');
+  $('wkh').textContent='今週の集計 '+(+p0[1])+'/'+(+p0[2])+'(月) 〜 '+(+q0[1])+'/'+(+q0[2])+'(土)';
+  var tn=0,td=0;w.list.forEach(function(x){tn+=x.n;td+=x.days;});
+  $('wk').innerHTML='<table><tr><th>美容師</th><th>出勤日数</th><th>人数</th></tr>'+w.list.map(function(x){return '<tr><td>'+esc(x.name)+'</td><td>'+x.days+'</td><td>'+x.n+'</td></tr>';}).join('')+'<tr><td><b>合計</b></td><td><b>'+td+'</b></td><td><b>'+tn+'</b></td></tr></table>';
+  $('upd').textContent='最終更新 '+r.updated;
+  $('nd').disabled=day>=today();
+  function draft(i){var p=r.stylists[i];if(!drafts[p.name])drafts[p.name]={name:p.name,on:p.on,counts:JSON.parse(JSON.stringify(p.counts))};return drafts[p.name];}
+  [].forEach.call(document.querySelectorAll('.pl'),function(el){el.onclick=function(){var d=draft(+el.getAttribute('data-i')),s=el.getAttribute('data-s');if((d.counts[s]||0)>=50)return;d.counts[s]=(d.counts[s]||0)+1;d.on=true;render();};});
+  [].forEach.call(document.querySelectorAll('.mi'),function(el){el.onclick=function(){var p=r.stylists[+el.getAttribute('data-i')],s=el.getAttribute('data-s');if(!(view(p).counts[s]>0))return;draft(+el.getAttribute('data-i')).counts[s]--;render();};});
+  [].forEach.call(document.querySelectorAll('.att'),function(el){el.onclick=function(){
+    var p=r.stylists[+el.getAttribute('data-i')];
+    if(view(p).on&&total(view(p))>0){window.alert('人数を 0 にしてから「休み」にしてください');return;}
+    var d=draft(+el.getAttribute('data-i'));d.on=!d.on;render();
+  };});
+  [].forEach.call(document.querySelectorAll('.sv'),function(el){el.onclick=function(){
+    if(saving)return;
+    var p=r.stylists[+el.getAttribute('data-i')],d=drafts[p.name];
+    if(!d)return;
+    saving=true;el.disabled=true;el.textContent='保存中...';
+    var my=seq;
+    api('setHairDay',[day,p.name,d.on,d.counts]).then(function(res){
+      if(my!==seq)return;
+      if(drafts[p.name]===d)delete drafts[p.name];
+      cur=res;render();
+    }).catch(function(e){window.alert('保存できませんでした: '+(e.message||e));render();}).then(function(){saving=false;});
+  };});
+}
+function load(){
+  var my=++seq;
+  $('dt').value=day;$('dt').max=today();
+  $('body').innerHTML='<div class="msg">読み込み中...</div>';
+  api('getHairDay',[day]).then(function(r){if(my===seq){cur=r;render();}}).catch(function(e){if(my===seq)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function go(d){
+  if(hasDraft()&&!window.confirm('保存していない入力があります。消して日付を変えますか？')){$('dt').value=day;return;}
+  drafts={};day=d;load();
+}
+$('pd').onclick=function(){go(shift(day,-1));};
+$('nd').onclick=function(){go(shift(day,1));};
+$('dt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('dt').value)&&$('dt').value<=today())go($('dt').value);else $('dt').value=day;};
+// iPad を置きっぱなしにしても、次の営業日には今日の画面へ戻す (入力途中なら動かさない)
+setInterval(function(){var t=today();if(t!==openDay&&!hasDraft()&&!saving){openDay=t;day=t;load();}},60000);
+load();
+</script>
+</body></html>
