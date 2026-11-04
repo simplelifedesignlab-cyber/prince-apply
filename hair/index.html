@@ -16,7 +16,7 @@ header .en{font-size:10px;letter-spacing:.32em;color:#AEB7CC;line-height:1.4}
 header h1{margin:0;font-size:18px;font-weight:500;letter-spacing:.06em}
 .wrap{max-width:560px;margin:0 auto;padding:12px 16px 110px}
 .nav{display:flex;align-items:center;gap:8px;margin:4px 0 12px}
-.nb{min-height:52px;flex:none;width:72px;font:inherit;font-size:15px;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;cursor:pointer}
+.nb{min-height:52px;flex:none;width:80px;padding:0;white-space:nowrap;font:inherit;font-size:14px;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;cursor:pointer}
 .nb:disabled{opacity:.4;cursor:default}
 .nav input[type=date]{flex:1;min-height:52px;font:inherit;font-size:18px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;min-width:0}
 .card{background:#fff;border:1px solid #E3E6EC;border-radius:8px;padding:14px;margin-bottom:12px}
@@ -119,7 +119,7 @@ function render(){
   }
   $('body').innerHTML=
     '<div class="card"><div class="top"><b>'+esc(p.name)+'</b><button class="link" id="chg">名前を変える</button></div>'+
-    '<div class="top" style="margin-top:8px"><span>今日の出勤</span><button class="att'+(v.on?' on':'')+'" id="att">'+(v.on?'出勤':'休み')+'</button></div></div>'+
+    '<div class="top" style="margin-top:8px"><span>この日の出勤</span><button class="att'+(v.on?' on':'')+'" id="att">'+(v.on?'出勤':'休み')+'</button></div></div>'+
     '<div class="card"><div class="lb">キャストを追加する</div>'+
     '<div class="st2">'+STORES.map(function(s){return '<button class="stb'+(addStore===s.id?' on':'')+'" data-s="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('')+'</div>'+
     (addStore?(roll?'<div class="lb2">キャストの名前</div><select id="gen">'+opts+'</select>'+(free?'<input type="text" id="free" maxlength="30" placeholder="名前を入れる" style="margin-top:8px" value="'+esc(addFree)+'">':''):'<div class="note">名前を読み込み中...</div>'):'<div class="note">先にお店を押してください</div>')+
