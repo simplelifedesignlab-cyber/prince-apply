@@ -243,7 +243,7 @@ if (MODE === 'apply') document.body.classList.add('ap'); // 応募者画面だ�
 // 2026-11-02: LINE のボタンから開くと ?lu=<ランダム文字列>、媒体別の URL には ?src=<名前> が付く。無くても応募できる (サーバ側で形式を確かめる)
 var LU = '', SRC = '';
 try { var QP = new URLSearchParams(location.search); LU = QP.get('lu') || ''; SRC = QP.get('src') || ''; } catch (e) {}
-var CASTQ = [{"f": "jikyu", "qi": 3, "page": "work", "label": "ナイトワークの経歴", "parts": [{"k": "s", "o": ["未経験", "体験のみ経験あり", "３か月以内", "3～6か月以内", "6か月～1年以内", "１年以上", "3年以上", "5年以上", "10年以上"]}]}, {"f": "jikyu", "qi": 4, "page": "work", "label": "直近で働いていた業態", "parts": [{"k": "s", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 5, "page": "work", "label": "今までに働いたことがある業態 (すべて)", "parts": [{"k": "m", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 6, "page": "work", "label": "ブランク (お仕事をしていない期間)", "parts": [{"k": "sel", "o": ["なし", "〜3ヶ月", "3〜6ヶ月", "6ヶ月〜1年", "1年以上"]}], "note": true}, {"f": "jikyu", "qi": 12, "page": "work", "label": "直近のお店の名前 (体験のみでもOK)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 14, "page": "work", "label": "そのお店の時給・給与", "parts": [{"l": "給与の形", "k": "sel", "o": ["時給のみ", "時給＋バック", "完全歩合", "体験時給のみ", "わからない"]}, {"l": "時給", "k": "sel", "o": ["1,000円", "1,100円", "1,200円", "1,300円", "1,400円", "1,500円", "1,600円", "1,700円", "1,800円", "1,900円", "2,000円", "2,100円", "2,200円", "2,300円", "2,400円", "2,500円", "2,600円", "2,700円", "2,800円", "2,900円", "3,000円", "3,100円", "3,200円", "3,300円", "3,400円", "3,500円", "3,600円", "3,700円", "3,800円", "3,900円", "4,000円", "4,100円", "4,200円", "4,300円", "4,400円", "4,500円", "4,600円", "4,700円", "4,800円", "4,900円", "5,000円", "5,100円", "5,200円", "5,300円", "5,400円", "5,500円", "5,600円", "5,700円", "5,800円", "5,900円", "6,000円", "6,100円", "6,200円", "6,300円", "6,400円", "6,500円", "6,600円", "6,700円", "6,800円", "6,900円", "7,000円", "7,100円", "7,200円", "7,300円", "7,400円", "7,500円", "7,600円", "7,700円", "7,800円", "7,900円", "8,000円", "8,100円", "8,200円", "8,300円", "8,400円", "8,500円", "8,600円", "8,700円", "8,800円", "8,900円", "9,000円", "9,100円", "9,200円", "9,300円", "9,400円", "9,500円", "9,600円", "9,700円", "9,800円", "9,900円", "10,000円", "10,000円より上", "わからない"]}], "note": true}, {"f": "jikyu", "qi": 15, "page": "work", "label": "指名本数と売上 (月)", "parts": [{"l": "指名本数", "k": "sel", "o": ["0本", "1〜5本", "6〜10本", "11〜20本", "21本以上"]}, {"l": "月の売上", "k": "sel", "o": ["〜30万円", "30〜50万円", "50〜100万円", "100〜200万円", "200万円以上", "わからない"]}]}, {"f": "jikyu", "qi": 16, "page": "work", "label": "お客様の特徴 (当てはまるものすべて)", "parts": [{"k": "m", "o": ["特定の一人のお客様が沢山来店してくれている", "特定の一人のお客様が高額会計だ", "複数のお客様がある程度のペースで毎月来店される", "地元のお客様が多い", "地方（道内のお客様が多い）", "地方（道外のお客様が多い）", "サラリーマンが多い", "経営者が多い（社長 役員）", "自営業の方が多い", "20代のお客様が多い", "30代のお客様が多い", "40代のお客様が多い", "50代のお客様が多い", "60代以上のお客様が多い", "1名で来られるお客様が多い", "基本は複数名でいらっしゃるお客様が大半だ", "接待で使われることが多い", "旅行の方が多い", "出張の方が多い", "未経験又は始めたばかりなのでまだわからない", "その他"]}], "note": true}, {"f": "jikyu", "qi": 18, "page": "work", "label": "直近のお店について", "parts": [{"l": "良かった点", "k": "m", "o": ["給料・バックが良い", "お客様が良い", "女の子の仲が良い", "黒服・店長が良い", "働きやすいシフト", "送迎がある", "ノルマがない", "特になし"]}, {"l": "辞めた理由", "k": "m", "o": ["給料・バック", "人間関係", "黒服・店長の対応", "ノルマ・罰金", "シフトの自由度", "お客様の質", "送迎がない", "店の方針", "引っ越し・生活の変化", "体調", "他のお店に移りたい", "在籍中", "集客が少なかった", "早上がりが多かった", "出勤調整が多かった", "その他"]}], "note": true}, {"f": "jikyu", "qi": 20, "page": "work", "label": "直近のお店の店長・担当黒服の名前 (わかる範囲)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 22, "page": "work", "label": "CASTとして頑張りたいポイント (複数可)", "parts": [{"k": "m", "o": ["LINE・連絡をマメにする", "誕生日・記念日のお祝い", "お客様の話を覚える", "同伴・アフターをする", "SNSで発信する", "接客を勉強する", "身だしなみ・美容を磨く", "清潔感", "言葉遣い", "聞き上手になる", "話しすぎない", "時間を守る", "お客様を否定しない", "距離感に気を付ける", "指名を増やしたい", "接客を教わりたい", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 7, "page": "shop", "label": "お店選びで重要視すること (複数可)", "parts": [{"k": "m", "o": ["時給", "お店の雰囲気", "女の子の仲の良さ", "フリーのお客様の多さ", "送迎", "日払い", "ノルマがない", "シフトの融通", "その他"]}], "note": true}, {"f": "jikyu", "qi": 8, "page": "shop", "label": "希望の時給", "hint": "※体験の際は、必ずしも希望通りの時給にはなりません。", "parts": [{"k": "sel", "o": ["2,000円", "2,500円", "3,000円", "3,500円", "4,000円", "4,500円", "5,000円", "5,500円", "6,000円", "6,000円より上", "相談したい"]}]}, {"f": "jikyu", "qi": 9, "page": "shop", "label": "その時給が欲しい理由", "parts": [{"k": "m", "o": ["生活費", "借金返済", "貯金", "学費", "目標がある", "前のお店と同じ以上", "その他"]}], "note": true}, {"f": "jikyu", "qi": 11, "page": "shop", "label": "当店への期待・要望 (複数可)", "parts": [{"k": "m", "o": ["シフトを融通してほしい", "子供がいるので配慮してほしい", "送迎がほしい", "日払いがいい", "ノルマなしがいい", "未経験から教えてほしい", "特になし", "その他"]}], "note": true}, {"f": "kyujin", "qi": 2, "page": "shop", "label": "応募したきっかけ", "parts": [{"k": "s", "o": ["紹介", "求人サイト・ホームページ", "スカウト", "SNS", "知人の口コミ", "その他"]}]}, {"f": "kyujin", "qi": 3, "page": "shop", "label": "紹介者のお名前・会社名", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "紹介"}}, {"f": "kyujin", "qi": 4, "page": "shop", "label": "見た求人媒体の名前", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "求人サイト・ホームページ"}}, {"f": "kyujin", "qi": 6, "page": "shop", "label": "面接に来るまでに見たもの (すべて)", "parts": [{"k": "m", "o": ["ホームページ", "Googleマップ", "インスタグラム", "TikTok", "バイトル", "ポケパラ", "ナイツネット", "その他"]}], "note": true}, {"f": "kyujin", "qi": 5, "page": "shop", "label": "応募するお店", "parts": [{"k": "s", "o": ["RegentClub千歳", "328", "WAVE千歳", "花もみじ千歳", "希望無し", "その他"]}]}, {"f": "kyujin", "qi": 8, "page": "shop", "label": "他のお店ではなく当店を選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地・通いやすさ", "送迎", "日払い", "知人の紹介", "求人の内容", "その他"]}], "note": true}, {"f": "kyujin", "qi": 9, "page": "shop", "label": "求人やSNSで重要視した点 (複数可)", "parts": [{"k": "m", "o": ["内装が綺麗", "更衣室が綺麗・広いなど", "時給が高い", "可愛い子がいる", "ＳＮＳでよく出てくる 有名かどうか", "有名じゃない知名度が低いほうがいい", "お店の理念 会社理念", "店長やスタッフの顔がわかる", "女の子がぎすぎすしてなさそう", "女性スタッフがいる", "自分が成長できる環境かどうか", "自身の働くペースと折り合いがつくか（出勤少なくてもＯＫなど）", "日払いができる", "単純に友達が働いてた", "知人の口コミで", "その他"]}], "note": true}, {"f": "kyujin", "qi": 11, "page": "shop", "label": "上で選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["しっかり稼ぎたい", "働きやすさ", "安心して働きたい", "自分を成長させたい", "人間関係", "通いやすさ", "その他"]}], "note": true}, {"f": "kyujin", "qi": 12, "page": "shop", "label": "他に応募中のお店", "parts": [{"l": "応募中", "k": "s", "o": ["ない", "ある"]}, {"l": "店名", "k": "t"}, {"l": "気になる理由", "k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地", "送迎", "日払い", "その他"]}]}, {"f": "kyujin", "qi": 13, "page": "shop", "label": "そのお店を見つけたきっかけ", "parts": [{"k": "s", "o": ["求人サイト", "SNS", "知人の口コミ", "スカウト", "Googleマップ", "通りがかり", "その他"]}], "note": true}, {"f": "kyujin", "qi": 14, "page": "shop", "label": "特に気になった言葉 (求人やSNSの中で)", "parts": [{"k": "t"}]}, {"f": "app", "qi": "alcohol", "page": "me", "label": "お酒", "parts": [{"k": "s", "o": ["飲める", "普通", "飲めない"]}]}, {"f": "jikyu", "qi": 24, "page": "me", "label": "他のお仕事の経験 (夜のお仕事以外)", "parts": [{"k": "m", "o": ["飲食・接客", "販売", "事務", "医療・介護", "美容", "工場・軽作業", "学生", "なし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 25, "page": "me", "label": "資格・趣味", "parts": [{"l": "資格", "k": "m", "o": ["美容系", "医療・介護系", "語学系", "運転免許", "なし", "その他"]}, {"l": "趣味", "k": "m", "o": ["音楽", "映画・ドラマ", "旅行", "スポーツ", "ゲーム", "料理", "ファッション・美容", "お酒", "その他"]}], "note": true}, {"f": "jikyu", "qi": 26, "page": "me", "label": "将来の夢・目標 (複数可)", "parts": [{"k": "m", "o": ["貯金", "独立・開業", "旅行", "美容整形", "資格取得", "家族のため", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 27, "page": "me", "label": "日本語以外で話せる言語", "parts": [{"k": "m", "o": ["英語", "韓国語", "中国語", "日本語のみ", "その他"]}], "note": true}, {"f": "jikyu", "qi": 28, "page": "me", "label": "(日本語のみ以外を選んだ方) どの程度使えますか", "parts": [{"k": "s", "o": ["日常会話ができる", "聞き取りはできる", "単語のみ", "勉強中"]}]}, {"f": "jikyu", "qi": 29, "page": "me", "label": "(任意) お子さん・パートナーはいますか", "parts": [{"k": "s", "o": ["旦那 あり 子供 なし", "子供のみ", "異性のパートナー", "無し", "その他"]}], "note": true}, {"f": "jikyu", "qi": 30, "page": "me", "label": "(任意) そのパートナーはこのお仕事に協力的ですか", "parts": [{"k": "s", "o": ["協力的", "条件つきでOK", "あまり協力的でない", "いない"]}], "note": true}, {"f": "app", "qi": "parent", "page": "me", "label": "(任意) 親は、このお仕事に応募することを知っていますか", "parts": [{"k": "s", "o": ["知っている", "内緒", "その他"]}], "note": true}], CAST_PAGES = [["work", "これまでのお仕事"], ["shop", "お店選び"], ["me", "あなたについて"]];
+var CASTQ = [{"f": "jikyu", "qi": 3, "page": "work", "label": "ナイトワークの経歴", "parts": [{"k": "s", "o": ["未経験", "体験のみ経験あり", "３か月以内", "3～6か月以内", "6か月～1年以内", "１年以上", "3年以上", "5年以上", "10年以上"]}]}, {"f": "app", "qi": "salesExp", "page": "work", "label": "前のお店で、指名や売上はありましたか (任意)", "parts": [{"k": "s", "o": ["あった", "なかった"]}], "showIf": {"f": "jikyu", "qi": 3, "not": "未経験"}}, {"f": "jikyu", "qi": 4, "page": "work", "label": "直近で働いていた業態", "parts": [{"k": "s", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 5, "page": "work", "label": "今までに働いたことがある業態 (すべて)", "parts": [{"k": "m", "o": ["ニュークラブ", "キャバクラ", "ラウンジ", "クラブ", "スナック", "ガールズバー", "コンカフェ", "未経験", "その他"]}], "note": true}, {"f": "jikyu", "qi": 6, "page": "work", "label": "ブランク (お仕事をしていない期間)", "parts": [{"k": "sel", "o": ["なし", "〜3ヶ月", "3〜6ヶ月", "6ヶ月〜1年", "1年以上"]}], "note": true}, {"f": "jikyu", "qi": 12, "page": "work", "label": "直近のお店の名前 (体験のみでもOK)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 14, "page": "work", "label": "そのお店の時給・給与", "parts": [{"l": "給与の形", "k": "sel", "o": ["時給のみ", "時給＋バック", "完全歩合", "体験時給のみ", "わからない"]}, {"l": "時給", "k": "sel", "o": ["1,000円", "1,100円", "1,200円", "1,300円", "1,400円", "1,500円", "1,600円", "1,700円", "1,800円", "1,900円", "2,000円", "2,100円", "2,200円", "2,300円", "2,400円", "2,500円", "2,600円", "2,700円", "2,800円", "2,900円", "3,000円", "3,100円", "3,200円", "3,300円", "3,400円", "3,500円", "3,600円", "3,700円", "3,800円", "3,900円", "4,000円", "4,100円", "4,200円", "4,300円", "4,400円", "4,500円", "4,600円", "4,700円", "4,800円", "4,900円", "5,000円", "5,100円", "5,200円", "5,300円", "5,400円", "5,500円", "5,600円", "5,700円", "5,800円", "5,900円", "6,000円", "6,100円", "6,200円", "6,300円", "6,400円", "6,500円", "6,600円", "6,700円", "6,800円", "6,900円", "7,000円", "7,100円", "7,200円", "7,300円", "7,400円", "7,500円", "7,600円", "7,700円", "7,800円", "7,900円", "8,000円", "8,100円", "8,200円", "8,300円", "8,400円", "8,500円", "8,600円", "8,700円", "8,800円", "8,900円", "9,000円", "9,100円", "9,200円", "9,300円", "9,400円", "9,500円", "9,600円", "9,700円", "9,800円", "9,900円", "10,000円", "10,000円より上", "わからない"]}], "note": true}, {"f": "jikyu", "qi": 15, "page": "work", "label": "指名本数と売上 (月)", "parts": [{"l": "指名本数", "k": "sel", "o": ["0本", "1〜5本", "6〜10本", "11〜20本", "21本以上"]}, {"l": "月の売上", "k": "sel", "o": ["〜30万円", "30〜50万円", "50〜100万円", "100〜200万円", "200万円以上", "わからない"]}]}, {"f": "jikyu", "qi": 16, "page": "work", "label": "お客様の特徴 (当てはまるものすべて)", "parts": [{"k": "m", "o": ["特定の一人のお客様が沢山来店してくれている", "特定の一人のお客様が高額会計だ", "複数のお客様がある程度のペースで毎月来店される", "地元のお客様が多い", "地方（道内のお客様が多い）", "地方（道外のお客様が多い）", "サラリーマンが多い", "経営者が多い（社長 役員）", "自営業の方が多い", "20代のお客様が多い", "30代のお客様が多い", "40代のお客様が多い", "50代のお客様が多い", "60代以上のお客様が多い", "1名で来られるお客様が多い", "基本は複数名でいらっしゃるお客様が大半だ", "接待で使われることが多い", "旅行の方が多い", "出張の方が多い", "未経験又は始めたばかりなのでまだわからない", "その他"]}], "note": true}, {"f": "jikyu", "qi": 18, "page": "work", "label": "直近のお店について", "parts": [{"l": "良かった点", "k": "m", "o": ["給料・バックが良い", "お客様が良い", "女の子の仲が良い", "黒服・店長が良い", "働きやすいシフト", "送迎がある", "ノルマがない", "特になし"]}, {"l": "辞めた理由", "k": "m", "o": ["給料・バック", "人間関係", "黒服・店長の対応", "ノルマ・罰金", "シフトの自由度", "お客様の質", "送迎がない", "店の方針", "引っ越し・生活の変化", "体調", "他のお店に移りたい", "在籍中", "集客が少なかった", "早上がりが多かった", "出勤調整が多かった", "その他"]}], "note": true}, {"f": "jikyu", "qi": 20, "page": "work", "label": "直近のお店の店長・担当黒服の名前 (わかる範囲)", "parts": [{"k": "t"}]}, {"f": "jikyu", "qi": 22, "page": "work", "label": "CASTとして頑張りたいポイント (複数可)", "parts": [{"k": "m", "o": ["LINE・連絡をマメにする", "誕生日・記念日のお祝い", "お客様の話を覚える", "同伴・アフターをする", "SNSで発信する", "接客を勉強する", "身だしなみ・美容を磨く", "清潔感", "言葉遣い", "聞き上手になる", "話しすぎない", "時間を守る", "お客様を否定しない", "距離感に気を付ける", "指名を増やしたい", "接客を教わりたい", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 7, "page": "shop", "label": "お店選びで重要視すること (複数可)", "parts": [{"k": "m", "o": ["時給", "お店の雰囲気", "女の子の仲の良さ", "フリーのお客様の多さ", "送迎", "日払い", "ノルマがない", "シフトの融通", "その他"]}], "note": true}, {"f": "jikyu", "qi": 8, "page": "shop", "label": "希望の時給", "hint": "※体験の際は、必ずしも希望通りの時給にはなりません。", "parts": [{"k": "sel", "o": ["2,000円", "2,500円", "3,000円", "3,500円", "4,000円", "4,500円", "5,000円", "5,500円", "6,000円", "6,000円より上", "相談したい"]}]}, {"f": "jikyu", "qi": 9, "page": "shop", "label": "その時給が欲しい理由", "parts": [{"k": "m", "o": ["生活費", "借金返済", "貯金", "学費", "目標がある", "前のお店と同じ以上", "その他"]}], "note": true}, {"f": "jikyu", "qi": 11, "page": "shop", "label": "当店への期待・要望 (複数可)", "parts": [{"k": "m", "o": ["シフトを融通してほしい", "子供がいるので配慮してほしい", "送迎がほしい", "日払いがいい", "ノルマなしがいい", "未経験から教えてほしい", "特になし", "その他"]}], "note": true}, {"f": "kyujin", "qi": 2, "page": "shop", "label": "応募したきっかけ", "parts": [{"k": "s", "o": ["紹介", "求人サイト・ホームページ", "スカウト", "SNS", "知人の口コミ", "その他"]}]}, {"f": "kyujin", "qi": 3, "page": "shop", "label": "紹介者のお名前・会社名", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "紹介"}}, {"f": "kyujin", "qi": 4, "page": "shop", "label": "見た求人媒体の名前", "parts": [{"k": "t"}], "showIf": {"f": "kyujin", "qi": 2, "v": "求人サイト・ホームページ"}}, {"f": "kyujin", "qi": 6, "page": "shop", "label": "面接に来るまでに見たもの (すべて)", "parts": [{"k": "m", "o": ["ホームページ", "Googleマップ", "インスタグラム", "TikTok", "バイトル", "ポケパラ", "ナイツネット", "その他"]}], "note": true}, {"f": "kyujin", "qi": 5, "page": "shop", "label": "応募するお店", "parts": [{"k": "s", "o": ["RegentClub千歳", "328", "WAVE千歳", "花もみじ千歳", "希望無し", "その他"]}]}, {"f": "kyujin", "qi": 8, "page": "shop", "label": "他のお店ではなく当店を選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地・通いやすさ", "送迎", "日払い", "知人の紹介", "求人の内容", "その他"]}], "note": true}, {"f": "kyujin", "qi": 9, "page": "shop", "label": "求人やSNSで重要視した点 (複数可)", "parts": [{"k": "m", "o": ["内装が綺麗", "更衣室が綺麗・広いなど", "時給が高い", "可愛い子がいる", "ＳＮＳでよく出てくる 有名かどうか", "有名じゃない知名度が低いほうがいい", "お店の理念 会社理念", "店長やスタッフの顔がわかる", "女の子がぎすぎすしてなさそう", "女性スタッフがいる", "自分が成長できる環境かどうか", "自身の働くペースと折り合いがつくか（出勤少なくてもＯＫなど）", "日払いができる", "単純に友達が働いてた", "知人の口コミで", "その他"]}], "note": true}, {"f": "kyujin", "qi": 11, "page": "shop", "label": "上で選んだ理由 (複数可)", "parts": [{"k": "m", "o": ["しっかり稼ぎたい", "働きやすさ", "安心して働きたい", "自分を成長させたい", "人間関係", "通いやすさ", "その他"]}], "note": true}, {"f": "kyujin", "qi": 12, "page": "shop", "label": "他に応募中のお店", "parts": [{"l": "応募中", "k": "s", "o": ["ない", "ある"]}, {"l": "店名", "k": "t"}, {"l": "気になる理由", "k": "m", "o": ["時給", "雰囲気", "口コミ・評判", "立地", "送迎", "日払い", "その他"]}]}, {"f": "kyujin", "qi": 13, "page": "shop", "label": "そのお店を見つけたきっかけ", "parts": [{"k": "s", "o": ["求人サイト", "SNS", "知人の口コミ", "スカウト", "Googleマップ", "通りがかり", "その他"]}], "note": true}, {"f": "kyujin", "qi": 14, "page": "shop", "label": "特に気になった言葉 (求人やSNSの中で)", "parts": [{"k": "t"}]}, {"f": "app", "qi": "alcohol", "page": "me", "label": "お酒", "parts": [{"k": "s", "o": ["飲める", "普通", "飲めない"]}]}, {"f": "jikyu", "qi": 24, "page": "me", "label": "他のお仕事の経験 (夜のお仕事以外)", "parts": [{"k": "m", "o": ["飲食・接客", "販売", "事務", "医療・介護", "美容", "工場・軽作業", "学生", "なし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 25, "page": "me", "label": "資格・趣味", "parts": [{"l": "資格", "k": "m", "o": ["美容系", "医療・介護系", "語学系", "運転免許", "なし", "その他"]}, {"l": "趣味", "k": "m", "o": ["音楽", "映画・ドラマ", "旅行", "スポーツ", "ゲーム", "料理", "ファッション・美容", "お酒", "その他"]}], "note": true}, {"f": "jikyu", "qi": 26, "page": "me", "label": "将来の夢・目標 (複数可)", "parts": [{"k": "m", "o": ["貯金", "独立・開業", "旅行", "美容整形", "資格取得", "家族のため", "特になし", "その他"]}], "note": true}, {"f": "jikyu", "qi": 27, "page": "me", "label": "日本語以外で話せる言語", "parts": [{"k": "m", "o": ["英語", "韓国語", "中国語", "日本語のみ", "その他"]}], "note": true}, {"f": "jikyu", "qi": 28, "page": "me", "label": "(日本語のみ以外を選んだ方) どの程度使えますか", "parts": [{"k": "s", "o": ["日常会話ができる", "聞き取りはできる", "単語のみ", "勉強中"]}]}, {"f": "jikyu", "qi": 29, "page": "me", "label": "(任意) お子さん・パートナーはいますか", "parts": [{"k": "s", "o": ["旦那 あり 子供 なし", "子供のみ", "異性のパートナー", "無し", "その他"]}], "note": true}, {"f": "jikyu", "qi": 30, "page": "me", "label": "(任意) そのパートナーはこのお仕事に協力的ですか", "parts": [{"k": "s", "o": ["協力的", "条件つきでOK", "あまり協力的でない", "いない"]}], "note": true}, {"f": "app", "qi": "parent", "page": "me", "label": "(任意) 親は、このお仕事に応募することを知っていますか", "parts": [{"k": "s", "o": ["知っている", "内緒", "その他"]}], "note": true}], CAST_PAGES = [["work", "これまでのお仕事"], ["shop", "お店選び"], ["me", "あなたについて"]], SPECX = {"storeForm": {"RegentClub千歳": "nc", "花もみじ千歳": "lounge"}, "contact": {"line": "", "mail": "", "tel": ""}};
 var OTHER = '__OTHER__', WEEK = ['月', '火', '水', '木', '金', '土', '日'];
 var B = null, CUR = null, TAB = null, VALS = {}, LIST = [];
 function $(id) { return document.getElementById(id); }
@@ -278,8 +278,11 @@ function sel(id, opts, val, ph) {
   if (val && !found && ph != null) h += '<option selected>' + esc(val) + '</option>';
   return h + '</select>';
 }
+var INFO_F = {}; // fld が作った欄の HTML を key ごとに控える (応募者画面の出し分けが欄を拾う)
 function fld(key, label, inner, req) {
-  return '<div class="q" id="w_' + key + '"><label class="t">' + label + (req ? ' <span class="req">*</span>' : '') + '</label>' + inner + '<div class="ferr" id="e_' + key + '"></div></div>';
+  var s = '<div class="q" id="w_' + key + '"><label class="t">' + label + (req ? ' <span class="req">*</span>' : '') + '</label>' + inner + '<div class="ferr" id="e_' + key + '"></div></div>';
+  INFO_F[key] = s;
+  return s;
 }
 function inp(id, type, val, extra) { return '<input id="' + id + '" type="' + type + '" value="' + esc(val) + '" ' + (extra || '') + '>'; }
 function socialId(v) { // 保存済みの URL から ID を取り出すのではなく、そのまま表示 (URL を貼っても可)
@@ -292,7 +295,7 @@ var MBTIS = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'IS
 var BUSTS = ['Aカップ', 'Bカップ', 'Cカップ', 'Dカップ', 'Eカップ', 'Fカップ', 'Gカップ', 'Hカップ以上', 'わからない'];
 var HEALTH = [['hDisease', '持病'], ['hBase', '基礎疾患'], ['hMental', '精神疾患'], ['hAllergy', 'アレルギー']];
 function healthSplit(v) { var m = /^あり: ?(.*)$/.exec(v || ''); return m ? ['あり', m[1]] : [v === 'なし' ? 'なし' : '', '']; }
-function infoSecs(a, req) {
+function infoSecs(a, req, kana) { // kana = 応募者画面の短いフォーム: フリガナを必須で出す
   var by = '', bm = '', bd = '';
   var bm_ = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.birth || '');
   if (bm_) { by = bm_[1]; bm = String(+bm_[2]); bd = String(+bm_[3]); }
@@ -307,7 +310,7 @@ function infoSecs(a, req) {
   else if (pref === '北海道') { if (HK_CITIES.indexOf(city) >= 0 && city !== 'その他') cs = city; else if (city) { cs = 'その他'; cityo = city; } }
   else cityo = city;
   var S = [];
-  var h = req ? '' : fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"'), 0); // 応募者入力では聞かない (2026-10-29)
+  var h = (req && !kana) ? '' : fld('furigana', 'フリガナ', inp('f_furigana', 'text', a.furigana, 'autocomplete="off"' + (kana ? ' placeholder="例: ヤマダ ハナコ"' : '')), kana ? 1 : 0); // 通常の応募者入力では聞かない (2026-10-29)。短いフォームは必須 (2026-11-06)
   h += fld('name', '氏名', inp('f_name', 'text', a.name), req);
   h += fld('birth', '生年月日', '<div class="row3">' + sel('f_by', years, by, '年') + sel('f_bm', months, bm, '月') + sel('f_bd', days, bd, '日') + '<b id="f_age" style="min-width:70px"></b></div>', req);
   h += fld('height', '身長', sel('f_height', HEIGHTS, a.height || '', '選択'), req);
@@ -317,7 +320,7 @@ function infoSecs(a, req) {
   h += fld('honseki', '本籍地 (任意・都道府県)', sel('f_honseki', PREFS, a.honseki || '', '選択'), 0);
   S.push({ t: '基本情報', h: h });
   h = fld('tel', 'TEL', inp('f_tel', 'tel', a.tel, 'inputmode="tel" autocomplete="off" placeholder="090-1234-5678"'), req);
-  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"') + (req ? '<div class="small">メールアドレスが違うと登録できません。iPhone の iCloud メールや Android の Gmail など、お手持ちのスマホで受信できるアドレスを記入してください。</div>' : ''), req);
+  h += fld('email', 'Email', inp('f_email', 'email', a.email, 'autocomplete="off"') + (req ? '<div class="small">(面接申込後はメールで連絡になります)</div><div class="small">メールアドレスが違うと登録できません。iPhone の iCloud メールや Android の Gmail など、お手持ちのスマホで受信できるアドレスを記入してください。</div>' : ''), req);
   S.push({ t: '連絡先', h: h });
   h = req ? '' : fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', (a.zip || '').replace(/\D/g, ''), 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', false);
   h += fld('pref', '都道府県', sel('f_pref', PREFS, pref), req);
@@ -656,7 +659,7 @@ function selHtml(opts, v) {
   return h + '</select>';
 }
 function qHtml(c, s) {
-  var d = decodeQ(c, s), h = '<div class="q cqb" id="' + qid(c) + '"' + (c.showIf ? ' data-si="' + c.showIf.f + ':' + c.showIf.qi + '" data-sv="' + esc(c.showIf.v) + '"' : '') + '><label class="t">' + esc(c.label) + '</label>' + (c.hint ? '<div class="small">' + esc(c.hint) + '</div>' : '');
+  var d = decodeQ(c, s), h = '<div class="q cqb" id="' + qid(c) + '"' + (c.showIf ? ' data-si="' + c.showIf.f + ':' + c.showIf.qi + '"' + (c.showIf.not != null ? ' data-sn="' + esc(c.showIf.not) + '"' : ' data-sv="' + esc(c.showIf.v) + '"') : '') + '><label class="t">' + esc(c.label) + '</label>' + (c.hint ? '<div class="small">' + esc(c.hint) + '</div>' : '');
   c.parts.forEach(function (p, pi) {
     var v = d.vals[pi];
     h += '<div class="pt" data-pi="' + pi + '">' + (p.l ? '<div class="pl">' + esc(p.l) + '</div>' : '');
@@ -703,7 +706,8 @@ function syncShow() {
   if ($('jdbox')) { var jo = document.querySelector('#jchips .chip.on'); $('jdbox').style.display = jo && jo.getAttribute('data-v') === '後日体入' ? '' : 'none'; }
   [].forEach.call(document.querySelectorAll('[data-si]'), function (w) {
     var c = CASTQ.filter(function (x) { return x.f + ':' + x.qi === w.getAttribute('data-si'); })[0];
-    w.style.display = qRead(c) === w.getAttribute('data-sv') ? '' : 'none';
+    var cv = qRead(c);
+    w.style.display = (w.hasAttribute('data-sn') ? (cv && cv !== w.getAttribute('data-sn')) : cv === w.getAttribute('data-sv')) ? '' : 'none';
   });
 }
 function castBlocks(page, vals, noStore) { // noStore = 応募者画面: 「応募するお店」は最初のページへ移したので、ここでは出さない
@@ -748,7 +752,7 @@ function pgGo(i) {
 }
 
 // ================= まとめ表示 (確認ページ・黒服画面のカード) =================
-var CARD_KEYS = ['jikyu:3', 'jikyu:4', 'jikyu:12', 'jikyu:6', 'jikyu:7', 'jikyu:8', 'jikyu:9', 'jikyu:11', 'kyujin:2', 'kyujin:5'];
+var CARD_KEYS = ['jikyu:3', 'jikyu:4', 'jikyu:12', 'jikyu:6', 'jikyu:7', 'jikyu:8', 'jikyu:9', 'jikyu:11', 'kyujin:2', 'kyujin:5', 'app:salesExp'];
 function summaryHtml(full) {
   var d = infoCollect(), cast = castAll(), rows = [];
   var age = '';
@@ -758,7 +762,7 @@ function summaryHtml(full) {
   rows.push(['生年月日', d.birth]);
   rows.push(['身長 / 体重', [d.height, d.weight].filter(Boolean).join(' / ')]);
   rows.push(['TEL / Email', d.tel + (d.email ? ' / ' + d.email : '')]);
-  rows.push(['住所', (d.zip ? '〒' + d.zip + ' ' : '') + d.address]);
+  if (FT === 'full') rows.push(['住所', (d.zip ? '〒' + d.zip + ' ' : '') + d.address]); // 短いフォームは住所を聞かない (隠し欄の既定値を出さない)
   var wd = [];
   WEEK.forEach(function (w, i) { if (d['wd' + i]) wd.push(w + ' ' + d['wd' + i]); });
   if (d.wdx) wd.push(d.wdx);
@@ -778,7 +782,8 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, hDisease: 3, hDiseaseT: 3, hBase: 3, hBaseT: 3, hMental: 3, hMentalT: 3, hAllergy: 3, hAllergyT: 3, hAgree: 3, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
+var PAGE_OF_FULL = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, hDisease: 3, hDiseaseT: 3, hBase: 3, hBaseT: 3, hMental: 3, hMentalT: 3, hAllergy: 3, hAllergyT: 3, hAgree: 3, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
+var PAGE_OF = PAGE_OF_FULL, FT = 'full', CONSENT_PG = 6, APPLY_BOUND = false; // FT = 今のフォームの種類 (full / nc / lounge)
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
   var done = false;
@@ -802,42 +807,133 @@ function storeBlock() {
   });
   return '<div id="w_store">' + q + '<div class="ferr" id="e_store"></div></div>';
 }
-function showApply() {
-  var S = infoSecs({}, 1), bykey = {};
+// 2026-11-06: 選んだお店の業態でフォームを出し分ける (STORE_FORM は Spec.js・サーバも同じ表で判定)
+function formTypeOf(store) {
+  var s = String(store || '').replace(/希望無し/g, '').trim(), m = (SPECX && SPECX.storeForm) || {};
+  return Object.prototype.hasOwnProperty.call(m, s) ? m[s] : 'full';
+}
+function pageMap(ft) {
+  var wk = { wd0: 1, wd1: 1, wd2: 1, wd3: 1, wd4: 1, wd5: 1, wd6: 1, wk: 1 }, base = { store: 0, name: 0, furigana: 0, birth: 0, tel: 0, email: 0, exp: 0 }, k;
+  if (ft === 'nc') { base.consent = 1; base.slot = 2; return base; }
+  if (ft === 'lounge') { for (k in wk) base[k] = wk[k]; base.consent = 2; base.slot = 3; return base; }
+  return PAGE_OF_FULL;
+}
+// お問い合わせ先 (Spec.js の CONTACT。空のあいだは「準備中」)
+function contactHtml() {
+  var c = (SPECX && SPECX.contact) || {};
+  function row(label, v, kind) {
+    v = String(v || '').trim();
+    var t = !v ? '<span style="color:#888">準備中</span>' :
+      /^https?:\/\//.test(v) ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">LINEで問い合わせる</a>' :
+      kind === 'mail' ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' :
+      kind === 'tel' ? '<a href="tel:' + esc(v.replace(/[^\d+]/g, '')) + '">' + esc(v) + '</a>' : esc(v);
+    return '<div style="margin:2px 0"><b style="display:inline-block;min-width:5.5em">' + label + '</b>' + t + '</div>';
+  }
+  return '<div class="contact" style="text-align:left;border:1px solid #F3DCE5;background:#FFF7FA;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:14px">' +
+    '<div style="font-weight:bold;margin-bottom:4px">お問い合わせ先</div>' + row('LINE', c.line, 'line') + row('メール', c.mail, 'mail') + row('電話番号', c.tel, 'tel') +
+    '<div class="small" style="margin-top:6px">17時以降の折り返しとなります。一般的なご質問は Q&amp;A でお願いします。</div></div>';
+}
+// 短いフォームの「ナイトワークの経歴」(必須) と、任意の質問
+function expBlock() {
+  var c = CASTQ.filter(function (x) { return x.f === 'jikyu' && x.qi === 3; })[0];
+  return '<div id="w_exp">' + qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>') + '<div class="ferr" id="e_exp"></div></div>';
+}
+function castPick(list) {
+  return CASTQ.filter(function (c) { return list.some(function (x) { return x[0] === c.f && x[1] === c.qi; }); }).map(function (c) { return qHtml(c, ''); }).join('');
+}
+function applyPages(ft) {
+  var full = ft === 'full', lounge = ft === 'lounge', S = infoSecs({}, 1, !full), bykey = {}, F = {};
   S.forEach(function (s) { bykey[s.t] = s.h; });
-  var pages = [
-    { t: '基本情報', h: '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
-      ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
-    { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) + '<div class="sec"><h3>経歴</h3>' + bykey['経歴'] + '</div>' },
-    { t: 'お店選び', h: castBlocks('shop', {}, true) },
-    { t: 'あなたについて', h: castBlocks('me', {}) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
-    { t: '出勤希望', h: bykey['出勤希望'] },
-    { t: 'SNS', h: bykey['SNS'] },
-    { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' },
-    { t: '確認', h: '<div class="small">内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。</div><div id="sumbox"></div>' +
-      '<div class="q" id="w_photo"><label class="t">面接写真（本人確認用・身分証との照合に使います） <span class="req">*</span></label>' +
-      '<div class="small">保存お願いします（無加工で、身分証と照合できるように撮影をお願いします。）</div>' +
-      '<input type="file" id="photoin" accept="image/*" capture="user" style="display:none">' +
-      '<button type="button" class="sm" id="photobtn">カメラを起動</button>' +
-      '<div><img id="photoprev" alt="" style="display:none;max-width:100%;max-height:320px;margin-top:8px;border-radius:6px"></div>' +
-      '<div class="small" id="photost"></div><div class="ferr" id="e_photo"></div></div>' +
-      '<div class="q" id="w_slot"><label class="t">希望面接日時 <span class="req">*</span></label>' +
-      '<div class="small">空いている日時から選んでください（今から1時間以内の時間は選べません）。</div>' +
-      '<div class="row3" style="margin-top:6px"><select id="slot_d"><option value="">日付を選択</option></select><select id="slot_t"><option value="">時刻を選択</option></select></div>' +
-      '<div class="small" id="slotst"></div><div class="ferr" id="e_slot"></div></div>' +
-      '<button class="pri big" id="sub" style="width:100%">送信</button><div id="sendst" style="color:#c00;font-weight:bold;margin-top:8px"></div>' }
-  ];
+  Object.keys(INFO_F).forEach(function (k) { F[k] = INFO_F[k]; });
+  var consentPg = { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' };
+  var slotQ = '<div class="q" id="w_slot"><label class="t">希望面接日時 <span class="req">*</span></label>' +
+    '<div class="small">空いている日時から選んでください（今から1時間以内の時間は選べません）。</div>' +
+    '<div class="row3" style="margin-top:6px"><select id="slot_d"><option value="">日付を選択</option></select><select id="slot_t"><option value="">時刻を選択</option></select></div>' +
+    '<div class="small" id="slotst"></div><div class="ferr" id="e_slot"></div></div>';
+  var photoQ = '<div class="q" id="w_photo"><label class="t">面接写真（本人確認用・身分証との照合に使います） <span class="req">*</span></label>' +
+    '<div class="small">保存お願いします（無加工で、身分証と照合できるように撮影をお願いします。）</div>' +
+    '<input type="file" id="photoin" accept="image/*" capture="user" style="display:none">' +
+    '<button type="button" class="sm" id="photobtn">カメラを起動</button>' +
+    '<div><img id="photoprev" alt="" style="display:none;max-width:100%;max-height:320px;margin-top:8px;border-radius:6px"></div>' +
+    '<div class="small" id="photost"></div><div class="ferr" id="e_photo"></div></div>';
+  var confirmPg = { t: '確認', h: '<div class="small">' + (lounge ? 'ご入力内容をご確認のうえ、よろしければ「送信」を押してください。修正する場合は「戻る」で戻れます。' : '内容を確認して、よければ「送信」を押してください。直す場合は「戻る」で戻れます。') + '</div><div id="sumbox"></div>' +
+    (full ? photoQ : '') + slotQ +
+    '<button class="pri big" id="sub" style="width:100%">送信</button><div id="sendst" style="color:#c00;font-weight:bold;margin-top:8px"></div>' };
+  if (full) {
+    return [
+      { t: '基本情報', h: contactHtml() + '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
+        ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
+      { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) + '<div class="sec"><h3>経歴</h3>' + bykey['経歴'] + '</div>' },
+      { t: 'お店選び', h: castBlocks('shop', {}, true) },
+      { t: 'あなたについて', h: castBlocks('me', {}) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
+      { t: '出勤希望', h: bykey['出勤希望'] },
+      { t: 'SNS', h: bykey['SNS'] },
+      consentPg, confirmPg
+    ];
+  }
+  // 短いフォーム: 画面に出さない欄も infoCollect / infoBind が前提にしているので、見えない箱に入れておく (値は空のまま。サーバは短いフォームでは受け取らない)
+  function strip(x, parts) { parts.forEach(function (p) { x = x.split(p).join(''); }); return x; }
+  var basic = [F.name, F.furigana, F.birth, F.tel, F.email], shown = basic.concat(lounge ? [bykey['出勤希望']] : []);
+  var rest = S.map(function (s) { return strip(s.h, shown); }).join('') + (lounge ? F.genWish + F.genWishYomi : '');
+  var p0 = (lounge ? '<div class="small">ご応募ありがとうございます。必要なことだけお伺いします。</div>' : '') + contactHtml() +
+    '<div class="small"><span class="req">*</span> は必須です。</div>' + storeBlock() +
+    '<div class="sec"><h3>あなたのこと</h3>' + basic.join('') + '</div>' +
+    '<div class="sec"><h3>これまでのお仕事</h3>' + expBlock() + castPick([['app', 'salesExp']]) + '</div>' +
+    '<div style="display:none">' + rest + '</div>';
+  var pages = [{ t: 'お店とあなたのこと', h: p0 }];
+  if (lounge) pages.push({ t: '出勤できる曜日', h: strip(bykey['出勤希望'], [F.genWish, F.genWishYomi]) });
+  pages.push(consentPg, confirmPg);
+  return pages;
+}
+// 画面を組み立てる (お店を選び直して業態が変わった時にも呼ぶ)
+function buildApply(ft) {
+  FT = ft; PAGE_OF = pageMap(ft); GEN_OK = '';
+  var pages = applyPages(ft);
+  CONSENT_PG = 0; pages.forEach(function (p, i) { if (p.t === '同意') CONSENT_PG = i; });
   pagerInit('app', pages, {
     bind: infoBind,
-    check: function (i) { if (i === 6) CONSENTED = true; return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
-    onShow: function (i) { if (i === 7) { $('sumbox').innerHTML = summaryHtml(true); loadSlots(); } }
+    check: function (i) { if (i === CONSENT_PG) CONSENTED = true; return applyErrs().filter(function (e) { return PAGE_OF[e[0]] === i; }); },
+    onShow: function (i) { if (i === PG.pages.length - 1) { $('sumbox').innerHTML = summaryHtml(true); loadSlots(); } }
   });
   $('sub').onclick = submitApply;
   $('slot_d').onchange = function () { fillTimes(); };
-  $('photobtn').onclick = function () { $('photoin').click(); };
-  $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
-  draftInit();
+  if ($('photobtn')) {
+    $('photobtn').onclick = function () { $('photoin').click(); };
+    $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
+  }
+  draftLink();
   rqInit();
+}
+function showApply() {
+  var dr = draftPeek(), ft = dr && ['nc', 'lounge', 'full'].indexOf(dr.ft) >= 0 ? dr.ft : 'full'; // 下書きは業態も保存している
+  buildApply(ft);
+  draftInit();
+  if (!APPLY_BOUND) {
+    APPLY_BOUND = true;
+    // お店のボタンを押したら、業態が変わる時だけフォームを組み直す (入力済みの欄は引き継ぐ)
+    document.addEventListener('click', function (e) {
+      if (!(e.target.closest && e.target.closest('#w_store .chip'))) return;
+      setTimeout(function () { var t = formTypeOf(slotStore()); if (t !== FT) rebuildApply(t); }, 0);
+    });
+  }
+}
+function chipKey(box) {
+  var g = box.closest('[id]');
+  return g ? g.id + '#' + [].indexOf.call(g.querySelectorAll('.chips'), box) : '';
+}
+function rebuildApply(t) {
+  var v = {}, c = {};
+  draftFields().forEach(function (el) { if (el.id) v[el.id] = el.type === 'checkbox' || el.type === 'radio' ? el.checked : el.value; });
+  [].forEach.call(document.querySelectorAll('#app .chips'), function (box) {
+    c[chipKey(box)] = [].filter.call(box.children, function (b) { return b.classList.contains('on'); }).map(function (b) { return b.getAttribute('data-v'); });
+  });
+  buildApply(t);
+  draftFields().forEach(function (el) { if (el.id && Object.prototype.hasOwnProperty.call(v, el.id)) { if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!v[el.id]; else el.value = v[el.id]; } });
+  [].forEach.call(document.querySelectorAll('#app .chips'), function (box) {
+    var on = c[chipKey(box)];
+    if (on) [].forEach.call(box.children, function (b) { b.classList[on.indexOf(b.getAttribute('data-v')) >= 0 ? 'add' : 'remove']('on'); });
+  });
+  syncCity(); syncAge(); syncShow(); rqPaint(); draftSave();
 }
 // 希望面接日時: 選んだお店 (希望無しなら全店) の空き枠をサーバから取る。取り直した時は前の選択を残す
 var SLOTS = [], DOW = ['日', '月', '火', '水', '木', '金', '土'];
@@ -894,19 +990,26 @@ function photoPick(f) {
 }
 function applyErrs() {
   var d = infoCollect(), errs = infoValidate(d, true);
+  if (FT !== 'full') { // 短いフォームは、聞いた項目のエラーだけ残す (隠し欄の未入力は無関係)
+    var okk = ['name', 'birth', 'tel', 'email'].concat(FT === 'lounge' ? ['wk'] : []);
+    errs = errs.filter(function (e) { return okk.indexOf(e[0]) >= 0; });
+    if (!d.furigana) errs.push(['furigana', 'フリガナを入力してください']);
+    else if (!/^[ァ-ヶー\s　]+$/.test(d.furigana)) errs.push(['furigana', 'フリガナはカタカナで入力してください']);
+    if (!castAll()['jikyu:3']) errs.push(['exp', 'ナイトワークの経歴を選んでください']);
+  }
   if (!CONSENTED) errs.push(['consent', '個人情報の取り扱いへの同意が必要です']);
   if (!castAll()['kyujin:5']) errs.push(['store', '応募するお店を選んでください']);
-  if (!PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
+  if (FT === 'full' && !PHOTO_ID) errs.push(['photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください']);
   if (!$('slot_d').value || !$('slot_t').value) errs.push(['slot', '希望面接日時を選んでください']);
   return errs;
 }
 // ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
 // 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
-var RQ_KEYS = ['hDisease', 'hBase', 'hMental', 'hAllergy', 'hAgree', 'store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot'], RQ_BLK = ['store', 'wk', 'photo', 'slot'], RQ_ON = false;
+var RQ_KEYS = ['hDisease', 'hBase', 'hMental', 'hAllergy', 'hAgree', 'store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot', 'furigana', 'exp'], RQ_BLK = ['store', 'wk', 'photo', 'slot', 'exp'], RQ_ON = false, RQ_L = false;
 function rqInit() {
   document.body.classList.add('ap');
   RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
-  ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, function () { setTimeout(rqPaint, 0); }); });
+  if (!RQ_L) { RQ_L = true; ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, function () { setTimeout(rqPaint, 0); }); }); }
   RQ_ON = true; rqPaint();
 }
 function rqPaint() {
@@ -947,12 +1050,22 @@ function draftSave() {
     var c = [].map.call(document.querySelectorAll('#app .chips'), function (box) {
       return [].filter.call(box.children, function (b) { return b.classList.contains('on'); }).map(function (b) { return b.getAttribute('data-v'); });
     });
-    draftLs(function (ls) { ls.setItem(DRAFT_KEY, JSON.stringify({ t: Date.now(), p: PG.i, f: f, c: c })); });
+    draftLs(function (ls) { ls.setItem(DRAFT_KEY, JSON.stringify({ t: Date.now(), p: PG.i, f: f, c: c, ft: FT })); });
   }, 300);
 }
 function draftClear() {
   DRAFT_ON = false; clearTimeout(DRAFT_T);
   draftLs(function (ls) { ls.removeItem(DRAFT_KEY); });
+}
+function draftPeek() { // 期限内の下書きを読むだけ (消さない)。showApply が業態を知るために使う
+  var raw = draftLs(function (ls) { return ls.getItem(DRAFT_KEY); }), dr = null;
+  try { dr = raw ? JSON.parse(raw) : null; } catch (e) { dr = null; }
+  return dr && dr.t && Date.now() - dr.t <= DRAFT_TTL ? dr : null;
+}
+function draftLink() { // 組み直しで消えるので、画面を組むたびに付ける
+  if ($('draft_reset')) return;
+  $('app').insertAdjacentHTML('beforeend', '<div class="small" style="text-align:center;margin:16px 0 24px"><a href="#" id="draft_reset">入力を最初からやり直す</a></div>');
+  $('draft_reset').onclick = function (e) { e.preventDefault(); draftClear(); location.reload(); };
 }
 function draftInit() {
   var raw = draftLs(function (ls) { return ls.getItem(DRAFT_KEY); }), dr = null;
@@ -966,10 +1079,8 @@ function draftInit() {
       [].forEach.call(box.children, function (b) { b.classList[dr.c[i].indexOf(b.getAttribute('data-v')) >= 0 ? 'add' : 'remove']('on'); });
     });
     syncCity(); syncAge(); syncShow();
-    pgGo(Math.max(0, Math.min(dr.p || 0, 6))); // 同意ページ (6) まで。それより先は同意を押し直してもらう
+    pgGo(Math.max(0, Math.min(dr.p || 0, CONSENT_PG))); // 同意ページまで。それより先は同意を押し直してもらう
   }
-  $('app').insertAdjacentHTML('beforeend', '<div class="small" style="text-align:center;margin:16px 0 24px"><a href="#" id="draft_reset">入力を最初からやり直す</a></div>');
-  $('draft_reset').onclick = function (e) { e.preventDefault(); draftClear(); location.reload(); };
   DRAFT_ON = true;
   ['input', 'change', 'click'].forEach(function (ev) { document.addEventListener(ev, draftSave); });
 }
@@ -978,13 +1089,13 @@ function submitApply() {
   if (SENDING) return; // 2 回押しで二重登録しない
   var errs = applyErrs();
   if (errs.length) {
-    var pg = 7; errs.forEach(function (e) { pg = Math.min(pg, PAGE_OF[e[0]] == null ? 7 : PAGE_OF[e[0]]); });
+    var last = PG.pages.length - 1, pg = last; errs.forEach(function (e) { pg = Math.min(pg, PAGE_OF[e[0]] == null ? last : PAGE_OF[e[0]]); });
     pgGo(pg); showErrors(errs);
     if ($('sendst')) $('sendst').textContent = '入力が足りない所があります: ' + errs.map(function (e) { return e[1]; }).join(' / ');
     return;
   }
   var d = infoCollect();
-  d.consent = true; d.cast = castAll(); d.photoId = PHOTO_ID; d.lu = LU; d.src = SRC;
+  d.consent = true; d.cast = castAll(); d.photoId = FT === 'full' ? PHOTO_ID : ''; d.lu = LU; d.src = SRC;
   d.slot = { date: $('slot_d').value, time: $('slot_t').value };
   SENDING = true;
   $('sub').disabled = true;
@@ -995,7 +1106,7 @@ function submitApply() {
     draftClear();
     msg('');
     $('app').innerHTML = '<div class="done"><div class="ck">&#10003;</div><h2 style="font-size:24px;line-height:1.6">お疲れ様でした。<br>情報を店舗へ送信しました。<br>このページは閉じてください。</h2>' +
-      '<p class="small" style="color:#C2336A">面接写真を保存しました。</p></div>';
+      '<p class="small" style="color:#C2336A">' + (FT === 'full' ? '面接写真を保存しました。' : 'ご入力のメールアドレスへ、あらためてご連絡いたします。') + '</p>' + contactHtml() + '</div>';
     window.scrollTo(0, 0);
   }).withFailureHandler(function (e) {
     SENDING = false; $('sub').disabled = false; $('sub').textContent = '送信';
