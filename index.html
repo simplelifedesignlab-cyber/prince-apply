@@ -238,8 +238,8 @@ body:not(.ap) .lt .n{text-align:right}
 })();
 </script>
 <script>
-var MODE = "apply", BASE = "", CONSENT = ["個人情報取り扱い同意書", "私は、個人情報の取り扱いについて、以下の事項を確認のうえ、同意します。", "", "1、個人情報の利用目的について", "取得した個人情報を以下の目的で使用し、それ以外の目的で利用することが無いことをお約束いたします。", "1.新規店舗open時などの際のお声かけ。", "2.当社営業店舗の入店活動に関わるご連絡など。", "3", "", "2、第三者への個人情報の提供に関して", "取得した個人情報は、あらかじめご本人の同意を得てある場合、または法律上公的機関への届出・提出が", "必要な場合を除いて第三者への開示や提供をしません。", "", "3、個人情報の開示・訂正・削除について", "取得した個人情報の内容の訂正や変更、追加または削除の要求あった場合には、必ずご本人であることを", "確認し、すみやかに対応します。"];
-if (MODE === 'apply') document.body.classList.add('ap'); // 応募者画面だけ LINE 風の見た目
+var MODE = (function(){var m=new URLSearchParams(location.search).get('mode');return m==='more'?'more':'apply';})(), BASE = "", CONSENT = ["個人情報取り扱い同意書", "私は、個人情報の取り扱いについて、以下の事項を確認のうえ、同意します。", "", "1、個人情報の利用目的について", "取得した個人情報を以下の目的で使用し、それ以外の目的で利用することが無いことをお約束いたします。", "1.新規店舗open時などの際のお声かけ。", "2.当社営業店舗の入店活動に関わるご連絡など。", "3", "", "2、第三者への個人情報の提供に関して", "取得した個人情報は、あらかじめご本人の同意を得てある場合、または法律上公的機関への届出・提出が", "必要な場合を除いて第三者への開示や提供をしません。", "", "3、個人情報の開示・訂正・削除について", "取得した個人情報の内容の訂正や変更、追加または削除の要求あった場合には、必ずご本人であることを", "確認し、すみやかに対応します。"];
+if (MODE === 'apply' || MODE === 'more') document.body.classList.add('ap'); // 応募者画面だけ LINE 風の見た目
 // 2026-11-02: LINE のボタンから開くと ?lu=<ランダム文字列>、媒体別の URL には ?src=<名前> が付く。無くても応募できる (サーバ側で形式を確かめる)
 var LU = '', SRC = '';
 try { var QP = new URLSearchParams(location.search); LU = QP.get('lu') || ''; SRC = QP.get('src') || ''; } catch (e) {}
@@ -346,16 +346,19 @@ function infoSecs(a, req, kana) { // kana = 応募者画面の短いフォーム
   h += fld('tiktok', 'TikTok (ID・@なし、またはURL)', inp('f_tiktok', 'text', a.tiktok, 'autocapitalize="off" autocomplete="off"'), 0);
   h += fld('sns', 'その他SNS', inp('f_sns', 'text', a.sns), 0);
   S.push({ t: 'SNS', h: h });
-  h = '<div class="small">これまでのお店について、わかる範囲で記入してください（任意）。</div>';
+  var h1 = '', intro = '<div class="small">これまでのお店について、わかる範囲で記入してください（任意）。</div>';
+  h = intro;
   [1, 2].forEach(function (n) {
+    var h0 = h.length;
     h += '<h4 style="margin:12px 0 4px">経歴' + n + '</h4>' +
       fld('c' + n + 'Store', '所属店舗', inp('f_c' + n + 'Store', 'text', a['c' + n + 'Store'], 'autocomplete="off"'), 0) +
       fld('c' + n + 'Period', '期間 (例: 2024年4月〜2025年3月)', inp('f_c' + n + 'Period', 'text', a['c' + n + 'Period'], 'autocomplete="off"'), 0) +
       fld('c' + n + 'Sales', '売上', inp('f_c' + n + 'Sales', 'text', a['c' + n + 'Sales'], 'autocomplete="off"'), 0) +
       fld('c' + n + 'Wage', '時給 / 日給', inp('f_c' + n + 'Wage', 'text', a['c' + n + 'Wage'], 'autocomplete="off"'), 0) +
       fld('c' + n + 'Shift', 'シフト', inp('f_c' + n + 'Shift', 'text', a['c' + n + 'Shift'], 'autocomplete="off"'), 0);
+    if (n === 1) h1 = intro + h.slice(h0);
   });
-  S.push({ t: '経歴', h: h });
+  S.push({ t: '経歴', h: h, h1: h1, h2: h.slice(h1.length) }); // h1 = 1 件目だけ (応募者画面) / h2 = 経歴 2 件目 (応募者画面では見えない箱に入れる)
   h = '<div class="small">あてはまるものを選んでください。「あり」の場合は内容も記入してください。</div>';
   HEALTH.forEach(function (x) {
     var p = healthSplit(a[x[0]]);
@@ -782,8 +785,8 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF_FULL = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 4, wd1: 4, wd2: 4, wd3: 4, wd4: 4, wd5: 4, wd6: 4, wk: 4, hDisease: 3, hDiseaseT: 3, hBase: 3, hBaseT: 3, hMental: 3, hMentalT: 3, hAllergy: 3, hAllergyT: 3, hAgree: 3, genWish: 4, genWishYomi: 4, photo: 7, slot: 7, consent: 6 };
-var PAGE_OF = PAGE_OF_FULL, FT = 'full', CONSENT_PG = 6, APPLY_BOUND = false; // FT = 今のフォームの種類 (full / nc / lounge)
+var PAGE_OF_FULL = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 3, wd1: 3, wd2: 3, wd3: 3, wd4: 3, wd5: 3, wd6: 3, wk: 3, hDisease: 2, hDiseaseT: 2, hBase: 2, hBaseT: 2, hMental: 2, hMentalT: 2, hAllergy: 2, hAllergyT: 2, hAgree: 2, genWish: 3, genWishYomi: 3, photo: 6, slot: 6, consent: 5 }; // 2026-11-08: 「お店選び」ページを外した (ページ番号が 1 つ繰り上がる)
+var PAGE_OF = PAGE_OF_FULL, FT = 'full', CONSENT_PG = 5, APPLY_BOUND = false; // FT = 今のフォームの種類 (full / nc / lounge)
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
   var done = false;
@@ -838,12 +841,14 @@ function expBlock() {
   var c = CASTQ.filter(function (x) { return x.f === 'jikyu' && x.qi === 3; })[0];
   return '<div id="w_exp">' + qHtml(c, '').replace('</label>', ' <span class="req">*</span></label>') + '<div class="ferr" id="e_exp"></div></div>';
 }
+var FULL_WORK = [['jikyu', 3], ['app', 'salesExp'], ['jikyu', 4], ['jikyu', 5], ['jikyu', 14], ['jikyu', 15]]; // 通常フォームの「これまでのお仕事」に出す質問 (2026-11-08)
 function castPick(list) {
   return CASTQ.filter(function (c) { return list.some(function (x) { return x[0] === c.f && x[1] === c.qi; }); }).map(function (c) { return qHtml(c, ''); }).join('');
 }
 function applyPages(ft) {
   var full = ft === 'full', lounge = ft === 'lounge', S = infoSecs({}, 1, !full), bykey = {}, F = {};
-  S.forEach(function (s) { bykey[s.t] = s.h; });
+  var byk1 = {};
+  S.forEach(function (s) { bykey[s.t] = s.h; byk1[s.t] = s; });
   Object.keys(INFO_F).forEach(function (k) { F[k] = INFO_F[k]; });
   var consentPg = { t: '同意', h: '<h3>個人情報の取り扱い</h3><div class="consent">' + esc(CONSENT.join('\n')) + '</div><div class="small">内容をお読みになり、よろしければ下の「同意して次へ」を押してください。</div>' };
   var slotQ = '<div class="q" id="w_slot"><label class="t">希望面接日時 <span class="req">*</span></label>' +
@@ -863,9 +868,9 @@ function applyPages(ft) {
     return [
       { t: '基本情報', h: contactHtml() + '<div class="small"><span class="req">*</span> は必須です。それ以外は答えられるものだけでOKです。</div>' + storeBlock() +
         ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
-      { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castBlocks('work', {}) + '<div class="sec"><h3>経歴</h3>' + bykey['経歴'] + '</div>' },
-      { t: 'お店選び', h: castBlocks('shop', {}, true) },
-      { t: 'あなたについて', h: castBlocks('me', {}) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
+      // 2026-11-08: 約 80 項目 → 約 35 項目。外した質問は黒服の面接画面 (castBlocks / infoHtml) には今までどおり全部出る
+      { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castPick(FULL_WORK) + '<div class="sec"><h3>経歴</h3>' + byk1['経歴'].h1 + '</div><div style="display:none">' + byk1['経歴'].h2 + '</div>' },
+      { t: 'あなたについて', h: castPick([['app', 'alcohol']]) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
       { t: '出勤希望', h: bykey['出勤希望'] },
       { t: 'SNS', h: bykey['SNS'] },
       consentPg, confirmPg
@@ -1116,5 +1121,154 @@ function submitApply() {
   }).submitApplicant(d);
 }
 
-startApply();
+// ================= 面接の待ち時間の追加入力 (?mode=more&t=トークン・応募者本人のスマホ・2026-11-08) =================
+// nc / lounge の応募者が、来店して面接を待つ間に入れる。トークンはサーバが業態と出す項目 (items) を返す。個人情報は返ってこない
+var MORE = null, MORE_GEN_OK = '';
+var MORE_NIGHT = [['jikyu', 4], ['jikyu', 5], ['jikyu', 14], ['jikyu', 15]];
+function moreMsg(t) { $('app').innerHTML = '<div class="pg" style="display:block"><h2>追加のご入力</h2><div class="q"><p>' + esc(t) + '</p></div></div>'; }
+function startMore() {
+  var t = '';
+  try { t = (new URLSearchParams(location.search).get('t') || '').trim().toLowerCase(); } catch (e) {}
+  if (!/^[0-9a-f]{32}$/.test(t)) { moreMsg('このURLは正しくありません。お手数ですがスタッフにお声がけください。'); return; }
+  google.script.run.withSuccessHandler(function (r) { MORE = r; MORE.t = t; showMore(); })
+    .withFailureHandler(function (e) { moreMsg(e && e.message || '読み込めませんでした。スタッフにお声がけください。'); }).getMore(t);
+}
+function moreHas(x) { return MORE.items.indexOf(x) >= 0; }
+function showMore() {
+  var nc = MORE.ft === 'nc', S = infoSecs({}, 1, false), by = {}, F = {};
+  S.forEach(function (s) { by[s.t] = s; });
+  Object.keys(INFO_F).forEach(function (k) { F[k] = INFO_F[k]; });
+  var h = '<div class="small">' + (nc ? 'お待たせしております。面接までの間に、続きをご入力ください。' : 'お待たせいたしております。面接までの間に、続きのご入力をお願いいたします。') + '　<span class="req">*</span> は必須です。</div>';
+  if (moreHas('address')) h += '<div class="sec"><h3>住所</h3>' + fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', '', 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', 0) + by['住所'].h + '</div>';
+  if (moreHas('health')) h += '<div class="sec"><h3>健康状態チェック</h3>' + by['健康状態チェック'].h + '</div>';
+  if (moreHas('gen')) h += '<div class="sec"><h3>源氏名と出勤希望</h3>' + by['出勤希望'].h + '</div>';
+  if (moreHas('night')) h += '<div class="sec"><h3>これまでのお仕事</h3>' + castPick(MORE_NIGHT) + by['経歴'].h1 + '</div>';
+  if (moreHas('alcohol') || moreHas('mbti')) h += '<div class="sec"><h3>あなたについて</h3>' + (moreHas('alcohol') ? castPick([['app', 'alcohol']]) : '') + (moreHas('mbti') ? F.mbti + F.honseki : '') + '</div>';
+  if (moreHas('sns')) h += '<div class="sec"><h3>SNS</h3>' + by["SNS"].h + '</div>';
+  if (moreHas('photo')) h += '<div class="q" id="w_photo"><label class="t">面接写真 <span class="req">*</span></label>' +
+    '<div class="small">' + (nc ? 'ご本人確認用です。無加工で、身分証と照合できるように撮影してください。' : 'ご本人確認のため、お顔の写真の撮影をお願いいたします。身分証との照合に使用いたします。') + '</div>' +
+    '<input type="file" id="photoin" accept="image/*" capture="user" style="display:none">' +
+    '<button type="button" class="sm" id="photobtn">カメラを起動</button>' +
+    '<div><img id="photoprev" alt="" style="display:none;max-width:100%;max-height:320px;margin-top:8px;border-radius:6px"></div>' +
+    '<div class="small" id="photost"></div><div class="ferr" id="e_photo"></div></div>';
+  h += '<button class="pri big" id="sub" style="width:100%">送信</button><div id="sendst" style="color:#c00;font-weight:bold;margin-top:8px"></div>';
+  $('app').innerHTML = '<div class="pg" style="display:block"><h2>追加のご入力</h2>' + h + '</div>';
+  moreBind();
+  $('sub').onclick = submitMoreForm;
+}
+function moreBind() {
+  if (moreHas('address')) {
+    $('f_pref').onchange = syncCity; $('f_city').onchange = syncCity; syncCity();
+    $('f_zip').addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, '').slice(0, 7);
+      if (this.value.length === 7) lookupZip(this.value); else $('zipst').textContent = '';
+    });
+  }
+  if (moreHas('wd')) {
+    WEEK.forEach(function (w, i) {
+      $('d_s' + i).onchange = function () {
+        if (!this.value) { setSel('d_e' + i, ''); setSel('d_r' + i, ''); } else if (!$('d_e' + i).value) setSel('d_e' + i, 'Last');
+      };
+      $('d_e' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_e' + i, ''); };
+      $('d_r' + i).onchange = function () { if (!$('d_s' + i).value) setSel('d_r' + i, ''); };
+      if (i > 0) $('d_c' + i).onclick = function () { ['s', 'e', 'r'].forEach(function (k) { setSel('d_' + k + i, $('d_' + k + (i - 1)).value); }); };
+    });
+  }
+  if (moreHas('gen')) {
+    var gy = $('f_geny'), gconv = function () { var v = kata(gy.value); if (v !== gy.value) gy.value = v; };
+    var gkey = function () { return gy.value.trim() + '|' + $('f_gen').value.trim(); };
+    var greset = function () { MORE_GEN_OK = ''; $('gen_warn').textContent = ''; };
+    gy.addEventListener('input', function (e) { if (!e.isComposing) gconv(); });
+    gy.addEventListener('compositionend', gconv);
+    gy.addEventListener('input', greset); $('f_gen').addEventListener('input', greset);
+    $('gen_chk').onclick = function () {
+      var w = $('gen_warn'), g = $('f_gen').value.trim(), y, k;
+      gconv(); y = gy.value.trim(); k = gkey(); MORE_GEN_OK = '';
+      if (!g || !y) { w.style.color = '#c00'; w.textContent = '源氏名と読み方（カタカナ）を入力してください'; return; }
+      if (!/^[ァ-ヶー\s　]+$/.test(y)) { w.style.color = '#c00'; w.textContent = '読み方はカタカナで入力してください'; return; }
+      w.style.color = '#555'; w.textContent = '照合中…'; $('gen_chk').disabled = true;
+      google.script.run.withSuccessHandler(function (r) {
+        $('gen_chk').disabled = false;
+        if (gkey() !== k) return;
+        if (r && r.length) { w.style.color = '#c00'; w.textContent = GEN_MSG; } else { MORE_GEN_OK = k; w.style.color = '#1a7f37'; w.textContent = '使えます'; }
+      }).withFailureHandler(function () {
+        $('gen_chk').disabled = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください';
+      }).findGenDup(y, MORE.store, g);
+    };
+  }
+  if (moreHas('photo')) {
+    $('photobtn').onclick = function () { $('photoin').click(); };
+    $('photoin').onchange = function () { photoPick(this.files && this.files[0]); this.value = ''; };
+  }
+}
+function moreCollect() {
+  var d = { cast: castAll(), photoId: PHOTO_ID }, v = function (id) { var e = $(id); return e ? e.value.trim() : ''; };
+  if (moreHas('address')) {
+    var z = v('f_zip').replace(/\D/g, '');
+    d.zip = z.length === 7 ? z.slice(0, 3) + '-' + z.slice(3) : z;
+    d.pref = v('f_pref');
+    if (d.pref === '北海道') { var c = v('f_city'); d.city = c === '札幌市' ? '札幌市' + v('f_ward') : c === 'その他' ? v('f_cityo') : c; } else d.city = v('f_cityo');
+    d.town = v('f_town'); d.building = v('f_building');
+  }
+  if (moreHas('health')) {
+    HEALTH.forEach(function (x) { var s = v('f_' + x[0]), t = v('f_' + x[0] + 'T'); d[x[0]] = s === 'あり' ? 'あり: ' + t : s; });
+    d.hAgree = $('f_hAgree').checked ? '1' : '';
+  }
+  if (moreHas('gen')) { d.genWish = v('f_gen'); d.genWishYomi = kata(v('f_geny')); }
+  if (moreHas('wd')) {
+    WEEK.forEach(function (w, i) {
+      var st = v('d_s' + i), en = v('d_e' + i), rd = v('d_r' + i);
+      d['wd' + i] = st ? st + '～' + (en || 'Last') + (rd ? ' 送迎希望' : '') : '';
+    });
+    var wx = document.querySelector('#wdx_box .chip.on'); d.wdx = wx ? wx.getAttribute('data-v') : '';
+  }
+  if (moreHas('night')) ['Store', 'Period', 'Sales', 'Wage', 'Shift'].forEach(function (k) { d['c1' + k] = v('f_c1' + k); });
+  if (moreHas('sns')) { d.insta = socialUrl(v('f_insta'), 'https://www.instagram.com/'); d.tiktok = socialUrl(v('f_tiktok'), 'https://www.tiktok.com/@'); d.sns = v('f_sns'); }
+  if (moreHas('mbti')) { d.mbti = v('f_mbti'); d.honseki = v('f_honseki'); }
+  return d;
+}
+function moreErrs() {
+  var d = moreCollect(), errs = [];
+  function e(k, t) { errs.push([k, t]); }
+  if (moreHas('address')) {
+    if (d.zip && d.zip.replace(/\D/g, '').length !== 7) e('zip', '郵便番号は7桁です');
+    if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
+    else if (d.pref === '北海道' && $('f_city').value === '札幌市' && !$('f_ward').value) e('city', '区を選んでください');
+    if (!d.town) e('town', '町名・番地を入力してください');
+  }
+  if (moreHas('health')) {
+    HEALTH.forEach(function (x) {
+      if (!d[x[0]]) e(x[0], x[1] + 'を選んでください');
+      else if (d[x[0]] === 'あり: ') e(x[0] + 'T', x[1] + 'の内容を記入してください');
+    });
+    if (!d.hAgree) e('hAgree', '回答への同意にチェックしてください');
+  }
+  if (moreHas('gen')) {
+    if (!d.genWish) e('genWish', '源氏名を入力してください');
+    if (!d.genWishYomi) e('genWishYomi', '源氏名の読み方（カタカナ）を入力してください');
+    else if (!/^[ァ-ヶー\s　]+$/.test(d.genWishYomi)) e('genWishYomi', '読み方はカタカナで入力してください');
+    else if (MORE_GEN_OK !== d.genWishYomi + '|' + d.genWish) e('genWishYomi', '源氏名の「確認」ボタンを押して、照合してください');
+  }
+  if (moreHas('wd') && !d.wdx && !WEEK.some(function (w, i) { return d['wd' + i]; })) e('wk', '出勤できる曜日を選ぶか、「不定期」「未定」を選んでください');
+  if (moreHas('photo') && !PHOTO_ID) e('photo', PHOTO ? '写真のアップロードが終わるまでお待ちください' : '面接写真を撮影してください');
+  return errs;
+}
+function submitMoreForm() {
+  if (SENDING) return;
+  var errs = moreErrs();
+  if (errs.length) { showErrors(errs); $('sendst').textContent = '入力が足りない所があります: ' + errs.map(function (x) { return x[1]; }).join(' / '); return; }
+  SENDING = true; $('sub').disabled = true; $('sub').innerHTML = '<span class="spin"></span>送信中…'; $('sendst').textContent = '';
+  google.script.run.withSuccessHandler(function () {
+    msg('');
+    $('app').innerHTML = '<div class="done"><div class="ck">&#10003;</div><h2 style="font-size:22px;line-height:1.7">' +
+      (MORE.ft === 'nc' ? '入力ありがとうございました。<br>面接担当がまいりますので、<br>そのままお待ちください。' : 'ご入力いただき、ありがとうございました。<br>担当の者がまいりますので、<br>そのままお待ちくださいませ。') + '</h2></div>';
+    window.scrollTo(0, 0);
+  }).withFailureHandler(function (e) {
+    SENDING = false; $('sub').disabled = false; $('sub').textContent = '送信';
+    var t = '送信できませんでした: ' + (e && e.message || e);
+    $('sendst').textContent = t; msg(t, true);
+  }).submitMore(MORE.t, moreCollect());
+}
+
+if (MODE === 'more') startMore(); else startApply();
 </script></body></html>
