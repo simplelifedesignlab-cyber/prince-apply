@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>よくあるご質問 | Prince 千歳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#E8578A;--pd:#C2336A;--bg:#FFF0F5;--line:#F6D3E0;--tx:#3a2a31}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Noto Sans JP',sans-serif;line-height:1.8;font-size:15px}
+header{background:var(--p);color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:20px;font-weight:700}
+header p{margin:4px 0 0;font-size:13px;opacity:.95}
+main{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+nav.jump{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+nav.jump a{background:#fff;border:1px solid var(--line);color:var(--pd);border-radius:999px;padding:4px 12px;font-size:13px;text-decoration:none}
+h2{font-size:17px;color:var(--pd);margin:24px 0 8px;padding-left:10px;border-left:4px solid var(--p)}
+details{background:#fff;border:1px solid var(--line);border-radius:10px;margin:8px 0}
+summary{cursor:pointer;padding:12px 14px;font-weight:500;list-style:none;position:relative;padding-right:34px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"Q";color:var(--p);font-weight:700;margin-right:8px}
+summary::after{content:"+";position:absolute;right:14px;top:10px;color:var(--p);font-size:20px;line-height:1.4}
+details[open] summary::after{content:"\2212"}
+.a{padding:0 14px 14px;border-top:1px dashed var(--line);padding-top:10px}
+.a::before{content:"A";color:var(--pd);font-weight:700;margin-right:8px}
+.badge{display:inline-block;background:#fff3cd;color:#8a6d00;border:1px solid #f0d98c;border-radius:4px;font-size:11px;padding:0 6px;margin-left:6px}
+.store{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:8px 0}
+.store h3{margin:0 0 4px;font-size:16px}
+.store h3 small{color:var(--pd);font-weight:400;font-size:12px;margin-left:6px}
+.store dl{margin:0;font-size:14px}
+.store dt{float:left;clear:left;width:5em;color:#7a5a67}
+.store dd{margin:0 0 2px 5em}
+.store .links{margin-top:8px;font-size:13px}
+.store .links a{color:var(--pd);margin-right:12px}
+.cta{display:block;text-align:center;background:var(--p);color:#fff;text-decoration:none;font-weight:700;border-radius:999px;padding:12px;margin:24px 0 0}
+footer{text-align:center;font-size:12px;color:#8b6b78;padding:0 16px 24px}
+</style>
+</head>
+<body>
+<header><h1>よくあるご質問</h1><p>Prince 千歳（RegentClub・花もみじ・WAVE・328）</p></header>
+<main>
+<nav class="jump" id="jump"></nav>
+<div id="qa"></div>
+<h2 id="stores">店舗情報</h2>
+<div id="storelist"></div>
+<a class="cta" id="cta" href="#">応募フォームへ</a>
+</main>
+<footer>お探しの答えが見つからない場合は、応募フォームのお問い合わせ先からご連絡ください。</footer>
+<script src="qa-data.js"></script>
+<script>
+(function () {
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function br(s) { return esc(s).replace(/\n/g, '<br>'); }
+  var check = /[?&]check=1/.test(location.search);  // 確認待ちの印は ?check=1 のときだけ (応募者には出ない)
+  var jump = [], html = '';
+  QA_DATA.categories.forEach(function (c, ci) {
+    jump.push('<a href="#c' + ci + '">' + esc(c.title) + '</a>');
+    html += '<h2 id="c' + ci + '">' + esc(c.title) + '</h2>';
+    c.items.forEach(function (it) {
+      html += '<details><summary>' + esc(it.q) + (check && it.pending ? '<span class="badge">確認待ち</span>' : '') + '</summary><div class="a">' + br(it.a) + '</div></details>';
+    });
+  });
+  jump.push('<a href="#stores">店舗情報</a>');
+  document.getElementById('jump').innerHTML = jump.join('');
+  document.getElementById('qa').innerHTML = html;
+  document.getElementById('storelist').innerHTML = QA_DATA.stores.map(function (s) {
+    var map = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.addr.replace(/（.*$/, ''));
+    var ap = QA_DATA.applyUrl + '?shop=' + encodeURIComponent(QA_DATA.shopParam[s.name] || '');
+    return '<div class="store"><h3>' + esc(s.name) + '<small>' + esc(s.kind) + '</small></h3><dl>' +
+      '<dt>営業時間</dt><dd>' + esc(s.hours) + '</dd>' +
+      '<dt>住所</dt><dd>' + esc(s.addr) + '</dd>' +
+      '<dt>電話</dt><dd><a href="tel:' + s.tel.replace(/[^\d]/g, '') + '">' + esc(s.tel) + '</a></dd></dl>' +
+      '<div class="links"><a href="' + map + '" target="_blank" rel="noopener">地図</a><a href="' + esc(s.official) + '" target="_blank" rel="noopener">公式サイト</a><a href="' + ap + '">この店に応募する</a></div></div>';
+  }).join('');
+  document.getElementById('cta').href = QA_DATA.applyUrl;
+})();
+</script>
+</body>
+</html>
