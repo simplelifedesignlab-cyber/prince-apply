@@ -833,6 +833,19 @@ function shopFromParam() {
   var n = ((SPECX && SPECX.shopParam) || {})[String(QSHOP || '').toLowerCase()];
   return n || '';
 }
+// 連絡先のコピー (clipboard API が無い LINE 内ブラウザ・GAS の iframe では textarea + execCommand に切り替える)
+function copyContact(b) {
+  var v = b.getAttribute('data-v') || '';
+  function done() { b.textContent = 'コピーしました'; setTimeout(function () { b.textContent = 'コピー'; }, 1800); }
+  function fb() {
+    var ta = document.createElement('textarea');
+    ta.value = v; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { ta.setSelectionRange(0, v.length); document.execCommand('copy'); done(); } catch (e) { b.textContent = 'コピーできません'; }
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, fb); else fb();
+}
 // お問い合わせ先 (Spec.js の CONTACT。空のあいだは「準備中」)
 function contactHtml() {
   var c = (SPECX && SPECX.contact) || {};
@@ -842,7 +855,8 @@ function contactHtml() {
       /^https?:\/\//.test(v) ? '<a href="' + esc(v) + '" target="_blank" rel="noopener">LINEで問い合わせる</a>' :
       kind === 'mail' ? '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>' :
       kind === 'tel' ? '<a href="tel:' + esc(v.replace(/[^\d+]/g, '')) + '">' + esc(v) + '</a>' : esc(v);
-    return '<div style="margin:2px 0"><b style="display:inline-block;min-width:5.5em">' + label + '</b>' + t + '</div>';
+    var cp = v && (kind === 'mail' || kind === 'tel') ? ' <button type="button" class="copybtn" data-v="' + esc(v) + '" onclick="copyContact(this)" style="margin-left:6px;padding:1px 8px;font-size:11px;font-family:inherit;color:var(--priD,#C2336A);background:#fff;border:1px solid #F3DCE5;border-radius:10px;cursor:pointer">コピー</button>' : '';
+    return '<div style="margin:2px 0"><b style="display:inline-block;min-width:5.5em">' + label + '</b>' + t + cp + '</div>';
   }
   return '<div class="contact" style="text-align:left;border:1px solid #F3DCE5;background:#FFF7FA;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:14px">' +
     '<div style="font-weight:bold;margin-bottom:4px">お問い合わせ先</div>' + row('LINE', c.line, 'line') + row('メール', c.mail, 'mail') + row('電話番号', c.tel, 'tel') +
