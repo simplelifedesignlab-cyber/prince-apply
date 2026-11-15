@@ -1562,7 +1562,7 @@ function showApplicant() {
     { t: '体験入店チェック', h: taikenHtml('main') },
     { t: 'クロージング・その他', h: taikenHtml('close') },
     { t: '面接終了 お疲れ様でした', h: '<div class="q"><div class="chips" id="jchips" data-m="s">' +
-        ['当日体入', '後日体入', '保留（後日連絡）', 'お断り（翌日18時に自動メール）'].map(function (v) { return '<button type="button" class="chip big" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
+        ['当日体入', '後日体入', '保留（後日連絡）', 'お断り（翌日18時に自動メール）'].filter(function (v) { return !(v.indexOf('お断り') === 0 && (a.status === '辞退' || a.status === '採用')); }).map(function (v) { return '<button type="button" class="chip big" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
         '<div id="jdbox" style="display:none"><div class="pl">体験日 (明日以降を選べます)</div>' + judgeDates() + '</div></div>' +
         '<button class="pri big" id="jsave" style="width:100%">保存</button>' }
   ];
@@ -1584,6 +1584,7 @@ function showApplicant() {
         if (!on) { msg('「当日体入」「後日体入」「保留」「お断り」のどれかを選んでください', true); return; }
         if (!document.querySelector('[data-k="idDoc"]').value) { pgGo(1); showErrors([['idDoc', '身分証を選んでください']]); return; }
         var v = on.getAttribute('data-v');
+        if (v.indexOf('お断り') === 0 && (CUR.a.status === '辞退' || CUR.a.status === '採用')) { msg('「' + CUR.a.status + '」の方は、お断りにできません', true); return; }
         if (v === '当日体入' || v === '後日体入') { // 2026-11-15 W1: 一日体験に進む前に、足りない項目を出して止める (サーバー側 setJudgement にも同じ検査)
           var cd = collectAll(), lack = [];
           if (!(cd.gen || cd.genWish || '').trim()) lack.push('源氏名');
