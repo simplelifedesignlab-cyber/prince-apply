@@ -1351,7 +1351,7 @@ function showList() {
   CUR = null; ROW = '';
   $('app').innerHTML = '<h2>応募者一覧</h2><div class="small"><a href="' + esc(BASE) + '" target="_top">応募者入力画面を開く</a>　<a href="#" id="totn">体入管理へ</a>　<a href="#" id="tolead">LINE・媒体</a>　<a href="#" id="qrb">応募者用QR</a>　<a href="' + esc(B.ssUrl) + '" target="_blank">記録シート</a></div>' +
     '<div class="chips" id="rows" data-m="x">' + Object.keys(KROWS).concat(['全部']).map(function (r) { return '<button type="button" class="chip rowb' + (r === '全部' ? ' on' : '') + '" data-r="' + r + '">' + r + '</button>'; }).join('') + '</div>' +
-    '<select id="sf" style="width:auto;margin-top:8px"><option value="">状態: すべて</option>' + B.statuses.map(function (s) { return '<option' + (s === 'クロージング' ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +
+    '<select id="sf" style="width:auto;margin-top:8px"><option value="">状態: すべて</option>' + B.statuses.reduce(function (r, s) { return r.concat(s === '面接中' ? ['面接予約', '面接中'] : [s]); }, []).concat(['辞退']).map(function (s) { return '<option' + (s === 'クロージング' ? ' selected' : '') + '>' + s + '</option>'; }).join('') + '</select>' +
     '<input type="text" id="flt" placeholder="名前で検索 (本名・源氏名・フリガナ / ひらがな可)"><div id="lst">読み込み中...</div>';
   $('totn').onclick = function (e) { e.preventDefault(); showTainyu(''); };
   $('tolead').onclick = function (e) { e.preventDefault(); showLeads(); };
@@ -1391,7 +1391,19 @@ function showQr() {
   };
 }
 // 段階の色 (スプレッドシートの行の色と同じ)
-var STC = { '一日体験予定': '#fff2cc', '1日体験': '#fff2cc', '再体験': '#fff2cc', '一日体験予定・保留': '#d9d9d9', 'クロージング': '#cfe2f3', 'クロージング・保留': '#d9d9d9', '保留': '#d9d9d9', '採用': '#d9ead3' };
+var STC = { '一日体験予定': '#fff2cc', '1日体験': '#fff2cc', '再体験': '#fff2cc', '一日体験予定・保留': '#d9d9d9', 'クロージング': '#cfe2f3', 'クロージング・保留': '#d9d9d9', '保留': '#d9d9d9', '採用': '#d9ead3', '辞退': '#d9d9d9' };
+// 2026-11-15 W1: 状態の値は「面接中」のまま、来店日時 (旧データは追加入力のQR発行・入力) の有無で表示名を分ける
+function arrived(a) { return !!(a.arriveAt || a.moreAt || a.moreDone); }
+function dispStatus(a) { return a.status === '面接中' ? (arrived(a) ? '面接中' : '面接予約') : a.status; }
+function declineBtn(a) { return a.status === '面接中' ? '<button type="button" class="sm dcb" data-id="' + esc(a.id) + '">来なかった・取消</button>' : ''; }
+function doDecline(id, after) {
+  ask('「来なかった・取消」にします。面接枠は空き、状態は「辞退」(灰色) になります。よろしいですか？', function () {
+    run('declineApplicant', [id], function (r) {
+      [LIST, [CUR && CUR.a]].forEach(function (l) { l.forEach(function (a) { if (a && a.id === id) { a.status = r.status; a.judged = r.judged; a.moreToken = ''; } }); });
+      msg(r.message); after();
+    });
+  });
+}
 function isClosing(st) { return st === 'クロージング' || st === 'クロージング・保留'; }
 function isPlan(st) { return st === '一日体験予定' || st === '1日体験' || st === '再体験'; }
 // 追加入力 (nc / lounge): 状態の表示と、「来店」で応募者専用の QR を出す (2026-11-08)
@@ -1399,7 +1411,8 @@ function moreOn(a) { return formTypeOf(a.store) !== 'full'; }
 function moreMark(a) { return moreOn(a) ? '追加入力: ' + (a.moreDone ? '済' : '未') : ''; }
 function showMoreQr(id) {
   run('issueMore', [id], function (r) {
-    [LIST, [CUR && CUR.a]].forEach(function (l) { l.forEach(function (a) { if (a && a.id === id) { a.moreToken = r.token; a.moreAt = r.at; } }); });
+    [LIST, [CUR && CUR.a]].forEach(function (l) { l.forEach(function (a) { if (a && a.id === id) { a.arriveAt = r.arriveAt; if (r.token) { a.moreToken = r.token; a.moreAt = r.at; } } }); });
+    if (r.ft === 'full') { msg('来店を記録しました (' + r.arriveAt + ')'); if ($('lst')) renderList(); else if ($('morebox')) fillMoreBox(); return; } // ガールズバーは QR なし
     var o = document.createElement('div');
     o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:center;justify-content:center';
     o.innerHTML = '<div style="background:#fff;color:#000;padding:20px;border-radius:12px;max-width:340px;text-align:center"><h3 style="margin:0 0 8px">追加入力 (' + (r.ft === 'nc' ? 'ニュークラブ' : 'ラウンジ') + ')</h3>' +
@@ -1426,24 +1439,29 @@ function showMoreQr(id) {
 function fillMoreBox() {
   var a = CUR.a, b = $('morebox');
   if (!b) return;
-  b.innerHTML = moreOn(a) ? '<div class="small"><b>' + esc(moreMark(a)) + '</b></div><button type="button" class="sm" id="morebtn">来店 (追加入力を渡す)</button>' : '';
+  var on = a.status === '面接中';
+  b.innerHTML = (a.reapplyAt ? '<div class="small"><b>再応募</b> (' + esc(a.reapplyAt) + ' に面接日時を取り直し)</div>' : '') + (on && a.arriveAt ? '<div class="small">来店 ' + esc(a.arriveAt) + '</div>' : '') +
+    (moreOn(a) ? '<div class="small"><b>' + esc(moreMark(a)) + '</b></div>' : '') +
+    (on && (moreOn(a) || !arrived(a)) ? '<button type="button" class="sm" id="morebtn">' + (moreOn(a) ? '来店 (追加入力を渡す)' : '来店') + '</button>' : '') + declineBtn(a).replace('class="sm dcb"', 'class="sm" id="dclbtn"');
   if ($('morebtn')) $('morebtn').onclick = function () { showMoreQr(a.id); };
+  if ($('dclbtn')) $('dclbtn').onclick = function () { doDecline(a.id, function () { paintHead(); fillMoreBox(); }); };
 }
 function renderList() {
   if (!$('flt')) return;
   var f = kn(($('flt').value || '').trim()), s = $('sf').value;
   var l = LIST.filter(function (a) {
     if (a.status === '不採用') return false; // 不採用は「お断り」タブへ移るので一覧には出さない
-    if (s === 'クロージング' ? !isClosing(a.status) : s === '一日体験予定' ? !isPlan(a.status) : s && a.status !== s) return false;
+    if (s === 'クロージング' ? !isClosing(a.status) : s === '一日体験予定' ? !isPlan(a.status) : s === '面接予約' || s === '面接中' ? dispStatus(a) !== s : s && a.status !== s) return false;
     if (ROW && rowOf(a.furigana || a.genWishYomi) !== ROW) return false;
     return !f || kn(a.name + a.furigana + a.genWishYomi + a.gen + a.id).indexOf(f) >= 0;
   });
   $('lst').innerHTML = l.length ? l.map(function (a) {
-    return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + (STC[a.status] || '#fff') + '"><b>' + esc(a.name) + ' / ' + esc(a.gen) + '</b> <span class="badge">' + esc(a.status) + '</span>' + (a.rank ? ' ランク' + esc(a.rank) : '') +
-      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + (logoOf(a.store) ? '<img class="rlg" src="' + logoOf(a.store) + '" alt="">' : '') + esc(a.store) + '　更新 ' + esc(a.updated) + (moreOn(a) ? '　' + esc(moreMark(a)) : '') + '</div>' + (moreOn(a) && a.status === '面接中' ? '<button type="button" class="sm mrb" data-id="' + esc(a.id) + '">来店 (追加入力)</button>' : '') + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
+    return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + (STC[a.status] || '#fff') + '"><b>' + esc(a.name) + ' / ' + esc(a.gen) + '</b> <span class="badge">' + esc(dispStatus(a)) + '</span>' + (a.reapplyAt ? ' <span class="badge">再応募</span>' : '') + (a.rank ? ' ランク' + esc(a.rank) : '') +
+      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + (logoOf(a.store) ? '<img class="rlg" src="' + logoOf(a.store) + '" alt="">' : '') + esc(a.store) + '　更新 ' + esc(a.updated) + (moreOn(a) ? '　' + esc(moreMark(a)) : '') + '</div>' + (a.status === '面接中' && (moreOn(a) || !arrived(a)) ? '<button type="button" class="sm mrb" data-id="' + esc(a.id) + '">' + (moreOn(a) ? '来店 (追加入力)' : '来店') + '</button>' : '') + declineBtn(a) + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
   }).join('') : '<div class="small">該当なし</div>';
   [].forEach.call(document.querySelectorAll('.item'), function (e) { e.onclick = function () { var id = e.getAttribute('data-id'); if (isClosing(e.getAttribute('data-st'))) { FROM = ''; showClosing(id); } else openApplicant(id); }; });
   [].forEach.call(document.querySelectorAll('.mrb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); showMoreQr(b.getAttribute('data-id')); }; });
+  [].forEach.call(document.querySelectorAll('.dcb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); doDecline(b.getAttribute('data-id'), renderList); }; });
   [].forEach.call(document.querySelectorAll('.clb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); FROM = ''; showClosing(b.getAttribute('data-id')); }; });
 }
 
@@ -1565,7 +1583,16 @@ function showApplicant() {
         var on = document.querySelector('#jchips .chip.on');
         if (!on) { msg('「当日体入」「後日体入」「保留」「お断り」のどれかを選んでください', true); return; }
         if (!document.querySelector('[data-k="idDoc"]').value) { pgGo(1); showErrors([['idDoc', '身分証を選んでください']]); return; }
-        var v = on.getAttribute('data-v'), kind = v === '当日体入' ? 'today' : v === '後日体入' ? 'later' : v.indexOf('保留') === 0 ? 'hold' : 'reject';
+        var v = on.getAttribute('data-v');
+        if (v === '当日体入' || v === '後日体入') { // 2026-11-15 W1: 一日体験に進む前に、足りない項目を出して止める (サーバー側 setJudgement にも同じ検査)
+          var cd = collectAll(), lack = [];
+          if (!(cd.gen || cd.genWish || '').trim()) lack.push('源氏名');
+          if (!cd.birth) lack.push('生年月日');
+          if (!CUR.a.faceUrl) lack.push('面接写真 (本人に撮ってもらう: 「来店」でQRを渡す)');
+          if (!cd.idDoc) lack.push('年齢確認書類');
+          if (lack.length) { msg('一日体験に進めません。足りない項目: ' + lack.join('、'), true); return; }
+        }
+        var kind = v === '当日体入' ? 'today' : v === '後日体入' ? 'later' : v.indexOf('保留') === 0 ? 'hold' : 'reject';
         var act = kind === 'today' || kind === 'later' ? 'taiken' : kind, date = kind === 'today' ? today() : kind === 'later' ? $('jdate').value : '';
         if (kind === 'later' && (!date || date <= today())) { msg('後日体入は明日以降の日付を選んでください', true); return; }
         var label = kind === 'today' ? '当日体入 (' + date + ')' : kind === 'later' ? '後日体入 (' + date + ')' : kind === 'hold' ? '保留 (後日連絡)' : 'お断り (不採用にして、翌日' + B.rejectSend + '時にお断りメールを自動送信予約)';
@@ -1590,7 +1617,7 @@ function showApplicant() {
 }
 function paintHead() {
   var a = CUR.a;
-  $('ttl').textContent = a.name + ' / ' + a.gen; $('stb').textContent = a.status + (a.judged ? ' (' + a.judged + ')' : '');
+  $('ttl').textContent = a.name + ' / ' + a.gen; $('stb').textContent = dispStatus(a) + (a.judged ? ' (' + a.judged + ')' : '');
   $('rk').textContent = a.rank ? '採用ランク: ' + a.rank : '';
 }
 function collectAll() {
