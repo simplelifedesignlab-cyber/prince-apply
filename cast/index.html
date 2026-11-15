@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>シフト入力</title><meta name="apple-mobile-web-app-title" content="シフト入力"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#E8578A"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta charset="utf-8">
+<html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>マイページ</title><meta name="apple-mobile-web-app-title" content="マイページ"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#E8578A"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
@@ -38,6 +38,11 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 #msg{min-height:24px;text-align:center;font-size:16px;margin-bottom:6px}
 #msg.ok{color:var(--priD)}#msg.ng{color:#d93025}
 #load{padding:40px 0;text-align:center}
+.booked{margin:6px 0;font-weight:700;color:var(--priD)}
+.hbtn{margin-top:8px;min-height:44px;font-size:16px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:6px 18px;font-family:inherit;cursor:pointer}
+.hbtn.sec{background:var(--priL);color:var(--priD)}
+.hbtn:disabled{opacity:.6}
+.hmsg{margin:6px 0 0;font-size:15px}.hmsg.ok{color:var(--priD)}.hmsg.ng{color:#d93025}
 .a2hs{border:2px solid var(--pri);position:relative;padding-right:44px}
 .a2hs h2{font-size:17px}
 .a2hs p{margin:4px 0;font-size:16px}
@@ -45,7 +50,7 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .a2hs .go{margin:6px 0 2px;min-height:44px;font-size:16px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:10px;padding:6px 18px;font-family:inherit;cursor:pointer}
 </style></head>
 <body>
-<header><div class="in"><h1 id="gen">シフト入力</h1><p id="store"></p></div></header>
+<header><div class="in"><h1 id="gen">マイページ</h1><p id="store"></p></div></header>
 <div class="wrap">
   <div id="load">読み込み中…</div>
   <div id="main" hidden>
@@ -132,6 +137,40 @@ function hairChoices(d) {
   return a.length ? a : data.hairOpts;
 }
 
+// 美容室の予約 (スイッチが入っている時だけ)。「保存」とは別に、押したその場で枠を取る
+function hairCall(d, fn, time) {
+  d.hbusy = true; d.hmsg = ''; render();
+  var done = function (r) {
+    d.hbusy = false;
+    if (r) { d.hb = r.b; d.ho = r.o; d.hair = !!r.b; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; }
+    render();
+  };
+  var run = google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { d.hbusy = false; d.hmsg = '通信できませんでした。もう一度押してください。'; d.hok = false; render(); });
+  if (fn === 'reserve') run.reserveHair(TOKEN, d.date, time); else run.cancelHair(TOKEN, d.date);
+}
+function hairBox(d) {
+  var s = el('div', 'sub');
+  s.appendChild(el('label', 't', '美容室(ヘアメイク)'));
+  var stale = d.shift !== d.savedShift;
+  if (d.hb) s.appendChild(el('p', 'booked', d.hb.time + ' ' + d.hb.place + ' 予約済み'));
+  if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
+  else if (d.ho.length) {
+    var sel = mkSel(d.ho, d.hpick || '', d.hb ? '別の時刻に変える' : '予約する時刻を選んでください', function (v) { d.hpick = v; });
+    sel.disabled = !!d.hbusy; s.appendChild(sel);
+    var go = el('button', 'hbtn', d.hb ? '時刻を変更する' : '予約する'); go.type = 'button'; go.disabled = !!d.hbusy;
+    go.onclick = function () { if (!d.hpick) { d.hmsg = '時刻を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick); };
+    s.appendChild(go);
+  } else if (!d.hb) s.appendChild(el('p', 'hint', 'この日は空きがありません。お店へ連絡してください'));
+  if (d.hb) {
+    s.appendChild(document.createElement('br'));
+    var cx = el('button', 'hbtn sec', '取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
+    cx.onclick = function () { hairCall(d, 'cancel'); };
+    s.appendChild(cx);
+  }
+  if (d.hmsg) s.appendChild(el('p', 'hmsg ' + (d.hok ? 'ok' : 'ng'), d.hmsg));
+  return s;
+}
+
 function render() {
   var box = document.getElementById('days');
   box.innerHTML = '';
@@ -170,12 +209,13 @@ function render() {
     card.appendChild(add);
 
     if (!rest) {
-      card.appendChild(el('label', 't', '送迎・ヘアメイク'));
+      card.appendChild(el('label', 't', data.hairOn ? '送迎' : '送迎・ヘアメイク'));
       var ch = el('div', 'chips');
       ch.appendChild(chip('送迎 行き(朝) ' + (d.go ? 'あり' : 'なし'), d.go, function () { d.go = !d.go; }));
       ch.appendChild(chip('送迎 帰り ' + (d.back ? 'あり' : 'なし'), d.back, function () { d.back = !d.back; }));
-      ch.appendChild(chip('ヘアメイク ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
+      if (!data.hairOn) ch.appendChild(chip('ヘアメイク ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
       card.appendChild(ch);
+      if (data.hairOn) card.appendChild(hairBox(d));
 
       if (d.go) {
         var s1 = el('div', 'sub');
@@ -205,7 +245,7 @@ function render() {
         if (d.after) s2.appendChild(el('p', 'hint', 'アフターの日は 3:00 までの帰りになります'));
         card.appendChild(s2);
       }
-      if (d.hair) {
+      if (d.hair && !data.hairOn) {
         var s3 = el('div', 'sub');
         s3.appendChild(el('label', 't', 'ヘアメイクの希望時間'));
         s3.appendChild(mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; }));
@@ -239,6 +279,10 @@ document.getElementById('save').onclick = function () {
     saving = false; btn.disabled = false; btn.textContent = '保存';
     msg.className = 'ok'; msg.textContent = '保存しました';
     data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim(); }); });
+    if (data.hairOn) { // 出勤を変えた日は空き時刻も変わるので読み直す
+      google.script.run.withSuccessHandler(function (r) { if (r && r.ok) { data = r; render(); } }).withFailureHandler(function () {}).getPage(TOKEN);
+      return;
+    }
     render();
   }).withFailureHandler(function (e) {
     saving = false; btn.disabled = false; btn.textContent = '保存';
