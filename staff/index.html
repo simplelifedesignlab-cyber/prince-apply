@@ -116,9 +116,22 @@ th,td{border-color:#E3E6EC}
 .pg-tx{white-space:pre-wrap;font-size:15px;padding:10px 12px}
 .dv td.dvc{min-width:44px;height:46px;cursor:pointer;font-size:18px}.dv td.cand{color:#B9C0CE;font-weight:400}
 .pg-row{display:flex;gap:8px;padding:0 12px 12px}.pg-row .pg-b{margin-top:0}
+.row .qb{min-height:44px;min-width:64px;font:inherit;font-size:15px;font-weight:700;border:1px solid var(--pri);border-radius:8px;background:#fff;color:var(--pri);cursor:pointer;padding:0 12px;flex:none}
+.row .l{flex:1}
+.ov{position:fixed;inset:0;background:rgba(17,24,39,.55);z-index:20;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+.ovb{background:#fff;border-radius:14px;width:100%;max-width:420px;padding:18px;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.ovb h3{margin:0 0 4px;font-size:19px;color:var(--pri)}
+.ovb .u{font-size:12px;color:#555;word-break:break-all;margin:10px 0}
+.ovb .qr{display:flex;justify-content:center;margin:12px 0}
+.ovb .b{display:block;width:100%;min-height:48px;font:inherit;font-size:16px;font-weight:500;border:1px solid var(--pri);border-radius:8px;background:var(--pri);color:#fff;cursor:pointer;margin-top:10px}
+.ovb .b.sub{background:#fff;color:var(--pri)}
+.ovb .b.dg{background:#fff;color:#111;border-color:#111}
+.ovb .b:disabled{opacity:.5}
+.ovb .er{color:#b00020;font-size:14px;margin-top:8px}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
@@ -195,6 +208,7 @@ function top_(){
     '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
     '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
     '<button class="big" data-v="post">投稿生成<small>お知らせ文を作って投稿予定へ</small></button>'+
+    '<a class="big" href="'+INTERVIEW+'&f=closing" target="_blank" rel="noopener">クロージング<small>体験後の打診・入店</small></a>'+
     '<a class="big" href="'+INTERVIEW+'" target="_blank" rel="noopener">面接管理<small>面接の画面を開く</small></a>'+
     '<div class="upd">黒服ポータル</div>';
   [].forEach.call(document.querySelectorAll('button.big'),function(b){b.onclick=function(){go(b.getAttribute('data-v'));};});
@@ -207,10 +221,32 @@ function vRoster(){
   var my=++seq;
   api('getRoster',[store]).then(function(r){
     var h='<div class="cnt">'+r.count+'人</div><div class="card">'+(r.casts.length?r.casts.map(function(c){
-      return '<div class="row"><span>'+(c.ban?'<b>'+esc(c.ban)+'</b> ':'')+esc(c.gen)+'</span><span class="s">'+(c.joined?esc(c.joined)+'〜':'')+(c.weekly?' 週'+esc(c.weekly):'')+'</span></div>';
+      return '<div class="row"><span class="l">'+(c.ban?'<b>'+esc(c.ban)+'</b> ':'')+esc(c.gen)+'<br><span class="s">'+(c.joined?esc(c.joined)+'〜':'')+(c.weekly?' 週'+esc(c.weekly):'')+'</span></span>'+(c.id?'<button class="qb" data-qid="'+esc(c.id)+'" data-qg="'+esc(c.gen)+'">QR</button>':'')+'</div>';
     }).join(''):'<div class="msg">在籍はいません</div>')+'</div>';
     fin(my,r,h);
+    [].forEach.call(document.querySelectorAll('.qb'),function(b){b.onclick=function(){castPanel(b.getAttribute('data-qid'),b.getAttribute('data-qg'));};});
   }).catch(function(e){fail(my,e);});
+}
+
+// 個人ページの QR・URL の作り直し・退店 (2026-11-15 W3)。URL (鍵入り) は黒服の鍵で取りに行く。画面を閉じたら消える (端末には残さない)
+function castPanel(id,gen){
+  var ov=document.createElement('div');ov.className='ov';
+  ov.innerHTML='<div class="ovb"><h3>'+esc(gen)+'</h3><div id="cpb">読み込み中...</div></div>';
+  document.body.appendChild(ov);
+  var close=function(){if(ov.parentNode)ov.parentNode.removeChild(ov);};
+  ov.onclick=function(e){if(e.target===ov)close();};
+  var show=function(r){
+    $('cpb').innerHTML='<div class="s" style="font-size:14px;color:#555">'+(r.ban?esc(r.ban)+'番　':'')+'キャストが自分のスマホで読み取ります。メールは使いません。</div><div class="qr" id="cpq"></div><div class="u">'+esc(r.url)+'</div>'+
+      '<button class="b sub" id="cpc">URL をコピー</button><button class="b sub" id="cpr">URL を作り直す (古い URL は使えなくなります)</button><button class="b dg" id="cpx">退店にする (個人ページが開かなくなります)</button><button class="b" id="cpz">閉じる</button><div class="er" id="cpe"></div>';
+    if(window.QRCode)new QRCode($('cpq'),{text:r.url,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});else $('cpq').textContent='QR を作れませんでした (URL をコピーしてください)';
+    var err=function(e){$('cpe').textContent=e.message||String(e);[].forEach.call(document.querySelectorAll('.ovb .b'),function(x){x.disabled=false;});};
+    var busy=function(){[].forEach.call(document.querySelectorAll('.ovb .b'),function(x){x.disabled=true;});$('cpe').textContent='';};
+    $('cpz').onclick=close;
+    $('cpc').onclick=function(){if(navigator.clipboard)navigator.clipboard.writeText(r.url).then(function(){$('cpe').textContent='コピーしました';},function(){$('cpe').textContent='コピーできませんでした';});else $('cpe').textContent='コピーできませんでした';};
+    $('cpr').onclick=function(){if(!window.confirm(gen+' さんの URL を作り直します。今の URL は使えなくなります。よろしいですか？'))return;busy();api('resetCastLink',[store,id]).then(show).catch(err);};
+    $('cpx').onclick=function(){if(!window.confirm(gen+' さんを退店にします。個人ページが開かなくなります。よろしいですか？'))return;busy();api('retireCast',[store,id]).then(function(){close();route();}).catch(err);};
+  };
+  api('getCastLink',[store,id]).then(show).catch(function(e){$('cpb').innerHTML='<div class="er">'+esc(e.message||String(e))+'</div><button class="b" id="cpz">閉じる</button>';$('cpz').onclick=close;});
 }
 
 var DOWS=['日','月','火','水','木','金','土'];

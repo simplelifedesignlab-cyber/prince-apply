@@ -1404,7 +1404,7 @@ function doDecline(id, after) {
     });
   });
 }
-function isClosing(st) { return st === 'クロージング' || st === 'クロージング・保留'; }
+function isClosing(st) { return st === 'クロージング' || st === 'クロージング・保留' || st === '保留'; } // 2026-11-15 W3: 面接の「保留」の人もクロージングの一覧に出す (closeDecide が受ける)
 function isPlan(st) { return st === '一日体験予定' || st === '1日体験' || st === '再体験'; }
 // 追加入力 (nc / lounge): 状態の表示と、「来店」で応募者専用の QR を出す (2026-11-08)
 function moreOn(a) { return formTypeOf(a.store) !== 'full'; }
@@ -1706,6 +1706,8 @@ function showClosing(id) {
     h += '<div class="sec"><h3>結果 (どれか 1 つ)</h3><div class="chips" id="clkind" data-m="s">' +
       ['入店', '再体入', '保留', 'お断り'].map(function (v) { return '<button type="button" class="chip big" data-v="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
       '<div class="kp" data-k="入店" style="display:none"><div class="q"><label class="t">入店する店舗 (初期値 = 面接店舗)</label>' + storeSel('cl_st_hire') + '</div>' +
+        '<div class="q"><label class="t">店番</label>' + inp('cl_ban', 'text', '', 'inputmode="numeric" maxlength="4" autocomplete="off" placeholder="空なら候補の番号"') + '<div class="small" id="cl_ban_hint">店舗を選ぶと、空いている番号の候補が出ます (20 番以降)。Excel の在籍一覧にも同じ番号で足してください。</div></div>' +
+        '<div class="q"><label class="t">入店日</label><input type="date" id="cl_hdate" value="' + today() + '"></div>' +
         shiftHtml(a) + '<div class="q"><label class="t">入店時休暇予定</label>' + inp('cl_leave', 'text', a.leavePlan) + '</div></div>' +
       '<div class="kp" data-k="再体入" style="display:none"><div class="q"><label class="t">再体入する店舗</label>' + storeSel('cl_st_re') + '</div>' +
         '<div class="q"><label class="t">日程</label><input type="date" id="cl_date" min="' + today() + '" value="' + ymdAdd(today(), 1) + '"></div>' +
@@ -1727,6 +1729,12 @@ function showClosing(id) {
     var showKind = function () { var k = kindNow(); [].forEach.call(document.querySelectorAll('.kp'), function (p) { p.style.display = p.getAttribute('data-k') === k ? '' : 'none'; }); };
     $('clkind').addEventListener('click', function () { setTimeout(showKind, 0); });
     if (isHold) { document.querySelector('#clkind .chip[data-v="保留"]').classList.add('on'); showKind(); }
+    var banFor = function () {
+      var st = $('cl_st_hire').value, b = $('cl_ban'), hint = $('cl_ban_hint');
+      if (!st) { b.placeholder = '空なら候補の番号'; return; }
+      run('suggestBan', [st], function (x) { if ($('cl_st_hire').value === st) { b.placeholder = '候補 ' + x.ban; hint.textContent = st + ' の空き番号の候補は ' + x.ban + ' です (空のままなら ' + x.ban + ')。Excel の在籍一覧にも同じ番号で足してください。'; } });
+    };
+    $('cl_st_hire').onchange = banFor; banFor();
     var KMAP = { '入店': 'hire', '再体入': 'retaiken', '保留': 'hold', 'お断り': 'reject' };
     $('cl_go').onclick = function () {
       var k = kindNow();
@@ -1738,6 +1746,9 @@ function showClosing(id) {
         if (!d.genYomi) { msg('フリガナを入力してください', true); return; }
         d.store = $('cl_st_hire').value;
         if (!d.store) { msg('入店する店舗を選んでください', true); return; }
+        d.ban = $('cl_ban').value.trim(); d.hireDate = $('cl_hdate').value;
+        if (d.ban && !/^[0-9０-９]{1,4}$/.test(d.ban)) { msg('店番は数字 (1〜4 桁) で入れてください', true); return; }
+        if (!d.hireDate) { msg('入店日を入れてください', true); return; }
         d.leave = $('cl_leave').value.trim();
         d.ds = WEEK.map(function (w, i) { return $('s_ds' + i).value ? $('s_ds' + i).value + '～' + ($('e_ds' + i).value || 'Last') : ''; });
       } else if (k === '再体入') {
