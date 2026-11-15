@@ -52,9 +52,29 @@ th{background:var(--priL);color:#5A6275;font-weight:500;font-size:13px}
 .err{color:#d93025}
 .note{font-size:14px;color:#5A6275;margin:8px 2px 0}
 .upd{font-size:13px;color:#8A92A6;text-align:center;margin:14px 0}
+.tabs{display:flex;gap:8px;margin:2px 0 10px}
+.tabs button{flex:1;min-height:52px;font:inherit;font-size:17px;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#5A6275;cursor:pointer}
+.tabs button.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.rv{padding:8px 0;border-top:1px solid #EEF0F4}
+.rl{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rl .tm{font-size:20px;font-weight:700}
+.rl .pl{font-size:13px;color:#5A6275}
+.rl .pr{font-size:18px;color:#B26A00}
+.rl .s{font-size:13px;color:#5A6275}
+.rl .g{font-size:18px;font-weight:700}
+.ra{display:flex;gap:8px;align-items:center;margin-top:6px}
+.ra button{flex:1;min-height:48px;font:inherit;font-size:16px;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:#111;cursor:pointer}
+.ra button.ok{background:var(--pri);border-color:var(--pri);color:#fff}
+.ra button.sub{flex:none;width:72px;font-weight:500;color:#5A6275}
+.ra .stt{font-size:15px;font-weight:700;color:var(--priD);flex:1}
+.ra .stt.ns{color:#5A6275}
+.flash{font-size:15px;color:var(--priD);background:var(--priL);border-radius:6px;padding:8px 10px;margin:0 0 8px}
+.dy{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.dy select{min-height:52px;font-size:17px}
 </style></head><body>
 <header><div class="in"><div class="en">PRINCE CHITOSE</div><h1>ヘアメイク 入力</h1></div></header>
 <div class="wrap">
+  <div class="tabs" id="tabs" style="display:none"><button id="tbD">担当・予約</button><button id="tbS">出勤シフト</button></div>
   <div class="nav" id="navw"><button class="nb" id="pd">← 前の日</button><input type="date" id="dt"><button class="nb" id="nd">次の日 →</button></div>
   <div id="body"><div class="msg">読み込み中...</div></div>
   <div id="wkw"><div class="hd" id="wkh"></div><div id="wk"></div></div>
@@ -99,11 +119,14 @@ function today(){return ymd(new Date(Date.now()-5*3600000));}
 var openDay=today(), day=openDay, cur=null, draft=null, seq=0, saving=false;
 var me=''; try{me=localStorage.getItem('hairName')||'';}catch(e){}
 var addStore='', addGen='', addFree='', roster={};
+var view='day', flash='', busy=false;
+var bPlace='', bTime='', bStore='', bGen='', bFree='';
+var shiftWeek=shift(today(),7), shiftData=null, sdraft=null, sBusy=false;
 
 function mine(){for(var i=0;i<cur.stylists.length;i++)if(cur.stylists[i].name===me)return cur.stylists[i];return null;}
 function setMe(n){me=n;try{if(n)localStorage.setItem('hairName',n);else localStorage.removeItem('hairName');}catch(e){}}
 function pickView(){
-  $('navw').style.display='none';$('wkw').style.display='none';$('bar').style.display='none';$('upd').textContent='';
+  $('tabs').style.display='none';$('navw').style.display='none';$('wkw').style.display='none';$('bar').style.display='none';$('upd').textContent='';
   if(!cur.stylists.length){$('body').innerHTML='<div class="msg err">美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)</div>';return;}
   $('body').innerHTML='<div class="card pick"><div class="lb">自分の名前を押してください</div>'+cur.stylists.map(function(p,i){return '<button data-i="'+i+'">'+esc(p.name)+'</button>';}).join('')+'</div>';
   [].forEach.call(document.querySelectorAll('.pick button'),function(el){el.onclick=function(){setMe(cur.stylists[+el.getAttribute('data-i')].name);render();};});
@@ -111,6 +134,8 @@ function pickView(){
 function render(){
   var p=mine();
   if(!p){pickView();return;}
+  $('tabs').style.display='';$('tbD').className=view==='day'?'on':'';$('tbS').className=view==='shift'?'on':'';
+  if(view==='shift'){renderShift();return;}
   $('navw').style.display='';$('wkw').style.display='';$('bar').style.display='';
   var v=draft||p, roll=roster[addStore], free=addGen===OTHER;
   var opts='';
@@ -120,12 +145,13 @@ function render(){
   $('body').innerHTML=
     '<div class="card"><div class="top"><b>'+esc(p.name)+'</b><button class="link" id="chg">名前を変える</button></div>'+
     '<div class="top" style="margin-top:8px"><span>この日の出勤</span><button class="att'+(v.on?' on':'')+'" id="att">'+(v.on?'出勤':'休み')+'</button></div></div>'+
+    rsvHtml()+bookHtml()+
     '<div class="card"><div class="lb">キャストを追加する</div>'+
     '<div class="st2">'+STORES.map(function(s){return '<button class="stb'+(addStore===s.id?' on':'')+'" data-s="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('')+'</div>'+
     (addStore?(roll?'<div class="lb2">キャストの名前</div><select id="gen">'+opts+'</select>'+(free?'<input type="text" id="free" maxlength="30" placeholder="名前を入れる" style="margin-top:8px" value="'+esc(addFree)+'">':''):'<div class="note">名前を読み込み中...</div>'):'<div class="note">先にお店を押してください</div>')+
     '<button class="add" id="add">追加する</button></div>'+
     '<div class="card"><div class="lb">担当したキャスト '+v.casts.length+' 人</div>'+
-    (v.casts.length?v.casts.map(function(c,i){return '<div class="who"><span class="s">'+esc(shortOf(c.store))+'</span><span class="g">'+esc(c.gen)+'</span><button class="del" data-i="'+i+'">消す</button></div>';}).join(''):'<div class="note">まだ入っていません</div>')+
+    (v.casts.length?v.casts.map(function(c,i){return '<div class="who"><span class="s">'+esc(shortOf(c.store))+'</span><span class="g">'+esc(c.gen)+'</span>'+(c.slot?'<span class="note" style="margin:0">予約の済</span>':'<button class="del" data-i="'+i+'">消す</button>')+'</div>';}).join(''):'<div class="note">まだ入っていません</div>')+
     (p.extra?'<div class="note">このほかに、名前なしの分が '+p.extra+' 人あります</div>':'')+
     (new Date(day+'T12:00:00').getDay()===0?'<div class="note">日曜の分は週の集計 (月〜土) に入りません</div>':'')+'</div>';
   var w=cur.week, p0=w.start.split('-'), q0=w.end.split('-'), x={days:0,n:0};
@@ -147,7 +173,7 @@ function render(){
     if(v.on&&(v.casts.length+p.extra)>0){window.alert('キャストが入っている日は「休み」にできません。先に「消す」を押してください');return;}
     var d=ed();d.on=!d.on;render();
   };
-  [].forEach.call(document.querySelectorAll('.stb'),function(el){el.onclick=function(){
+  [].forEach.call(document.querySelectorAll('.stb[data-s]'),function(el){el.onclick=function(){
     var id=el.getAttribute('data-s');addStore=id;addGen='';addFree='';render();
     if(!roster[id])api('getSalonCasts',[id]).then(function(r){roster[id]=r.casts;if(addStore===id)render();}).catch(function(){roster[id]=[];if(addStore===id){addGen=OTHER;render();}});
   };});
@@ -162,6 +188,7 @@ function render(){
   [].forEach.call(document.querySelectorAll('.del'),function(el){el.onclick=function(){
     var d=ed(),i=+el.getAttribute('data-i');d.casts=d.casts.filter(function(c,j){return j!==i;});render();
   };});
+  bindRsv();
   sv.onclick=function(){
     if(saving||!draft)return;
     var d=draft,my=seq;
@@ -173,6 +200,131 @@ function render(){
     }).catch(function(e){window.alert('保存できませんでした: '+(e.message||e));render();}).then(function(){saving=false;});
   };
 }
+
+// ---- 予約 (cur.reserve が true の時だけ。スイッチが入るまでは出ない) ----
+function opt(v,t,sel){return '<option value="'+esc(v)+'"'+(sel?' selected':'')+'>'+esc(t)+'</option>';}
+function opts_(list,sel,ph){return '<option value="">'+esc(ph)+'</option>'+list.map(function(x){return opt(x[0],x[1],x[0]===sel);}).join('');}
+function rsvHtml(){
+  if(!cur.reserve)return '';
+  if(cur.slotsError)return '<div class="card"><div class="lb">この日の予約</div><div class="note err">読み込めませんでした: '+esc(cur.slotsError)+'</div></div>';
+  var h='<div class="card"><div class="lb">この日の予約 '+cur.slots.length+' 件</div>'+(flash?'<div class="flash">'+esc(flash)+'</div>':'');
+  if(!cur.slots.length)h+='<div class="note">予約はありません</div>';
+  cur.slots.forEach(function(x,i){
+    var a;
+    if(x.status==='予約')a='<button class="ok" data-a="済" data-i="'+i+'">済</button><button data-a="来ず" data-i="'+i+'">来ず</button><button class="sub" data-a="取消" data-i="'+i+'">取消</button>';
+    else a='<span class="stt'+(x.status==='来ず'?' ns':'')+'">'+esc(x.status)+(x.by?' ('+esc(x.by)+')':'')+'</span><button class="sub" data-a="戻す" data-i="'+i+'">戻す</button>';
+    h+='<div class="rv"><div class="rl"><span class="tm">'+esc(x.time)+'</span><span class="pl">'+esc(x.place)+'</span>'+(x.prio?'<span class="pr">★</span>':'')+'<span class="s">'+esc(shortOf(x.store))+'</span><span class="g">'+esc(x.gen)+'</span></div><div class="ra">'+a+'</div></div>';
+  });
+  return h+'<div class="note">★ = 同伴・来店予定がある人。「来ず」は料金を引きません</div></div>';
+}
+function openOf(place){var r=(cur.open||[]).filter(function(o){return o.place===place;})[0];return r?r.times:[];}
+function bookName(){return (bGen===OTHER?bFree:bGen).replace(/[\s　]+/g,' ').trim();}
+function bookReady(){return !!(bPlace&&bTime&&bStore&&bookName());}
+function bookHtml(){
+  if(!cur.reserve||cur.slotsError)return '';
+  if(!(cur.open||[]).length)return '<div class="card"><div class="lb">代わりに予約する</div><div class="note">この日は予約を入れられません (今日から 14 日先までです)</div></div>';
+  var places=cur.places||[], roll=roster[bStore], free=bGen===OTHER, times=openOf(bPlace);
+  if(times.indexOf(bTime)<0)bTime='';
+  var pl=opts_(places.map(function(x){return [x.place,x.place];}),bPlace,'場所を選ぶ'), tm=opts_(times.map(function(t){return [t,t];}),bTime,times.length?'時刻を選ぶ':'空きがありません');
+  var g='';
+  if(bStore&&roll)g='<div class="lb2">キャストの名前</div><select id="bgen"><option value="">キャストを選ぶ</option>'+roll.map(function(n){return opt(n,n,n===bGen);}).join('')+opt(OTHER,'リストにない名前を入れる',free)+'</select>'+(free?'<input type="text" id="bfree" maxlength="30" placeholder="名前を入れる" style="margin-top:8px" value="'+esc(bFree)+'">':'');
+  else if(bStore)g='<div class="note">名前を読み込み中...</div>';
+  return '<div class="card"><div class="lb">代わりに予約する</div><div class="lb2" style="margin-top:0">場所</div><select id="bpl">'+pl+'</select><div class="lb2">時刻</div><select id="btm">'+tm+'</select>'+
+    '<div class="lb2">お店</div><div class="st2">'+STORES.map(function(s){return '<button class="stb'+(bStore===s.id?' on':'')+'" data-bs="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('')+'</div>'+g+
+    '<button class="add" id="bk"'+(bookReady()?'':' disabled')+'>予約する</button></div>';
+}
+function bindRsv(){
+  if(!cur.reserve||cur.slotsError)return;
+  [].forEach.call(document.querySelectorAll('.rv button'),function(el){el.onclick=function(){
+    var x=cur.slots[+el.getAttribute('data-i')],a=el.getAttribute('data-a');
+    if(busy||!x)return;
+    if(a!=='取消'&&draft){window.alert('先に「保存する」を押してください (保存していない入力があります)');return;}
+    if(!x.store){window.alert('お店が分かりません。Prince App の「美容枠」で直してください');return;}
+    if(a==='取消'&&!window.confirm(x.gen+' さんの予約を取り消しますか？'))return;
+    if(a==='来ず'&&!window.confirm(x.gen+' さんを「来ず」にしますか？ (料金は引きません)'))return;
+    busy=true;var my=seq;
+    var fn=a==='取消'?'cancelHairFor':'setHairStatus', args=a==='取消'?[day,x.place,x.time,x.store,x.gen]:[day,x.place,x.time,x.store,x.gen,a==='戻す'?'予約':a,me];
+    api(fn,args).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';render();}).catch(function(e){window.alert('できませんでした: '+(e.message||e));}).then(function(){busy=false;});
+  };});
+  if(!$('bpl'))return;
+  $('bpl').onchange=function(){bPlace=$('bpl').value;bTime='';render();};
+  $('btm').onchange=function(){bTime=$('btm').value;$('bk').disabled=!bookReady();};
+  [].forEach.call(document.querySelectorAll('[data-bs]'),function(el){el.onclick=function(){
+    var id=el.getAttribute('data-bs');bStore=id;bGen='';bFree='';
+    var first=null;(cur.places||[]).forEach(function(p){if(!first&&p.stores.indexOf(id)>=0)first=p.place;});
+    if(first)bPlace=first;
+    render();
+    if(!roster[id])api('getSalonCasts',[id]).then(function(r){roster[id]=r.casts;if(bStore===id)render();}).catch(function(){roster[id]=[];if(bStore===id){bGen=OTHER;render();}});
+  };});
+  if($('bgen'))$('bgen').onchange=function(){bGen=$('bgen').value;bFree='';render();};
+  if($('bfree'))$('bfree').oninput=function(){bFree=$('bfree').value;$('bk').disabled=!bookReady();};
+  $('bk').onclick=function(){
+    if(busy||!bookReady())return;
+    var g=bookName();busy=true;$('bk').disabled=true;$('bk').textContent='予約中...';var my=seq;
+    api('bookHairFor',[day,bPlace,bTime,bStore,g]).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';bTime='';bGen='';bFree='';render();}).catch(function(e){window.alert('予約できませんでした: '+(e.message||e));render();}).then(function(){busy=false;});
+  };
+}
+
+// ---- 出勤シフト (来週の出勤。スイッチと関係なく使える) ----
+var TM=[];(function(){for(var m=16*60;m<=28*60;m+=30)TM.push(pad(Math.floor(m/60))+':'+pad(m%60));})();
+function sCur(d){if(sdraft&&sdraft[d]!==undefined)return sdraft[d];return shiftData.rows[d]||null;}
+function sChanged(){return sdraft?Object.keys(sdraft).length:0;}
+function sPlace(name){var r=null;shiftData.places.forEach(function(p){if(p.place===name)r=p;});return r;}
+function renderShift(){
+  $('navw').style.display='none';$('wkw').style.display='none';
+  if(!shiftData){$('bar').style.display='none';$('body').innerHTML='<div class="msg">読み込み中...</div>';return;}
+  var sd=shiftData, d0=sd.days[0], d6=sd.days[6];
+  var h='<div class="nav"><button class="nb" id="spw">← 前の週</button><div style="flex:1;text-align:center;font-weight:700;font-size:16px">'+esc(d0.label)+'(月) 〜 '+esc(d6.label)+'(日)</div><button class="nb" id="snw">次の週 →</button></div>';
+  if(!sd.places.length)h+='<div class="msg err">場所が未登録です (Prince App の「美容設定」タブ)</div>';
+  sd.days.forEach(function(dy,i){
+    var past=dy.date<sd.today, c=sCur(dy.date), ph='<option value="">休み</option>'+sd.places.map(function(p){return opt(p.place,p.place,c&&c.place===p.place);}).join('');
+    h+='<div class="card"><div class="top"><b>'+esc(dy.label)+' ('+esc(dy.dow)+')</b>'+(past?'<span class="note" style="margin:0">過ぎた日</span>':'')+'</div>'+
+      '<select class="spl" data-i="'+i+'" style="margin-top:8px"'+(past?' disabled':'')+'>'+ph+'</select>'+
+      (c?'<div class="dy"><select class="sst" data-i="'+i+'"'+(past?' disabled':'')+'>'+TM.map(function(t){return opt(t,t+' から',t===c.start);}).join('')+'</select><select class="sen" data-i="'+i+'"'+(past?' disabled':'')+'>'+TM.map(function(t){return opt(t,t+' まで',t===c.end);}).join('')+'</select></div>':'')+'</div>';
+  });
+  h+='<div class="note">※ いま美容枠は、シフトを入れていない日は「ふだんの美容師数」で作られます。急に休む日は、お店に連絡してください。</div>';
+  $('body').innerHTML=h;
+  var n=sChanged(), sv=$('sv');
+  $('bar').style.display='';$('tot').textContent=n?('変更 '+n+' 日'):'変更なし';
+  sv.className='sv'+(n?'':' clean');sv.disabled=!n;sv.textContent=n?'保存する':'保存済み';
+  $('upd').textContent='最終更新 '+sd.updated;
+  $('spw').onclick=function(){goWeek(-7);};$('snw').onclick=function(){goWeek(7);};
+  function setC(i,fn){
+    var dy=sd.days[i].date;if(!sdraft)sdraft={};
+    var c=sCur(dy),nc=fn(c?{place:c.place,start:c.start,end:c.end}:null);sdraft[dy]=nc;
+    var o=sd.rows[dy]||null;
+    if((!o&&!nc)||(o&&nc&&o.place===nc.place&&o.start===nc.start&&o.end===nc.end))delete sdraft[dy];
+    if(!sChanged())sdraft=null;
+    renderShift();
+  }
+  [].forEach.call(document.querySelectorAll('.spl'),function(el){el.onchange=function(){var v=el.value;setC(+el.getAttribute('data-i'),function(c){var p=v?sPlace(v):null;return p?{place:p.place,start:c?c.start:p.start,end:c?c.end:p.end}:null;});};});
+  [].forEach.call(document.querySelectorAll('.sst'),function(el){el.onchange=function(){var v=el.value;setC(+el.getAttribute('data-i'),function(c){c.start=v;if(c.end<=v)c.end=TM[Math.min(TM.indexOf(v)+2,TM.length-1)];return c;});};});
+  [].forEach.call(document.querySelectorAll('.sen'),function(el){el.onchange=function(){var v=el.value;setC(+el.getAttribute('data-i'),function(c){c.end=v;return c;});};});
+  sv.onclick=function(){
+    if(sBusy||!sdraft)return;
+    var ents=[],bad='';
+    Object.keys(sdraft).forEach(function(dy){var c=sdraft[dy];if(c&&c.end<=c.start)bad=dy;ents.push({date:dy,place:c?c.place:'',start:c?c.start:'',end:c?c.end:''});});
+    if(bad){window.alert('終わりの時刻が開始より前になっています ('+bad+')');return;}
+    var cap=sd.weekStart;sBusy=true;sv.disabled=true;sv.textContent='保存中...';
+    api('setHairShiftWeek',[me,ents]).then(function(res){if(!shiftData||shiftData.weekStart!==cap)return;shiftData=res;sdraft=null;renderShift();}).catch(function(e){window.alert('保存できませんでした: '+(e.message||e));renderShift();}).then(function(){sBusy=false;});
+  };
+}
+function goWeek(n){
+  if(sdraft&&!window.confirm('保存していない入力があります。消して週を変えますか？'))return;
+  sdraft=null;shiftWeek=shift(shiftData?shiftData.weekStart:shiftWeek,n);shiftData=null;loadShift();
+}
+function loadShift(){
+  var wk=shiftWeek;renderShift();
+  api('getHairShiftWeek',[me,wk]).then(function(r){if(wk===shiftWeek){shiftData=r;render();}}).catch(function(e){if(wk===shiftWeek)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function setView(v){
+  if(view===v)return;
+  view=v;
+  if(v==='shift'&&!shiftData){loadShift();return;}
+  render();
+}
+$('tbD').onclick=function(){setView('day');};
+$('tbS').onclick=function(){setView('shift');};
 function load(){
   var my=++seq;
   $('dt').value=day;$('dt').max=today();
@@ -181,13 +333,13 @@ function load(){
 }
 function go(d){
   if(draft&&!window.confirm('保存していない入力があります。消して日付を変えますか？')){$('dt').value=day;return;}
-  draft=null;day=d;load();
+  draft=null;day=d;flash='';load();
 }
 $('pd').onclick=function(){go(shift(day,-1));};
 $('nd').onclick=function(){go(shift(day,1));};
 $('dt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('dt').value)&&$('dt').value<=today())go($('dt').value);else $('dt').value=day;};
 // 開きっぱなしにしても、次の営業日には今日の画面へ戻す (入力途中なら動かさない)
-setInterval(function(){var t=today();if(t!==openDay&&!draft&&!saving){openDay=t;day=t;load();}},60000);
+setInterval(function(){var t=today();if(t!==openDay&&!draft&&!saving){openDay=t;day=t;flash='';load();}},60000);
 load();
 </script>
 </body></html>
