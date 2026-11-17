@@ -116,6 +116,8 @@ function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate
 function shift(s,n){var p=s.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]+n,12);return ymd(d);}
 // 営業日: 朝 5 時までは前の日として開く
 function today(){return ymd(new Date(Date.now()-5*3600000));}
+// 開ける日は 14 日先まで (予約の枠が作られる範囲 = Code.js の hsDayView_ / bookHairFor と同じ)
+function maxDay(){return shift(today(),14);}
 var openDay=today(), day=openDay, cur=null, draft=null, seq=0, saving=false;
 var me=''; try{me=localStorage.getItem('hairName')||'';}catch(e){}
 var addStore='', addGen='', addFree='', roster={};
@@ -159,7 +161,7 @@ function render(){
   $('wkh').textContent='今週の自分の集計 '+(+p0[1])+'/'+(+p0[2])+'(月) 〜 '+(+q0[1])+'/'+(+q0[2])+'(土)';
   $('wk').innerHTML='<table><tr><th>出勤日数</th><th>人数</th></tr><tr><td>'+x.days+'</td><td>'+x.n+'</td></tr></table>';
   $('upd').textContent='最終更新 '+cur.updated;
-  $('nd').disabled=day>=today();
+  $('nd').disabled=day>=maxDay();
   $('tot').textContent='合計 '+(v.casts.length+p.extra)+' 人';
   var sv=$('sv'),dirty=!!draft;
   sv.className='sv'+(dirty?'':' clean');sv.disabled=!dirty;sv.textContent=dirty?'保存する':(p.saved?'保存済み':'未入力');
@@ -327,7 +329,7 @@ $('tbD').onclick=function(){setView('day');};
 $('tbS').onclick=function(){setView('shift');};
 function load(){
   var my=++seq;
-  $('dt').value=day;$('dt').max=today();
+  $('dt').value=day;$('dt').max=maxDay();
   $('body').innerHTML='<div class="msg">読み込み中...</div>';
   api('getHairDay',[day]).then(function(r){if(my===seq){cur=r;render();}}).catch(function(e){if(my===seq)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
@@ -337,7 +339,7 @@ function go(d){
 }
 $('pd').onclick=function(){go(shift(day,-1));};
 $('nd').onclick=function(){go(shift(day,1));};
-$('dt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('dt').value)&&$('dt').value<=today())go($('dt').value);else $('dt').value=day;};
+$('dt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('dt').value)&&$('dt').value<=maxDay())go($('dt').value);else $('dt').value=day;};
 // 開きっぱなしにしても、次の営業日には今日の画面へ戻す (入力途中なら動かさない)
 setInterval(function(){var t=today();if(t!==openDay&&!draft&&!saving){openDay=t;day=t;flash='';load();}},60000);
 load();
