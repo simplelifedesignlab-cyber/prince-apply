@@ -43,6 +43,10 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .hbtn.sec{background:var(--priL);color:var(--priD)}
 .hbtn:disabled{opacity:.6}
 .hmsg{margin:6px 0 0;font-size:15px}.hmsg.ok{color:var(--priD)}.hmsg.ng{color:#d93025}
+.sg{border:2px solid var(--pri);background:var(--priL)}
+.sg h2{margin:0 0 6px;font-size:18px;color:var(--priD)}
+.sg p{margin:4px 0;font-size:16px}
+.sg .ng{color:#d93025;font-weight:700}
 .a2hs{border:2px solid var(--pri);position:relative;padding-right:44px}
 .a2hs h2{font-size:17px}
 .a2hs p{margin:4px 0;font-size:16px}
@@ -63,6 +67,7 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
       <button type="button" class="go" id="a2hsGo" hidden>追加する</button>
     </div>
     <p class="note">日ごとに出勤・予定・送迎を入力して、いちばん下の「保存」を押してください。このページはあなた専用です。他の人に教えないでください。</p>
+    <div id="sougei"></div>
     <div id="days"></div>
   </div>
 </div>
@@ -171,7 +176,23 @@ function hairBox(d) {
   return s;
 }
 
+function renderSougei() {
+  var box = document.getElementById('sougei'), s = data.sougei;
+  box.innerHTML = '';
+  if (!s) return;
+  var card = el('div', 'card sg');
+  card.appendChild(el('h2', '', '今日の送迎 ' + s.label));
+  function line(name, x, txt) {
+    var p = el('p', x.cancel ? 'ng' : '', name + ': ' + (x.cancel ? 'キャンセルになりました' : txt));
+    card.appendChild(p);
+  }
+  if (s.go) line('行き', s.go, (s.go.time ? 'お迎え ' + s.go.time + ' ごろ' : 'お迎えの時刻は決まり次第お知らせします') + (s.go.place ? ' ・ ' + s.go.place : ''));
+  if (s.back) line('帰り', s.back, s.back.kind === 'time' ? s.back.dep + ' 発' : s.back.kind === 'after' ? 'アフター (3:00 までにお店へ)' : s.back.kind === 'staff' ? 'お店のスタッフがお送りします' : '出発の時刻は決まり次第お知らせします');
+  box.appendChild(card);
+}
+
 function render() {
+  renderSougei();
   var box = document.getElementById('days');
   box.innerHTML = '';
   data.days.forEach(function (d) {
@@ -278,6 +299,7 @@ document.getElementById('save').onclick = function () {
   google.script.run.withSuccessHandler(function (res) {
     saving = false; btn.disabled = false; btn.textContent = '保存';
     msg.className = 'ok'; msg.textContent = '保存しました';
+    if (res && res.sougei !== undefined) data.sougei = res.sougei; // 送迎をなしにした時、「今日の送迎」を更新する (W9)
     if (res && res.pastDropped) { msg.className = 'ng'; msg.textContent = '日付が変わったので、昨日の分は保存しませんでした。開き直してください'; }
     data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim(); }); });
     if (data.hairOn) { // 出勤を変えた日は空き時刻も変わるので読み直す
