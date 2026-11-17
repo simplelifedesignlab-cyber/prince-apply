@@ -275,9 +275,10 @@ document.getElementById('save').onclick = function () {
       leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note,
       plans: d.plans.filter(function (p) { return String(p.n || '').trim(); }) };
   });
-  google.script.run.withSuccessHandler(function () {
+  google.script.run.withSuccessHandler(function (res) {
     saving = false; btn.disabled = false; btn.textContent = '保存';
     msg.className = 'ok'; msg.textContent = '保存しました';
+    if (res && res.pastDropped) { msg.className = 'ng'; msg.textContent = '日付が変わったので、昨日の分は保存しませんでした。開き直してください'; }
     data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim(); }); });
     if (data.hairOn) { // 出勤を変えた日は空き時刻も変わるので読み直す
       google.script.run.withSuccessHandler(function (r) { if (r && r.ok) { data = r; render(); } }).withFailureHandler(function () {}).getPage(TOKEN);
