@@ -379,14 +379,15 @@ function infoSecs(a, req, kana) { // kana = 応募者画面の短いフォーム
     if (n === 1) h1 = intro + h.slice(h0);
   });
   S.push({ t: '経歴', h: h, h1: h1, h2: h.slice(h1.length) }); // h1 = 1 件目だけ (応募者画面) / h2 = 経歴 2 件目 (応募者画面では見えない箱に入れる)
-  h = '<div class="small">あてはまるものを選んでください。「あり」の場合は内容も記入してください。</div>';
-  HEALTH.forEach(function (x) {
-    var p = healthSplit(a[x[0]]);
-    h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), req) +
-      fld(x[0] + 'T', x[1] + ' 「あり」の内容', inp('f_' + x[0] + 'T', 'text', p[1], 'autocomplete="off"'), 0);
-  });
-  h += fld('hAgree', '同意', '<label class="opt"><input type="checkbox" id="f_hAgree"' + (a.hAgree ? ' checked' : '') + '> 上記内容の項目に偽りなく回答しました</label>', req);
-  S.push({ t: '健康状態チェック', h: h });
+  if (!req) { // 2026-11-17: 健康状態は応募者に聞かない。黒服の面接画面 (req=0) だけに出す (一日体験に進む前に必須・サーバ側 missingForPlan_ も検査)
+    h = '<div class="small">面接で黒服が聞いて入れてください (一日体験に進むのに必要)。あてはまるものを選び、「あり」の場合は内容も記入してください。</div>';
+    HEALTH.forEach(function (x) {
+      var p = healthSplit(a[x[0]]);
+      h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), 1) +
+        fld(x[0] + 'T', x[1] + ' 「あり」の内容', inp('f_' + x[0] + 'T', 'text', p[1], 'autocomplete="off"'), 0);
+    });
+    S.push({ t: '健康状態チェック', h: h });
+  }
   return S;
 }
 function infoHtml(a, req) {
@@ -551,10 +552,10 @@ function infoCollect() {
   d.bust = $('f_bust').value; d.mbti = $('f_mbti').value; d.honseki = $('f_honseki').value;
   [1, 2].forEach(function (n) { ['Store', 'Period', 'Sales', 'Wage', 'Shift'].forEach(function (k) { d['c' + n + k] = $('f_c' + n + k).value.trim(); }); });
   HEALTH.forEach(function (x) {
+    if (!$('f_' + x[0])) return; // 応募者画面には健康状態の欄が無い (黒服の面接画面だけ)
     var v = $('f_' + x[0]).value, t = $('f_' + x[0] + 'T').value.trim();
     d[x[0]] = v === 'あり' ? 'あり: ' + t : v;
   });
-  d.hAgree = $('f_hAgree').checked ? '1' : '';
   return d;
 }
 // strict=true: 応募者入力 (必須あり) / false: 黒服画面 (形式の確認だけ)
@@ -574,11 +575,6 @@ function infoValidate(d, strict) {
     if (MODE === 'apply' && GEN_KEY && GEN_OK !== GEN_KEY()) e('genWishYomi', '源氏名の「確認」ボタンを押して、照合してください');
     if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
     if (!d.town) e('town', '町名・番地を入力してください');
-    HEALTH.forEach(function (x) {
-      if (!d[x[0]]) e(x[0], x[1] + 'を選んでください');
-      else if (d[x[0]] === 'あり: ') e(x[0] + 'T', x[1] + 'の内容を記入してください');
-    });
-    if (!d.hAgree) e('hAgree', '回答への同意にチェックしてください');
   }
   if (d.birth) {
     var p = d.birth.split('-');
@@ -805,7 +801,7 @@ function summaryHtml(full) {
 }
 
 // ================= 応募者入力 (本人・iPad) =================
-var PAGE_OF_FULL = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 3, wd1: 3, wd2: 3, wd3: 3, wd4: 3, wd5: 3, wd6: 3, wk: 3, hDisease: 2, hDiseaseT: 2, hBase: 2, hBaseT: 2, hMental: 2, hMentalT: 2, hAllergy: 2, hAllergyT: 2, hAgree: 2, genWish: 3, genWishYomi: 3, photo: 6, slot: 6, consent: 5 }; // 2026-11-08: 「お店選び」ページを外した (ページ番号が 1 つ繰り上がる)
+var PAGE_OF_FULL = { store: 0, name: 0, birth: 0, height: 0, weight: 0, tel: 0, email: 0, pref: 0, city: 0, town: 0, building: 0, wd0: 3, wd1: 3, wd2: 3, wd3: 3, wd4: 3, wd5: 3, wd6: 3, wk: 3, genWish: 3, genWishYomi: 3, photo: 6, slot: 6, consent: 5 }; // 2026-11-08: 「お店選び」ページを外した (ページ番号が 1 つ繰り上がる)
 var PAGE_OF = PAGE_OF_FULL, FT = 'full', CONSENT_PG = 5, APPLY_BOUND = false; // FT = 今のフォームの種類 (full / nc / lounge)
 // 起動時に店舗リスト (スプレッドシートの「プルダウン」タブ) を取り、「応募するお店」の選択肢を差し替えてから開く。取れなければ埋め込み値のまま
 function startApply() {
@@ -922,7 +918,7 @@ function applyPages(ft) {
         ['基本情報', '連絡先', '住所'].map(function (t) { return '<div class="sec"><h3>' + t + '</h3>' + bykey[t] + '</div>'; }).join('') },
       // 2026-11-08: 約 80 項目 → 約 35 項目。外した質問は黒服の面接画面 (castBlocks / infoHtml) には今までどおり全部出る
       { t: 'これまでのお仕事', h: '<div class="small">当てはまるものをタップしてください。わからない所は飛ばしてOKです。</div>' + castPick(FULL_WORK) + '<div class="sec"><h3>経歴</h3>' + byk1['経歴'].h1 + '</div><div style="display:none">' + byk1['経歴'].h2 + '</div>' },
-      { t: 'あなたについて', h: castPick([['app', 'alcohol']]) + '<div class="sec"><h3>健康状態チェック</h3>' + bykey['健康状態チェック'] + '</div>' },
+      { t: 'あなたについて', h: castPick([['app', 'alcohol']]) },
       { t: '出勤希望', h: bykey['出勤希望'] },
       { t: 'SNS', h: bykey['SNS'] },
       consentPg, confirmPg
@@ -1073,7 +1069,7 @@ function applyErrs() {
 }
 // ================= 必須欄の「未入力が分かる」表示 (応募者画面だけ) =================
 // 必須で空の欄はピンク、入力されたら白に戻す (入力のたびに切り替え)。判定は送信前の検証 (applyErrs) と同じものを使う
-var RQ_KEYS = ['hDisease', 'hBase', 'hMental', 'hAllergy', 'hAgree', 'store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot', 'furigana', 'exp'], RQ_BLK = ['store', 'wk', 'photo', 'slot', 'exp'], RQ_ON = false, RQ_L = false;
+var RQ_KEYS = ['store', 'name', 'birth', 'height', 'weight', 'tel', 'email', 'city', 'town', 'genWish', 'genWishYomi', 'wk', 'photo', 'slot', 'furigana', 'exp'], RQ_BLK = ['store', 'wk', 'photo', 'slot', 'exp'], RQ_ON = false, RQ_L = false;
 function rqInit() {
   document.body.classList.add('ap');
   RQ_KEYS.forEach(function (k) { var w = $('w_' + k); if (w) { w.classList.add('rq'); if (RQ_BLK.indexOf(k) >= 0) w.classList.add('blk'); } });
@@ -1203,7 +1199,6 @@ function showMore() {
   Object.keys(INFO_F).forEach(function (k) { F[k] = INFO_F[k]; });
   var h = '<div class="small">' + (nc ? 'お待たせしております。面接までの間に、続きをご入力ください。' : 'お待たせいたしております。面接までの間に、続きのご入力をお願いいたします。') + '　<span class="req">*</span> は必須です。</div>';
   if (moreHas('address')) h += '<div class="sec"><h3>住所</h3>' + fld('zip', '郵便番号 (7桁・ハイフンなし)', inp('f_zip', 'text', '', 'inputmode="numeric" maxlength="8" autocomplete="off" placeholder="0660032"') + '<div class="small" id="zipst"></div>', 0) + by['住所'].h + '</div>';
-  if (moreHas('health')) h += '<div class="sec"><h3>健康状態チェック</h3>' + by['健康状態チェック'].h + '</div>';
   if (moreHas('gen')) h += '<div class="sec"><h3>源氏名と出勤希望</h3>' + by['出勤希望'].h + '</div>';
   if (moreHas('night')) h += '<div class="sec"><h3>これまでのお仕事</h3>' + castPick(MORE_NIGHT) + by['経歴'].h1 + '</div>';
   if (moreHas('alcohol') || moreHas('mbti')) h += '<div class="sec"><h3>あなたについて</h3>' + (moreHas('alcohol') ? castPick([['app', 'alcohol']]) : '') + (moreHas('mbti') ? F.mbti + F.honseki : '') + '</div>';
@@ -1273,10 +1268,6 @@ function moreCollect() {
     if (d.pref === '北海道') { var c = v('f_city'); d.city = c === '札幌市' ? '札幌市' + v('f_ward') : c === 'その他' ? v('f_cityo') : c; } else d.city = v('f_cityo');
     d.town = v('f_town'); d.building = v('f_building');
   }
-  if (moreHas('health')) {
-    HEALTH.forEach(function (x) { var s = v('f_' + x[0]), t = v('f_' + x[0] + 'T'); d[x[0]] = s === 'あり' ? 'あり: ' + t : s; });
-    d.hAgree = $('f_hAgree').checked ? '1' : '';
-  }
   if (moreHas('gen')) { d.genWish = v('f_gen'); d.genWishYomi = kata(v('f_geny')); }
   if (moreHas('wd')) {
     WEEK.forEach(function (w, i) {
@@ -1298,13 +1289,6 @@ function moreErrs() {
     if (!d.city || (d.pref === '北海道' && $('f_city').value === '')) e('city', '市区町村を選んでください');
     else if (d.pref === '北海道' && $('f_city').value === '札幌市' && !$('f_ward').value) e('city', '区を選んでください');
     if (!d.town) e('town', '町名・番地を入力してください');
-  }
-  if (moreHas('health')) {
-    HEALTH.forEach(function (x) {
-      if (!d[x[0]]) e(x[0], x[1] + 'を選んでください');
-      else if (d[x[0]] === 'あり: ') e(x[0] + 'T', x[1] + 'の内容を記入してください');
-    });
-    if (!d.hAgree) e('hAgree', '回答への同意にチェックしてください');
   }
   if (moreHas('gen')) {
     if (!d.genWish) e('genWish', '源氏名を入力してください');
@@ -1591,6 +1575,7 @@ function showApplicant() {
           if (!cd.birth) lack.push('生年月日');
           if (!CUR.a.faceUrl) lack.push('面接写真 (本人に撮ってもらう: 「来店」でQRを渡す)');
           if (!cd.idDoc) lack.push('年齢確認書類');
+          HEALTH.forEach(function (x) { if (!/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim())) lack.push('健康状態(' + x[1] + ')'); }); // 2026-11-17: 黒服が面接で聞いて入れる
           if (lack.length) { msg('一日体験に進めません。足りない項目: ' + lack.join('、'), true); return; }
         }
         var kind = v === '当日体入' ? 'today' : v === '後日体入' ? 'later' : v.indexOf('保留') === 0 ? 'hold' : 'reject';
