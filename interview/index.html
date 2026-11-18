@@ -278,6 +278,7 @@ function run(fn, args, ok, ng) {
   google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { msg('エラー: ' + (e && e.message || e), true); if (ng) ng(); })[fn].apply(null, args);
 }
 function ask(text, ok) {
+  msg(''); // 前の赤いエラーを残さない (2026-11-18)
   $('mtext').textContent = text; $('modal').style.display = 'flex';
   $('mok').onclick = function () { $('modal').style.display = 'none'; ok(); };
   $('mng').onclick = function () { $('modal').style.display = 'none'; };
@@ -1537,7 +1538,7 @@ function showApplicant() {
   var edit = infoHtml(a, 0) + CAST_PAGES.map(function (p) { return '<div class="sec"><h3>' + esc(p[1]) + '</h3>' + castBlocks(p[0], vals) + '</div>'; }).join('');
   var jq = STAFFQ.filter(function (c) { return c.f === 'jikyu'; });
   var pages = [
-    { t: 'CAST回答の確認', h: '<div id="morebox"></div><div class="card" id="card"></div><div class="small">カードをタップすると、内容を修正できます。</div><div id="edit1" style="display:none">' + edit + '</div>' },
+    { t: 'CAST回答の確認', h: '<div id="morebox"></div><div class="card" id="card"></div><div class="small">カードをタップすると、内容の修正と健康状態の入力ができます。</div><div id="edit1" style="display:none">' + edit + '</div>' },
     { t: '追加ヒアリング', h: fieldHtml('interviewer', '面接担当者', 'text', a.interviewer) + fieldHtml('idDoc', '身分証 <span class="req">*</span>', 'choice', a.idDoc) +
         fieldHtml('idChecker', '年齢確認者', 'text', a.idChecker) + fieldHtml('idDate', '年齢確認日', 'date', a.idDate) + fieldHtml('voice', '声色', 'choice', a.voice) +
         fieldHtml('explainer', '入店説明者', 'text', a.explainer) + fieldHtml('explainDate', '入店説明日', 'date', a.explainDate) +
@@ -1576,7 +1577,11 @@ function showApplicant() {
           if (!CUR.a.faceUrl) lack.push('面接写真 (本人に撮ってもらう: 「来店」でQRを渡す)');
           if (!cd.idDoc) lack.push('年齢確認書類');
           HEALTH.forEach(function (x) { if (!/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim())) lack.push('健康状態(' + x[1] + ')'); }); // 2026-11-17: 黒服が面接で聞いて入れる
-          if (lack.length) { msg('一日体験に進めません。足りない項目: ' + lack.join('、'), true); return; }
+          if (lack.length) {
+            var hNg = HEALTH.filter(function (x) { return !/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim()); })[0];
+            if (hNg) { pgGo(0); $('edit1').style.display = 'block'; $('w_' + hNg[0]).scrollIntoView({ block: 'center' }); } // 2026-11-18: 健康状態の欄は畳まれているので、開いてそこへ移る
+            msg('一日体験に進めません。足りない項目: ' + lack.join('、') + (hNg ? '　(健康状態はこの画面で選んでください)' : ''), true); return;
+          }
         }
         var kind = v === '当日体入' ? 'today' : v === '後日体入' ? 'later' : v.indexOf('保留') === 0 ? 'hold' : 'reject';
         var act = kind === 'today' || kind === 'later' ? 'taiken' : kind, date = kind === 'today' ? today() : kind === 'later' ? $('jdate').value : '';
