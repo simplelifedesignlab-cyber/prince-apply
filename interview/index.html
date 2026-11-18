@@ -1328,7 +1328,7 @@ function rowOf(f) {
   return '';
 }
 function startStaff() {
-  google.script.run.withSuccessHandler(function (b) { B = b; B.t0 = Date.now(); B.choices.jikyu = YEN; ['wageA', 'wageB', 'wageC', 'wageD'].forEach(function (k) { B.choices[k] = YEN; }); B.choices.hosho = ['なし'].concat(YEN, ['その他']); if (MODE === 'tainyu') showTainyu(''); else if (MODE === 'leads') showLeads(); else showList(); })
+  google.script.run.withSuccessHandler(function (b) { B = b; B.choices.jikyu = YEN; ['wageA', 'wageB', 'wageC', 'wageD'].forEach(function (k) { B.choices[k] = YEN; }); B.choices.hosho = ['なし'].concat(YEN, ['その他']); if (MODE === 'tainyu') showTainyu(''); else if (MODE === 'leads') showLeads(); else showList(); })
     .withFailureHandler(function (e) { $('app').textContent = '起動エラー: ' + e.message; }).getBoot();
 }
 var YEN = (function () { var a = []; for (var v = 2000; v <= 6000; v += 500) a.push(String(v).replace(/(\d)(\d{3})$/, '$1,$2') + '円'); return a.concat(['6,000円より上']); })();
@@ -1675,12 +1675,11 @@ function parseReasons(s) {
   return o;
 }
 function chosen(boxId) { return [].map.call(document.querySelectorAll('#' + boxId + ' .chip.on'), function (b) { return b.getAttribute('data-v'); }); }
-function jstNow() { return (B.jstMin + Math.floor((Date.now() - B.t0) / 60000)) % 1440; }
 function showClosing(id) {
   $('app').innerHTML = '読み込み中...';
   run('getApplicant', [id], function (r) {
     CUR = r;
-    var a = r.a, cut = B.rejectCutoff, late = jstNow() >= cut * 60;
+    var a = r.a;
     var isHold = a.status === 'クロージング・保留' || a.status === '保留';
     var rs = parseReasons(isHold ? a.holdReason : ''), rj = parseReasons(a.rejReason);
     var stores = B.choices.store, home = a.ivStore || (stores.indexOf(a.store) >= 0 ? a.store : '');
@@ -1708,8 +1707,7 @@ function showClosing(id) {
       '<div class="kp" data-k="お断り" style="display:none"><div id="cl_rej">' + chipsHtml(['接客態度', '勤務態度', '時給面'], rj.sel, 'm') + '</div>' +
         '<div class="q"><label class="t">その他</label>' + inp('cl_rej_o', 'text', rj.other) + '</div>' +
         '<div class="q"><label class="t">お断りメール自動送信</label><div class="chips" id="cl_mail" data-m="s"><button type="button" class="chip on" data-v="ON">ON</button><button type="button" class="chip" data-v="OFF">OFF</button></div>' +
-        '<div class="small">ON の時は面接時のメール宛てに、翌日' + B.rejectSend + '時に送信予約します (' + cut + '時を過ぎると予約されません)。</div>' +
-        (late ? '<div class="ferr" style="display:block">' + cut + '時を過ぎているため、ON でも予約されません</div>' : '') +
+        '<div class="small">ON の時は面接時のメール宛てに、翌日' + B.rejectSend + '時に送信予約します。</div>' +
         (a.rejState ? '<div class="small">お断りメール: ' + esc(a.rejState) + (a.rejSched ? '（送信予定 ' + esc(a.rejSched) + '）' : '') + '</div>' : '') + '</div></div>' +
       '<button class="pri big" id="cl_go" style="width:100%">決定</button></div>';
     $('app').innerHTML = h;
