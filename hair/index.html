@@ -59,7 +59,7 @@ th{background:var(--priL);color:#5A6275;font-weight:500;font-size:13px}
 .rl{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .rl .tm{font-size:20px;font-weight:700}
 .rl .pl{font-size:13px;color:#5A6275}
-.rl .pr{font-size:18px;color:#B26A00}
+.rl .pr{font-size:18px;color:var(--priD)}
 .rl .s{font-size:13px;color:#5A6275}
 .rl .g{font-size:18px;font-weight:700}
 .ra{display:flex;gap:8px;align-items:center;margin-top:6px}
@@ -68,6 +68,8 @@ th{background:var(--priL);color:#5A6275;font-weight:500;font-size:13px}
 .ra button.sub{flex:none;width:72px;font-weight:500;color:#5A6275}
 .ra .stt{font-size:15px;font-weight:700;color:var(--priD);flex:1}
 .ra .stt.ns{color:#5A6275}
+.rv.over{border-left:4px solid #d93025;padding-left:8px}
+.rv .ovn{font-size:14px;font-weight:700;color:#d93025;margin-top:4px}
 .flash{font-size:15px;color:var(--priD);background:var(--priL);border-radius:6px;padding:8px 10px;margin:0 0 8px}
 .dy{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .dy select{min-height:52px;font-size:17px}
@@ -215,7 +217,7 @@ function rsvHtml(){
     var a;
     if(x.status==='予約')a='<button class="ok" data-a="済" data-i="'+i+'">済</button><button data-a="来ず" data-i="'+i+'">来ず</button><button class="sub" data-a="取消" data-i="'+i+'">取消</button>';
     else a='<span class="stt'+(x.status==='来ず'?' ns':'')+'">'+esc(x.status)+(x.by?' ('+esc(x.by)+')':'')+'</span><button class="sub" data-a="戻す" data-i="'+i+'">戻す</button>';
-    h+='<div class="rv"><div class="rl"><span class="tm">'+esc(x.time)+'</span><span class="pl">'+esc(x.place)+'</span>'+(x.prio?'<span class="pr">★</span>':'')+'<span class="s">'+esc(shortOf(x.store))+'</span><span class="g">'+esc(x.gen)+'</span></div><div class="ra">'+a+'</div></div>';
+    h+='<div class="rv'+(x.over?' over':'')+'"><div class="rl"><span class="tm">'+esc(x.time)+'</span><span class="pl">'+esc(x.place)+'</span>'+(x.prio?'<span class="pr">★</span>':'')+'<span class="s">'+esc(shortOf(x.store))+'</span><span class="g">'+esc(x.gen)+'</span></div>'+(x.over?'<div class="ovn">美容師が足りません (予約は残しています。お店で調整してください)</div>':'')+'<div class="ra">'+a+'</div></div>';
   });
   return h+'<div class="note">★ = 同伴・来店予定がある人。「来ず」は料金を引きません</div></div>';
 }
