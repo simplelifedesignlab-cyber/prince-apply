@@ -186,8 +186,21 @@ function renderSougei() {
     var p = el('p', x.cancel ? 'ng' : '', name + ': ' + (x.cancel ? 'キャンセルになりました' : txt));
     card.appendChild(p);
   }
-  if (s.go) line('行き', s.go, (s.go.time ? 'お迎え ' + s.go.time + ' ごろ' : 'お迎えの時刻は決まり次第お知らせします') + (s.go.place ? ' ・ ' + s.go.place : ''));
-  if (s.back) line('帰り', s.back, s.back.kind === 'time' ? s.back.dep + ' 発' : s.back.kind === 'after' ? 'アフター (3:00 までにお店へ)' : s.back.kind === 'staff' ? 'お店のスタッフがお送りします' : '出発の時刻は決まり次第お知らせします');
+  function car(x) { // 車の情報 (決まっている時だけ・2026-11-19 v2)
+    var c = x.car; if (!c || x.cancel) return;
+    var v = (c.color ? c.color + (c.model ? 'の' : '') : '') + c.model;
+    if (v || c.plate4) card.appendChild(el('p', 'car', '車: ' + v + (c.plate4 ? (v ? '・' : '') + 'ナンバー ' + c.plate4 : '')));
+    if (c.driver) card.appendChild(el('p', 'car', 'ドライバー: ' + c.driver));
+  }
+  if (s.go) {
+    line('行き', s.go, s.go.pending ? '車は決まり次第ここに出ます' + (s.go.place ? ' ・ ' + s.go.place : '') :
+      (s.go.bin ? s.go.bin + (s.go.time ? ' (お迎え ' + s.go.time + ' ごろ)' : '') : s.go.time ? 'お迎え ' + s.go.time + ' ごろ' : 'お迎えの時刻は決まり次第お知らせします') + (s.go.place ? ' ・ ' + s.go.place : ''));
+    if (!s.go.pending) car(s.go);
+  }
+  if (s.back) {
+    line('帰り', s.back, s.back.pending ? '帰りの車はお店でお伝えします' : s.back.kind === 'time' ? s.back.dep + ' 発' : s.back.kind === 'after' ? 'アフター (3:00 までにお店へ)' : s.back.kind === 'staff' ? 'お店のスタッフがお送りします' : '出発の時刻は決まり次第お知らせします');
+    if (!s.back.pending) car(s.back);
+  }
   box.appendChild(card);
 }
 
