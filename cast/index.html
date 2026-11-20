@@ -158,6 +158,7 @@ function hairBox(d) {
   s.appendChild(el('label', 't', '美容室(ヘアメイク)'));
   var stale = d.shift !== d.savedShift;
   if (d.hb) s.appendChild(el('p', 'booked', d.hb.time + ' ' + d.hb.place + ' 予約済み'));
+  if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した予約です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
   if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
   else if (d.ho.length) {
     var sel = mkSel(d.ho, d.hpick || '', d.hb ? '別の時刻に変える' : '予約する時刻を選んでください', function (v) { d.hpick = v; });
