@@ -201,6 +201,7 @@ function render(){
       if(my!==seq)return;
       if(draft===d)draft=null;
       cur=res;render();
+      if(res.msg&&res.msg.indexOf('【注意】')>=0)window.alert(res.msg); // 給料引き(日別)を更新できなかった時 (今までは画面に出なかった)
     }).catch(function(e){window.alert('保存できませんでした: '+(e.message||e));render();}).then(function(){saving=false;});
   };
 }
@@ -248,7 +249,7 @@ function bindRsv(){
     if(a==='来ず'&&!window.confirm(x.gen+' さんを「来ず」にしますか？ (料金は引きません)'))return;
     busy=true;var my=seq;
     var fn=a==='取消'?'cancelHairFor':'setHairStatus', args=a==='取消'?[day,x.place,x.time,x.store,x.gen]:[day,x.place,x.time,x.store,x.gen,a==='戻す'?'予約':a,me];
-    api(fn,args).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';render();}).catch(function(e){window.alert('できませんでした: '+(e.message||e));}).then(function(){busy=false;});
+    api(fn,args).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';if(flash.indexOf('【注意】')>=0)window.alert(flash);render();}).catch(function(e){window.alert('できませんでした: '+(e.message||e));}).then(function(){busy=false;});
   };});
   if(!$('bpl'))return;
   $('bpl').onchange=function(){bPlace=$('bpl').value;bTime='';render();};
@@ -265,7 +266,7 @@ function bindRsv(){
   $('bk').onclick=function(){
     if(busy||!bookReady())return;
     var g=bookName();busy=true;$('bk').disabled=true;$('bk').textContent='予約中...';var my=seq;
-    api('bookHairFor',[day,bPlace,bTime,bStore,g]).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';bTime='';bGen='';bFree='';render();}).catch(function(e){window.alert('予約できませんでした: '+(e.message||e));render();}).then(function(){busy=false;});
+    api('bookHairFor',[day,bPlace,bTime,bStore,g]).then(function(res){if(my!==seq)return;cur=res;flash=res.msg||'';if(flash.indexOf('【注意】')>=0)window.alert(flash);bTime='';bGen='';bFree='';render();}).catch(function(e){window.alert('予約できませんでした: '+(e.message||e));render();}).then(function(){busy=false;});
   };
 }
 

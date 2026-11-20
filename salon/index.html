@@ -310,7 +310,8 @@ function fitRows(){
 }
 window.addEventListener('resize',fitRows);
 var toastT=0;
-function toast(m){if(!m)return;var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},3500);}
+// 【注意】で始まる返事 (給料引き(日別)の更新失敗など) は 3.5 秒で消えるトーストにせず、アラートで止めて見せる
+function toast(m){if(!m)return;if(m.indexOf('【注意】')>=0)window.alert(m);var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},3500);}
 // 書き込みは 1 つずつ。終わったら返ってきた最新の一覧で描き直す (一覧に戻った時は取り直す)
 function act(fn){
   if(busy)return;
@@ -320,7 +321,7 @@ function act(fn){
 function closeSheets(){$('ovAdd').hidden=true;$('ovSt').hidden=true;}
 
 // ---------- 空きに入れる ----------
-var add={slot:null,special:false,picked:null}, castAll=null, castLoading=false;
+var add={slot:null,special:false,picked:null}, castAll=null, castLoading=false, castErr='';
 function norm(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96);}).replace(/\s+/g,'');}
 $('aStore').innerHTML='<option value="">店舗を選ぶ (全部から探す)</option>'+STORES.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.s)+'</option>';}).join('');
 (function(){var o='';for(var m=15*60;m<=22*60+30;m+=30)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('aTime').innerHTML=o;})();
@@ -330,8 +331,8 @@ function openAdd(slot,special){
   $('aTimeBox').hidden=!special;$('aStore').value='';$('aName').value='';$('aPlan').value='なし';$('aFee').value='無料';
   planChange();renderSug();$('ovAdd').hidden=false;
   if(!castAll&&!castLoading){
-    castLoading=true;
-    api('getSalonCastAll',[]).then(function(r){castAll=r.casts;castLoading=false;renderSug();}).catch(function(){castLoading=false;});
+    castLoading=true;castErr='';
+    api('getSalonCastAll',[]).then(function(r){castAll=r.casts;castLoading=false;renderSug();}).catch(function(e){castLoading=false;castErr=String(e&&e.message||e);renderSug();});
   }
 }
 function planChange(){
@@ -341,7 +342,8 @@ function planChange(){
 function renderSug(){
   var q=norm($('aName').value), st=$('aStore').value, pool=(castAll||[]).filter(function(c){return !st||c.store===st;});
   var hits=q?pool.filter(function(c){return norm(c.gen).indexOf(q)===0;}):pool, h='';
-  if(!castAll)h='<span class="no">名前の一覧を読み込み中...</span>';
+  if(!castAll&&castErr)h='<span class="no">名前の一覧を読み込めませんでした: '+esc(castErr)+'</span>';
+  else if(!castAll)h='<span class="no">名前の一覧を読み込み中...</span>';
   else if(!hits.length)h='<span class="no">合う名前がありません</span>';
   else hits.slice(0,8).forEach(function(c,i){
     var on=add.picked&&add.picked.store===c.store&&add.picked.gen===c.gen;
@@ -376,13 +378,13 @@ function openSt(e){
   if(names.indexOf(def)<0)def='';
   $('sSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');
   var free=e.tag==='撮影'&&e.fee==='無料';
-  $('sHint').textContent=free?'撮影 (美容室費 無料): 給料引きには載りません (担当は選ばなくてもよい)':(names.length?'':'美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)');
+  $('sHint').textContent=free?'撮影 (美容室費 無料): 給料引きには載りません。美容師の人数には数えるので、担当を選んでください':(names.length?'':'美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)');
   $('ovSt').hidden=false;
 }
 function doSt(a){
   if(!cur)return;
   var sty=$('sSty').value, free=cur.tag==='撮影'&&cur.fee==='無料';
-  if(a==='done'&&!sty&&!free){window.alert('先に担当の美容師を選んでください');return;}
+  if(a==='done'&&!sty){window.alert('先に担当の美容師を選んでください');return;}
   if(a==='cancel'&&!window.confirm(cur.gen+' さんをキャンセルします。この枠は空きに戻ります。よろしいですか？'))return;
   var e=cur;
   if(a==='done'&&sty)lsSet('salonStylist',sty);
