@@ -135,6 +135,7 @@ th,td{border-color:#E3E6EC}
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
+var SALON = 'https://simplelifedesignlab-cyber.github.io/prince-apply/salon/?as=staff'; // 美容室の画面 (美容師と同じ)。?as=staff = 黒服の鍵 (ivKey) で開く・鍵は URL に付けない
 var STORES = [{id:'RegentClub千歳',s:'RC千歳',l:'regent'},{id:'328',s:'328',l:'328'},{id:'WAVE千歳',s:'WAVE千歳',l:'wave'},{id:'花もみじ千歳',s:'花もみじ千歳',l:'hanamomiji'}];
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -205,6 +206,7 @@ function top_(){
     '<button class="big" data-v="shift">シフト管理<small>1週間の出勤表</small></button>'+
     '<button class="big" data-v="trans">送迎管理<small>行き・帰りの一覧</small></button>'+
     '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
+    '<a class="big" href="'+SALON+'" target="_blank" rel="noopener">美容室<small>予約の一覧・空き枠に手入力</small></a>'+
     '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
     '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
     '<button class="big" data-v="post">投稿生成<small>お知らせ文を作って投稿予定へ</small></button>'+
