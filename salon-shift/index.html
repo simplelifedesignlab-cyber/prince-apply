@@ -101,7 +101,7 @@ function render(){
   for(var i=0;i<lead;i++)h+='<div class="cell empty"></div>';
   for(var d=1;d<=last;d++){
     var k=c.month+'-'+pad(d),st=c.days[k],past=k<t;
-    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')++'" data-d="'+k+'"'+(past?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
+    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')+'" data-d="'+k+'"'+(past?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
   }
   h+='</div>';
   $('body').innerHTML=h;
