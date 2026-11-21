@@ -135,6 +135,7 @@ th,td{border-color:#E3E6EC}
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
+var BOOK = 'https://docs.google.com/spreadsheets/d/1nOuWwEVRQcZfO73t8YzMKEeAEmMHjUW4WZ8EoCpPYxg/edit'; // 出勤表ブック (シフト表 = 日別タブ / 送迎の割り振り = 送迎 当日タブ)
 var SALON = 'https://simplelifedesignlab-cyber.github.io/prince-apply/salon/?as=staff'; // 美容室の画面 (美容師と同じ)。?as=staff = 黒服の鍵 (ivKey) で開く・鍵は URL に付けない
 var STORES = [{id:'RegentClub千歳',s:'RC千歳',l:'regent'},{id:'328',s:'328',l:'328'},{id:'WAVE千歳',s:'WAVE千歳',l:'wave'},{id:'花もみじ千歳',s:'花もみじ千歳',l:'hanamomiji'}];
 var $ = function(id){return document.getElementById(id);};
@@ -176,6 +177,7 @@ var month = ymd(new Date()).slice(0,7);
 var rankTab = 'sales';
 
 var VIEWS = {
+  today:{t:'出勤一覧',run:vToday,all:true},
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
   hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}, post:{t:'投稿生成',run:vPost}
 };
@@ -190,6 +192,7 @@ function route(){
   if(!VIEWS[v]){$('ttl').textContent='黒服ポータル';top_();return;}
   $('ttl').textContent=VIEWS[v].t;
   var el=$('app');
+  if(VIEWS[v].all){el.innerHTML='<div id="body"></div><div class="upd" id="upd"></div>';VIEWS[v].run();return;} // 店を選ばない画面 (出勤一覧 = 4 店まとめて)
   el.innerHTML='<div class="stores" id="stores"></div><div id="body"></div><div class="upd" id="upd"></div>';
   $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'"><img src="../logo/'+s.l+'.png" alt=""><span>'+esc(s.s)+'</span></button>';}).join('');
   [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
@@ -202,10 +205,13 @@ window.addEventListener('hashchange',route);
 
 function top_(){
   $('app').innerHTML=
+    '<button class="big" data-v="today">出勤一覧<small>今日の出勤・送迎・ヘアメイク (4 店まとめて)</small></button>'+
     '<button class="big" data-v="roster">在籍一覧<small>キャストの名簿</small></button>'+
     '<button class="big" data-v="shift">シフト管理<small>1週間の出勤表</small></button>'+
     '<button class="big" data-v="trans">送迎管理<small>行き・帰りの一覧</small></button>'+
     '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
+    '<a class="big" href="'+BOOK+'#gid=1139586545" target="_blank" rel="noopener">送迎<small>送迎の割り振り (出勤表の「送迎 当日」)</small></a>'+
+    '<a class="big" href="'+BOOK+'#gid=530204687" target="_blank" rel="noopener">シフト表<small>出勤表 (日別タブ・店ごとに下のタブで切替)</small></a>'+
     '<a class="big" href="'+SALON+'" target="_blank" rel="noopener">美容室<small>予約の一覧・空き枠に手入力</small></a>'+
     '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
     '<button class="big pk" data-v="rank" style="min-height:56px;font-size:18px;margin-left:24px;width:calc(100% - 24px)">ランキング<small>売上・本数・同伴</small></button>'+
@@ -218,6 +224,39 @@ function top_(){
 function fin(my,res,html){ if(my!==seq)return; $('body').innerHTML=html; $('upd').textContent='最終更新 '+(res&&res.updated||''); }
 function fail(my,e){ if(my!==seq)return; $('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>'; }
 function yen(n){return Number(n||0).toLocaleString('ja-JP')+'円';}
+
+// 出勤一覧 (2026-11-21 H 指示)。4 店まとめて・日付は前後に動かせる。読むだけ (本名・電話・住所は出ない)
+var attDay='';
+function bizDay(){return ymd(new Date(Date.now()-5*3600000));}
+function vToday(){
+  if(!attDay)attDay=bizDay();
+  var my=++seq;
+  $('body').innerHTML='<div class="nav"><button class="nb" id="ap">← 前の日</button><input type="date" id="adt" value="'+esc(attDay)+'" style="flex:1;min-height:44px;font:inherit;font-size:17px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:4px;background:#fff;min-width:0"><button class="nb" id="an">次の日 →</button></div><div id="att"><div class="msg">読み込み中...</div></div>';
+  var mv=function(d){attDay=d;vToday();};
+  $('ap').onclick=function(){var x=parse(attDay);x.setDate(x.getDate()-1);mv(ymd(x));};
+  $('an').onclick=function(){var x=parse(attDay);x.setDate(x.getDate()+1);mv(ymd(x));};
+  $('adt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('adt').value))mv($('adt').value);};
+  api('getAttendanceList',[attDay]).then(function(r){
+    if(my!==seq)return;
+    var tag=function(t){return '<span class="tag">'+t+'</span>';};
+    var h='<div class="hd"><b>'+esc(r.date.slice(5).replace('-','/'))+'('+esc(r.dow)+')'+(r.date===r.today?' 今日':'')+'</b><span>'+r.stores.reduce(function(a,s){return a+s.on.length;},0)+'人出勤</span></div>';
+    if(r.error)h+='<div class="msg err" style="padding:10px">出勤表を読めませんでした<br><small>'+esc(r.error)+'</small></div>';
+    r.stores.forEach(function(s){
+      h+='<div class="sec"><h3>'+esc(s.short)+'　出勤 '+s.on.length+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'</h3>'+
+        (s.on.length?s.on.map(function(c){
+          var tm=c.time||c.shift||'';
+          return '<div class="li"><span>'+(c.ban?'<b>'+esc(c.ban)+'</b> ':'')+esc(c.gen)+(c.absent?'<span class="tag" style="background:#b71c1c">当欠</span>':'')+(c.att&&!c.absent?'<span class="tag" style="background:#5A6275">出勤済</span>':'')+
+            '<small>'+esc(tm)+(c.leave?' 〜 '+esc(c.leave):'')+(c.area?(tm?' / ':'')+esc(c.area):'')+'</small></span><span>'+
+            (c.go?tag('迎'):'')+(c.back?tag('送'):'')+(c.hair?tag('ヘア'+(c.hair==='予約'?'予約':'希望')+(c.hairTime?' '+esc(c.hairTime):'')):'')+'</span></div>';
+        }).join(''):'<div class="li" style="color:#888">出勤予定なし</div>')+'</div>';
+    });
+    h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
+    h+='<div class="sec"><h3>送迎 出勤のドライバー (朝=行き / 帰り)</h3>'+(r.drivers.length?r.drivers.map(function(x){return '<div class="li"><span>'+esc(x.name)+'</span><span>'+(x.go?tag('朝'+(x.goT?' '+esc(x.goT):'')):'')+(x.back?tag('帰り'+(x.backT?' '+esc(x.backT):'')):'')+'</span></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
+    if(r.notes&&r.notes.length)h+='<div class="note">'+r.notes.map(esc).join(' / ')+'</div>';
+    h+='<div class="note">迎＝行きの送迎あり　送＝帰りの送迎あり　元: 出勤表の「データ」</div>';
+    $('att').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;
+  }).catch(function(e){if(my===seq&&$('att'))$('att').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
 
 function vRoster(){
   var my=++seq;

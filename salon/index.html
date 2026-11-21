@@ -102,6 +102,7 @@ button,select,input{font-family:inherit}
   <div class="ch"><h1 id="cTitle">&nbsp;</h1>
     <div class="r">
       <button class="ib" id="cPrev" aria-label="前の月"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <a class="tb" id="cShift" href="../salon-shift/" style="text-decoration:none;display:inline-flex;align-items:center">シフト</a>
       <button class="tb" id="cToday">今日</button>
       <button class="ib" id="cNext" aria-label="次の月"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
     </div>
@@ -267,7 +268,8 @@ function stLabel(s){return s==='済'?['s1','対応済']:s==='来ず'?['s2','来�
 function renderDay(r){
   dayData=r;today=r.today||today;
   var multi=r.places.length>1, staffN=0;r.places.forEach(function(p){staffN+=p.staff;});
-  $('dSub').textContent=r.reserve&&r.places.length?'美容師 '+staffN+' 人 · 1 時間 最大 '+r.hourCap+' 人':'';
+  var duty=(r.onDuty||[]).map(function(x){return x.name+' '+x.start+'-'+x.end;}).join('、'), sub0=r.reserve&&r.places.length?'美容師 '+staffN+' 人 · 1 時間 最大 '+r.hourCap+' 人':'';
+  $('dSub').textContent=sub0+(duty?(sub0?' · ':'')+'出勤 '+duty:''); // 出勤の美容師 (美容師シフト・表示だけ 2026-11-21)
   $('nB').textContent=r.counts.booked;$('nD').textContent=r.counts.done;$('nN').textContent=r.counts.noshow;$('nF').textContent=r.counts.free;
   $('dNote').innerHTML=r.error?'<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>':'';
   $('dUpd').textContent='最終更新 '+r.updated;

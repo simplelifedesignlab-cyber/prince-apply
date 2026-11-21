@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>送迎シフト入力</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:16px;line-height:1.4;background:#fff;color:#1F2A44;overflow-wrap:anywhere}
+button,select,input{font-family:inherit}
+[hidden]{display:none!important}
+.page{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:32px}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:16px 12px 6px 20px}
+.ch h1{margin:0;font-size:26px;font-weight:900;white-space:nowrap}
+.tb{height:36px;padding:0 12px;border:1.5px solid #1F2A44;background:#fff;border-radius:18px;font-size:14px;font-weight:700;cursor:pointer;color:#1F2A44}
+.mn{display:flex;align-items:center;justify-content:space-between;padding:4px 12px 8px}
+.mn b{font-size:20px;font-weight:900}
+.ib{width:44px;height:44px;border:1.5px solid #1F2A44;background:#fff;border-radius:22px;font-size:18px;font-weight:700;cursor:pointer;color:#1F2A44}
+.sub{padding:0 20px 8px;font-size:13px;color:#6B6B6B}
+.dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid #ECECEC}
+.dow div{text-align:center;font-size:12px;font-weight:700;padding:5px 0;color:#6B6B6B}
+.dow div:first-child{color:#D92D20}.dow div:last-child{color:#1D5BD8}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(84px,auto)}
+.cell{display:flex;flex-direction:column;gap:2px;padding:3px 2px;border:0;border-right:1px solid #F1F1F1;border-bottom:1px solid #F1F1F1;min-width:0;overflow:hidden;background:#fff;cursor:pointer;color:#1F2A44;text-align:left}
+.cell:disabled{cursor:default;opacity:.35}
+.cell .n{display:inline-flex;align-items:center;height:22px;padding-left:4px;font-size:12px;font-weight:700}
+.cell.today .n{justify-content:center;width:22px;padding:0;margin-left:2px;border-radius:11px;background:#1F2A44;color:#fff;font-weight:900}
+.cell.empty{cursor:default;background:#fff}
+.chip{display:block;font-size:11px;font-weight:700;line-height:15px;padding:1px 3px;border-radius:4px;background:#1F2A44;color:#fff;overflow:hidden;white-space:nowrap}
+.chip.off{background:#fff;color:#6B6B6B;box-shadow:inset 0 0 0 1.5px #C9C9C9}
+.chip.dr{background:#fff;color:#1F2A44;box-shadow:inset 0 0 0 1.5px #1F2A44}
+.cell.busy{opacity:.5}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:2px}
+.tg{min-height:34px;font:inherit;font-size:11px;font-weight:700;border:1px solid #C3C8D1;border-radius:4px;background:#fff;color:#8A92A6;cursor:pointer;padding:0}
+.tg.on{background:#1F2A44;border-color:#1F2A44;color:#fff}
+.tg:disabled{opacity:.35;cursor:default}
+.cell{cursor:default}
+.cell.on{background:#E6E9F0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 10px}
+.seg button{min-height:48px;font-size:15px;font-weight:700;border:1.5px solid #1F2A44;border-radius:12px;background:#fff;color:#1F2A44;cursor:pointer}
+.seg button.on{background:#1F2A44;color:#fff}
+.msg{padding:26px 10px;text-align:center;font-size:17px;color:#666}
+.err{color:#B91C1C}
+.pick{padding:0 20px}
+.pick .lb{font-size:16px;font-weight:700;margin:14px 0 4px}
+.pick button{display:block;width:100%;min-height:60px;margin-top:10px;font-size:19px;font-weight:700;border:1.5px solid #1F2A44;border-radius:14px;background:#fff;color:#1F2A44;cursor:pointer}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #1F2A44;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:480px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar .t{font-size:16px;font-weight:700}
+.sv{min-height:52px;min-width:150px;font-size:18px;font-weight:700;border:0;border-radius:26px;background:#1F2A44;color:#fff;cursor:pointer}
+.sv:disabled{background:#C9C9C9;cursor:default}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sh{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.sh h3{margin:0 0 12px;font-size:20px;font-weight:900}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.seg button{min-height:52px;font-size:17px;font-weight:700;border:1.5px solid #1F2A44;border-radius:12px;background:#fff;color:#1F2A44;cursor:pointer}
+.seg button.on{background:#1F2A44;color:#fff}
+.fl{font-size:13px;font-weight:700;color:#6B6B6B;margin:10px 0 4px}
+.tt{display:flex;align-items:center;gap:8px}
+select{width:100%;min-height:52px;font-size:18px;padding:0 10px;border:1.5px solid #1F2A44;border-radius:12px;background:#fff;color:#1F2A44}
+.ok{display:block;width:100%;min-height:54px;margin-top:16px;font-size:18px;font-weight:700;border:0;border-radius:27px;background:#1F2A44;color:#fff;cursor:pointer}
+.cl{display:block;width:100%;min-height:46px;margin-top:6px;font-size:15px;border:0;background:none;color:#6B6B6B;cursor:pointer}
+</style></head><body>
+<div class="page">
+  <div class="ch"><h1>送迎 シフト入力</h1><div><button class="tb" id="who" hidden></button></div></div>
+  <div id="body"><div class="msg">読み込み中...</div></div>
+</div>
+<script>
+var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
+var $ = function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// 鍵は送迎用の鍵 sougeiKey (?k= -> localStorage)・名前は driverName
+var KEY='';
+try{
+  var u0=new URL(location.href),k0=u0.searchParams.get('k');
+  if(k0){localStorage.setItem('sougeiKey',k0);u0.searchParams.delete('k');history.replaceState(null,'',u0.pathname+u0.search+u0.hash);}
+  KEY=localStorage.getItem('sougeiKey')||'';
+}catch(e){}
+function post_(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();});
+}
+function api(fn,args){
+  return post_(fn,args).then(function(j){
+    if(!j||!j.needKey)return j;
+    var k=window.prompt('送迎用のキーを入力してください');
+    if(!k)throw new Error('送迎用のキーが必要です');
+    KEY=k.trim();
+    return post_(fn,args).then(function(j2){
+      if(j2&&j2.needKey){try{localStorage.removeItem('sougeiKey');}catch(e){}throw new Error('キーが違います');}
+      try{localStorage.setItem('sougeiKey',KEY);}catch(e){}
+      return j2;
+    });
+  }).then(function(j){if(!j||!j.ok)throw new Error(j&&j.error||'失敗しました');return j.result;});
+}
+function pad(n){return ('0'+n).slice(-2);}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function today(){return ymd(new Date(Date.now()-5*3600000));}
+var DOW=['日','月','火','水','木','金','土'];
+var me=''; try{me=localStorage.getItem('driverName')||'';}catch(e){}
+var month=today().slice(0,7), cur=null, seq=0, names=null, pending={};
+function setMe(n){me=n;try{if(n)localStorage.setItem('driverName',n);else localStorage.removeItem('driverName');}catch(e){}}
+function addMonth(ym,n){var y=+ym.slice(0,4),m=+ym.slice(5)-1+n;return ymd(new Date(y,m,1,12)).slice(0,7);}
+function pickName(){
+  $('who').hidden=true;
+  if(!names||!names.length){$('body').innerHTML='<div class="msg err">ドライバーが未登録です</div>';return;}
+  $('body').innerHTML='<div class="pick"><div class="lb">自分の名前を押してください</div>'+names.map(function(n,i){return '<button data-i="'+i+'">'+esc(n)+'</button>';}).join('')+'</div>';
+  [].forEach.call(document.querySelectorAll('.pick button'),function(el){el.onclick=function(){setMe(names[+el.getAttribute('data-i')]);load();};});
+}
+function render(){
+  var c=cur,t=today(),p=c.first.split('-'),first=new Date(+p[0],+p[1]-1,1,12),lead=first.getDay(),last=+c.last.slice(8),h='';
+  $('who').hidden=false;$('who').textContent=me+'　変更';
+  h+='<div class="mn"><button class="ib" id="pm">‹</button><b>'+(+p[0])+'年'+(+p[1])+'月</b><button class="ib" id="nm">›</button></div>';
+  h+='<div class="sub">出られる日の「朝」「帰り」をタップ。もう一度で取り消し。</div>';
+  h+='<div class="dow">'+DOW.map(function(x){return '<div>'+x+'</div>';}).join('')+'</div><div class="grid">';
+  for(var i=0;i<lead;i++)h+='<div class="cell empty"></div>';
+  for(var d=1;d<=last;d++){
+    var k=c.month+'-'+pad(d),st=c.days[k]||{go:false,back:false},past=k<t,dis=past||pending[k]?' disabled':'';
+    h+='<div class="cell'+(k===t?' today':'')+(pending[k]?' busy':'')+'"><span class="n">'+d+'</span><div class="two"><button class="tg'+(st.go?' on':'')+'" data-d="'+k+'" data-w="go"'+dis+'>朝</button><button class="tg'+(st.back?' on':'')+'" data-d="'+k+'" data-w="back"'+dis+'>帰</button></div></div>';
+  }
+  h+='</div>';
+  $('body').innerHTML=h;
+  $('pm').onclick=function(){month=addMonth(month,-1);load();};
+  $('nm').onclick=function(){month=addMonth(month,1);load();};
+  [].forEach.call(document.querySelectorAll('.tg'),function(el){el.onclick=function(){toggle(el.getAttribute('data-d'),el.getAttribute('data-w'));};});
+}
+// タップした日の 朝 (= 行き) / 帰り を その場で保存
+function toggle(d,w){
+  var st=cur.days[d]||{go:false,back:false},ent={date:d,go:st.go,back:st.back},m=month;
+  ent[w]=!st[w];
+  pending[d]=1;render();
+  api('setSougeiShiftDays',[me,[ent]]).then(function(r){delete pending[d];if(m===month&&r.month===month)cur=r;else if(m===month)load();render();}).catch(function(e){delete pending[d];window.alert('保存できませんでした: '+(e.message||e));render();});
+}
+$('who').onclick=function(){setMe('');pickName();};
+function load(){
+  var my=++seq;
+  api('getSougeiShiftMonth',[me,month]).then(function(r){
+    if(my!==seq)return;
+    names=r.drivers;
+    if(!me||names.indexOf(me)<0){setMe('');pickName();return;}
+    cur=r;render();
+  }).catch(function(e){if(my===seq)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+load();
+</script>
+</body></html>
