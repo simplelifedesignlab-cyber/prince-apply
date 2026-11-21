@@ -11,7 +11,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:16px;line-height:1.4;background:#fff;color:#1A1A1A;overflow-wrap:anywhere}
 button,select,input{font-family:inherit}
 [hidden]{display:none!important}
-.page{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:32px}
+.page{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding-bottom:110px}
 .ch{display:flex;align-items:center;justify-content:space-between;padding:16px 12px 6px 20px}
 .ch h1{margin:0;font-size:26px;font-weight:900;white-space:nowrap}
 .tb{height:36px;padding:0 12px;border:1.5px solid #1A1A1A;background:#fff;border-radius:18px;font-size:14px;font-weight:700;cursor:pointer;color:#1A1A1A}
@@ -43,11 +43,25 @@ button,select,input{font-family:inherit}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .seg button{min-height:52px;font-size:17px;font-weight:700;border:1.5px solid #1A1A1A;border-radius:12px;background:#fff;color:#1A1A1A;cursor:pointer}
 .seg button.on{background:#1A1A1A;color:#fff}
+.cell.dirty{background:#FFF4D6;outline:2px dashed #D97706;outline-offset:-2px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:1px solid #ECECEC;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar-in{max-width:480px;margin:0 auto}
+.bar button{display:block;width:100%;min-height:56px;font-size:19px;font-weight:900;border:0;border-radius:14px;background:#1A1A1A;color:#fff;cursor:pointer}
+.bar button:disabled{background:#E3E3E3;color:#9A9A9A;cursor:default}
+.ov{position:fixed;top:0;left:0;right:0;bottom:0;z-index:30;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.ovb{background:#fff;border-radius:18px;padding:26px 20px 18px;max-width:380px;width:100%;text-align:center}
+.ovb .big{font-size:30px;font-weight:900;line-height:1.3;margin-bottom:10px}
+.ovb .det{font-size:16px;margin-bottom:8px}
+.ovb .bad{font-size:16px;font-weight:700;color:#B91C1C;margin-bottom:8px}
+.ovb button{display:block;width:100%;min-height:52px;margin-top:10px;font-size:17px;font-weight:700;border:1.5px solid #1A1A1A;border-radius:12px;background:#fff;color:#1A1A1A;cursor:pointer}
+.ovb button.pri{background:#1A1A1A;color:#fff}
 </style></head><body>
 <div class="page">
   <div class="ch"><h1>シフト入力</h1><div><button class="tb" id="who" hidden></button></div></div>
   <div id="body"><div class="msg">読み込み中...</div></div>
 </div>
+<div class="bar" id="bar" hidden><div class="bar-in"><button id="dec" disabled>決定</button></div></div>
+<div class="ov" id="ov" hidden><div class="ovb" id="ovb"></div></div>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var $ = function(id){return document.getElementById(id);};
@@ -86,6 +100,7 @@ function setMe(n){me=n;try{if(n)localStorage.setItem('hairName',n);else localSto
 function addMonth(ym,n){var y=+ym.slice(0,4),m=+ym.slice(5)-1+n;return ymd(new Date(y,m,1,12)).slice(0,7);}
 function placeObj(){for(var i=0;i<cur.places.length;i++)if(cur.places[i].place===myPlace)return cur.places[i];return cur.places[0];}
 function pickName(){
+  cur=null;base={};$('bar').hidden=true;
   $('who').hidden=true;
   if(!names||!names.length){$('body').innerHTML='<div class="msg err">美容師が未登録です</div>';return;}
   $('body').innerHTML='<div class="pick"><div class="lb">自分の名前を押してください</div>'+names.map(function(n,i){return '<button data-i="'+i+'">'+esc(n)+'</button>';}).join('')+'</div>';
@@ -96,44 +111,94 @@ function render(){
   $('who').hidden=false;$('who').textContent=me+'　変更';
   h+='<div class="mn"><button class="ib" id="pm">‹</button><b>'+(+p[0])+'年'+(+p[1])+'月</b><button class="ib" id="nm">›</button></div>';
   if(c.places.length>1){var po=placeObj();h+='<div class="seg">'+c.places.map(function(q,i){return '<button data-p="'+i+'"'+(q.place===po.place?' class="on"':'')+'>'+esc(q.place)+'</button>';}).join('')+'</div>';}
-  h+='<div class="sub">出る日をタップ。もう一度タップで取り消し。</div>';
+  h+='<div class="sub">出る日をタップ。もう一度タップで取り消し。最後に下の「決定」を押すと反映されます。点線の枠はまだ決定していない日です。</div>';
   h+='<div class="dow">'+DOW.map(function(x){return '<div>'+x+'</div>';}).join('')+'</div><div class="grid">';
+  var dset={};dirtyKeys().forEach(function(x){dset[x]=1;});
   for(var i=0;i<lead;i++)h+='<div class="cell empty"></div>';
   for(var d=1;d<=last;d++){
     var k=c.month+'-'+pad(d),st=c.days[k],past=k<t;
-    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')+'" data-d="'+k+'"'+(past?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
+    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')+(dset[k]?' dirty':'')+'" data-d="'+k+'"'+((past||saving)?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
   }
   h+='</div>';
-  $('body').innerHTML=h;
-  $('pm').onclick=function(){month=addMonth(month,-1);load();};
-  $('nm').onclick=function(){month=addMonth(month,1);load();};
-  [].forEach.call(document.querySelectorAll('.seg button'),function(el){el.onclick=function(){myPlace=cur.places[+el.getAttribute('data-p')].place;try{localStorage.setItem('hairShiftPlace',myPlace);}catch(e){}render();};});
+  $('body').innerHTML=h;barUpdate();
+  $('pm').onclick=function(){guard(function(){month=addMonth(month,-1);load();});};
+  $('nm').onclick=function(){guard(function(){month=addMonth(month,1);load();});};
+  [].forEach.call(document.querySelectorAll('.seg button'),function(el){el.onclick=function(){if(saving)return;myPlace=cur.places[+el.getAttribute('data-p')].place;try{localStorage.setItem('hairShiftPlace',myPlace);}catch(e){}render();};});
   [].forEach.call(document.querySelectorAll('.cell[data-d]'),function(el){el.onclick=function(){toggle(el.getAttribute('data-d'));};});
 }
-// タップした日を その場で保存 (出る <-> 出ない)。時間は場所のふだんの時間
-// 画面はすぐ変え、送るのは 1 本ずつ (連続タップはまとめて次の 1 本に・サーバーのロック待ちで落ちないように)
-var queue={}, inflight=false;
+function sig(st){return st?st.place+'|'+st.start+'|'+st.end:'';}
+
+// 決定ボタン方式 (2026-11-21 H 指示): タップは画面上だけ・下の「決定」でまとめて保存・保存したら「反映しました」を大きく出す
+// base = サーバーに保存済みの状態 / cur.days = 画面の状態。違う日 = 未決定 (点線の枠)。保存は 1 日ずつ順に呼ぶ (失敗した日だけ未決定のまま残す)
+var base={}, saving=false;
+function clone(x){return JSON.parse(JSON.stringify(x));}
+function snap(){base=clone(cur.days);}
+function dirtyKeys(){
+  if(!cur)return [];
+  var seen={},r=[];
+  Object.keys(cur.days).concat(Object.keys(base)).forEach(function(k){if(seen[k])return;seen[k]=1;if(sig(cur.days[k])!==sig(base[k]))r.push(k);});
+  return r.sort();
+}
+function dayList(ks){return ks.map(function(k){return (+k.slice(8))+'日';}).join('・');}
+function showOv(h,btns){
+  $('ovb').innerHTML=h+btns.map(function(b,i){return '<button data-i="'+i+'"'+(b.pri?' class="pri"':'')+'>'+esc(b.t)+'</button>';}).join('');
+  [].forEach.call($('ovb').querySelectorAll('button'),function(el){el.onclick=function(){var b=btns[+el.getAttribute('data-i')];$('ov').hidden=true;if(b.f)b.f();};});
+  $('ov').hidden=false;
+}
+function barUpdate(){
+  var n=dirtyKeys().length;
+  $('bar').hidden=false;$('dec').disabled=(n===0||saving);
+  $('dec').textContent=saving?'反映中...':(n?'決定（'+n+' 件）':'決定');
+}
+// 未決定の変更があるまま 月・名前を変える時は止める (画面内の確認)
+function guard(f){
+  if(saving)return;
+  var n=dirtyKeys().length;
+  if(!n){f();return;}
+  showOv('<div class="big">決定していない変更があります</div><div class="det">'+n+' 件がまだ保存されていません。</div>',[{t:'戻って決定する',pri:true},{t:'変更を捨てて移る',f:f}]);
+}
+window.addEventListener('beforeunload',function(e){if(saving||dirtyKeys().length){e.preventDefault();e.returnValue='';return '';}});
+$('dec').onclick=function(){decide();};
+function decide(){
+  if(saving)return;
+  var ks=dirtyKeys();
+  if(!ks.length)return;
+  saving=true;render();
+  var m=month,ok=[],ng=[],last=null,i=0;
+  (function next(){
+    if(i>=ks.length)return fin();
+    var d=ks[i++];
+    api('setHairShiftMonth',[me,[(cur.days[d]?{date:d,place:cur.days[d].place,start:cur.days[d].start,end:cur.days[d].end}:{date:d,place:''})],m]).then(function(r){
+      ok.push(d);last=r;
+      if(cur.days[d])base[d]=clone(cur.days[d]);else delete base[d];
+    }).catch(function(){ng.push(d);}).then(next);
+  })();
+  function fin(){
+    saving=false;
+    if(!ng.length&&last&&last.month===m){cur=last;snap();}
+    render();
+    var mm=(+m.slice(5))+'月';
+    var h=ng.length&&!ok.length?'<div class="big">反映できませんでした</div>':(ng.length?'<div class="big">一部だけ反映しました</div>':'<div class="big">反映しました</div>');
+    if(ok.length)h+='<div class="det">'+mm+' '+ok.length+' 件（'+esc(dayList(ok))+'）</div>';
+    if(ng.length)h+='<div class="bad">'+esc(dayList(ng))+'は反映できませんでした。もう一度決定を押してください。</div>';
+    showOv(h,[{t:'OK',pri:true}]);
+  }
+}
 function toggle(d){
+  if(saving)return;
   var st=cur.days[d],po=placeObj();
-  if(st){delete cur.days[d];queue[d]={date:d,place:''};}
-  else{cur.days[d]={place:po.place,start:po.start,end:po.end};queue[d]={date:d,place:po.place,start:po.start,end:po.end};}
-  render();flush();
+  if(st)delete cur.days[d];
+  else cur.days[d]={place:po.place,start:po.start,end:po.end};
+  render();
 }
-function flush(){
-  if(inflight)return;
-  var ents=Object.keys(queue).map(function(k){return queue[k];});
-  if(!ents.length)return;
-  queue={};inflight=true;var m=month;
-  api('setHairShiftMonth',[me,ents,m]).then(function(r){inflight=false;if(Object.keys(queue).length){flush();return;}if(m===month){cur=r;render();}}).catch(function(e){inflight=false;queue={};window.alert('保存できませんでした: '+(e.message||e));load();});
-}
-$('who').onclick=function(){setMe('');pickName();};
+$('who').onclick=function(){guard(function(){setMe('');pickName();});};
 function load(){
-  var my=++seq;
+  var my=++seq;cur=null;base={};$('bar').hidden=true;
   api('getHairShiftMonth',[me,month]).then(function(r){
     if(my!==seq)return;
     names=r.stylists;
     if(!me||names.indexOf(me)<0){setMe('');pickName();return;}
-    cur=r;render();
+    cur=r;snap();render();
   }).catch(function(e){if(my===seq)$('body').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
 load();
