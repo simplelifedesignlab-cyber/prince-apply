@@ -31,7 +31,6 @@ button,select,input{font-family:inherit}
 .chip{display:block;font-size:11px;font-weight:700;line-height:15px;padding:1px 3px;border-radius:4px;background:#1A1A1A;color:#fff;overflow:hidden;white-space:nowrap}
 .chip.off{background:#fff;color:#6B6B6B;box-shadow:inset 0 0 0 1.5px #C9C9C9}
 .chip.dr{background:#fff;color:#1A1A1A;box-shadow:inset 0 0 0 1.5px #1A1A1A}
-.cell.busy{opacity:.5}
 .cell.on{background:#F3F3F3}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 10px}
 .seg button{min-height:48px;font-size:15px;font-weight:700;border:1.5px solid #1A1A1A;border-radius:12px;background:#fff;color:#1A1A1A;cursor:pointer}
@@ -41,22 +40,9 @@ button,select,input{font-family:inherit}
 .pick{padding:0 20px}
 .pick .lb{font-size:16px;font-weight:700;margin:14px 0 4px}
 .pick button{display:block;width:100%;min-height:60px;margin-top:10px;font-size:19px;font-weight:700;border:1.5px solid #1A1A1A;border-radius:14px;background:#fff;color:#1A1A1A;cursor:pointer}
-.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #1A1A1A;padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.bar .in{max-width:480px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.bar .t{font-size:16px;font-weight:700}
-.sv{min-height:52px;min-width:150px;font-size:18px;font-weight:700;border:0;border-radius:26px;background:#1A1A1A;color:#fff;cursor:pointer}
-.sv:disabled{background:#C9C9C9;cursor:default}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
-.sh{background:#fff;width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
-.sh h3{margin:0 0 12px;font-size:20px;font-weight:900}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .seg button{min-height:52px;font-size:17px;font-weight:700;border:1.5px solid #1A1A1A;border-radius:12px;background:#fff;color:#1A1A1A;cursor:pointer}
 .seg button.on{background:#1A1A1A;color:#fff}
-.fl{font-size:13px;font-weight:700;color:#6B6B6B;margin:10px 0 4px}
-.tt{display:flex;align-items:center;gap:8px}
-select{width:100%;min-height:52px;font-size:18px;padding:0 10px;border:1.5px solid #1A1A1A;border-radius:12px;background:#fff;color:#1A1A1A}
-.ok{display:block;width:100%;min-height:54px;margin-top:16px;font-size:18px;font-weight:700;border:0;border-radius:27px;background:#1A1A1A;color:#fff;cursor:pointer}
-.cl{display:block;width:100%;min-height:46px;margin-top:6px;font-size:15px;border:0;background:none;color:#6B6B6B;cursor:pointer}
 </style></head><body>
 <div class="page">
   <div class="ch"><h1>シフト入力</h1><div><button class="tb" id="who" hidden></button></div></div>
@@ -94,7 +80,7 @@ function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate
 function today(){return ymd(new Date(Date.now()-5*3600000));}
 var DOW=['日','月','火','水','木','金','土'];
 var me=''; try{me=localStorage.getItem('hairName')||'';}catch(e){}
-var month=today().slice(0,7), cur=null, seq=0, names=null, pending={}, myPlace='';
+var month=today().slice(0,7), cur=null, seq=0, names=null, myPlace='';
 try{myPlace=localStorage.getItem('hairShiftPlace')||'';}catch(e){}
 function setMe(n){me=n;try{if(n)localStorage.setItem('hairName',n);else localStorage.removeItem('hairName');}catch(e){}}
 function addMonth(ym,n){var y=+ym.slice(0,4),m=+ym.slice(5)-1+n;return ymd(new Date(y,m,1,12)).slice(0,7);}
@@ -115,7 +101,7 @@ function render(){
   for(var i=0;i<lead;i++)h+='<div class="cell empty"></div>';
   for(var d=1;d<=last;d++){
     var k=c.month+'-'+pad(d),st=c.days[k],past=k<t;
-    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')+(pending[k]?' busy':'')+'" data-d="'+k+'"'+(past||pending[k]?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
+    h+='<button class="cell'+(k===t?' today':'')+(st?' on':'')++'" data-d="'+k+'"'+(past?' disabled':'')+'><span class="n">'+d+'</span>'+(st?'<span class="chip">出る</span><span class="chip off" style="margin-top:1px">'+esc(st.place.replace(/千歳|店内/g,'').trim())+'</span>':'')+'</button>';
   }
   h+='</div>';
   $('body').innerHTML=h;
@@ -125,10 +111,20 @@ function render(){
   [].forEach.call(document.querySelectorAll('.cell[data-d]'),function(el){el.onclick=function(){toggle(el.getAttribute('data-d'));};});
 }
 // タップした日を その場で保存 (出る <-> 出ない)。時間は場所のふだんの時間
+// 画面はすぐ変え、送るのは 1 本ずつ (連続タップはまとめて次の 1 本に・サーバーのロック待ちで落ちないように)
+var queue={}, inflight=false;
 function toggle(d){
-  var st=cur.days[d],po=placeObj(),ent=st?{date:d,place:''}:{date:d,place:po.place,start:po.start,end:po.end},m=month;
-  pending[d]=1;render();
-  api('setHairShiftMonth',[me,[ent],m]).then(function(r){delete pending[d];if(m===month){cur=r;}render();}).catch(function(e){delete pending[d];window.alert('保存できませんでした: '+(e.message||e));render();});
+  var st=cur.days[d],po=placeObj();
+  if(st){delete cur.days[d];queue[d]={date:d,place:''};}
+  else{cur.days[d]={place:po.place,start:po.start,end:po.end};queue[d]={date:d,place:po.place,start:po.start,end:po.end};}
+  render();flush();
+}
+function flush(){
+  if(inflight)return;
+  var ents=Object.keys(queue).map(function(k){return queue[k];});
+  if(!ents.length)return;
+  queue={};inflight=true;var m=month;
+  api('setHairShiftMonth',[me,ents,m]).then(function(r){inflight=false;if(Object.keys(queue).length){flush();return;}if(m===month){cur=r;render();}}).catch(function(e){inflight=false;queue={};window.alert('保存できませんでした: '+(e.message||e));load();});
 }
 $('who').onclick=function(){setMe('');pickName();};
 function load(){
