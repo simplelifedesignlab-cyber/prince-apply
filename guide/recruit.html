@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>LINE 求人の説明書</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<!-- 型: 図解スライド (横型 16:9)。staff.html の「だれが何を入れてどこに出るか」の図解を 1 枚 1 メッセージに割った版。
+     操作: ← → / Space / スワイプ / 下のボタン。印刷 = 横 A4・1 スライド 1 ページ。スマホ縦は 1 枚ずつ縦に並べて読む。
+     配色: 黒服向け = 濃紺・白・黒 / Noto Sans JP。内容の出典: 設計_最終_入口から送迎まで_v1.md・設計 2j・interview-app/interview-apply/line-recruit/staff-portal のコード (2026-11-23 時点)。 -->
+<style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:#E9ECF2;color:#111;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.55;overflow:hidden;display:flex;flex-direction:column;-webkit-text-size-adjust:100%}
+:root{--navy:#1F2A44;--navyL:#E6E9F0;--line:#D8DCE6;--wipbg:#FFE9C2;--wipfg:#7A4A00;--okbg:#DFF3E6;--okfg:#14602F}
+.view{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.stage{position:relative;width:min(100vw,calc((100dvh - 56px)*16/9));aspect-ratio:16/9;background:#fff;box-shadow:0 2px 16px rgba(0,0,0,.18);overflow:hidden}
+.slide{--u:1cqw;container-type:size;position:absolute;inset:0;display:none;flex-direction:column;padding:calc(var(--u)*3.6) calc(var(--u)*5) calc(var(--u)*3);background:#fff;overflow:hidden}
+.slide.on{display:flex}
+.tag{font-size:calc(var(--u)*1.5);font-weight:700;letter-spacing:.2em;color:#fff;background:var(--navy);align-self:flex-start;border-radius:calc(var(--u)*.8);padding:calc(var(--u)*.2) calc(var(--u)*1.4)}
+h2{margin:calc(var(--u)*1) 0 calc(var(--u)*.6);font-size:calc(var(--u)*4.2);line-height:1.3;font-weight:900;color:var(--navy)}
+.lead{margin:0 0 calc(var(--u)*1.6);font-size:calc(var(--u)*2.3);font-weight:500;color:#333}
+.lead b,.t b{color:var(--navy);font-weight:900}
+.body{flex:1;min-height:0;display:flex;flex-direction:column;gap:calc(var(--u)*1.4);justify-content:center}
+.row{display:flex;gap:calc(var(--u)*1.6);align-items:stretch}
+.row.c{align-items:center}
+.body>.box,.body>.mock{flex:none}
+.col{display:flex;flex-direction:column;gap:calc(var(--u)*1.2);flex:1;min-width:0}
+.box{flex:1;min-width:0;border:calc(var(--u)*.22) solid var(--navy);border-radius:calc(var(--u)*1.2);padding:calc(var(--u)*1.2) calc(var(--u)*1.5);background:#fff}
+.box.navy{background:var(--navy);color:#fff}
+.box.soft{background:var(--navyL);border-color:#B9C0D2}
+.box.dash{border-style:dashed}
+.box h3{margin:0 0 calc(var(--u)*.4);font-size:calc(var(--u)*2.5);line-height:1.35;font-weight:900}
+.box p,.t{margin:0;font-size:calc(var(--u)*2.1);font-weight:500;line-height:1.55}
+.box .s{font-size:calc(var(--u)*1.7);font-weight:500;opacity:.85}
+.box.navy .s{opacity:.9}
+.arr{flex:none;align-self:center;font-size:calc(var(--u)*3.4);font-weight:900;color:var(--navy);line-height:1}
+.num{display:inline-flex;align-items:center;justify-content:center;width:calc(var(--u)*3.6);height:calc(var(--u)*3.6);border-radius:50%;background:var(--navy);color:#fff;font-weight:900;font-size:calc(var(--u)*2.1);margin-right:calc(var(--u)*.8);flex:none}
+.box.navy .num{background:#fff;color:var(--navy)}
+.who{display:inline-block;font-size:calc(var(--u)*1.5);font-weight:700;border-radius:calc(var(--u)*1.2);padding:0 calc(var(--u)*1.1);margin-bottom:calc(var(--u)*.5);background:var(--navyL);color:var(--navy);border:calc(var(--u)*.12) solid #B9C0D2}
+.box.navy .who{background:#fff;color:var(--navy)}
+.chip{display:inline-block;font-weight:900;font-size:calc(var(--u)*1.6);border-radius:calc(var(--u)*1.2);padding:0 calc(var(--u)*1.2);line-height:1.7;white-space:nowrap;vertical-align:.1em}
+.chip.ok{background:var(--okbg);color:var(--okfg)}
+.chip.wip{background:var(--wipbg);color:var(--wipfg)}
+.chip.chk{background:#E8E8EE;color:#444}
+.wipnote{margin-top:calc(var(--u)*1);font-size:calc(var(--u)*1.8);font-weight:700;background:#FFF4E5;border:calc(var(--u)*.15) solid #F3D3A0;border-radius:calc(var(--u)*1);padding:calc(var(--u)*.7) calc(var(--u)*1.4);color:#5a3a00}
+.url{font-family:ui-monospace,Consolas,monospace;font-size:calc(var(--u)*1.9);font-weight:700;background:var(--navyL);border-radius:calc(var(--u)*.8);padding:calc(var(--u)*.5) calc(var(--u)*1.2);overflow-wrap:anywhere;color:var(--navy)}
+/* 画面の見本 */
+.mock{border:calc(var(--u)*.2) solid #9AA3B5;border-radius:calc(var(--u)*1.2);background:#fff;overflow:hidden;font-size:calc(var(--u)*1.8);box-shadow:0 calc(var(--u)*.3) calc(var(--u)*1) rgba(0,0,0,.12)}
+.mock .mh{background:var(--navy);color:#fff;font-weight:700;padding:calc(var(--u)*.6) calc(var(--u)*1.2);font-size:calc(var(--u)*1.7)}
+.mock .mr{display:flex;align-items:center;gap:calc(var(--u)*1);padding:calc(var(--u)*.7) calc(var(--u)*1.2);border-bottom:calc(var(--u)*.1) solid var(--line);font-weight:500}
+.mock .mr:last-child{border-bottom:0}
+.badge{font-size:calc(var(--u)*1.5);font-weight:700;border-radius:calc(var(--u)*.8);padding:0 calc(var(--u)*1);border:calc(var(--u)*.12) solid #999;white-space:nowrap}
+.badge.y{background:#fff2cc;border-color:#e6c75f}
+.badge.b{background:#cfe2f3;border-color:#8fb4d6}
+.badge.g{background:#d9ead3;border-color:#93c47d}
+.badge.k{background:#d9d9d9;border-color:#aaa}
+.badge.w{background:#fff;border-color:#888}
+.btn{display:inline-block;font-weight:700;border:calc(var(--u)*.18) solid var(--navy);border-radius:calc(var(--u)*.9);padding:0 calc(var(--u)*1.3);background:#fff;color:var(--navy);font-size:calc(var(--u)*1.7);line-height:1.8;white-space:nowrap}
+.btn.p{background:var(--navy);color:#fff}
+.phone{width:calc(var(--u)*17);flex:none;border:calc(var(--u)*.4) solid #111;border-radius:calc(var(--u)*2.4);padding:calc(var(--u)*1.6) calc(var(--u)*1.2);background:#fff;font-size:calc(var(--u)*1.6);display:flex;flex-direction:column;gap:calc(var(--u)*.6);align-items:center;text-align:center}
+.qr{width:calc(var(--u)*11);height:calc(var(--u)*11);border:calc(var(--u)*.4) solid #111;background:
+ conic-gradient(#111 25%,#fff 0 50%,#111 0 75%,#fff 0) 0 0/calc(var(--u)*1.4) calc(var(--u)*1.4);position:relative}
+.qr:before,.qr:after{content:"";position:absolute;width:calc(var(--u)*3.2);height:calc(var(--u)*3.2);border:calc(var(--u)*.6) solid #111;background:#fff;top:calc(var(--u)*.4);left:calc(var(--u)*.4)}
+.qr:after{left:auto;right:calc(var(--u)*.4)}
+.logos{display:flex;gap:calc(var(--u)*1.4);align-items:center;justify-content:center}
+.logos img{height:calc(var(--u)*5);width:auto;max-width:calc(var(--u)*14);object-fit:contain}
+.tbl{width:100%;border-collapse:collapse;font-size:calc(var(--u)*2)}
+.tbl th,.tbl td{border:calc(var(--u)*.14) solid var(--line);padding:calc(var(--u)*.6) calc(var(--u)*1.1);text-align:left;vertical-align:top}
+.tbl th{background:var(--navyL);color:var(--navy);font-weight:900}
+.tbl td{font-weight:500}
+.foot{position:absolute;left:calc(var(--u)*5);right:calc(var(--u)*5);bottom:calc(var(--u)*1.1);display:flex;justify-content:space-between;font-size:calc(var(--u)*1.2);color:#8a93a6}
+.slide{padding-bottom:calc(var(--u)*3.6)}
+.cover{background:var(--navy)!important;color:#fff;justify-content:center}
+.cover h1{margin:calc(var(--u)*1) 0 calc(var(--u)*1.6);font-size:calc(var(--u)*7);line-height:1.25;font-weight:900}
+.cover p{margin:0;font-size:calc(var(--u)*2.4);opacity:.92}
+.cover small{font-size:calc(var(--u)*1.8);letter-spacing:.3em;opacity:.8}
+.cover .foot{color:#aab3c8}
+/* 操作バー */
+.bar{height:56px;flex:none;background:var(--navy);color:#fff;display:flex;align-items:center;gap:10px;padding:0 12px}
+.bar button{font:inherit;font-weight:700;font-size:16px;color:#fff;background:#3a4766;border:0;border-radius:10px;min-width:64px;min-height:40px;cursor:pointer}
+.bar button:disabled{opacity:.35;cursor:default}
+.bar .cnt{flex:1;text-align:center;font-weight:700;font-size:15px;white-space:nowrap}
+.bar .pr{min-width:0;padding:0 12px;background:#2c3753}
+.prog{position:absolute;left:0;bottom:0;height:calc(var(--u,1cqw)*.6);background:var(--navy);transition:width .2s}
+/* スマホ縦 */
+@media (max-aspect-ratio:1/1){
+ .stage{width:100vw;height:calc(100dvh - 56px);aspect-ratio:auto}
+ .slide{--u:1.95cqw;overflow-y:auto;justify-content:flex-start}
+ .body{justify-content:flex-start}
+ .row{flex-direction:column}
+ .row.grid4{flex-direction:row;flex-wrap:wrap}
+ .row.grid4 .box{flex:1 1 40%}
+ .arr{transform:rotate(90deg);align-self:center;margin:calc(var(--u)*-.4) 0}
+ .phone{width:calc(var(--u)*30);align-self:center}
+ .qr{width:calc(var(--u)*16);height:calc(var(--u)*16)}
+ .foot{position:static;margin-top:calc(var(--u)*2)}
+ .cover{justify-content:center}
+ .cover h1{font-size:calc(var(--u)*6.4)}
+ .bar .pr{display:none}
+}
+/* 印刷 = 横 A4・1 スライド 1 ページ */
+@page{size:A4 landscape;margin:0}
+@media print{
+ html,body{height:auto;overflow:visible;background:#fff}
+ body{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .bar{display:none}
+ .view{display:block}
+ .stage{width:auto;height:auto;aspect-ratio:auto;box-shadow:none;overflow:visible}
+ .slide,.slide.on{--u:1cqw;display:flex;position:relative;inset:auto;width:297mm;height:209mm;break-after:page;page-break-after:always;overflow:hidden;justify-content:flex-start}
+ .slide:last-child{break-after:auto;page-break-after:auto}
+ .body{justify-content:center}
+ .row{flex-direction:row}
+ .arr{transform:none;margin:0}
+ .foot{position:absolute}
+ .phone{width:calc(var(--u)*17)}
+ .qr{width:calc(var(--u)*11);height:calc(var(--u)*11)}
+ .cover{justify-content:center}
+ .cover h1{font-size:calc(var(--u)*7)}
+}
+</style></head><body>
+<div class="view"><div class="stage" id="stage">
+
+<!-- 1 表紙 -->
+<section class="slide cover">
+<small>PRINCE CHITOSE / STAFF</small>
+<h1>LINE 求人の説明書</h1>
+<p>キャストが応募してから、採用されて<br>マイページの URL が届くまで</p>
+<p style="margin-top:calc(var(--u)*2.4);font-size:calc(var(--u)*1.9)">RegentClub千歳 ・ 328 ・ WAVE千歳 ・ 花もみじ千歳　／　黒服・社内向け　／　← → キーで めくります</p>
+<div class="foot"><span>2026-11-23 時点の仕組みです</span><span>1 / 15</span></div>
+</section>
+
+<!-- 2 全体 -->
+<section class="slide">
+<span class="tag">全体</span>
+<h2>流れは 5 つの駒だけ</h2>
+<p class="lead">応募 → 来店 → 面接 → 一日体験 → クロージング・採用。<b>黒服が動くのは 2 つ目から</b>です。</p>
+<div class="body">
+ <div class="row keep" style="align-items:stretch">
+  <div class="box"><span class="who">キャスト</span><h3><span class="num">1</span>応募</h3><p class="s">LINE か URL・QR で フォームに 入れる</p></div><span class="arr">→</span>
+  <div class="box navy"><span class="who">黒服</span><h3><span class="num">2</span>来店</h3><p class="s">「来店」を押す</p></div><span class="arr">→</span>
+  <div class="box navy"><span class="who">黒服</span><h3><span class="num">3</span>面接</h3><p class="s">画面を見ながら 質問</p></div><span class="arr">→</span>
+  <div class="box"><span class="who">黒服・レジ</span><h3><span class="num">4</span>一日体験</h3><p class="s">体入管理・レジ</p></div><span class="arr">→</span>
+  <div class="box navy"><span class="who">黒服</span><h3><span class="num">5</span>採用</h3><p class="s">クロージング → 入店</p></div>
+ </div>
+ <div class="box soft"><p>入れた データは すべて <b>Prince App スプレッドシート</b>に 集まります。黒服が 見る入口は <b>黒服ポータル</b>の「面接管理」「クロージング」です。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>2 / 15</span></div>
+</section>
+
+<!-- 3 入口 -->
+<section class="slide">
+<span class="tag">STEP 1　応募</span>
+<h2>入口は 2 つ。どちらも 同じフォーム</h2>
+<p class="lead">LINE が 使いにくい人のために、<b>URL・QR からも</b> 応募できます。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><span class="who">入口 A</span><h3>求人 LINE</h3>
+   <p>友だち追加 → 下のメニュー<b>「応募する」</b> → 返ってきた ボタンで フォームが 開く。</p><p class="s" style="margin-top:.4em">メニュー: 応募する ／ 持ち物・場所 ／ よくある質問 ／ 店舗情報</p></div>
+  <div class="box"><span class="who">入口 B</span><h3>URL ・ QR</h3>
+   <p>求人 URL を 開く (QR を 読む)。店を 選んだ状態で 開く形 <b>?shop=</b> もあります。</p>
+   <div class="url" style="margin-top:calc(var(--u)*.8)">simplelifedesignlab-cyber.github.io/prince-apply/</div></div>
+ </div>
+ <div class="box soft"><p><b>LINE が 止まっても</b> URL の入口は そのまま 動きます (予備の 入口)。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>3 / 15</span></div>
+</section>
+
+<!-- 4 フォーム -->
+<section class="slide">
+<span class="tag">STEP 1　応募</span>
+<h2>フォームは お店ごとに 違います</h2>
+<p class="lead">応募の途中で やめさせない ように、<b>聞くことを 業態で 絞って</b> います。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><h3>RegentClub</h3><p class="s">ニュークラブ用</p><p>3 ページ。名前・生年月日・電話・メール・経験・面接の希望日時。<b>残りは 来店してから。</b></p></div>
+  <div class="box"><h3>花もみじ</h3><p class="s">ラウンジ用</p><p>4 ページ。上に 出勤できる曜日。言葉づかいは 落ち着いた 大人向け。</p></div>
+  <div class="box"><h3>WAVE ・ 328</h3><p class="s">ガールズバー用</p><p>約 35 項目 + 写真・源氏名。残りは 面接で 黒服が 聞く。</p></div>
+ </div>
+ <div class="box soft"><p>全部で <b>メール必須</b>・<b>18 歳未満は 止まります</b>。「前の店で 指名・売上が あった」に「はい」の人は、通知に <b>★</b> が付きます (店から 直接 連絡)。最後に <b>面接の日時</b>を 選びます。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>4 / 15</span></div>
+</section>
+
+<!-- 5 応募後 -->
+<section class="slide">
+<span class="tag">STEP 1　応募</span>
+<h2>応募したあと、キャストの手元には</h2>
+<p class="lead">画面には「<b>情報を店舗へ送信しました</b>」と出て、そこで 終わりです。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><h3>質問は Q&amp;A ページ</h3><p>フォームと LINE から リンク。<b>27 問</b>。LINE に 質問を 書くと、言葉から 合う答えを <b>自動で 返します</b>。当たらない時は「17 時以降に 折り返し」。</p></div>
+  <div class="box dash"><h3>面接の リマインド <span class="chip wip">準備中</span></h3><p>前日 18 時・当日 10 時に <b>メール</b>で 思い出して もらう仕組みは 作ってありますが、<b>スイッチが まだ 入って いません</b> (11/20 時点)。</p></div>
+ </div>
+ <div class="box soft"><p>応募の 確認メールは ありません。LINE の「通知」も 使わない決まり (<span class="chip wip">準備中</span> スイッチ オフ)。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>5 / 15</span></div>
+</section>
+
+<!-- 6 黒服が受け取る -->
+<section class="slide">
+<span class="tag">STEP 2　黒服が 受け取る</span>
+<h2>応募が 入ると、メールが 届きます</h2>
+<p class="lead">店への <b>求人通知メール</b>。中身は 最小限。<span class="chip ok">動いています</span></p>
+<div class="body">
+ <div class="row">
+  <div class="mock" style="flex:1.1"><div class="mh">【求人通知】 新しい応募</div>
+   <div class="mr">店舗 <b>花もみじ千歳</b></div><div class="mr">面接日時 <b>○月○日 19:00</b></div><div class="mr">応募者 ID <b>A2026…</b></div><div class="mr">★ 売上経験 (本人申告)</div><div class="mr">黒服画面の リンク</div></div>
+  <div class="col" style="flex:1">
+   <div class="box"><p><b>本名・電話・メール</b>は メールに 書きません。</p></div>
+   <div class="box dash"><p>宛先は「求人通知先」タブ。<b>いまは 全体宛</b>で 届きます <span class="chip chk">店ごとの 宛先は 確認中</span></p></div>
+  </div>
+ </div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>6 / 15</span></div>
+</section>
+
+<!-- 7 画面 -->
+<section class="slide">
+<span class="tag">STEP 2　黒服が 受け取る</span>
+<h2>見る場所は 2 つ。入れる場所は 1 つ</h2>
+<p class="lead">応募者の 入力は、黒服ポータルの <b>「面接管理」</b>で 行います。</p>
+<div class="body">
+ <div class="row">
+  <div class="box navy"><span class="who">入れる・押す</span><h3>黒服ポータル → 面接管理</h3><p>応募者の 一覧。「来店」「面接」「判定」は ここから。</p></div>
+  <div class="box"><span class="who">見るだけ</span><h3>Prince App スプレッドシート</h3><p>タブ <b>「応募者」</b> (1 人 1 行・状態つき) と <b>「面接枠」</b> (面接の 空き・埋まり)。</p></div>
+ </div>
+ <div class="mock"><div class="mh">面接管理 (応募者一覧)　見本</div>
+  <div class="mr"><span class="badge w">面接予約</span> さくら　○/○ 19:00　★ <span style="margin-left:auto" class="btn">開く</span></div>
+  <div class="mr"><span class="badge w">面接中</span> みお　来店 18:55 <span style="margin-left:auto" class="btn">開く</span></div>
+  <div class="mr"><span class="badge y">一日体験予定</span> ゆい　<span style="margin-left:auto" class="btn">開く</span></div></div>
+ <p class="s" style="margin:0;font-size:calc(var(--u)*1.6);color:#55606E">名前は 仮名の 見本です。</p>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>7 / 15</span></div>
+</section>
+
+<!-- 8 来店 -->
+<section class="slide">
+<span class="tag">STEP 3　来店</span>
+<h2>来たら「来店」を 押す</h2>
+<p class="lead">面接管理で その人を 開き、<b>「来店」</b>。ここから 面接の 準備が 始まります。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><h3>RegentClub ・ 花もみじ</h3><p>「来店 (追加入力を渡す)」→ <b>QR が 出る</b>。キャストの スマホで 読んでもらう (この端末で 開いて 渡しても OK)。</p><p class="s" style="margin-top:.4em">QR は <b>12 時間・1 回だけ</b>。送信されると 使えなく なります。</p></div>
+  <div class="box"><h3>WAVE ・ 328</h3><p>「来店」を 押すと <b>記録だけ</b> (QR は 出ません)。細かい質問は 面接で 黒服が 聞きます。</p></div>
+ </div>
+ <div class="box soft"><p>来ない人は <b>「来なかった・取消」</b> → 状態は「辞退」(灰色)、面接の 枠が 空きます。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>8 / 15</span></div>
+</section>
+
+<!-- 9 追加入力 -->
+<section class="slide">
+<span class="tag">STEP 3　来店</span>
+<h2>待ち時間に、キャストが 自分で 追加入力</h2>
+<p class="lead">黒服が QR を 渡したら、<b>キャストは 待ちながら 入力</b>。黒服は その間 別の 用事が できます。</p>
+<div class="body">
+ <div class="row c">
+  <div class="phone"><b>追加入力</b><div class="qr"></div><span>QR を スマホで 読む</span></div>
+  <span class="arr">→</span>
+  <div class="col">
+   <div class="box"><h3>RegentClub (ニュークラブ)</h3><p class="s">住所・健康・写真・源氏名・出勤希望・経歴・お酒・SNS など</p></div>
+   <div class="box"><h3>花もみじ (ラウンジ)</h3><p class="s">住所・健康・写真 だけ</p></div>
+  </div>
+ </div>
+ <div class="box soft"><p>送信後の 画面は「<b>そのまま お待ちください</b>」。入った内容は、面接の 画面の <b>空欄だけ</b>が 埋まります。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>9 / 15</span></div>
+</section>
+
+<!-- 10 面接 -->
+<section class="slide">
+<span class="tag">STEP 4　面接</span>
+<h2>面接は、画面を 見ながら 聞く</h2>
+<p class="lead">追加入力が 済んだら、黒服は <b>入った内容を 見ながら</b> 質問を 上から 聞きます。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><h3>やること</h3><p>質問を 上から 聞いて「<b>次へ</b>」(全 6 ページ)。途中で やめる時は「一時保存」。</p></div>
+  <div class="box"><h3>6 ページ目で 判定</h3><p><b>当日体入 ／ 後日体入 ／ 保留 ／ お断り</b> から 1 つ → 「保存」→ 確認で「OK」。</p></div>
+ </div>
+ <div class="box soft"><p><b>身分証が ない人</b>は 面接まで できます。足りない 項目が あると「当日体入」「後日体入」は 押せません (画面に 出ます)。「お断り」は <b>翌日 18 時に 自動メール</b>。</p></div>
+ <p class="s" style="margin:0;font-size:calc(var(--u)*1.7);color:#55606E">保存したあとは 画面から 取り消せません。まちがえたら 相談してください。</p>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>10 / 15</span></div>
+</section>
+
+<!-- 11 体入 -->
+<section class="slide">
+<span class="tag">STEP 5　一日体験 (体入)</span>
+<h2>体験の日は「来た」→ レジで 時刻と 金額</h2>
+<p class="lead">面接の判定が「体入」なら、<b>体入管理</b>に 載ります (状態は「一日体験予定」)。</p>
+<div class="body">
+ <div class="row">
+  <div class="box navy"><span class="who">黒服</span><h3>体入管理</h3><p>その子が 来たら「<b>来た</b>」→ OK。来なければ「来なかった」(灰色・あとから「来た」も 可)。</p></div>
+  <span class="arr">→</span>
+  <div class="box"><span class="who">レジの人</span><h3>レジ_一日体験</h3><p>その子の「入力する」を 押し、<b>出勤・退勤の 時刻と 支給額</b> (例: 20:00 / 23:00 / 9000)。</p><p class="s" style="margin-top:.4em">電話・住所は 出ません。</p></div>
+ </div>
+ <div class="box dash"><p><span class="chip chk">確認中</span> レジ表の「レジ担当」「メモ」「日報に 入力済」を <b>だれが 入れるか</b>は、お店での 確認が まだ 済んでいません。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>11 / 15</span></div>
+</section>
+
+<!-- 12 クロージング -->
+<section class="slide">
+<span class="tag">STEP 6　クロージング</span>
+<h2>体験の あと、本人と 話して 4 つから 選ぶ</h2>
+<p class="lead">ポータルの <b>「クロージング」</b>を 開いて、時給を えらび、結果を 1 つ 押します。</p>
+<div class="body">
+ <div class="row keep grid4" style="align-items:stretch">
+  <div class="box navy"><h3>入店</h3><p class="s">在籍に 入る</p></div>
+  <div class="box"><h3>再体入</h3><p class="s">もう 1 回 体験へ</p></div>
+  <div class="box"><h3>保留</h3><p class="s">灰色で 残る</p></div>
+  <div class="box"><h3>お断り</h3><p class="s">翌日 18 時に メール</p></div>
+ </div>
+ <div class="box soft"><p>「入店」は <b>店番と 入店日</b> を 見て「決定」→ OK。「決定しました」が 出たら 完了。<b>1 回 押したら 待つ</b> (2 回 押さない)。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>12 / 15</span></div>
+</section>
+
+<!-- 13 在籍 -->
+<section class="slide">
+<span class="tag">STEP 7　採用 → 在籍</span>
+<h2>「入店」で 在籍に 載る。URL が 届く</h2>
+<p class="lead">キャストの <b>マイページ</b> (シフト・送迎・美容室を 入れる 画面) の URL を、2 つの 方法で 渡します。</p>
+<div class="body">
+ <div class="row">
+  <div class="box"><span class="who">自動</span><h3>入店メール</h3><p>入店の <b>15 分以内</b>に、メールで マイページの URL が 届く。<span class="chip ok">動いています</span></p><p class="s" style="margin-top:.4em">メールが ない・まちがい の人は「Email なし」。下の QR で。</p></div>
+  <div class="box navy"><span class="who">その場で</span><h3>QR を 見せる</h3><p>ポータル「在籍一覧」→ 店 → その子の名前の 右の <b>「QR」</b>。本人の スマホで 読んで もらう。</p></div>
+ </div>
+ <div class="box soft"><p><b>Excel (在籍一覧) は 店の 手作業</b>です。翌日 15 時の 日報に「<b>Excel に 足してください</b>」と 出ます。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>13 / 15</span></div>
+</section>
+
+<!-- 14 準備中 -->
+<section class="slide">
+<span class="tag">いまの 状態</span>
+<h2>動いている所と、まだの所</h2>
+<p class="lead">うそを 書かない ために、<b>準備中</b>の ものを 先に 並べます。</p>
+<div class="body">
+ <table class="tbl">
+  <tr><th style="width:44%">こと</th><th>いま</th></tr>
+  <tr><td>応募者への 面接リマインド (前日・当日のメール)</td><td><span class="chip wip">準備中</span> スイッチ オフ (11/20 時点)</td></tr>
+  <tr><td>LINE での 応募者への 自動 push</td><td><span class="chip wip">準備中</span> スイッチ オフ (11/20 時点)</td></tr>
+  <tr><td>約 160 人の 既存キャストへの URL 配布</td><td><span class="chip chk">確認中</span> 開始時期は これから</td></tr>
+  <tr><td>店ごとの 求人通知の 宛先</td><td><span class="chip chk">確認中</span> いまは 全体宛</td></tr>
+  <tr><td>レジ表の 担当・メモ・日報済</td><td><span class="chip chk">確認中</span> だれが 入れるか 未確認</td></tr>
+  <tr><td>応募 → 入店メール / QR / 通知 / Q&amp;A 自動返信</td><td><span class="chip ok">動いています</span></td></tr>
+ </table>
+</div>
+<div class="foot"><span>LINE 求人の説明書</span><span>14 / 15</span></div>
+</section>
+
+<!-- 15 まとめ -->
+<section class="slide">
+<span class="tag">まとめ</span>
+<h2>黒服が 押すのは 4 か所</h2>
+<p class="lead">ぜんぶ 黒服ポータルの <b>「面接管理」</b>と <b>「クロージング」</b>から。</p>
+<div class="body">
+ <div class="row keep" style="align-items:stretch">
+  <div class="box navy"><h3>① 来店</h3><p class="s">来たら 押して QR</p></div><span class="arr">→</span>
+  <div class="box navy"><h3>② 判定</h3><p class="s">面接 6 ページ目</p></div><span class="arr">→</span>
+  <div class="box"><h3>③ 来た</h3><p class="s">体入管理</p></div><span class="arr">→</span>
+  <div class="box navy"><h3>④ 入店</h3><p class="s">クロージング</p></div>
+ </div>
+ <div class="box soft"><p>わからない時は 画面の ボタンを 押す前に 聞いてください。くわしい 手順は <b>黒服向け 業務の説明書</b> (staff.html) に あります。</p></div>
+</div>
+<div class="foot"><span>LINE 求人の説明書 / Prince 千歳 黒服向け</span><span>15 / 15</span></div>
+</section>
+
+</div></div>
+<div class="bar"><button id="pv" aria-label="前へ">◀ 前</button><div class="cnt" id="cnt">1 / 15</div><button class="pr" id="pt">印刷</button><button id="nx" aria-label="次へ">次 ▶</button></div>
+<script>
+(function(){
+  var S=[].slice.call(document.querySelectorAll('.slide')),n=S.length,i=0;
+  function show(k){
+    i=Math.max(0,Math.min(n-1,k));
+    S.forEach(function(s,j){s.classList.toggle('on',j===i);});
+    S[i].scrollTop=0;
+    document.getElementById('cnt').textContent=(i+1)+' / '+n;
+    document.getElementById('pv').disabled=i===0;
+    document.getElementById('nx').disabled=i===n-1;
+    try{history.replaceState(null,'','#'+(i+1));}catch(e){}
+  }
+  document.getElementById('pv').onclick=function(){show(i-1);};
+  document.getElementById('nx').onclick=function(){show(i+1);};
+  document.getElementById('pt').onclick=function(){window.print();};
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();show(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1);}
+    else if(e.key==='Home'){show(0);}else if(e.key==='End'){show(n-1);}
+  });
+  var x0=null,y0=null;
+  document.getElementById('stage').addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  document.getElementById('stage').addEventListener('touchend',function(e){
+    if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){show(dx<0?i+1:i-1);}
+  },{passive:true});
+  var m=parseInt((location.hash||'').slice(1),10);show(isNaN(m)?0:m-1);
+})();
+</script>
+</body></html>
