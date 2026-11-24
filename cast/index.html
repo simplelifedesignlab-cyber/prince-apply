@@ -21,6 +21,7 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .sub{margin:8px 0 0;padding:8px 10px;background:var(--priL);border-radius:10px}
 .sub label.t{margin:6px 0 4px;font-size:15px}
 .sub input[type=text]{margin-top:6px}
+.sub select{margin-top:6px}
 .hint{margin:6px 0 0;font-size:14px;color:#888}
 .prio{display:inline-block;margin:6px 0 0;padding:2px 10px;font-size:14px;font-weight:700;color:#fff;background:#e8710a;border-radius:12px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -133,11 +134,13 @@ function mkSel(opts, cur, blankLabel, onchg) {
 function isT(s) { return /^\d\d:\d\d$/.test(s); }
 function mins(s) { return Number(s.slice(0, 2)) * 60 + Number(s.slice(3)); }
 function hhmm(m) { return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + m % 60).slice(-2); }
-// ヘアメイクの候補: 出勤が時刻なら 2 時間前〜30 分前の 30 分刻み。それ以外は全時間帯
+// ヘアメイクの候補: 出勤が時刻なら 2 時間前〜30 分前の 30 分刻み。それ以外は全時間帯。
+// 19:30 より前の出勤の子は、出勤してから (出勤の時刻〜1 時間 30 分後) だけ (2026-11-24 山本さんの答え 3: 19:00・19:30 出勤のヘアセットは出勤してから)
 function hairChoices(d) {
   if (!isT(d.shift)) return data.hairOpts;
-  var t = mins(d.shift), a = [];
-  for (var m = t - 120; m <= t - 30; m += 30) { var h = hhmm(m); if (data.hairOpts.indexOf(h) >= 0) a.push(h); }
+  var t = mins(d.shift), a = [], from = t - 120, to = t - 30;
+  if (t <= 19 * 60 + 30) { from = t; to = t + 90; }
+  for (var m = from; m <= to; m += 30) { var h = hhmm(m); if (data.hairOpts.indexOf(h) >= 0) a.push(h); }
   if (d.hairTime && a.indexOf(d.hairTime) < 0) a.unshift(d.hairTime);
   return a.length ? a : data.hairOpts;
 }
@@ -147,7 +150,7 @@ function hairCall(d, fn, time) {
   d.hbusy = true; d.hmsg = ''; render();
   var done = function (r) {
     d.hbusy = false;
-    if (r) { d.hb = r.b; d.ho = r.o; d.hair = !!r.b; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; }
+    if (r) { d.hb = r.b; d.ho = r.o; d.hp = r.p || []; d.hnote = r.n || ''; d.hair = !!r.b; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; }
     render();
   };
   var run = google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { d.hbusy = false; d.hmsg = '通信できませんでした。もう一度押してください。'; d.hok = false; render(); });
@@ -155,21 +158,27 @@ function hairCall(d, fn, time) {
 }
 function hairBox(d) {
   var s = el('div', 'sub');
-  s.appendChild(el('label', 't', '美容室(ヘアメイク)'));
-  var stale = d.shift !== d.savedShift;
-  if (d.hb) s.appendChild(el('p', 'booked', d.hb.time + ' ' + d.hb.place + ' 予約済み'));
-  if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した予約です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
+  s.appendChild(el('label', 't', 'ヘアメイク 希望時間'));
+  var stale = d.shift !== d.savedShift, hp = d.hp || [];
+  if (d.hnote) s.appendChild(el('p', 'hmsg ng', d.hnote));
+  if (d.hb) s.appendChild(el('p', 'booked', '希望時間 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
+  if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した時間です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
   if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
-  else if (d.ho.length) {
-    var sel = mkSel(d.ho, d.hpick || '', d.hb ? '別の時刻に変える' : '予約する時刻を選んでください', function (v) { d.hpick = v; });
+  else if (d.ho.length || hp.length) {
+    var sel = el('select'), b0 = el('option', '', d.hb ? '別の時間に変える' : '希望の時間を選んでください'); b0.value = ''; sel.appendChild(b0);
+    d.ho.map(function (t) { return { t: t, p: false }; }).concat(hp.map(function (t) { return { t: t, p: true }; })).sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }).forEach(function (o) {
+      var op = el('option', '', o.t + (o.p ? ' (優先で入れます)' : '')); op.value = o.t; if (o.t === d.hpick) op.selected = true; sel.appendChild(op);
+    });
+    sel.onchange = function () { d.hpick = sel.value; };
     sel.disabled = !!d.hbusy; s.appendChild(sel);
-    var go = el('button', 'hbtn', d.hb ? '時刻を変更する' : '予約する'); go.type = 'button'; go.disabled = !!d.hbusy;
-    go.onclick = function () { if (!d.hpick) { d.hmsg = '時刻を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick); };
+    var go = el('button', 'hbtn', d.hb ? '希望時間を変える' : '希望時間を出す'); go.type = 'button'; go.disabled = !!d.hbusy;
+    go.onclick = function () { if (!d.hpick) { d.hmsg = '時間を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick); };
     s.appendChild(go);
+    s.appendChild(el('p', 'hint', '来店予定・同伴の方が優先です。お店が決めるまでは、時間が変わることがあります'));
   } else if (!d.hb) s.appendChild(el('p', 'hint', 'この日は空きがありません。お店へ連絡してください'));
   if (d.hb) {
     s.appendChild(document.createElement('br'));
-    var cx = el('button', 'hbtn sec', '取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
+    var cx = el('button', 'hbtn sec', '希望を取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
     cx.onclick = function () { hairCall(d, 'cancel'); };
     s.appendChild(cx);
   }
@@ -177,6 +186,11 @@ function hairBox(d) {
   return s;
 }
 
+// 車の表示 = 車種 (NO.番号)。番号は「3」「NO.3」「3番」のどれで入っていても NO.3。番号が空なら車種だけ (c.color = 送迎予定の「車の色」列 = 中身は車の番号)
+function carLabel(c) {
+  var no = String(c.color || '').replace(/^\s*(NO\.?|No\.?|no\.?|ＮＯ|№)\s*/, '').replace(/\s*番\s*$/, '').trim();
+  return (c.model || '') + (no ? (c.model ? ' ' : '') + '(NO.' + no + ')' : '');
+}
 function renderSougei() {
   var box = document.getElementById('sougei'), s = data.sougei;
   box.innerHTML = '';
@@ -189,7 +203,7 @@ function renderSougei() {
   }
   function car(x) { // 車の情報 (決まっている時だけ・2026-11-19 v2)
     var c = x.car; if (!c || x.cancel) return;
-    var v = (c.color ? c.color + (c.model ? 'の' : '') : '') + c.model;
+    var v = carLabel(c); // 2026-11-24: 車の色ではなく車の番号 (NO)
     if (v || c.plate4) card.appendChild(el('p', 'car', '車: ' + v + (c.plate4 ? (v ? '・' : '') + 'ナンバー ' + c.plate4 : '')));
     if (c.driver) card.appendChild(el('p', 'car', 'ドライバー: ' + c.driver));
   }
@@ -243,6 +257,16 @@ function render() {
     add.onclick = function () { d.plans.push({ k: data.planKinds[0], n: '' }); render(); };
     card.appendChild(add);
 
+    if (!rest) { // 来店の予定 (2026-11-24 山本さんの要望): わかる範囲で。時間を入れると「来店予定あり」になり、ヘアメイクの希望時間は優先になる
+      var vb = el('div', 'sub');
+      vb.appendChild(el('label', 't', '来店の予定 (わかる範囲で)'));
+      vb.appendChild(mkSel(data.visTimes, d.vt || '', '来店予定の時間', function (v) { d.vt = v; render(); }));
+      vb.appendChild(mkSel(data.visNums, d.vn || '', '人数', function (v) { d.vn = v; }));
+      vb.appendChild(mkSel(data.visKeeps, d.vk || '', 'キープボトル', function (v) { d.vk = v; }));
+      vb.appendChild(mkSel(data.visSeats, d.vs || '', '席 (ホール / VIP)', function (v) { d.vs = v; }));
+      card.appendChild(vb);
+    }
+
     if (!rest) {
       card.appendChild(el('label', 't', data.hairOn ? '送迎' : '送迎・ヘアメイク'));
       var ch = el('div', 'chips');
@@ -284,7 +308,7 @@ function render() {
         var s3 = el('div', 'sub');
         s3.appendChild(el('label', 't', 'ヘアメイクの希望時間'));
         s3.appendChild(mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; }));
-        var hasPlan = d.plans.some(function (p) { return String(p.n || '').trim(); });
+        var hasPlan = d.plans.some(function (p) { return String(p.n || '').trim(); }) || !!d.vt;
         if (hasPlan) { s3.appendChild(el('span', 'prio', '優先')); s3.appendChild(el('p', 'hint', '同伴・来店予定の日は優先で入れます')); }
         card.appendChild(s3);
       }
@@ -307,7 +331,7 @@ document.getElementById('save').onclick = function () {
   btn.disabled = true; btn.textContent = '保存中…'; msg.className = ''; msg.textContent = '';
   var payload = data.days.map(function (d) {
     return { date: d.date, shift: d.shift, go: d.go, back: d.back, hair: d.hair,
-      leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note,
+      leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note, vt: d.vt, vn: d.vn, vk: d.vk, vs: d.vs,
       plans: d.plans.filter(function (p) { return String(p.n || '').trim(); }) };
   });
   google.script.run.withSuccessHandler(function (res) {
