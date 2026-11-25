@@ -15,6 +15,25 @@ header .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10p
 header h1{margin:0;font-size:19px;flex:1}
 #back{min-height:44px;font-size:16px;font-weight:700;background:#fff;color:var(--priD);border:0;border-radius:22px;padding:6px 14px;font-family:inherit;cursor:pointer}
 .wrap{max-width:640px;margin:0 auto;padding:12px 12px 60px}
+.wrap.wide{max-width:1280px}
+.atabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:8px 0 12px}
+.at{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;min-height:60px;border:1px solid #C3C8D1;border-radius:4px;background:#fff;color:var(--priD);font:inherit;cursor:pointer}
+.at img{display:block;width:100%;height:30px;object-fit:contain;background:#fff;border-radius:4px}
+.at .an1{font-size:15px;font-weight:700}.at .an2{font-size:11px;opacity:.8;white-space:nowrap}
+.at.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+table.att{font-size:14px}table.att th,table.att td{padding:6px 8px;text-align:left}
+table.att td.g{font-weight:700}table.att td.mm{white-space:normal;min-width:140px;max-width:260px}
+table.att small.chg{display:block;font-size:11px;color:#5A6275}
+table.att tr.man td{background:#FDEBD3}
+table.att tr.abs td{color:#b71c1c}table.att tr.abs td.g{text-decoration:line-through}
+.hr{font-weight:700;color:var(--priD)}
+.tag.tabs2{background:#b71c1c;margin-left:0}.tag.tdone{background:#5A6275;margin-left:0}
+.acs{display:none}
+.ac{padding:10px 14px;border-top:1px solid #EEF0F4}
+.ac.man{background:#FDEBD3}.ac.abs{color:#b71c1c}.ac.abs .ag{text-decoration:line-through}
+.ah{display:flex;align-items:baseline;gap:10px}.ab{font-size:22px;font-weight:700;color:var(--pri)}.ag{font-size:22px;font-weight:700}.ac.abs .ab{color:#b71c1c}
+.am{font-size:14px;color:#444;margin-top:2px}.ak{margin-top:4px}.ak .tag{margin:0 6px 4px 0}.ao{font-size:13px;color:#5A6275;margin-top:4px}
+@media (max-width:767px){.atbl{display:none}.acs{display:block}.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .upd{font-size:13px;color:#777;text-align:center;margin:14px 0}
 .big{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;margin:0 0 12px;border:0;border-radius:16px;background:#fff;color:#222;box-shadow:0 1px 4px rgba(0,0,0,.1);font-family:inherit;cursor:pointer;text-align:left;padding:10px 18px;border-left:10px solid var(--pri);text-decoration:none}
 .big small{display:block;font-size:14px;font-weight:400;color:#777}
@@ -187,6 +206,7 @@ function bindCasts(){[].forEach.call(document.querySelectorAll('[data-g]'),funct
 function go(v){location.hash=v||'';}
 function route(){
   var v=location.hash.replace('#','');
+  $('app').className=VIEWS[v]&&VIEWS[v].all?'wrap wide':'wrap';
   $('back').hidden=!VIEWS[v];
   $('back').textContent=v==='cast'?'← 売上':'← TOP';
   if(!VIEWS[v]){$('ttl').textContent='黒服ポータル';top_();return;}
@@ -228,6 +248,7 @@ function yen(n){return Number(n||0).toLocaleString('ja-JP')+'円';}
 // 出勤一覧 (2026-11-21 H 指示)。4 店まとめて・日付は前後に動かせる。読むだけ (本名・電話・住所は出ない)
 var attDay='';
 function bizDay(){return ymd(new Date(Date.now()-5*3600000));}
+var attStore=lsGet('staffAttStore')||''; // '' = 全店
 function vToday(){
   if(!attDay)attDay=bizDay();
   var my=++seq;
@@ -238,24 +259,50 @@ function vToday(){
   $('adt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('adt').value))mv($('adt').value);};
   api('getAttendanceList',[attDay]).then(function(r){
     if(my!==seq)return;
-    var tag=function(t){return '<span class="tag">'+t+'</span>';};
-    var h='<div class="hd"><b>'+esc(r.date.slice(5).replace('-','/'))+'('+esc(r.dow)+')'+(r.date===r.today?' 今日':'')+'</b><span>'+r.stores.reduce(function(a,s){return a+s.on.length;},0)+'人出勤</span></div>';
-    if(r.error)h+='<div class="msg err" style="padding:10px">出勤表を読めませんでした<br><small>'+esc(r.error)+'</small></div>';
-    r.stores.forEach(function(s){
-      h+='<div class="sec"><h3>'+esc(s.short)+'　出勤 '+s.on.length+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'</h3>'+
-        (s.on.length?s.on.map(function(c){
-          var tm=c.time||c.shift||'';
-          return '<div class="li"><span>'+(c.ban?'<b>'+esc(c.ban)+'</b> ':'')+esc(c.gen)+(c.absent?'<span class="tag" style="background:#b71c1c">当欠</span>':'')+(c.att&&!c.absent?'<span class="tag" style="background:#5A6275">出勤済</span>':'')+
-            '<small>'+esc(tm)+(c.leave?' 〜 '+esc(c.leave):'')+(c.area?(tm?' / ':'')+esc(c.area):'')+'</small></span><span>'+
-            (c.go?tag('迎'):'')+(c.back?tag('送'):'')+(c.hair?tag('ヘア'+(c.hair==='予約'?'予約':'希望')+(c.hairTime?' '+esc(c.hairTime):'')):'')+'</span></div>';
-        }).join(''):'<div class="li" style="color:#888">出勤予定なし</div>')+'</div>';
-    });
-    h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
-    h+='<div class="sec"><h3>送迎 出勤のドライバー (朝=行き / 帰り)</h3>'+(r.drivers.length?r.drivers.map(function(x){return '<div class="li"><span>'+esc(x.name)+'</span><span>'+(x.go?tag('朝'+(x.goT?' '+esc(x.goT):'')):'')+(x.back?tag('帰り'+(x.backT?' '+esc(x.backT):'')):'')+'</span></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
-    if(r.notes&&r.notes.length)h+='<div class="note">'+r.notes.map(esc).join(' / ')+'</div>';
-    h+='<div class="note">迎＝行きの送迎あり　送＝帰りの送迎あり　元: 出勤表の「データ」</div>';
-    $('att').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;
+    attRender(r);
   }).catch(function(e){if(my===seq&&$('att'))$('att').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function attRender(r){
+  var tag=function(t){return '<span class="tag">'+t+'</span>';};
+  var logo={};STORES.forEach(function(x){logo[x.id]=x;});
+  var cnt=function(s){var ab=s.on.filter(function(c){return c.absent;}).length;return {p:s.on.length,a:ab,f:s.on.length-ab};};
+  var tot=r.stores.reduce(function(a,s){var c=cnt(s);return {p:a.p+c.p,a:a.a+c.a,f:a.f+c.f};},{p:0,a:0,f:0});
+  if(attStore&&!r.stores.some(function(s){return s.id===attStore;}))attStore='';
+  var h='<div class="hd"><b>'+esc(r.date.slice(5).replace('-','/'))+'('+esc(r.dow)+')'+(r.date===r.today?' 今日':'')+'</b><span>出勤予定 '+tot.p+'人 / 当欠 '+tot.a+'人 / 確定 '+tot.f+'人</span></div>';
+  if(r.error)h+='<div class="msg err" style="padding:10px">出勤表を読めませんでした<br><small>'+esc(r.error)+'</small></div>';
+  h+='<div class="atabs"><button class="at'+(attStore===''?' on':'')+'" data-as=""><span class="an1">全店</span><span class="an2">予定 '+tot.p+' / 当欠 '+tot.a+' / 確定 '+tot.f+'</span></button>'+
+    r.stores.map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div>';
+  var tags=function(c){
+    var t=(c.go?tag('迎'):'')+(c.back?tag('送'):'')+(c.dohan?tag('同伴'+(['1','あり','○','TRUE'].indexOf(c.dohan.toUpperCase())<0?' '+esc(c.dohan):'')):'');
+    return t;
+  };
+  var hairT=function(c){return c.hair?'<span class="hr">'+(c.hair==='予約'?'予約':'希望')+(c.hairTime?' '+esc(c.hairTime):'')+'</span>':'';};
+  var stat=function(c){return c.absent?'<span class="tag tabs2">当欠</span>':(c.att?'<span class="tag tdone">出勤済</span>':'');};
+  var visit=function(c){return (c.visitT||c.visitN)?esc(c.visitT)+(c.visitN?' '+esc(c.visitN)+'名':''):'';};
+  var shown=r.stores.filter(function(s){return !attStore||s.id===attStore;});
+  shown.forEach(function(s){
+    var c=cnt(s);
+    h+='<div class="sec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'</h3>';
+    if(!s.on.length){h+='<div class="li" style="color:#888">出勤予定なし</div></div>';return;}
+    h+='<div class="sc atbl"><table class="att"><thead><tr><th>店番</th><th>源氏名</th><th>方面</th><th>担当</th><th>ヘアメイク</th><th>出勤</th><th>退勤</th><th>同伴</th><th>来店予定</th><th>送迎</th><th>状態</th><th>メモ</th></tr></thead><tbody>'+
+      s.on.map(function(x){
+        var tm=x.time||x.shift||'';
+        return '<tr class="'+(x.manual?'man ':'')+(x.absent?'abs':'')+'"><td>'+esc(x.ban)+'</td><td class="g">'+esc(x.gen)+'</td><td>'+esc(x.area)+'</td><td>'+esc(x.tanto)+'</td><td>'+hairT(x)+'</td><td>'+esc(tm)+(x.change?'<small class="chg">変更 '+esc(x.change)+'</small>':'')+'</td><td>'+esc(x.leave)+'</td><td>'+(x.dohan?'同伴'+(['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+esc(x.dohan):''):'')+'</td><td>'+visit(x)+'</td><td>'+(x.go?'迎':'')+(x.go&&x.back?' / ':'')+(x.back?'送':'')+'</td><td>'+stat(x)+'</td><td class="mm">'+esc(x.memo)+'</td></tr>';
+      }).join('')+'</tbody></table></div>';
+    h+='<div class="acs">'+s.on.map(function(x){
+      var tm=x.time||x.shift||'';
+      return '<div class="ac'+(x.manual?' man':'')+(x.absent?' abs':'')+'"><div class="ah"><span class="ab">'+esc(x.ban)+'</span><span class="ag">'+esc(x.gen)+'</span>'+stat(x)+'</div>'+
+        '<div class="am">'+esc(tm||'時刻未定')+(x.leave?' 〜 '+esc(x.leave):'')+(x.change?'（変更 '+esc(x.change)+'）':'')+(x.area?'　'+esc(x.area):'')+(x.tanto?'　担当 '+esc(x.tanto):'')+'</div>'+
+        '<div class="ak">'+tags(x)+(x.hair?tag('ヘア'+esc(x.hair)+(x.hairTime?' '+esc(x.hairTime):'')):'')+(visit(x)?tag('来店 '+visit(x)):'')+'</div>'+
+        (x.memo?'<div class="ao">'+esc(x.memo)+'</div>':'')+'</div>';
+    }).join('')+'</div></div>';
+  });
+  h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
+  h+='<div class="sec"><h3>送迎 出勤のドライバー (朝=行き / 帰り)</h3>'+(r.drivers.length?r.drivers.map(function(x){return '<div class="li"><span>'+esc(x.name)+'</span><span>'+(x.go?tag('朝'+(x.goT?' '+esc(x.goT):'')):'')+(x.back?tag('帰り'+(x.backT?' '+esc(x.backT):'')):'')+'</span></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
+  if(r.notes&&r.notes.length)h+='<div class="note">'+r.notes.map(esc).join(' / ')+'</div>';
+  h+='<div class="note">迎＝行きの送迎あり　送＝帰りの送迎あり　薄いオレンジ＝手入力の追加出勤　確定＝予定−当欠　元: 出勤表の「データ」</div>';
+  $('att').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;
+  [].forEach.call(document.querySelectorAll('.at'),function(b){b.onclick=function(){attStore=b.getAttribute('data-as');lsSet('staffAttStore',attStore);attRender(r);};});
 }
 
 function vRoster(){
