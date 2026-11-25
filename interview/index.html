@@ -1407,11 +1407,14 @@ function isClosing(st) { return st === 'クロージング' || st === 'クロー
 function isPlan(st) { return st === '一日体験予定' || st === '1日体験' || st === '再体験'; }
 // 追加入力 (nc / lounge): 状態の表示と、「来店」で応募者専用の QR を出す (2026-11-08)
 function moreOn(a) { return formTypeOf(a.store) !== 'full'; }
-// 一覧の色 (2026-11-25 H): 面接中 = 追加入力 未 薄いグレー / 済 薄いオレンジ・一日体験が終わった (クロージング) = 緑
+// 一覧の色 (2026-11-25 H 指定): 面接前 グレー / 面接中 白 / 一日体験予定 青 / クロージング 緑 / 採用 黄 / お断り・辞退 濃いグレー / ほか 白
 function itemBg(a) {
-  if (a.status === '面接中' && moreOn(a)) return a.moreDone ? '#fde0c2' : '#eeeeee';
+  if (a.status === '面接中') return arrived(a) ? '#fff' : '#e3e3e3';
+  if (isPlan(a.status)) return '#cfe2f3';
   if (a.status === 'クロージング') return '#d9ead3';
-  return '#fff'; // ほかの状態は今までどおり白 (CSS の !important で白だった見た目を変えない)
+  if (a.status === '採用') return '#fff2cc';
+  if (a.status === '不採用' || a.status === '辞退') return '#b7b7b7';
+  return '#fff';
 }
 function moreBtnHtml(a, attr) { // 「面接入力」: 追加入力が済んだら押せない (QR を出さない)
   if (!moreOn(a)) return '<button type="button" ' + attr + '>来店</button>';
