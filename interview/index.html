@@ -381,7 +381,7 @@ function infoSecs(a, req, kana) { // kana = 応募者画面の短いフォーム
   });
   S.push({ t: '経歴', h: h, h1: h1, h2: h.slice(h1.length) }); // h1 = 1 件目だけ (応募者画面) / h2 = 経歴 2 件目 (応募者画面では見えない箱に入れる)
   if (!req) { // 2026-11-17: 健康状態は応募者に聞かない。黒服の面接画面 (req=0) だけに出す (一日体験に進む前に必須・サーバ側 missingForPlan_ も検査)
-    h = '<div class="small">面接で黒服が聞いて入れてください (一日体験に進むのに必要)。あてはまるものを選び、「あり」の場合は内容も記入してください。</div>';
+    h = '<button type="button" class="pri" id="hallok" style="width:100%;margin-bottom:8px">すべて問題なし (4項目を「なし」にする)</button><div class="small">面接で黒服が聞いて入れてください (一日体験に進むのに必要)。あてはまるものを選び、「あり」の場合は内容も記入してください。</div>';
     HEALTH.forEach(function (x) {
       var p = healthSplit(a[x[0]]);
       h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), 1) +
@@ -748,6 +748,7 @@ function pagerInit(box, pages, opt) {
     var er = opt.check ? opt.check(PG.i) : [];
     showErrors(er);
     if (er.length) return;
+    if (opt.soft && opt.soft(PG.i)) { ask('未入力の項目があります。このまま次へ進んでよろしいですか？', function () { pgGo(PG.i + 1); }); return; } // 2026-11-25 黒服画面だけ: 未入力でも確認のうえ進める
     pgGo(PG.i + 1);
   };
   pgGo(0);
@@ -1530,6 +1531,62 @@ function judgeDone(m) {
   $('tocl').onclick = function () { FROM = 'tainyu'; showTainyu(''); };
   window.scrollTo(0, 0);
 }
+// 2026-11-25 身分証と年齢確認 = 面接の最初 (1 ページ目の先頭)。面接官の端末のカメラで身分証を撮り、Drive に保存 (シートにはリンクだけ)
+function idBlockHtml(a) {
+  return '<div class="sec" id="idblock"><h3>身分証・年齢確認 (最初に)</h3>' + fieldHtml('idDoc', '身分証の種類', 'choice', a.idDoc) +
+    fieldHtml('idChecker', '年齢確認者', 'text', a.idChecker) + fieldHtml('idDate', '年齢確認日', 'date', a.idDate) +
+    '<div class="q"><label class="t">身分証の写真 (撮ると確認済みになります)</label><input type="file" id="idphotoin" accept="image/*" capture="environment" style="display:none">' +
+    '<button type="button" id="idphotobtn" class="big" style="width:100%">身分証を撮影する</button><img id="idphotoprev" style="display:none;max-width:100%;margin-top:6px;border-radius:6px"><div class="small" id="idphotost"></div></div></div>';
+}
+function idPhotoPaint() {
+  var u = CUR.a.idPhoto, st = $('idphotost');
+  if (!st) return;
+  if (u) { st.style.color = '#1a7f37'; st.innerHTML = '身分証の写真は保存済みです　<a href="' + esc(u) + '" target="_blank">開く</a>'; $('idphotobtn').textContent = '撮り直す'; }
+}
+function idPhotoPick(f) {
+  if (!f) return;
+  var im = new Image(), u = URL.createObjectURL(f), st = $('idphotost');
+  im.onload = function () {
+    var k = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas');
+    c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    var data = c.toDataURL('image/jpeg', 0.85);
+    URL.revokeObjectURL(u);
+    $('idphotoprev').src = data; $('idphotoprev').style.display = 'block';
+    st.style.color = '#555'; st.textContent = '身分証の写真を保存中…'; $('idphotobtn').disabled = true;
+    google.script.run.withSuccessHandler(function (r) {
+      $('idphotobtn').disabled = false; CUR.a.idPhoto = r.url; CUR.a.updated = r.updated; idPhotoPaint();
+    }).withFailureHandler(function (e) {
+      $('idphotobtn').disabled = false; st.style.color = '#c00'; st.textContent = '保存に失敗しました。もう一度撮影してください: ' + (e && e.message || e);
+    }).uploadIdPhoto(CUR.a.id, data);
+  };
+  im.onerror = function () { URL.revokeObjectURL(u); st.style.color = '#c00'; st.textContent = '写真を読み込めませんでした。もう一度撮影してください'; };
+  im.src = u;
+}
+// 2026-11-25 「次へ」の確認用: そのページに未入力があるか (任意の補足・メモ・畳まれた欄は数えない)。体入保存の検査 (jsave / missingForPlan_) は別で残る
+function unfilledOnPage(i) {
+  var pg = $('pg' + i), n = 0;
+  if (!pg) return 0;
+  var vis = function (e) { return e.offsetParent !== null; };
+  [].forEach.call(pg.querySelectorAll('.mpair'), function (pr) { if (vis(pr) && !pairVal(pr)) n++; });
+  [].forEach.call(pg.querySelectorAll('select, input[type=text], input[type=date]'), function (e) {
+    if (!vis(e) || e.closest('.mpair') || e.classList.contains('nt') || e.hasAttribute('data-ko')) return;
+    var k = e.getAttribute('data-k');
+    if (k === 'idDoc' || k === 'memo' || k === 'wageNote') return;
+    if (!String(e.value || '').trim()) n++;
+  });
+  [].forEach.call(pg.querySelectorAll('.chips[data-m="s"]'), function (g) {
+    if (!vis(g)) return;
+    var on = g.querySelector('.chip.on');
+    if (!on || on.getAttribute('data-v') === '未入力') n++;
+  });
+  if (i === 0) {
+    if (!$('idblock').querySelector('[data-k="idDoc"]').value && !CUR.a.idPhoto) n++;
+    var cd = collectAll();
+    HEALTH.forEach(function (x) { if (!/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim())) n++; });
+  }
+  return n;
+}
 function showApplicant() {
   var a = CUR.a, vals = {};
   B.forms.forEach(function (f) { f.q.forEach(function (q, i) { vals[f.key + ':' + i] = VALS[f.key][i]; }); });
@@ -1539,9 +1596,8 @@ function showApplicant() {
   var edit = infoHtml(a, 0) + CAST_PAGES.map(function (p) { return '<div class="sec"><h3>' + esc(p[1]) + '</h3>' + castBlocks(p[0], vals) + '</div>'; }).join('');
   var jq = STAFFQ.filter(function (c) { return c.f === 'jikyu'; });
   var pages = [
-    { t: 'CAST回答の確認', h: '<div id="morebox"></div><div class="card" id="card"></div><div class="small">カードをタップすると、内容の修正と健康状態の入力ができます。</div><div id="edit1" style="display:none">' + edit + '</div>' },
-    { t: '追加ヒアリング', h: fieldHtml('interviewer', '面接担当者', 'text', a.interviewer) + fieldHtml('idDoc', '身分証 <span class="req">*</span>', 'choice', a.idDoc) +
-        fieldHtml('idChecker', '年齢確認者', 'text', a.idChecker) + fieldHtml('idDate', '年齢確認日', 'date', a.idDate) + fieldHtml('voice', '声色', 'choice', a.voice) +
+    { t: 'CAST回答の確認', h: idBlockHtml(a) + '<div id="morebox"></div><div class="card" id="card"></div><div class="small">カードをタップすると、内容の修正と健康状態の入力ができます。</div><div id="edit1" style="display:none">' + edit + '</div>' },
+    { t: '追加ヒアリング', h: fieldHtml('interviewer', '面接担当者', 'text', a.interviewer) + fieldHtml('voice', '声色', 'choice', a.voice) +
         fieldHtml('explainer', '入店説明者', 'text', a.explainer) + fieldHtml('explainDate', '入店説明日', 'date', a.explainDate) +
         jq.map(function (c) { return qHtml(c, vals['jikyu:' + c.qi]); }).join('') },
     { t: '条件決定', h: '<div class="grid">' + STAFF.map(function (t) { return fieldHtml(t[0], t[1], t[2], t[0] === 'gen' ? (a.gen || a.genWish) : t[0] === 'genYomi' ? (a.genYomi || a.genWishYomi) : a[t[0]]); }).join('') + '</div><div class="q"><label class="t">メモ</label><textarea data-k="memo">' + esc(a.memo) + '</textarea></div>' },
@@ -1554,12 +1610,16 @@ function showApplicant() {
   ];
   pagerInit('pgwrap', pages, {
     extra: '<button id="isv">一時保存</button>',
-    check: function (i) { return i === 1 && !document.querySelector('[data-k="idDoc"]').value ? [['idDoc', '身分証を選んでください']] : []; },
+    check: function (i) { return []; }, // 2026-11-25 身分証は必須ではなくなった (体験に進む時だけ検査)
+    soft: function (i) { return unfilledOnPage(i); },
     bind: function () {
       infoBind();
       [].forEach.call(document.querySelectorAll('select[data-k]'), function (s) {
         s.onchange = function () { var o = document.querySelector('[data-ko="' + s.getAttribute('data-k') + '"]'); if (o) o.style.display = s.value === 'その他' ? 'block' : 'none'; };
       });
+      $('hallok').onclick = function () { HEALTH.forEach(function (x) { $('f_' + x[0]).value = 'なし'; $('f_' + x[0] + 'T').value = ''; }); msg('健康状態を4項目とも「なし」にしました'); };
+      $('idphotobtn').onclick = function () { $('idphotoin').click(); };
+      $('idphotoin').onchange = function () { idPhotoPick(this.files && this.files[0]); this.value = ''; };
       $('card').onclick = function () { var e = $('edit1'); e.style.display = e.style.display === 'none' ? 'block' : 'none'; };
       $('back').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
       var gk = document.querySelector('[data-k="genYomi"]');
@@ -1568,7 +1628,6 @@ function showApplicant() {
       $('jsave').onclick = function () {
         var on = document.querySelector('#jchips .chip.on');
         if (!on) { msg('「当日体入」「後日体入」「保留」「お断り」のどれかを選んでください', true); return; }
-        if (!document.querySelector('[data-k="idDoc"]').value) { pgGo(1); showErrors([['idDoc', '身分証を選んでください']]); return; }
         var v = on.getAttribute('data-v');
         if (v.indexOf('お断り') === 0 && (CUR.a.status === '辞退' || CUR.a.status === '採用')) { msg('「' + CUR.a.status + '」の方は、お断りにできません', true); return; }
         if (v === '当日体入' || v === '後日体入') { // 2026-11-15 W1: 一日体験に進む前に、足りない項目を出して止める (サーバー側 setJudgement にも同じ検査)
@@ -1576,11 +1635,12 @@ function showApplicant() {
           if (!(cd.gen || cd.genWish || '').trim()) lack.push('源氏名');
           if (!cd.birth) lack.push('生年月日');
           if (!CUR.a.faceUrl) lack.push('面接写真 (本人に撮ってもらう: 「来店」でQRを渡す)');
-          if (!cd.idDoc) lack.push('年齢確認書類');
+          if (!cd.idDoc && !CUR.a.idPhoto) lack.push('年齢確認書類 (身分証の種類か写真)');
           HEALTH.forEach(function (x) { if (!/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim())) lack.push('健康状態(' + x[1] + ')'); }); // 2026-11-17: 黒服が面接で聞いて入れる
           if (lack.length) {
             var hNg = HEALTH.filter(function (x) { return !/^なし$|^あり: .+/.test(String(cd[x[0]] || '').trim()); })[0];
-            if (hNg) { pgGo(0); $('edit1').style.display = 'block'; $('w_' + hNg[0]).scrollIntoView({ block: 'center' }); } // 2026-11-18: 健康状態の欄は畳まれているので、開いてそこへ移る
+            if (!cd.idDoc && !CUR.a.idPhoto) { pgGo(0); $('idblock').scrollIntoView({ block: 'center' }); }
+            else if (hNg) { pgGo(0); $('edit1').style.display = 'block'; $('w_' + hNg[0]).scrollIntoView({ block: 'center' }); } // 2026-11-18: 健康状態の欄は畳まれているので、開いてそこへ移る
             msg('一日体験に進めません。足りない項目: ' + lack.join('、') + (hNg ? '　(健康状態はこの画面で選んでください)' : ''), true); return;
           }
         }
@@ -1604,7 +1664,7 @@ function showApplicant() {
       };
       paintHead();
     },
-    onShow: function (i) { if (i === 0) fillMoreBox(); if (i === 0) $('card').innerHTML = summaryHtml(false) + (a.formType ? '<div class="small">応募フォーム: ' + esc(a.formType) + (a.salesExp ? '　売上経験(本人申告): ' + esc(a.salesExp) : '') + '</div>' : '') + (a.ivAt ? '<div class="small">面接日時: ' + esc(slotText(a.ivAt.split(' ')[0], a.ivAt.split(' ')[1] || '') + (a.ivStore ? '　' + a.ivStore : '')) + '</div>' : '') + (a.faceUrl ? '<div class="small"><a href="' + esc(a.faceUrl) + '" target="_blank">面接写真を開く</a></div>' : ''); }
+    onShow: function (i) { if (i === 0) idPhotoPaint(); if (i === 0) fillMoreBox(); if (i === 0) $('card').innerHTML = summaryHtml(false) + (a.formType ? '<div class="small">応募フォーム: ' + esc(a.formType) + (a.salesExp ? '　売上経験(本人申告): ' + esc(a.salesExp) : '') + '</div>' : '') + (a.ivAt ? '<div class="small">面接日時: ' + esc(slotText(a.ivAt.split(' ')[0], a.ivAt.split(' ')[1] || '') + (a.ivStore ? '　' + a.ivStore : '')) + '</div>' : '') + (a.faceUrl ? '<div class="small"><a href="' + esc(a.faceUrl) + '" target="_blank">面接写真を開く</a></div>' : ''); }
   });
 }
 function paintHead() {
