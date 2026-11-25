@@ -1475,7 +1475,7 @@ function renderList() {
 }
 
 var FROM = '', TDATE = '';
-function openApplicant(id) {
+function openApplicant(id, start) {
   $('app').innerHTML = '読み込み中...';
   run('getApplicant', [id], function (r) {
     CUR = r; VALS = {};
@@ -1483,7 +1483,7 @@ function openApplicant(id) {
       var s = r.forms[f.key];
       VALS[f.key] = s ? s.values : f.q.map(function () { return ''; });
     });
-    showApplicant();
+    showApplicant(start);
   });
 }
 
@@ -1609,7 +1609,7 @@ function unfilledOnPage(i) {
   }
   return n;
 }
-function showApplicant() {
+function showApplicant(start) {
   var a = CUR.a, vals = {};
   B.forms.forEach(function (f) { f.q.forEach(function (q, i) { vals[f.key + ':' + i] = VALS[f.key][i]; }); });
   CASTQ.forEach(function (c) { if (c.f === 'app') vals['app:' + c.qi] = a[c.qi] || ''; });
@@ -1638,6 +1638,8 @@ function showApplicant() {
         '<div id="jdbox" style="display:none"><div class="pl">体験日 (明日以降を選べます)</div>' + judgeDates() + '</div></div>' +
         '<button class="pri big" id="jsave" style="width:100%">保存</button>' }
   ];
+  // 面接中は 条件決定 → すぐ判定 (当日体入/後日体入…) で閉じる。体験入店チェック・クロージングは一日体験のあとに開く (2026-11-25 H)
+  if (a.status === '面接中') pages.splice(3, 2);
   pagerInit('pgwrap', pages, {
     extra: '<button id="isv">一時保存</button>',
     check: function (i) { return []; }, // 2026-11-25 身分証は必須ではなくなった (体験に進む時だけ検査)
@@ -1696,6 +1698,7 @@ function showApplicant() {
     },
     onShow: function (i) { if (i === 0) idPhotoPaint(); if (i === 0) fillMoreBox(); if (i === 0) $('card').innerHTML = summaryHtml(false) + (a.formType ? '<div class="small">応募フォーム: ' + esc(a.formType) + (a.salesExp ? '　売上経験(本人申告): ' + esc(a.salesExp) : '') + '</div>' : '') + (a.ivAt ? '<div class="small">面接日時: ' + esc(slotText(a.ivAt.split(' ')[0], a.ivAt.split(' ')[1] || '') + (a.ivStore ? '　' + a.ivStore : '')) + '</div>' : '') + (a.faceUrl ? '<div class="small"><a href="' + esc(a.faceUrl) + '" target="_blank">面接写真を開く</a></div>' : ''); }
   });
+  if (start) pgGo(start); // クロージング画面から「体験入店チェック」を開いた時
 }
 function paintHead() {
   var a = CUR.a;
@@ -1777,7 +1780,7 @@ function showClosing(id) {
     var storeSel = function (cid) {
       return '<select id="' + cid + '"><option value="">店舗を選択</option>' + stores.map(function (o) { return '<option' + (o === home ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select>';
     };
-    var h = '<button id="back">← 戻る</button><h2>クロージング</h2><div style="background:' + (STC[a.status] || '#fff') + ';padding:6px 10px;border-radius:8px"><b id="cl_name">' + esc(a.gen || a.genWish || a.name) + '</b>　<span class="small">' + esc(a.name) + '</span> <span class="badge" id="clst">' + esc(a.status) + '</span></div><div class="small">' + esc(a.id) + '　' + esc(a.email) + '</div>';
+    var h = '<button id="back">← 戻る</button><h2>クロージング</h2><button type="button" class="sm" id="cl_tk">体験入店チェック・評価を入力</button><div style="background:' + (STC[a.status] || '#fff') + ';padding:6px 10px;border-radius:8px"><b id="cl_name">' + esc(a.gen || a.genWish || a.name) + '</b>　<span class="small">' + esc(a.name) + '</span> <span class="badge" id="clst">' + esc(a.status) + '</span></div><div class="small">' + esc(a.id) + '　' + esc(a.email) + '</div>';
     h += '<div class="sec"><h3>採用を打診</h3>' +
       '<div class="q"><label class="t">時給</label>' + pairHtml('yen', B.yen, a.hireWage, 'id="cl_wage"') + '</div>' +
       '<div class="q"><label class="t">保証期間</label>' + pairHtml('mon', B.choices.hoshoTerm, a.hoshoTerm, 'id="cl_term"') + '</div>' +
@@ -1803,6 +1806,7 @@ function showClosing(id) {
       '<button class="pri big" id="cl_go" style="width:100%">決定</button></div>';
     $('app').innerHTML = h;
     $('back').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+    $('cl_tk').onclick = function () { openApplicant(a.id, 3); };
     var gy = $('cl_geny');
     gy.addEventListener('input', function (e) { if (!e.isComposing) { var v = kata(gy.value); if (v !== gy.value) gy.value = v; } });
     var kindNow = function () { var on = document.querySelector('#clkind .chip.on'); return on ? on.getAttribute('data-v') : ''; };
