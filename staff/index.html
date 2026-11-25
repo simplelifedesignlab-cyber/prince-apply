@@ -23,26 +23,26 @@ header h1{margin:0;font-size:19px;flex:1}
 .at.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 .hr{font-weight:700;color:var(--priD)}
 .tag.tabs2{background:#b71c1c;margin-left:0}.tag.tdone{background:#5A6275;margin-left:0}
-/* 2026-11-25 H: 出勤簿。PC/iPad (768px 以上) = 列見出し 1 回 + 同じ列幅の grid で 1 行・スマホ = 折り返し (ラベル小さめ)。罫線の格子にはしない (行の間に薄い線だけ) */
+/* 2026-11-25 H: 出勤簿。PC/iPad (768px 以上) = 列見出し 1 回 + 同じ列幅の grid で 1 行・スマホ (767px 以下) = 1 人 1 枚のカード (3 段 + 詳細)。罫線の格子にはしない (行の間に薄い線だけ) */
 .ar,.vr,.ad{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:flex-end;padding:8px 12px;border-top:1px solid #EEF0F4}
 .ar.man,.vr.man{background:#FDEBD3}
 .ar.abs .ag{color:#b71c1c;text-decoration:line-through}.ar.abs .ab{color:#b71c1c}
-.an{display:flex;align-items:center;gap:8px;min-width:140px;min-height:34px}
 .ng{display:flex;align-items:center;gap:6px;min-width:0}
-.ab{font-size:15px;font-weight:700;color:var(--pri);min-width:30px}.ag{font-size:15px;font-weight:700;overflow-wrap:anywhere}
+.ab{font-size:15px;font-weight:700;color:var(--pri);min-width:26px}.ag{font-size:15px;font-weight:700;overflow-wrap:anywhere}
 .ag.dh{background:#2e7d32;color:#fff;border-radius:999px;padding:1px 12px}
-.ng .tag{margin:0;font-size:10px;padding:0 6px;line-height:16px;flex:none}
 .f{display:flex;flex-direction:column;gap:1px;min-width:0}
-.f .lb{font-size:10px;color:#5A6275;line-height:1.3}.f .lb a{color:var(--priD);text-decoration:underline}
+.f .lb{font-size:10px;color:#5A6275;line-height:1.3}
 .f select,.f input{font:inherit;font-size:12px;color:#111;min-height:34px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;padding:0 3px;width:100%;min-width:0}
-.f select.hint{color:#8A92A6}
+.f input::placeholder{color:#8A92A6;opacity:1}
 .f input:disabled,.f select:disabled{background:#F4F5F7;color:#333;opacity:1}
-.f.t{width:84px}.f.h{width:92px}.f.sg{width:128px}.f.s{width:70px}.f.m{flex:1;min-width:130px}
+.ar.abs .f.st select{color:#b71c1c;font-weight:700}
 .f .ro{min-height:34px;display:flex;align-items:center;font-size:12px;color:#111;overflow-wrap:anywhere}
 .f .un{color:#b71c1c;font-weight:700}
+.sgt{font-size:10px;color:#5A6275;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .arh,.vrh,.adh{display:none}.vph{display:none}
+.lks{font-size:12px;font-weight:400;margin-left:12px;letter-spacing:0}.lks a{color:var(--priD);margin-right:10px;text-decoration:underline}
 .vr .ty{min-width:46px;font-size:12px;font-weight:700;min-height:34px;display:flex;align-items:center}
-.vr .ty.dh span{background:#2e7d32;color:#fff;border-radius:999px;padding:1px 10px}
+.f.kd select{font-weight:700}.f.kd select.dh{background:#2e7d32;color:#fff;border-color:#2e7d32}
 .vr .f.k{flex:1;min-width:130px}.vr .f.nm{width:128px}.vr .f.nm .ro b{overflow-wrap:anywhere}
 .vx{min-height:34px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;color:#5A6275;font:inherit;font-size:12px;cursor:pointer;padding:0 10px}
 .ad .f.nmi{width:170px}
@@ -51,20 +51,44 @@ header h1{margin:0;font-size:19px;flex:1}
 .abar button:disabled{opacity:.5;cursor:default}
 .abar .am2{flex:1;font-size:13px}.abar .am2.err{color:#b71c1c;font-weight:700}.abar .am2.ok{color:#2e7d32}
 @media (min-width:768px){
- .ar,.arh{display:grid;grid-template-columns:30px minmax(130px,1.6fr) 84px 84px 68px minmax(44px,1fr) minmax(44px,1fr) repeat(4,minmax(32px,.5fr)) minmax(60px,1.2fr);gap:0 4px;align-items:center;padding:4px 12px}
- .ar .an{display:contents}
+ .ar,.arh{display:grid;grid-template-columns:30px minmax(96px,1.5fr) 56px 74px 74px 62px minmax(54px,.9fr) minmax(54px,.9fr) repeat(4,minmax(28px,.45fr)) minmax(48px,1.2fr);gap:0 4px;align-items:center;padding:4px 8px}
+ .r2,.r3,.dtl{display:contents}
  .ar .ng .ag{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
  .ar .f,.vr .f{width:auto!important;min-width:0}
  .f .lb{display:none}
  .f select,.f input,.f .ro,.vx{min-height:30px;height:30px}
  .f .ro{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:30px}
+ .f.sg .sgt{display:block;line-height:11px}
+ .f.sg{align-self:center}
+ .dtb,.sum{display:none!important}
  .arh,.vrh{display:grid;font-size:10px;color:#5A6275;padding-top:6px;padding-bottom:0}
  .arh a,.vrh a{color:var(--priD);text-decoration:underline}
- .vr,.vrh,.ad{display:grid;grid-template-columns:50px 130px 84px minmax(100px,1fr) 84px 84px 52px;gap:0 5px;align-items:center;padding:4px 12px}
+ .lks{display:none}
+ .vr,.vrh{display:grid;grid-template-columns:62px 130px 84px minmax(100px,1fr) 84px 84px 52px;gap:0 5px;align-items:center;padding:4px 12px}
  .vph{display:block}
  .adh,.ad{display:grid;grid-template-columns:minmax(140px,240px) 84px 84px;gap:0 5px;align-items:center;padding:4px 12px}
  .adh{font-size:10px;color:#5A6275;padding-bottom:0;padding-top:6px}
  .ad .f.nmi{width:auto}
+}
+@media (max-width:767px){
+ .ar{gap:4px 8px;align-items:center;padding:6px 10px}
+ .ar .ng{flex:1}
+ .r2,.r3{display:flex;flex-basis:100%;align-items:center;gap:4px 8px;min-width:0}
+ .ar .f{flex-direction:row;align-items:center;gap:3px}
+ .ar .f .lb{display:block;white-space:nowrap}
+ .ar .f select,.ar .f input{min-height:28px;height:28px;font-size:12px}
+ .ar .f.t{width:auto}.ar .f.t input{width:62px}
+ .ar .f.h{width:auto}.ar .f.h select{width:62px}.ar .f.h .ro{min-height:28px}
+ .ar .f.st{width:auto}.ar .f.st select{width:62px}
+ .ar .f.sg{width:auto;flex:1;min-width:0}.ar .f.sg select{width:54px;flex:none}
+ .ar .f.sg .sgt{flex:1}
+ .dtb{margin-left:auto;flex:none;min-height:26px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;color:#5A6275;font:inherit;font-size:11px;padding:0 8px;cursor:pointer}
+ .dtl{display:none;flex-basis:100%;flex-wrap:wrap;gap:4px 6px}
+ .ar.open .dtl{display:flex}
+ .dtl .f{flex-direction:column;align-items:stretch}
+ .dtl .f.s{width:64px}.dtl .f.m{flex:1;min-width:120px}
+ .sum{flex-basis:100%;font-size:10px;color:#8A92A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .ar.open .sum{display:none}
 }
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .tsub{margin:-4px 0 12px 24px}.tsub a{display:inline-block;font-size:14px;font-weight:700;color:var(--pri);padding:6px 0}
@@ -333,23 +357,28 @@ function attRender(r,msg,isErr){
   var inp=function(fld,val,max){return '<input data-f="'+fld+'" data-o="'+esc(val)+'" value="'+esc(val)+'" maxlength="'+max+'"'+dis+'>';};
   var sel=function(fld,list,cur,lab,hint){return '<select data-f="'+fld+'" data-o="'+esc(cur)+'"'+(cur===''&&hint?' class="hint" data-hint="1"':'')+dis+'>'+opts(list,cur,lab,cur===''&&hint?hint+' (アプリ)':'')+'</select>';};
   var lnk=function(u,t){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+t+'</a>';};
-  var sgTxt=function(on,t,bin,drv){if(!on)return '<span class="ro" style="color:#8A92A6">なし</span>';return '<span class="ro">'+esc(t||'')+(bin?' '+esc(bin):'')+' '+(drv?esc(drv):'<span class="un">未定</span>')+'</span>';};
+  var inpT=function(fld,val,hint,dl){return '<input data-f="'+fld+'" data-o="'+esc(val)+'" value="'+esc(val)+'" list="'+dl+'" placeholder="'+esc(hint?hint+' (アプリ)':'')+'" maxlength="8" autocomplete="off"'+dis+'>';};
+  var goSel=function(fld,on){var cur=on?'あり':'';return '<select data-f="'+fld+'" data-o="'+cur+'"'+dis+'><option value=""'+(cur===''?' selected':'')+'>なし</option><option value="あり"'+(cur?' selected':'')+'>あり</option></select>';};
+  var sgt=function(on,t,bin,drv){if(!on)return '';return '<span class="sgt">'+esc(t||'')+(bin?' '+esc(bin):'')+' '+(drv?esc(drv):'<span class="un">未定</span>')+'</span>';};
   var rowHtml=function(x){
-    var tin=x.tin,tout=x.tout; // キャストの到着希望・退勤希望は初期表示 (薄い文字・保存しない)
     var hairCell=x.hairBook?'<span class="ro">予約 '+esc(x.hairBook)+'</span>':sel('hairT',T_HAIR,x.hairT||(x.hairWish?'◯':''),{'◯':'◯ 時間未定'});
+    var stv=x.absent==='当欠'?'当欠':(x.absent?'欠勤':'出勤');
+    var stSel='<select class="stt"'+dis+'>'+['出勤','欠勤'].concat(stv==='当欠'?['当欠']:[]).map(function(o){return '<option'+(o===stv?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+    var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);
     return '<div class="ar'+(x.manual?' man':'')+(x.absent?' abs':'')+'" data-gen="'+esc(x.gen)+'">'+
-      '<div class="an"><span class="ab">'+esc(x.ban)+'</span><div class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span>'+(x.absent?tag(x.absent,'tabs2'):(x.att?tag('出勤済','tdone'):''))+'</div></div>'+
-      f('t','出勤',sel('tin',T_IN,tin,null,x.arrive||x.shift))+f('t','退勤',sel('tout',['ラスト'].concat(T_IN),tout,null,x.leaveW))+
-      fd('h',lnk(SALON+'#d='+r.date,'美容室 ↗'),hairCell)+
-      fd('sg',lnk(SG_URL,'送迎(出) ↗'),sgTxt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+
-      fd('sg',lnk(SG_URL,'送迎(帰) ↗'),sgTxt(x.back,x.leaveW,x.backBin,x.backDrv))+
-      f('s','ロッカー',inp('locker',x.locker,20))+f('s','ドレス',inp('dress',x.dress,20))+f('s','靴',inp('shoes',x.shoes,20))+f('s','充電器',inp('charger',x.charger,20))+f('m','メモ',inp('memo',x.memo,100))+'</div>';
+      '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span></span>'+
+      '<label class="f st"><span class="lb"></span>'+stSel+'</label>'+
+      '<div class="r2">'+f('t','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+fd('h','美容',hairCell)+'</div>'+
+      '<div class="r3">'+fd('sg','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+'<button type="button" class="dtb">詳細 ▼</button></div>'+
+      '<div class="dtl">'+f('s','ロッカー',inp('locker',x.locker,20))+f('s','ドレス',inp('dress',x.dress,20))+f('s','靴',inp('shoes',x.shoes,20))+f('s','充電器',inp('charger',x.charger,20))+f('m','メモ',inp('memo',x.memo,100))+'</div>'+
+      (sm.length?'<div class="sum">'+esc(sm.join(' / '))+'</div>':'')+'</div>';
   };
+  h+='<datalist id="dl_in">'+T_IN.map(function(t){return '<option value="'+t+'">';}).join('')+'</datalist><datalist id="dl_out">'+['ラスト'].concat(T_IN).map(function(t){return '<option value="'+t+'">';}).join('')+'</datalist>';
   var shown=r.stores.filter(function(s){return !attStore||s.id===attStore;});
   shown.forEach(function(s){
     var c=cnt(s);
-    h+='<div class="sec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'</h3>';
-    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span>出勤</span><span>退勤</span><span>'+lnk(r.date?SALON+'#d='+r.date:SALON,'美容室 ↗')+'</span><span>'+lnk(SG_URL,'送迎(出) ↗')+'</span><span>'+lnk(SG_URL,'送迎(帰) ↗')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
+    h+='<div class="sec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+lnk(SALON+'#d='+r.date,'美容室 ↗')+lnk(SG_URL,'送迎 ↗')+'</span></h3>';
+    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>'+lnk(SALON+'#d='+r.date,'美容室 ↗')+'</span><span>'+lnk(SG_URL,'送迎 朝 ↗')+'</span><span>'+lnk(SG_URL,'送迎 帰 ↗')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
     h+=s.on.length?s.on.map(rowHtml).join(''):'<div class="li" style="color:#888">出勤予定なし</div>';
     h+='</div>';
   });
@@ -357,21 +386,22 @@ function attRender(r,msg,isErr){
     var st=shown[0],nm=st.on.map(function(x){return x.gen;});
     h+='<div class="sec" id="addsec"><h3>追加出勤 (手入力)　名前と出勤時刻を入れて「更新」</h3>';
     h+='<div class="adh"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span></div>';
-    for(var i=0;i<3;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<select data-a="tin">'+opts(T_IN,'')+'</select>')+f('t','退勤','<select data-a="tout">'+opts(['ラスト'].concat(T_IN),'')+'</select>')+'</div>';
+    for(var i=0;i<3;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+'</div>';
     h+='</div><datalist id="dl_cast">'+st.casts.map(function(g){return '<option value="'+esc(g)+'">';}).join('')+'</datalist>';
     // 同伴・来店 (同伴が上 → 席 VIP → 卓番 → ホール → 未定)
     var vs=st.on.filter(function(x){return x.dohan||x.visT||x.visN||x.keep||x.seat;});
     vs.sort(function(a,b){return (a.dohan?0:1)-(b.dohan?0:1)||seatRank(a.seat)-seatRank(b.seat)||(a.visT<b.visT?-1:a.visT>b.visT?1:0)||(parseInt(a.ban,10)||9999)-(parseInt(b.ban,10)||9999);});
-    h+='<div class="sec" id="vissec"><h3>同伴・来店</h3><div class="vrh"><span></span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席</span><span></span></div>';
+    h+='<div class="sec" id="vissec"><h3>同伴・来店</h3><div class="vrh"><span>種類</span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席</span><span></span></div>';
     h+=vs.length?vs.map(function(x){
       var dn=x.dohan&&['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+x.dohan:'';
-      return '<div class="vr'+(x.manual?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="ty'+(x.dohan?' dh':'')+'">'+(x.dohan?'<span>同伴'+esc(dn)+'</span>':'来店')+'</div>'+
+      var kd=x.dohan?'同伴':'来店';
+      return '<div class="vr'+(x.manual?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="f kd"><span class="lb">種類</span><select data-f="kind" data-o="'+kd+'" class="'+(x.dohan?'dh':'')+'"'+dis+'><option'+(kd==='来店'?' selected':'')+'>来店</option><option'+(kd==='同伴'?' selected':'')+'>同伴</option></select></div>'+
         '<div class="f nm"><span class="lb">源氏名</span><div class="ro"><b>'+esc(x.gen)+'</b></div></div>'+
         f('t','時刻',sel('visT',T_VIS,x.visT))+f('k','客名(ボトル名)',inp('keep',x.keep,40))+f('s','人数',sel('visN',T_NUM,x.visN))+f('s','席',sel('seat',T_SEAT,x.seat))+
         '<button type="button" class="vx" data-clr="1">消す</button></div>';
     }).join(''):'<div class="li" style="color:#888">同伴・来店の予定なし</div>';
     h+='<div class="li" style="font-size:12px;color:#5A6275;border-top:1px solid #EEF0F4">下に手入力 (出勤の人から選びます)</div>';
-    for(var j=0;j<3;j++)h+='<div class="vr vn"><div class="ty vph"></div><div class="f nm"><span class="lb">源氏名</span><select data-v="gen"><option value=""></option>'+nm.map(function(g){return '<option>'+esc(g)+'</option>';}).join('')+'</select></div>'+
+    for(var j=0;j<3;j++)h+='<div class="vr vn"><div class="f kd"><span class="lb">種類</span><select data-v="kind"><option>来店</option><option>同伴</option></select></div><div class="f nm"><span class="lb">源氏名</span><select data-v="gen"><option value=""></option>'+nm.map(function(g){return '<option>'+esc(g)+'</option>';}).join('')+'</select></div>'+
       f('t','時刻','<select data-v="visT">'+opts(T_VIS,'')+'</select>')+f('k','客名(ボトル名)','<input data-v="keep" maxlength="40">')+f('s','人数','<select data-v="visN">'+opts(T_NUM,'')+'</select>')+f('s','席','<select data-v="seat">'+opts(T_SEAT,'')+'</select>')+'<div class="vph"></div></div>';
     h+='</div>';
   }
@@ -384,6 +414,13 @@ function attRender(r,msg,isErr){
   [].forEach.call(document.querySelectorAll('.at'),function(b){b.onclick=function(){if(!attLeave())return;attStore=b.getAttribute('data-as');lsSet('staffAttStore',attStore);attRender(attData);};});
   [].forEach.call(document.querySelectorAll('#att input,#att select'),function(el){el.addEventListener('change',function(){attDirty=true;if(el.getAttribute('data-hint')){el.classList.toggle('hint',el.value==='');}});el.addEventListener('input',function(){attDirty=true;});});
   [].forEach.call(document.querySelectorAll('.vx'),function(b){b.onclick=function(){var row=b.parentNode;['visT','keep','visN','seat'].forEach(function(k){var e=row.querySelector('[data-f="'+k+'"]');if(e){e.value='';attDirty=true;}});};});
+  [].forEach.call(document.querySelectorAll('.stt'),function(sel){sel.onchange=function(){
+    var row=sel.closest('.ar'),t=row.querySelector('[data-f="tout"]');
+    if(sel.value==='欠勤'){t.value='欠勤';row.classList.add('abs');}
+    else{if(t.value==='欠勤'||t.value==='当欠')t.value='';row.classList.remove('abs');}
+    attDirty=true;};});
+  [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',sel.value==='同伴');});});
+  [].forEach.call(document.querySelectorAll('.dtb'),function(b){b.onclick=function(){var row=b.closest('.ar');row.classList.toggle('open');b.textContent=row.classList.contains('open')?'詳細 ▲':'詳細 ▼';};});
   $('asave').onclick=attSave;
 }
 function attCollect(){
@@ -403,9 +440,10 @@ function attCollect(){
     if(n)p.visits.push(o);
   });
   [].forEach.call(document.querySelectorAll('.vn'),function(row){
-    var v={};['gen','visT','keep','visN','seat'].forEach(function(k){v[k]=row.querySelector('[data-v="'+k+'"]').value.trim();});
-    if(!v.gen){if(v.visT||v.keep||v.visN||v.seat)throw new Error('下の手入力の行は、源氏名を選んでください');return;}
-    if(!(v.visT||v.keep||v.visN||v.seat))return;
+    var v={};['gen','visT','keep','visN','seat','kind'].forEach(function(k){v[k]=row.querySelector('[data-v="'+k+'"]').value.trim();});
+    var dh=v.kind==='同伴';if(!dh)delete v.kind; // 来店のままなら種類は送らない (すでに同伴の人を来店に戻さない)
+    if(!v.gen){if(v.visT||v.keep||v.visN||v.seat||dh)throw new Error('下の手入力の行は、源氏名を選んでください');return;}
+    if(!(v.visT||v.keep||v.visN||v.seat||dh))return;
     p.visits.push(v);
   });
   return p;
