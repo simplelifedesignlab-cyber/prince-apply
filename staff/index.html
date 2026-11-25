@@ -21,19 +21,17 @@ header h1{margin:0;font-size:19px;flex:1}
 .at img{display:block;width:100%;height:30px;object-fit:contain;background:#fff;border-radius:4px}
 .at .an1{font-size:15px;font-weight:700}.at .an2{font-size:11px;opacity:.8;white-space:nowrap}
 .at.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-table.att{font-size:14px}table.att th,table.att td{padding:6px 8px;text-align:left}
-table.att td.g{font-weight:700}table.att td.mm{white-space:normal;min-width:140px;max-width:260px}
-table.att small.chg{display:block;font-size:11px;color:#5A6275}
-table.att tr.man td{background:#FDEBD3}
-table.att tr.abs td{color:#b71c1c}table.att tr.abs td.g{text-decoration:line-through}
 .hr{font-weight:700;color:var(--priD)}
 .tag.tabs2{background:#b71c1c;margin-left:0}.tag.tdone{background:#5A6275;margin-left:0}
-.acs{display:none}
-.ac{padding:10px 14px;border-top:1px solid #EEF0F4}
+.acs{display:grid;grid-template-columns:1fr;gap:0} /* 2026-11-25 H: PC もスマホと同じカード (表はやめた)・幅で列を増やす */
+@media (min-width:600px){.acs{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.acs{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1260px){.acs{grid-template-columns:repeat(4,1fr)}}
+.ac{padding:7px 12px;border-top:1px solid #EEF0F4;border-right:1px solid #EEF0F4}
 .ac.man{background:#FDEBD3}.ac.abs{color:#b71c1c}.ac.abs .ag{text-decoration:line-through}
-.ah{display:flex;align-items:baseline;gap:10px}.ab{font-size:22px;font-weight:700;color:var(--pri)}.ag{font-size:22px;font-weight:700}.ac.abs .ab{color:#b71c1c}
-.am{font-size:14px;color:#444;margin-top:2px}.ak{margin-top:4px}.ak .tag{margin:0 6px 4px 0}.ao{font-size:13px;color:#5A6275;margin-top:4px}
-@media (max-width:767px){.atbl{display:none}.acs{display:block}.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
+.ah{display:flex;align-items:baseline;gap:8px}.ab{font-size:15px;font-weight:700;color:var(--pri)}.ag{font-size:15px;font-weight:700}.ac.abs .ab{color:#b71c1c}
+.am{font-size:12px;color:#444;margin-top:1px}.ak{margin-top:3px}.ak .tag{margin:0 4px 3px 0;font-size:11px}.ao{font-size:11px;color:#5A6275;margin-top:2px}
+@media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .upd{font-size:13px;color:#777;text-align:center;margin:14px 0}
 .big{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;margin:0 0 12px;border:0;border-radius:16px;background:#fff;color:#222;box-shadow:0 1px 4px rgba(0,0,0,.1);font-family:inherit;cursor:pointer;text-align:left;padding:10px 18px;border-left:10px solid var(--pri);text-decoration:none}
 .big small{display:block;font-size:14px;font-weight:400;color:#777}
@@ -284,11 +282,6 @@ function attRender(r){
     var c=cnt(s);
     h+='<div class="sec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'</h3>';
     if(!s.on.length){h+='<div class="li" style="color:#888">出勤予定なし</div></div>';return;}
-    h+='<div class="sc atbl"><table class="att"><thead><tr><th>店番</th><th>源氏名</th><th>方面</th><th>担当</th><th>ヘアメイク</th><th>出勤</th><th>退勤</th><th>同伴</th><th>来店予定</th><th>送迎</th><th>状態</th><th>メモ</th></tr></thead><tbody>'+
-      s.on.map(function(x){
-        var tm=x.time||x.shift||'';
-        return '<tr class="'+(x.manual?'man ':'')+(x.absent?'abs':'')+'"><td>'+esc(x.ban)+'</td><td class="g">'+esc(x.gen)+'</td><td>'+esc(x.area)+'</td><td>'+esc(x.tanto)+'</td><td>'+hairT(x)+'</td><td>'+esc(tm)+(x.change?'<small class="chg">変更 '+esc(x.change)+'</small>':'')+'</td><td>'+esc(x.leave)+'</td><td>'+(x.dohan?'同伴'+(['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+esc(x.dohan):''):'')+'</td><td>'+visit(x)+'</td><td>'+(x.go?'迎':'')+(x.go&&x.back?' / ':'')+(x.back?'送':'')+'</td><td>'+stat(x)+'</td><td class="mm">'+esc(x.memo)+'</td></tr>';
-      }).join('')+'</tbody></table></div>';
     h+='<div class="acs">'+s.on.map(function(x){
       var tm=x.time||x.shift||'';
       return '<div class="ac'+(x.manual?' man':'')+(x.absent?' abs':'')+'"><div class="ah"><span class="ab">'+esc(x.ban)+'</span><span class="ag">'+esc(x.gen)+'</span>'+stat(x)+'</div>'+
