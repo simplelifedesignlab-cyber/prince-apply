@@ -488,6 +488,9 @@ function infoBind() {
         $('gen_chk').disabled = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください'; syncNext();
       }).findGenDup(y, genStore(), g);
     };
+    // 2026-11-25 H「プルダウン・ボタンで簡単に・離脱させない」: 欄を離れたら自動で照合 (確認ボタンを押し忘れても止まらない)
+    var gautoA = function () { if ($('f_gen').value.trim() && gy.value.trim() && GEN_OK !== genKey() && !$('gen_chk').disabled) $('gen_chk').click(); };
+    gy.addEventListener('change', gautoA); $('f_gen').addEventListener('change', gautoA);
     GEN_KEY = genKey;
   } else {
     gy.addEventListener('change', function () {
@@ -1196,7 +1199,7 @@ function submitApply() {
 
 // ================= 面接の待ち時間の追加入力 (?mode=more&t=トークン・応募者本人のスマホ・2026-11-08) =================
 // nc / lounge の応募者が、来店して面接を待つ間に入れる。トークンはサーバが業態と出す項目 (items) を返す。個人情報は返ってこない
-var MORE = null, MORE_GEN_OK = '';
+var MORE = null, MORE_GEN_OK = '', MORE_RESUBMIT = false;
 var MORE_NIGHT = [['jikyu', 4], ['jikyu', 5], ['jikyu', 14], ['jikyu', 15]];
 function moreMsg(t) { $('app').innerHTML = '<div class="pg" style="display:block"><h2>追加のご入力</h2><div class="q"><p>' + esc(t) + '</p></div></div>'; }
 function startMore() {
@@ -1262,11 +1265,15 @@ function moreBind() {
       google.script.run.withSuccessHandler(function (r) {
         $('gen_chk').disabled = false;
         if (gkey() !== k) return;
-        if (r && r.length) { w.style.color = '#c00'; w.textContent = GEN_MSG; } else { MORE_GEN_OK = k; w.style.color = '#1a7f37'; w.textContent = '使えます'; }
+        if (r && r.length) { w.style.color = '#c00'; w.textContent = GEN_MSG; MORE_RESUBMIT = false; $('sendst').textContent = GEN_MSG; }
+        else { MORE_GEN_OK = k; w.style.color = '#1a7f37'; w.textContent = '使えます'; if (MORE_RESUBMIT) { MORE_RESUBMIT = false; submitMoreForm(); } }
       }).withFailureHandler(function () {
-        $('gen_chk').disabled = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください';
+        $('gen_chk').disabled = false; MORE_RESUBMIT = false; w.style.color = '#c00'; w.textContent = '照合できませんでした。もう一度「確認」を押してください';
       }).findGenDup(y, MORE.store, g);
     };
+    // 欄を離れたら自動で照合 (2026-11-25 H: 確認ボタンの押し忘れで離脱させない)
+    var gautoM = function () { if ($('f_gen').value.trim() && gy.value.trim() && MORE_GEN_OK !== gkey() && !$('gen_chk').disabled) $('gen_chk').click(); };
+    gy.addEventListener('change', gautoM); $('f_gen').addEventListener('change', gautoM);
   }
   if (moreHas('photo')) {
     $('photobtn').onclick = function () { $('photoin').click(); };
@@ -1316,6 +1323,10 @@ function moreErrs() {
 }
 function submitMoreForm() {
   if (SENDING) return;
+  if (moreHas('gen')) { // 照合がまだなら、送信ボタンで照合 → 使えれば そのまま送信 (確認ボタンを押さなくてよい)
+    var gg = $('f_gen').value.trim(), yy = kata($('f_geny').value.trim());
+    if (gg && /^[ァ-ヶー\s　]+$/.test(yy) && MORE_GEN_OK !== yy + '|' + gg) { $('f_geny').value = yy; MORE_RESUBMIT = true; $('sendst').textContent = '源氏名を照合しています…'; $('gen_chk').click(); return; }
+  }
   var errs = moreErrs();
   if (errs.length) { showErrors(errs); $('sendst').textContent = '入力が足りない所があります: ' + errs.map(function (x) { return x[1]; }).join(' / '); return; }
   SENDING = true; $('sub').disabled = true; $('sub').innerHTML = '<span class="spin"></span>送信中…'; $('sendst').textContent = '';
