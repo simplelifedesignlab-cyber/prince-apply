@@ -1612,7 +1612,15 @@ function showApplicant() {
     { t: '追加ヒアリング', h: fieldHtml('interviewer', '面接担当者', 'text', a.interviewer) + fieldHtml('voice', '声色', 'choice', a.voice) +
         fieldHtml('explainer', '入店説明者', 'text', a.explainer) + fieldHtml('explainDate', '入店説明日', 'date', a.explainDate) +
         jq.map(function (c) { return qHtml(c, vals['jikyu:' + c.qi]); }).join('') },
-    { t: '条件決定', h: '<div class="grid">' + STAFF.map(function (t) { return fieldHtml(t[0], t[1], t[2], t[0] === 'gen' ? (a.gen || a.genWish) : t[0] === 'genYomi' ? (a.genYomi || a.genWishYomi) : a[t[0]]); }).join('') + '</div><div class="q"><label class="t">メモ</label><textarea data-k="memo">' + esc(a.memo) + '</textarea></div>' },
+    { t: '条件決定', h: (function () { // 時給は 1 つの枠: 体験時給 → 入店時保証 → ガールズバー時給 A〜D (2026-11-25 H)
+      var fh = function (t) { return fieldHtml(t[0], t[1], t[2], t[0] === 'gen' ? (a.gen || a.genWish) : t[0] === 'genYomi' ? (a.genYomi || a.genWishYomi) : a[t[0]]); };
+      var pick = function (ks) { return STAFF.filter(function (t) { return ks.indexOf(t[0]) >= 0; }).map(fh).join(''); };
+      var NC = ['jikyu', 'hosho', 'hoshoTerm'], GB = ['wageA', 'wageB', 'wageC', 'wageD', 'wageNote'];
+      return '<div class="grid">' + pick(['gen', 'genYomi']) + '</div>' +
+        '<div class="sec"><h3>時給</h3><div class="grid">' + pick(NC) + '</div>' +
+        '<h3 style="margin-top:14px">ガールズバー時給</h3><div class="grid">' + pick(GB) + '</div></div>' +
+        '<div class="grid">' + STAFF.filter(function (t) { return ['gen', 'genYomi'].concat(NC, GB).indexOf(t[0]) < 0; }).map(fh).join('') + '</div>';
+    })() + '<div class="q"><label class="t">メモ</label><textarea data-k="memo">' + esc(a.memo) + '</textarea></div>' },
     { t: '体験入店チェック', h: taikenHtml('main') },
     { t: 'クロージング・その他', h: taikenHtml('close') },
     { t: '面接終了 お疲れ様でした', h: '<div class="q"><div class="chips" id="jchips" data-m="s">' +
