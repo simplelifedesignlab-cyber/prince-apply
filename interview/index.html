@@ -1407,6 +1407,16 @@ function isClosing(st) { return st === 'クロージング' || st === 'クロー
 function isPlan(st) { return st === '一日体験予定' || st === '1日体験' || st === '再体験'; }
 // 追加入力 (nc / lounge): 状態の表示と、「来店」で応募者専用の QR を出す (2026-11-08)
 function moreOn(a) { return formTypeOf(a.store) !== 'full'; }
+// 一覧の色 (2026-11-25 H): 面接中 = 追加入力 未 薄いグレー / 済 薄いオレンジ・一日体験が終わった (クロージング) = 緑
+function itemBg(a) {
+  if (a.status === '面接中' && moreOn(a)) return a.moreDone ? '#fde0c2' : '#eeeeee';
+  if (a.status === 'クロージング') return '#d9ead3';
+  return STC[a.status] || '#fff';
+}
+function moreBtnHtml(a, attr) { // 「面接入力」: 追加入力が済んだら押せない (QR を出さない)
+  if (!moreOn(a)) return '<button type="button" ' + attr + '>来店</button>';
+  return a.moreDone ? '<button type="button" ' + attr.replace(/ (id|data-id)="[^"]*"/g, '').replace(/class="sm[^"]*"/, 'class="sm"') + ' disabled>面接入力 (済)</button>' : '<button type="button" ' + attr + '>面接入力</button>';
+}
 function moreMark(a) { return moreOn(a) ? '追加入力: ' + (a.moreDone ? '済' : '未') : ''; }
 function showMoreQr(id) {
   run('issueMore', [id], function (r) {
@@ -1441,7 +1451,7 @@ function fillMoreBox() {
   var on = a.status === '面接中';
   b.innerHTML = (a.reapplyAt ? '<div class="small"><b>再応募</b> (' + esc(a.reapplyAt) + ' に面接日時を取り直し)</div>' : '') + (on && a.arriveAt ? '<div class="small">来店 ' + esc(a.arriveAt) + '</div>' : '') +
     (moreOn(a) ? '<div class="small"><b>' + esc(moreMark(a)) + '</b></div>' : '') +
-    (on && (moreOn(a) || !arrived(a)) ? '<button type="button" class="sm" id="morebtn">' + (moreOn(a) ? '来店 (追加入力を渡す)' : '来店') + '</button>' : '') + declineBtn(a).replace('class="sm dcb"', 'class="sm" id="dclbtn"');
+    (on && (moreOn(a) || !arrived(a)) ? moreBtnHtml(a, 'class="sm" id="morebtn"') : '') + declineBtn(a).replace('class="sm dcb"', 'class="sm" id="dclbtn"');
   if ($('morebtn')) $('morebtn').onclick = function () { showMoreQr(a.id); };
   if ($('dclbtn')) $('dclbtn').onclick = function () { doDecline(a.id, function () { paintHead(); fillMoreBox(); }); };
 }
@@ -1455,8 +1465,8 @@ function renderList() {
     return !f || kn(a.name + a.furigana + a.genWishYomi + a.gen + a.id).indexOf(f) >= 0;
   });
   $('lst').innerHTML = l.length ? l.map(function (a) {
-    return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + (STC[a.status] || '#fff') + '"><b>' + esc(a.name) + (gname(a) ? ' / ' + esc(gname(a)) : '') + '</b> <span class="badge">' + esc(dispStatus(a)) + '</span>' + (a.reapplyAt ? ' <span class="badge">再応募</span>' : '') + (a.rank ? ' ランク' + esc(a.rank) : '') +
-      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + (logoOf(a.store) ? '<img class="rlg" src="' + logoOf(a.store) + '" alt="">' : '') + esc(a.store) + '　更新 ' + esc(a.updated) + (moreOn(a) ? '　' + esc(moreMark(a)) : '') + '</div>' + (a.status === '面接中' && (moreOn(a) || !arrived(a)) ? '<button type="button" class="sm mrb" data-id="' + esc(a.id) + '">' + (moreOn(a) ? '来店 (追加入力)' : '来店') + '</button>' : '') + declineBtn(a) + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
+    return '<div class="item" data-id="' + esc(a.id) + '" data-st="' + esc(a.status) + '" style="background:' + itemBg(a) + '"><b>' + esc(a.name) + (gname(a) ? ' / ' + esc(gname(a)) : '') + '</b> <span class="badge">' + esc(dispStatus(a)) + '</span>' + (a.reapplyAt ? ' <span class="badge">再応募</span>' : '') + (a.rank ? ' ランク' + esc(a.rank) : '') +
+      '<div class="small">' + esc(a.furigana || a.genWishYomi) + '　' + esc(a.id) + '　' + (logoOf(a.store) ? '<img class="rlg" src="' + logoOf(a.store) + '" alt="">' : '') + esc(a.store) + '　更新 ' + esc(a.updated) + (moreOn(a) ? '　' + esc(moreMark(a)) : '') + '</div>' + (a.status === '面接中' && (moreOn(a) || !arrived(a)) ? moreBtnHtml(a, 'class="sm mrb" data-id="' + esc(a.id) + '"') : '') + declineBtn(a) + (isClosing(a.status) ? '<button type="button" class="sm clb" data-id="' + esc(a.id) + '">クロージング</button>' : '') + '</div>';
   }).join('') : '<div class="small">該当なし</div>';
   [].forEach.call(document.querySelectorAll('.item'), function (e) { e.onclick = function () { var id = e.getAttribute('data-id'); if (isClosing(e.getAttribute('data-st'))) { FROM = ''; showClosing(id); } else openApplicant(id); }; });
   [].forEach.call(document.querySelectorAll('.mrb'), function (b) { b.onclick = function (ev) { ev.stopPropagation(); showMoreQr(b.getAttribute('data-id')); }; });
