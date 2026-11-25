@@ -189,7 +189,7 @@ function hairBox(d) {
 // 車の表示 = 車種 (NO.番号)。番号は「3」「NO.3」「3番」のどれで入っていても NO.3。番号が空なら車種だけ (c.color = 送迎予定の「車の色」列 = 中身は車の番号)
 function carLabel(c) {
   var no = String(c.color || '').replace(/^\s*(NO\.?|No\.?|no\.?|ＮＯ|№)\s*/, '').replace(/\s*番\s*$/, '').trim();
-  return (c.model || '') + (no ? (c.model ? ' ' : '') + '(NO.' + no + ')' : '');
+  return no ? 'NO.' + no : ''; // 2026-11-25 H: 車は「NO.3」だけ (車種・ナンバー下4桁は出さない)
 }
 function renderSougei() {
   var box = document.getElementById('sougei'), s = data.sougei;
@@ -204,7 +204,7 @@ function renderSougei() {
   function car(x) { // 車の情報 (決まっている時だけ・2026-11-19 v2)
     var c = x.car; if (!c || x.cancel) return;
     var v = carLabel(c); // 2026-11-24: 車の色ではなく車の番号 (NO)
-    if (v || c.plate4) card.appendChild(el('p', 'car', '車: ' + v + (c.plate4 ? (v ? '・' : '') + 'ナンバー ' + c.plate4 : '')));
+    if (v) card.appendChild(el('p', 'car', '車: ' + v));
     if (c.driver) card.appendChild(el('p', 'car', 'ドライバー: ' + c.driver));
   }
   if (s.go) {
