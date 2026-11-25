@@ -35,7 +35,7 @@ header h1{margin:0;font-size:19px;flex:1}
 .f select,.f input{font:inherit;font-size:12px;color:#111;min-height:34px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;padding:0 3px;width:100%;min-width:0}
 .f input::placeholder{color:#8A92A6;opacity:1}
 .f input:disabled,.f select:disabled{background:#F4F5F7;color:#333;opacity:1}
-.ar.abs .f.st select{color:#b71c1c;font-weight:700}
+.ar.abs .f.sx select{color:#b71c1c;font-weight:700}
 .f .ro{min-height:34px;display:flex;align-items:center;font-size:12px;color:#111;overflow-wrap:anywhere}
 .f .un{color:#b71c1c;font-weight:700}
 .sgt{font-size:10px;color:#5A6275;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -79,7 +79,8 @@ header h1{margin:0;font-size:19px;flex:1}
  .ar .f select,.ar .f input{min-height:28px;height:28px;font-size:12px}
  .ar .f.t{width:auto}.ar .f.t input{width:62px}
  .ar .f.h{width:auto}.ar .f.h select{width:62px}.ar .f.h .ro{min-height:28px}
- .ar .f.st{width:auto}.ar .f.st select{width:62px}
+ .ar .f.sx{width:auto;margin-left:auto}.ar .f.sx select{width:62px}
+ .ar .f.sx .lb{display:none}
  .ar .f.sg{width:auto;flex:1;min-width:0}.ar .f.sg select{width:54px;flex:none}
  .ar .f.sg .sgt{flex:1}
  .dtb{margin-left:auto;flex:none;min-height:26px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;color:#5A6275;font:inherit;font-size:11px;padding:0 8px;cursor:pointer}
@@ -367,7 +368,7 @@ function attRender(r,msg,isErr){
     var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);
     return '<div class="ar'+(x.manual?' man':'')+(x.absent?' abs':'')+'" data-gen="'+esc(x.gen)+'">'+
       '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span></span>'+
-      '<label class="f st"><span class="lb"></span>'+stSel+'</label>'+
+      '<label class="f sx"><span class="lb"></span>'+stSel+'</label>'+
       '<div class="r2">'+f('t','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+fd('h','美容',hairCell)+'</div>'+
       '<div class="r3">'+fd('sg','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+'<button type="button" class="dtb">詳細 ▼</button></div>'+
       '<div class="dtl">'+f('s','ロッカー',inp('locker',x.locker,20))+f('s','ドレス',inp('dress',x.dress,20))+f('s','靴',inp('shoes',x.shoes,20))+f('s','充電器',inp('charger',x.charger,20))+f('m','メモ',inp('memo',x.memo,100))+'</div>'+
