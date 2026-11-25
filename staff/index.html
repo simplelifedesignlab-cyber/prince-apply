@@ -50,7 +50,7 @@ header h1{margin:0;font-size:19px;flex:1}
 .abar button{min-height:46px;min-width:140px;font:inherit;font-size:16px;font-weight:700;border:0;border-radius:4px;background:var(--pri);color:#fff;cursor:pointer}
 .abar button:disabled{opacity:.5;cursor:default}
 .abar .am2{flex:1;font-size:13px}.abar .am2.err{color:#b71c1c;font-weight:700}.abar .am2.ok{color:#2e7d32}
-@media (min-width:768px){
+@media all{ /* 2026-11-25 H: スマホも PC と同じ並び (横スクロール) */
  .ar,.arh{display:grid;grid-template-columns:30px minmax(96px,1.5fr) 56px 74px 74px 62px minmax(54px,.9fr) minmax(54px,.9fr) repeat(4,minmax(28px,.45fr)) minmax(48px,1.2fr);gap:0 4px;align-items:center;padding:4px 8px}
  .r2,.r3,.dtl{display:contents}
  .ar .ng .ag{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -70,26 +70,12 @@ header h1{margin:0;font-size:19px;flex:1}
  .adh{font-size:10px;color:#5A6275;padding-bottom:0;padding-top:6px}
  .ad .f.nmi{width:auto}
 }
-@media (max-width:767px){
- .ar{gap:4px 8px;align-items:center;padding:6px 10px}
- .ar .ng{flex:1}
- .r2,.r3{display:flex;flex-basis:100%;align-items:center;gap:4px 8px;min-width:0}
- .ar .f{flex-direction:row;align-items:center;gap:3px}
- .ar .f .lb{display:block;white-space:nowrap}
- .ar .f select,.ar .f input{min-height:28px;height:28px;font-size:12px}
- .ar .f.t{width:auto}.ar .f.t input{width:62px}
- .ar .f.h{width:auto}.ar .f.h select{width:62px}.ar .f.h .ro{min-height:28px}
- .ar .f.sx{width:auto;margin-left:auto}.ar .f.sx select{width:62px}
- .ar .f.sx .lb{display:none}
- .ar .f.sg{width:auto;flex:1;min-width:0}.ar .f.sg select{width:54px;flex:none}
- .ar .f.sg .sgt{flex:1}
- .dtb{margin-left:auto;flex:none;min-height:26px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;color:#5A6275;font:inherit;font-size:11px;padding:0 8px;cursor:pointer}
- .dtl{display:none;flex-basis:100%;flex-wrap:wrap;gap:4px 6px}
- .ar.open .dtl{display:flex}
- .dtl .f{flex-direction:column;align-items:stretch}
- .dtl .f.s{width:64px}.dtl .f.m{flex:1;min-width:120px}
- .sum{flex-basis:100%;font-size:10px;color:#8A92A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .ar.open .sum{display:none}
+@media (max-width:767px){ /* スマホ: PC と同じ表を横にスクロール。店番と名前は左に固定 */
+ .sec.atsec{overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .ar,.arh{min-width:860px}.vr,.vrh{min-width:640px}
+ .ar>:first-child,.arh>:first-child{position:sticky;left:0;z-index:2;background:#fff}
+ .ar>:nth-child(2),.arh>:nth-child(2){position:sticky;left:34px;z-index:2;background:#fff}
+ .arh{background:#fff}
 }
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .tsub{margin:-4px 0 12px 24px}.tsub a{display:inline-block;font-size:14px;font-weight:700;color:var(--pri);padding:6px 0}
@@ -378,21 +364,21 @@ function attRender(r,msg,isErr){
   var shown=r.stores.filter(function(s){return !attStore||s.id===attStore;});
   shown.forEach(function(s){
     var c=cnt(s);
-    h+='<div class="sec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+lnk(SALON+'#d='+r.date,'美容室 ↗')+lnk(SG_URL,'送迎 ↗')+'</span></h3>';
+    h+='<div class="sec atsec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+lnk(SALON+'#d='+r.date,'美容室 ↗')+lnk(SG_URL,'送迎 ↗')+'</span></h3>';
     if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>'+lnk(SALON+'#d='+r.date,'美容室 ↗')+'</span><span>'+lnk(SG_URL,'送迎 朝 ↗')+'</span><span>'+lnk(SG_URL,'送迎 帰 ↗')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
     h+=s.on.length?s.on.map(rowHtml).join(''):'<div class="li" style="color:#888">出勤予定なし</div>';
     h+='</div>';
   });
   if(edit){
     var st=shown[0],nm=st.on.map(function(x){return x.gen;});
-    h+='<div class="sec" id="addsec"><h3>追加出勤 (手入力)　名前と出勤時刻を入れて「更新」</h3>';
+    h+='<div class="sec atsec" id="addsec"><h3>追加出勤 (手入力)　名前と出勤時刻を入れて「更新」</h3>';
     h+='<div class="adh"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span></div>';
     for(var i=0;i<3;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+'</div>';
     h+='</div><datalist id="dl_cast">'+st.casts.map(function(g){return '<option value="'+esc(g)+'">';}).join('')+'</datalist>';
     // 同伴・来店 (同伴が上 → 席 VIP → 卓番 → ホール → 未定)
     var vs=st.on.filter(function(x){return x.dohan||x.visT||x.visN||x.keep||x.seat;});
     vs.sort(function(a,b){return (a.dohan?0:1)-(b.dohan?0:1)||seatRank(a.seat)-seatRank(b.seat)||(a.visT<b.visT?-1:a.visT>b.visT?1:0)||(parseInt(a.ban,10)||9999)-(parseInt(b.ban,10)||9999);});
-    h+='<div class="sec" id="vissec"><h3>同伴・来店</h3><div class="vrh"><span>種類</span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席</span><span></span></div>';
+    h+='<div class="sec atsec" id="vissec"><h3>同伴・来店</h3><div class="vrh"><span>種類</span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席</span><span></span></div>';
     h+=vs.length?vs.map(function(x){
       var dn=x.dohan&&['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+x.dohan:'';
       var kd=x.dohan?'同伴':'来店';
