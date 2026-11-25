@@ -198,6 +198,54 @@ th,td{border-color:#E3E6EC}
 .ovb .b.dg{background:#fff;color:#111;border-color:#111}
 .ovb .b:disabled{opacity:.5}
 .ovb .er{color:#b00020;font-size:14px;margin-top:8px}
+[hidden]{display:none!important}
+/* 2026-11-25 「今日」画面: タブ・美容室タブ・送迎タブ。出勤簿の .ar/.vr/.ad は使わない (attCollect が拾うため) */
+.ttabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
+.ttab{min-height:46px;font:inherit;font-size:17px;font-weight:700;border:2px solid var(--pri);border-radius:6px;background:#fff;color:var(--priD);cursor:pointer}
+.ttab.on{background:var(--pri);color:#fff}
+.abar .aun{font-size:13px;font-weight:700;color:#b71c1c;white-space:nowrap}.abar .asy{font-size:12px;color:#5A6275;white-space:nowrap}
+.sl-cn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px}
+.sl-cn div{border:1px solid #C3C8D1;border-radius:6px;padding:4px 8px;background:#fff;display:flex;flex-direction:column}.sl-cn small{font-size:11px;color:#5A6275}.sl-cn b{font-size:18px}
+.sl-sub{font-size:12px;color:#5A6275;margin:0 0 8px}
+.slwrap,.sgwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.slt{border-collapse:collapse;width:100%;min-width:640px;background:#fff;font-size:13px}
+.slt th,.slt td{border:1px solid #E1E4E8;padding:3px;vertical-align:top;text-align:left;white-space:normal}
+.slt th{background:var(--priL);position:static;text-align:center;font-size:13px}.slt th small{display:block;font-weight:400;font-size:10px;color:#5A6275}.slt th.sls{font-size:11px;font-weight:400}
+.slt td.sltm,.slt th.sltm{position:sticky;left:0;z-index:2;background:#fff;font-weight:700;text-align:center;width:54px;min-width:54px}.slt th.sltm{background:var(--priL)}
+.slc,.slf{display:flex;flex-direction:column;gap:2px;width:100%;min-height:50px;padding:5px 6px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;font:inherit;text-align:left;cursor:pointer;color:#111}
+.slc.man{background:#FDEBD3}.slc.ovr{box-shadow:inset 0 0 0 2px #b71c1c}
+.slf{border:1px dashed #8A92A6;color:#5A6275}.slf:disabled{opacity:.5;cursor:default}.slf small{font-size:10px}.slf .slp{font-size:12px;font-weight:700;color:var(--priD)}
+.slnm{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.slnm .ag{font-size:14px}
+.slst{font-size:10px;font-weight:700;border-radius:3px;padding:0 5px;margin-left:auto}
+.slst.sl0{border:1px solid #1F2A44;color:#1F2A44;background:#fff}.slst.sl1{background:#DCEBDD;color:#1b5e20}.slst.sl2{background:#FFE9C7;color:#8a4b00}
+.slsub{font-size:10px;color:#5A6275;overflow-wrap:anywhere}.slsub.r{color:#b71c1c;font-weight:700}
+.slrow{display:flex;align-items:center;gap:8px;padding:6px 12px;border-top:1px solid #EEF0F4}.slrow .slc{flex:1}.slrow .sltm{font-weight:700;width:50px}
+.slsp{display:block;width:100%;min-height:48px;margin:12px 0 4px;font:inherit;font-weight:700;border:2px solid var(--pri);border-radius:6px;background:#fff;color:var(--priD);cursor:pointer}
+.slov{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;z-index:30}
+.slsheet{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:#fff;border-radius:16px 16px 0 0;padding:16px;display:flex;flex-direction:column;gap:8px}
+.slsh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:17px}
+.slsheet label{font-size:13px;font-weight:700;color:#444}.slsheet select,.slsheet input{height:46px;border-radius:6px;border:1px solid #C3C8D1;background:#fff;padding:0 10px;font:inherit;font-size:16px;width:100%}
+.slsg{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}.slsg button{min-height:42px;padding:0 12px;border-radius:21px;font:inherit;font-weight:700;cursor:pointer;border:1px solid #C3C8D1;background:#fff}.slsg button.on{background:var(--pri);color:#fff;border-color:var(--pri)}.slno{font-size:13px;color:#5A6275;align-self:center}
+.slbig{min-height:50px;border:0;border-radius:6px;background:var(--pri);color:#fff;font:inherit;font-size:16px;font-weight:700;cursor:pointer}.slbig:disabled{background:#E4E4E4;color:#666;cursor:default}
+.sl2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.sl2 button{min-height:48px;border-radius:6px;background:#fff;font:inherit;font-weight:700;border:1px solid #6B6B6B;cursor:pointer}
+.slhint{font-size:12px;color:#5A6275}
+.sltoast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#1A1A1A;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;max-width:90%;z-index:40}
+.sg-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 8px}.sg-dir{display:flex;gap:6px}
+.sgd{min-height:42px;padding:0 18px;font:inherit;font-weight:700;border:1px solid #C3C8D1;border-radius:6px;background:#fff;color:var(--priD);cursor:pointer}.sgd.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.sg-sum{font-size:13px}.un{color:#b71c1c;font-weight:700}.sgoff{color:#8A92A6;font-weight:400}
+.sgwrap{padding-bottom:2px}
+.sgr{display:grid;grid-template-columns:minmax(150px,1.3fr) 76px minmax(96px,.9fr) minmax(140px,1.6fr) 140px;gap:0 6px;align-items:center;padding:4px 10px;border-top:1px solid #EEF0F4;min-width:660px;background:#fff}
+.sgr.chg{background:#FFF8D6}.sgr.cx{color:#888}.sgr.cx .ag{text-decoration:line-through}
+.sgh{font-size:10px;color:#5A6275;border-top:0;padding-top:6px;padding-bottom:0}
+.sgn{display:flex;align-items:center;gap:5px;min-width:0}.sgs{font-size:11px;color:#5A6275}.sgv{font-size:10px;font-weight:700;border-radius:3px;padding:0 5px;background:#E6E9F0;color:var(--priD)}
+.sgt,.sgb,.sgp{font-size:12px;overflow-wrap:anywhere}.sgx{font-size:12px;color:#888}
+.sgsel{font:inherit;font-size:13px;min-height:34px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;width:100%}.sgsel.un{border-color:#b71c1c;background:#FDECEC}
+.sgund h3{color:#b71c1c}.sgok{color:#2e7d32}.sgno{color:#b71c1c}.sglw small{color:#5A6275;font-size:12px;overflow-wrap:anywhere}
+@media (max-width:767px){
+ .sgr>:first-child,.sgr.sgh>:first-child{position:sticky;left:0;z-index:2;background:inherit}
+ .sgr.sgh{background:#fff}
+ .sglw .li{flex-wrap:wrap}
+}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div></header>
 <div class="wrap" id="app"></div>
@@ -305,16 +353,93 @@ var attDay='';
 function bizDay(){return ymd(new Date(Date.now()-5*3600000));}
 var attStore=lsGet('staffAttStore')||''; // '' = 全店 (見るだけ)
 var attDirty=false,attData=null,attBusy=false;
-var SG_URL=BOOK+'#gid=1139586545'; // 出勤表の「送迎 当日」
-function attLeave(){return !attDirty||window.confirm('保存していない変更があります。捨てて移動しますか？');}
+// ---- 「今日」画面の枠 (2026-11-25): 日付・店・タブ (出勤簿 / 美容室 / 送迎)・下に固定の更新。日付と店はタブを替えても残る ----
+var tdTab=lsGet('staffTodayTab')||'att'; if(['att','salon','sougei'].indexOf(tdTab)<0)tdTab='att';
+var sgPend={},sgBoard=null,slData=null,sgDir=lsGet('staffSgDir')==='back'?'back':'go';
+function unsavedN(){
+  var n=0;
+  if(attDirty&&$('att')){try{var p=attCollect();n+=p.rows.length+p.adds.length+p.visits.length;}catch(e){n+=1;}}
+  return n+Object.keys(sgPend).length;
+}
+function attLeave(){return unsavedN()===0||window.confirm('保存していない変更があります。捨てて移動しますか？');}
+function updUnsaved(){var e=$('aun');if(!e)return;var n=unsavedN();e.textContent=n?'未保存 '+n+' 件':'';}
+function updSync(){
+  var e=$('asy');if(!e)return;
+  var d=new Date(),t=pad(d.getHours())+':'+pad(d.getMinutes());
+  e.textContent=attData&&attData.lastSync?'最終同期 '+attData.lastSync:'読込 '+t;
+  e.title=attData&&attData.lastSync?'出勤表の最終同期 (10 分おき)':'同期の時刻は取れなかったので、この画面を読み込んだ時刻です';
+}
+function setSaveLabel(){
+  var b=$('asave');if(!b)return;
+  b.textContent=tdTab==='att'?(attStore?'更新':'読み直し'):(tdTab==='sougei'&&Object.keys(sgPend).length?'更新':'読み直し');
+}
+function setMsg(t,err){var m=$('amsg');if(m){m.textContent=t||'';m.className='am2'+(err?' err':' ok');}}
+function renderBand(){
+  var b=$('band');if(!b)return;
+  var r=attData,logo={};STORES.forEach(function(x){logo[x.id]=x;});
+  var cnt=function(s){var ab=s.on.filter(function(c){return !!c.absent;}).length;return {p:s.on.length,a:ab,f:s.on.length-ab};};
+  var tot=r?r.stores.reduce(function(a,s){return a+s.on.length;},0):0;
+  if(r&&attStore&&!r.stores.some(function(s){return s.id===attStore;}))attStore='';
+  b.innerHTML='<div class="atabs"><button class="at'+(attStore===''?' on':'')+'" data-as=""><span class="an1">全店</span><span class="an2">'+(tdTab==='att'?'見るだけ':'すべて')+(r?' ('+tot+'人)':'')+'</span></button>'+
+    (r?r.stores:STORES.map(function(s){return {id:s.id,short:s.s,on:[]};})).map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div>';
+  [].forEach.call(b.querySelectorAll('.at'),function(x){x.onclick=function(){
+    var v=x.getAttribute('data-as');if(v===attStore)return;
+    if(!attLeave())return;
+    attStore=v;lsSet('staffAttStore',attStore);sgPend={};
+    if(attData)attRender(attData);else renderBand();
+    if(slData)slRender();if(sgBoard)sgRender();
+  };});
+}
+function setTab(t){
+  if(t===tdTab)return;
+  if(!attLeave())return;
+  sgPend={};tdTab=t;lsSet('staffTodayTab',t);
+  if(attData)attRender(attData);
+  showTab();
+}
+function showTab(){
+  ['att','salon','sougei'].forEach(function(t){
+    var p=$(t==='att'?'att':t==='salon'?'salonPane':'sgPane');if(p)p.hidden=(t!==tdTab);
+    var b=document.querySelector('.ttab[data-t="'+t+'"]');if(b)b.classList.toggle('on',t===tdTab);
+  });
+  renderBand();setSaveLabel();updUnsaved();
+  if(tdTab==='salon')slLoad(false);
+  if(tdTab==='sougei')sgLoad(false);
+}
+function tdSave(){
+  if(tdTab==='att')return attSave();
+  if(tdTab==='salon'){slLoad(true);return;}
+  if(Object.keys(sgPend).length)return sgSave();
+  sgLoad(true);
+}
 function vToday(){
   if(!attDay)attDay=bizDay();
-  var my=++seq;attDirty=false;
-  $('body').innerHTML='<div class="nav"><button class="nb" id="ap">← 前の日</button><input type="date" id="adt" value="'+esc(attDay)+'" style="flex:1;min-height:44px;font:inherit;font-size:17px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:4px;background:#fff;min-width:0"><button class="nb" id="an">次の日 →</button></div><div id="att"><div class="msg">読み込み中...</div></div>';
+  var my=++seq;attDirty=false;sgPend={};sgBoard=null;slData=null;attData=null;
+  $('body').innerHTML='<div class="nav"><button class="nb" id="ap">← 前の日</button><input type="date" id="adt" value="'+esc(attDay)+'" style="flex:1;min-height:44px;font:inherit;font-size:17px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:4px;background:#fff;min-width:0"><button class="nb" id="atd">今日</button><button class="nb" id="an">次の日 →</button></div>'+
+    '<div id="band"></div>'+
+    '<div class="ttabs"><button class="ttab" data-t="att">出勤簿</button><button class="ttab" data-t="salon">美容室</button><button class="ttab" data-t="sougei">送迎</button></div>'+
+    '<div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
+    '<div class="abar"><button id="asave">更新</button><span class="aun" id="aun"></span><div class="am2 ok" id="amsg"></div><span class="asy" id="asy"></span></div>'+
+    '<div class="slov" id="slAddOv" hidden><div class="slsheet"><div class="slsh"><b id="slaT"></b><button type="button" class="vx" id="slaX">閉じる</button></div>'+
+      '<div id="slaTimeBox" hidden><label>時刻 (15:00 から 30 分きざみ)</label><select id="slaTime"></select></div>'+
+      '<label>店舗</label><select id="slaStore"></select><label>名前 (最初の文字を打つと候補が出ます)</label><input id="slaName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="slsg" id="slaSug"></div>'+
+      '<label>予定</label><select id="slaPlan"><option>なし</option><option>同伴</option><option>優先</option><option>撮影</option></select>'+
+      '<div id="slaFeeBox" hidden><label>美容室費</label><select id="slaFee"><option>無料</option><option>有料</option></select><div class="slhint" id="slaFeeH"></div></div>'+
+      '<button type="button" class="slbig" id="slaOk" disabled>名前を選ぶと確定できます</button></div></div>'+
+    '<div class="slov" id="slStOv" hidden><div class="slsheet"><div class="slsh"><span><b id="slsN"></b><small id="slsS" style="display:block;color:#5A6275"></small></span><button type="button" class="vx" id="slsX">閉じる</button></div>'+
+      '<label>担当</label><select id="slsSty"></select><div class="slhint" id="slsH"></div>'+
+      '<button type="button" class="slbig" id="slsDone">対応した</button><div class="sl2"><button type="button" id="slsNo">来なかった</button><button type="button" id="slsCancel">キャンセル</button></div>'+
+      '<small style="color:#5A6275">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</small><button type="button" class="vx" id="slsReset">未対応に戻す</button></div></div>'+
+    '<div class="sltoast" id="sltoast" hidden></div>';
   var mv=function(d){if(!attLeave()){$('adt').value=attDay;return;}attDay=d;vToday();};
   $('ap').onclick=function(){var x=parse(attDay);x.setDate(x.getDate()-1);mv(ymd(x));};
   $('an').onclick=function(){var x=parse(attDay);x.setDate(x.getDate()+1);mv(ymd(x));};
+  $('atd').onclick=function(){if(attDay!==bizDay())mv(bizDay());};
   $('adt').onchange=function(){if(/^\d{4}-\d{2}-\d{2}$/.test($('adt').value))mv($('adt').value);};
+  [].forEach.call(document.querySelectorAll('.ttab'),function(b){b.onclick=function(){setTab(b.getAttribute('data-t'));};});
+  $('asave').onclick=tdSave;
+  slBind();
+  renderBand();showTab();
   api('getAttendanceList',[attDay]).then(function(r){
     if(my!==seq)return;
     attRender(r);
@@ -340,13 +465,11 @@ function attRender(r,msg,isErr){
   var edit=!!attStore,dis=edit?'':' disabled';
   var h='<div class="hd"><b>'+esc(r.date.slice(5).replace('-','/'))+'('+esc(r.dow)+')'+(r.date===r.today?' 今日':'')+'</b><span>出勤予定 '+tot.p+'人 / 当欠 '+tot.a+'人 / 確定 '+tot.f+'人</span></div>';
   if(r.error)h+='<div class="msg err" style="padding:10px">出勤表を読めませんでした<br><small>'+esc(r.error)+'</small></div>';
-  h+='<div class="atabs"><button class="at'+(attStore===''?' on':'')+'" data-as=""><span class="an1">全店</span><span class="an2">見るだけ ('+tot.p+'人)</span></button>'+
-    r.stores.map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div>';
   var f=function(cls,label,inner){return '<label class="f '+cls+'"><span class="lb">'+label+'</span>'+inner+'</label>';};
   var fd=function(cls,label,inner){return '<div class="f '+cls+'"><span class="lb">'+label+'</span>'+inner+'</div>';};
   var inp=function(fld,val,max){return '<input data-f="'+fld+'" data-o="'+esc(val)+'" value="'+esc(val)+'" maxlength="'+max+'"'+dis+'>';};
   var sel=function(fld,list,cur,lab,hint){return '<select data-f="'+fld+'" data-o="'+esc(cur)+'"'+(cur===''&&hint?' class="hint" data-hint="1"':'')+dis+'>'+opts(list,cur,lab,cur===''&&hint?hint+' (アプリ)':'')+'</select>';};
-  var lnk=function(u,t){return '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+t+'</a>';};
+  var tl=function(t,l,d){return '<a href="#" class="tl" data-tab="'+t+'"'+(d?' data-dir="'+d+'"':'')+'>'+l+'</a>';};
   var inpT=function(fld,val,hint,dl){return '<input data-f="'+fld+'" data-o="'+esc(val)+'" value="'+esc(val)+'" list="'+dl+'" placeholder="'+esc(hint?hint+' (アプリ)':'')+'" maxlength="8" autocomplete="off"'+dis+'>';};
   var goSel=function(fld,on){var cur=on?'あり':'';return '<select data-f="'+fld+'" data-o="'+cur+'"'+dis+'><option value=""'+(cur===''?' selected':'')+'>なし</option><option value="あり"'+(cur?' selected':'')+'>あり</option></select>';};
   var sgt=function(on,t,bin,drv){if(!on)return '';return '<span class="sgt">'+esc(t||'')+(bin?' '+esc(bin):'')+' '+(drv?esc(drv):'<span class="un">未定</span>')+'</span>';};
@@ -367,8 +490,8 @@ function attRender(r,msg,isErr){
   var shown=r.stores.filter(function(s){return !attStore||s.id===attStore;});
   shown.forEach(function(s){
     var c=cnt(s);
-    h+='<div class="sec atsec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+lnk(SALON+'#d='+r.date,'美容室 ↗')+lnk(SG_URL,'送迎 ↗')+'</span></h3>';
-    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>'+lnk(SALON+'#d='+r.date,'美容室 ↗')+'</span><span>'+lnk(SG_URL,'送迎 朝 ↗')+'</span><span>'+lnk(SG_URL,'送迎 帰 ↗')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
+    h+='<div class="sec atsec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+tl('salon','美容室 ↗')+tl('sougei','送迎 ↗')+'</span></h3>';
+    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>'+tl('salon','美容室 ↗')+'</span><span>'+tl('sougei','送迎 朝 ↗','go')+'</span><span>'+tl('sougei','送迎 帰 ↗','back')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
     h+=s.on.length?s.on.map(rowHtml).join(''):'<div class="li" style="color:#888">出勤予定なし</div>';
     h+='</div>';
   });
@@ -398,11 +521,13 @@ function attRender(r,msg,isErr){
   h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
   h+='<div class="sec"><h3>送迎 出勤のドライバー (朝=行き / 帰り)</h3>'+(r.drivers.length?r.drivers.map(function(x){return '<div class="li"><span>'+esc(x.name)+'</span><span>'+(x.go?tag('朝'+(x.goT?' '+esc(x.goT):'')):'')+(x.back?tag('帰り'+(x.backT?' '+esc(x.backT):'')):'')+'</span></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
   if(r.notes&&r.notes.length)h+='<div class="note">'+r.notes.map(esc).join(' / ')+'</div>';
-  h+='<div class="note">薄いオレンジ＝手入力の追加出勤　緑の丸＝同伴　確定＝予定−当欠　美容室の予約・送迎の割り振りは、それぞれのシートで直します (リンク)　元: 出勤表の「データ」</div>';
-  h+='<div class="abar"><button id="asave">'+(edit?'更新':'読み直し')+'</button><div class="am2'+(isErr?' err':' ok')+'" id="amsg">'+esc(msg||'')+'</div></div>';
+  h+='<div class="note">薄いオレンジ＝手入力の追加出勤　緑の丸＝同伴　確定＝予定−当欠　美容室・送迎は上のタブで直します　元: 出勤表の「データ」</div>';
   $('att').innerHTML=h;$('upd').textContent='最終更新 '+r.updated;
-  [].forEach.call(document.querySelectorAll('.at'),function(b){b.onclick=function(){if(!attLeave())return;attStore=b.getAttribute('data-as');lsSet('staffAttStore',attStore);attRender(attData);};});
-  [].forEach.call(document.querySelectorAll('#att input,#att select'),function(el){el.addEventListener('change',function(){attDirty=true;if(el.getAttribute('data-hint')){el.classList.toggle('hint',el.value==='');}});el.addEventListener('input',function(){attDirty=true;});});
+  if(msg!==undefined){var am=$('amsg');if(am){am.textContent=msg;am.className='am2'+(isErr?' err':' ok');}}
+  [].forEach.call(document.querySelectorAll('#att .tl'),function(a){a.onclick=function(ev){ev.preventDefault();if(a.getAttribute('data-dir')){sgDir=a.getAttribute('data-dir');lsSet('staffSgDir',sgDir);}setTab(a.getAttribute('data-tab'));};});
+  renderBand();updSync();updUnsaved();setSaveLabel();
+  if(slData&&tdTab==='salon')slRender();if(sgBoard&&tdTab==='sougei')sgRender();
+  [].forEach.call(document.querySelectorAll('#att input,#att select'),function(el){el.addEventListener('change',function(){attDirty=true;updUnsaved();if(el.getAttribute('data-hint')){el.classList.toggle('hint',el.value==='');}});el.addEventListener('input',function(){attDirty=true;updUnsaved();});});
   [].forEach.call(document.querySelectorAll('.vx'),function(b){b.onclick=function(){var row=b.parentNode;['visT','keep','visN','seat'].forEach(function(k){var e=row.querySelector('[data-f="'+k+'"]');if(e){e.value='';attDirty=true;}});};});
   [].forEach.call(document.querySelectorAll('.stt'),function(sel){sel.onchange=function(){
     var row=sel.closest('.ar'),t=row.querySelector('[data-f="tout"]');
@@ -411,7 +536,6 @@ function attRender(r,msg,isErr){
     attDirty=true;};});
   [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',sel.value==='同伴');});});
   [].forEach.call(document.querySelectorAll('.dtb'),function(b){b.onclick=function(){var row=b.closest('.ar');row.classList.toggle('open');b.textContent=row.classList.contains('open')?'詳細 ▲':'詳細 ▼';};});
-  $('asave').onclick=attSave;
 }
 function attCollect(){
   var p={rows:[],adds:[],visits:[]},seen={};
@@ -452,6 +576,223 @@ function attSave(){
     attBusy=false;var b=$('asave');if(b)b.disabled=false;
     var m=$('amsg');if(m){m.textContent='保存できませんでした: '+(e.message||e);m.className='am2 err';}
   });
+}
+
+// ---- 美容室タブ (salon/?as=staff の「日別」を中に入れたもの・2026-11-25)。縦 = 時間・横 = 場所ごとの枠 (美容師 1 人分)。予約は美容師に紐づかない (担当は「対応した」の時に選ぶ) ----
+var slSeq=0,slBusy=false,slList=[],slAdd={slot:null,special:false,picked:null},slCur=null,slCast=null,slCastLoading=false,slCastErr='';
+var SLSHORT={};STORES.forEach(function(s){SLSHORT[s.id]=s.s;});
+function nnK(s){return String(s||'').normalize('NFKC').replace(/\s+/g,'');}
+function attFind(store,gen){
+  if(!attData)return null;var g=nnK(gen),hit=null;
+  attData.stores.forEach(function(s){if(s.id===store)s.on.forEach(function(x){if(nnK(x.gen)===g)hit=x;});});
+  return hit;
+}
+function slRank(e){var x=attFind(e.store,e.gen),dh=e.tag==='同伴'||(x&&x.dohan),vs=x&&(x.visT||x.visN||x.keep||x.seat);return dh?0:vs?1:2;}
+function slBanN(e){var x=attFind(e.store,e.gen),n=x?parseInt(x.ban,10):NaN;return isNaN(n)?9999:n;}
+function slSort(a,b){return slRank(a)-slRank(b)||slBanN(a)-slBanN(b)||(a.gen<b.gen?-1:a.gen>b.gen?1:0);}
+function slToast(m){if(!m)return;if(m.indexOf('【注意】')>=0)window.alert(m);var t=$('sltoast');t.textContent=m;t.hidden=false;clearTimeout(slToast.t);slToast.t=setTimeout(function(){t.hidden=true;},3500);}
+function slLoad(force){
+  var p=$('salonPane');if(!p)return;
+  if(slData&&!force){slRender();return;}
+  var my=++slSeq;
+  p.innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSalonSlots',[attDay]).then(function(r){if(my!==slSeq)return;slData=r;slRender();setMsg(force?'読み直しました':'',false);}).catch(function(e){if(my===slSeq)p.innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function slEntryHtml(e,i){
+  var x=attFind(e.store,e.gen),dh=e.tag==='同伴'||(x&&x.dohan),vs=x&&(x.visT||x.visN||x.keep||x.seat);
+  var st=e.status==='済'?['sl1','対応済']:e.status==='来ず'?['sl2','来なかった']:['sl0','未対応'];
+  var sub=[];
+  if(e.tag&&e.tag!=='同伴')sub.push(e.tag+(e.tag==='撮影'&&e.fee?' '+e.fee:''));
+  if(vs&&!dh)sub.push('来店');
+  if(e.special)sub.push('特別枠');
+  sub.push(SLSHORT[e.store]||e.store||'');
+  sub.push(e.entry==='キャスト'?'希望時間':e.entry+'入力');
+  if(e.by&&e.status==='済')sub.push('担当 '+e.by);
+  return '<button type="button" class="slc'+(e.manual&&e.entry==='黒服'?' man':'')+(e.over?' ovr':'')+'" data-i="'+i+'"><span class="slnm">'+(x&&x.ban?'<span class="ab">'+esc(x.ban)+'</span>':'')+'<b class="ag'+(dh?' dh':'')+'">'+esc(e.gen)+'</b><span class="slst '+st[0]+'">'+st[1]+'</span></span><span class="slsub'+(e.over?' r':'')+'">'+(e.over?'定員超過 · ':'')+esc(sub.join(' · '))+'</span></button>';
+}
+function slRender(){
+  var p=$('salonPane'),r=slData;if(!p||!r)return;
+  slList=[];
+  var h='',dis=r.canBook?'':' disabled';
+  if(!r.reserve){p.innerHTML='<div class="msg">予約はまだ始まっていません</div>';return;}
+  var inSt=function(pl){return !attStore||!pl.stores||!pl.stores.length||pl.stores.indexOf(attStore)>=0;};
+  var places=r.places.filter(inSt),keep=function(e){return e.kind==='free'||!attStore||e.store===attStore;};
+  var rows=r.rows.filter(function(e){return keep(e)&&places.some(function(pl){return pl.place===e.place;});});
+  var sp=r.special.filter(keep);
+  var duty=(r.onDuty||[]).map(function(x){return esc(x.name)+' '+esc(x.start)+'-'+esc(x.end);}).join('、');
+  var cn={b:0,d:0,n:0,f:0};rows.concat(sp).forEach(function(e){if(e.kind==='free')cn.f++;else{cn.b++;if(e.status==='済')cn.d++;if(e.status==='来ず')cn.n++;}});
+  h+='<div class="sl-cn"><div><small>希望時間</small><b>'+cn.b+'</b></div><div><small>対応済</small><b>'+cn.d+'</b></div><div><small>来なかった</small><b>'+cn.n+'</b></div><div><small>空き</small><b>'+cn.f+'</b></div></div>';
+  h+='<div class="sl-sub">'+(duty?'出勤の美容師: '+duty:'出勤の美容師の入力なし')+(attStore?'　/　'+esc(SLSHORT[attStore]||attStore)+' だけ表示':'')+(r.hourCap?'　/　1 時間 最大 '+r.hourCap+' 人':'')+'</div>';
+  if(r.error)h+='<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>';
+  var times=[];rows.forEach(function(e){if(times.indexOf(e.time)<0)times.push(e.time);});times.sort();
+  if(!times.length)h+='<div class="msg">'+(r.canBook?'この日は表示する枠がありません (美容師の出勤が無い・または店の絞り込み)':'この日の枠はありません (予約できるのは今日から 14 日先まで)')+'</div>';
+  else{
+    var cols=places.map(function(pl){
+      var m=0;times.forEach(function(t){var n=rows.filter(function(e){return e.time===t&&e.place===pl.place;}).length;if(n>m)m=n;});
+      return {pl:pl,n:m};
+    }).filter(function(c){return c.n>0;});
+    h+='<div class="slwrap"><table class="slt"><thead><tr><th class="sltm" rowspan="2">時間</th>'+cols.map(function(c){return '<th colspan="'+c.n+'">'+esc(c.pl.place)+'<small> 美容師 '+c.pl.staff+' 人</small></th>';}).join('')+'</tr><tr>'+cols.map(function(c){var s='';for(var k=1;k<=c.n;k++)s+='<th class="sls">枠'+k+'</th>';return s;}).join('')+'</tr></thead><tbody>';
+    times.forEach(function(t){
+      h+='<tr><td class="sltm">'+esc(t)+'</td>';
+      cols.forEach(function(c){
+        var es=rows.filter(function(e){return e.time===t&&e.place===c.pl.place;}),bk=es.filter(function(e){return e.kind==='booked';}).sort(slSort),fr=es.filter(function(e){return e.kind==='free';}),all=bk.concat(fr);
+        for(var k=0;k<c.n;k++){
+          var e=all[k];
+          if(!e){h+='<td class="slx"></td>';continue;}
+          slList.push(e);var i=slList.length-1;
+          if(e.kind==='free')h+='<td><button type="button" class="slf" data-i="'+i+'"'+dis+'><b>空き</b>'+(e.note?'<small>'+esc(e.note)+' さんはキャンセル</small>':'')+(r.canBook?'<span class="slp">＋入れる</span>':'')+'</button></td>';
+          else h+='<td>'+slEntryHtml(e,i)+'</td>';
+        }
+      });
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+  }
+  if(sp.length){h+='<div class="sec"><h3>特別枠 (撮影など)</h3>'+sp.slice().sort(slSort).map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">'+esc(e.time)+'</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
+  if(r.canBook)h+='<button type="button" class="slsp" id="slSpec">特別枠 (撮影など・時刻を選んで入れる)</button>';
+  h+='<div class="note">黒服が代わりに入れた分は薄いオレンジ・同伴は緑の名前札。並びは 同伴 → 来店 → 店番。操作はすぐ保存されます (最終更新 '+esc(r.updated)+')</div>';
+  p.innerHTML=h;
+  [].forEach.call(p.querySelectorAll('.slf'),function(b){b.onclick=function(){slOpenAdd(slList[+b.getAttribute('data-i')],false);};});
+  [].forEach.call(p.querySelectorAll('.slc'),function(b){b.onclick=function(){slOpenSt(slList[+b.getAttribute('data-i')]);};});
+  if($('slSpec'))$('slSpec').onclick=function(){slOpenAdd(null,true);};
+}
+function slAct(fn){
+  if(slBusy)return;
+  slBusy=true;$('salonPane').style.opacity='.6';
+  fn().then(function(r){if(r&&r.rows){slData=r;slClose();slRender();slToast(r.msg);setMsg('',false);}}).catch(function(e){window.alert(e.message||e);}).then(function(){slBusy=false;$('salonPane').style.opacity='';});
+}
+function slClose(){$('slAddOv').hidden=true;$('slStOv').hidden=true;}
+function slOpenAdd(slot,special){
+  slAdd={slot:slot,special:special,picked:null};
+  $('slaT').textContent=special?'特別枠に入れる':slot.time+' の空きに入れる';
+  $('slaTimeBox').hidden=!special;$('slaStore').value=attStore||'';$('slaName').value='';$('slaPlan').value='なし';$('slaFee').value='無料';
+  slPlan();slSug();$('slAddOv').hidden=false;
+  if(!slCast&&!slCastLoading){
+    slCastLoading=true;slCastErr='';
+    api('getSalonCastAll',[]).then(function(r){slCast=r.casts;slCastLoading=false;slSug();}).catch(function(e){slCastLoading=false;slCastErr=String(e&&e.message||e);slSug();});
+  }
+}
+function slPlan(){var s=$('slaPlan').value==='撮影';$('slaFeeBox').hidden=!s;$('slaFeeH').textContent=$('slaFee').value==='無料'?'無料の予約は「対応した」にしても給料引きに載りません':'有料は今の済と同じく給料引きに載ります';}
+function normK(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96);}).replace(/\s+/g,'');}
+function slSug(){
+  var q=normK($('slaName').value),st=$('slaStore').value,pool=(slCast||[]).filter(function(c){return !st||c.store===st;});
+  var hits=q?pool.filter(function(c){return normK(c.gen).indexOf(q)===0;}):pool,h='';
+  if(!slCast&&slCastErr)h='<span class="slno">名前の一覧を読み込めませんでした: '+esc(slCastErr)+'</span>';
+  else if(!slCast)h='<span class="slno">名前の一覧を読み込み中...</span>';
+  else if(!hits.length)h='<span class="slno">合う名前がありません</span>';
+  else hits.slice(0,8).forEach(function(c){var on=slAdd.picked&&slAdd.picked.store===c.store&&slAdd.picked.gen===c.gen;h+='<button type="button" data-k="'+esc(c.store)+'|'+esc(c.gen)+'"'+(on?' class="on"':'')+'>'+esc(c.gen)+(st?'':' · '+esc(SLSHORT[c.store]||c.store))+'</button>';});
+  $('slaSug').innerHTML=h;
+  [].forEach.call($('slaSug').querySelectorAll('button'),function(b){b.onclick=function(){var k=b.getAttribute('data-k').split('|');slAdd.picked={store:k[0],gen:k.slice(1).join('|')};$('slaName').value=slAdd.picked.gen;slSug();};});
+  var pk=slAdd.picked;$('slaOk').disabled=!pk;$('slaOk').textContent=pk?pk.gen+' ('+(SLSHORT[pk.store]||pk.store)+') で確定':'名前を選ぶと確定できます';
+}
+function slOpenSt(e){
+  slCur=e;$('slsN').textContent=e.gen;$('slsS').textContent=e.time+' · '+(SLSHORT[e.store]||e.store)+(e.special?' · 特別枠':'');
+  var names=slData.stylists||[],def=e.by||lsGet('salonStylist')||'';if(names.indexOf(def)<0)def='';
+  $('slsSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  var free=e.tag==='撮影'&&e.fee==='無料';
+  $('slsH').textContent=free?'撮影 (美容室費 無料): 給料引きには載りません。美容師の人数には数えるので、担当を選んでください':(names.length?'':'美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)');
+  $('slStOv').hidden=false;
+}
+function slDoSt(a){
+  if(!slCur)return;
+  var sty=$('slsSty').value;
+  if(a==='done'&&!sty){window.alert('先に担当の美容師を選んでください');return;}
+  if(a==='cancel'&&!window.confirm(slCur.gen+' さんをキャンセルします。この枠は空きに戻ります。よろしいですか？'))return;
+  var e=slCur;if(a==='done'&&sty)lsSet('salonStylist',sty);
+  slAct(function(){return api('setSalonSlot',[attDay,e.place,e.time,e.store,e.gen,a,sty]);});
+}
+function slBind(){
+  $('slaStore').innerHTML='<option value="">店舗を選ぶ (全部から探す)</option>'+STORES.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.s)+'</option>';}).join('');
+  (function(){var o='';for(var m=15*60;m<=22*60+30;m+=30)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('slaTime').innerHTML=o;})();
+  $('slaStore').onchange=function(){slAdd.picked=null;slSug();};
+  $('slaName').oninput=function(){slAdd.picked=null;slSug();};
+  $('slaPlan').onchange=slPlan;$('slaFee').onchange=slPlan;
+  $('slaX').onclick=slClose;$('slsX').onclick=slClose;
+  $('slAddOv').onclick=function(e){if(e.target===$('slAddOv'))slClose();};$('slStOv').onclick=function(e){if(e.target===$('slStOv'))slClose();};
+  $('slaOk').onclick=function(){
+    var pk=slAdd.picked;if(!pk)return;
+    var plan=$('slaPlan').value,fee=plan==='撮影'?$('slaFee').value:'';
+    slAct(function(){return api('bookSalonManual',[attDay,slAdd.special?'':slAdd.slot.place,slAdd.special?$('slaTime').value:slAdd.slot.time,pk.store,pk.gen,'',plan,fee,slAdd.special]);});
+  };
+  $('slsDone').onclick=function(){slDoSt('done');};$('slsNo').onclick=function(){slDoSt('noshow');};$('slsCancel').onclick=function(){slDoSt('cancel');};$('slsReset').onclick=function(){slDoSt('reset');};
+}
+
+// ---- 送迎タブ (2026-11-25)。ドライバーごとに 1 枚・プルダウンで担当を替える → 更新で 出勤表の送迎割当 へ書く。LINE WORKS へは送らない (状態を見せるだけ) ----
+var sgSeq=0,sgBusy=false;
+function sgKey(x){return x.dir+'|'+x.store+'|'+x.name;}
+function sgEff(x){var k=sgKey(x);return sgPend[k]!==undefined?sgPend[k].driver:x.driver;}
+function sgLoad(force){
+  var p=$('sgPane');if(!p)return;
+  if(sgBoard&&!force){sgRender();return;}
+  var my=++sgSeq;
+  p.innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSougeiBoard',[attDay]).then(function(r){if(my!==sgSeq)return;sgBoard=r;sgPend={};sgRender();updUnsaved();setSaveLabel();if(force)setMsg('読み直しました',false);}).catch(function(e){if(my===sgSeq)p.innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
+}
+function sgPrio(x){return x.dohan?0:x.visit?1:2;}
+function sgSortX(a,b){
+  var oa=parseInt(a.order,10),ob=parseInt(b.order,10),ba=parseInt(a.ban,10),bb=parseInt(b.ban,10);
+  return sgPrio(a)-sgPrio(b)||(isNaN(oa)?9999:oa)-(isNaN(ob)?9999:ob)||(isNaN(ba)?9999:ba)-(isNaN(bb)?9999:bb)||(a.name<b.name?-1:a.name>b.name?1:0);
+}
+function sgRender(){
+  var p=$('sgPane'),b=sgBoard;if(!p||!b)return;
+  var inSt=function(x){return !attStore||x.store===attStore;};
+  var all=(sgDir==='go'?b.go:b.back).filter(inSt),canc=b.cancelled.filter(function(x){return x.dir===sgDir&&inSt(x);});
+  var nodrv=function(x){return !sgEff(x)&&!(x.dir==='back'&&x.bin==='店スタッフ');};
+  var undec=all.filter(nodrv).length,nG=b.go.filter(inSt).length,nB=b.back.filter(inSt).length;
+  var h='<div class="sg-top"><div class="sg-dir"><button type="button" class="sgd'+(sgDir==='go'?' on':'')+'" data-d="go">行き ('+nG+')</button><button type="button" class="sgd'+(sgDir==='back'?' on':'')+'" data-d="back">帰り ('+nB+')</button></div><span class="sg-sum">'+(undec?'<b class="un">ドライバー未定 '+undec+' 人</b>':'ドライバー未定なし')+'</span></div>';
+  if(b.notes&&b.notes.length)h+='<div class="note">'+b.notes.map(esc).join(' / ')+'</div>';
+  var drvBy={};b.drivers.forEach(function(d){drvBy[d.name]=d;});
+  var groups={},order=[];
+  var put=function(name,x){if(!groups[name]){groups[name]=[];order.push(name);}groups[name].push(x);};
+  all.forEach(function(x){var d=sgEff(x);if(d)put(d,x);});
+  var optHtml=function(cur){
+    var names=b.drivers.map(function(d){return d.name;});if(cur&&names.indexOf(cur)<0)names.unshift(cur);
+    return '<option value="">未定</option>'+names.map(function(n){var d=drvBy[n];return '<option value="'+esc(n)+'"'+(n===cur?' selected':'')+'>'+esc(n)+(d&&d.on?' ○':'')+'</option>';}).join('');
+  };
+  var rowHtml=function(x,ro){
+    var k=sgKey(x),chg=sgPend[k]!==undefined,tm=sgDir==='go'?(x.pick?x.pick+' 迎え':(x.time||'')):(x.time||''),pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
+    var safe=esc(k);
+    return '<div class="sgr'+(chg?' chg':'')+(x.cancel?' cx':'')+'"><span class="sgn"><span class="ab">'+esc(x.ban)+'</span><b class="ag'+(x.dohan?' dh':'')+'">'+esc(x.name)+'</b>'+(x.visit&&!x.dohan?'<span class="sgv">来店</span>':'')+'<span class="sgs">'+esc(x.shop)+'</span></span><span class="sgt">'+esc(tm||'—')+'</span><span class="sgb">'+esc(x.bin||'便 未定')+(x.order?' 順'+esc(x.order):'')+'</span><span class="sgp">'+esc(pl)+'</span>'+
+      (ro?'<span class="sgx">'+esc(x.cancel)+' (送迎なし)</span>':'<select data-k="'+safe+'" class="sgsel'+(nodrv(x)?' un':'')+'">'+optHtml(sgEff(x))+'</select>')+'</div>';
+  };
+  var head='<div class="sgr sgh"><span>店番 / 源氏名</span><span>時刻</span><span>便</span><span>乗る場所 (町名まで)</span><span>ドライバー</span></div>';
+  var card=function(title,cls,items,ro){
+    return '<div class="sec sgsec'+(cls?' '+cls:'')+'"><h3>'+title+'</h3><div class="sgwrap">'+head+items.slice().sort(sgSortX).map(function(x){return rowHtml(x,ro);}).join('')+'</div></div>';
+  };
+  var und=all.filter(nodrv),staff=all.filter(function(x){return !sgEff(x)&&x.dir==='back'&&x.bin==='店スタッフ';});
+  if(und.length)h+=card('ドライバー未定　'+und.length+' 人','sgund',und,false);
+  var cards=b.drivers.filter(function(d){return (groups[d.name]&&groups[d.name].length)||d.on;}).map(function(d){return d.name;});
+  order.forEach(function(n){if(cards.indexOf(n)<0)cards.push(n);});
+  cards.forEach(function(n){
+    var d=drvBy[n]||{name:n,no:'',model:'',cap:null,on:false},items=groups[n]||[],over=d.cap!=null&&items.length>d.cap;
+    var t=esc(n)+(d.no?'　車 NO.'+esc(String(d.no).replace(/^\s*(NO\.?|No\.?|no\.?|ＮＯ|№)\s*/,'').replace(/\s*番\s*$/,'')):'')+(d.model?' ('+esc(d.model)+')':'')+'　'+items.length+' 人'+(d.cap!=null?' / 定員 '+d.cap:'')+(d.on?'　出勤 ○':'　<span class="sgoff">出勤の入力なし</span>')+(over?'　<b class="un">定員超過</b>':'')+(drvBy[n]?'':'　<b class="un">名簿にない人</b>');
+    h+=items.length?card(t,'',items,false):'<div class="sec sgsec"><h3>'+t+'</h3><div class="li" style="color:#888">この向きの担当なし</div></div>';
+  });
+  if(staff.length)h+=card('店スタッフが送る　'+staff.length+' 人','',staff,false);
+  if(!all.length&&!canc.length)h+='<div class="msg">この日の'+(sgDir==='go'?'行き':'帰り')+'の送迎はありません</div>';
+  if(canc.length)h+=card('当欠・欠勤 (送迎なし)　'+canc.length+' 人','sgcx',canc,true);
+  var lw=b.lw||{};
+  h+='<div class="sec sglw"><h3>LINE WORKS</h3><div class="li"><span><b class="'+(lw.sent?'sgok':'sgno')+'">'+(lw.sent?'送った':'まだ')+'</b>'+(lw.at&&lw.known?' ('+esc(lw.at)+' の記録)':'')+'</span><small>'+esc(lw.text||'')+'</small></div></div>';
+  h+='<div class="note">担当を替えたら下の「更新」で保存します。出勤表の「送迎 当日」シートには 10 分以内に反映されます。LINE WORKS へは、ここからは送りません (送る操作はシート側のメニュー)。送迎ログは 16:30 の自動送信が書くので、手で確定した分は「まだ」と出ることがあります。</div>';
+  p.innerHTML=h;
+  [].forEach.call(p.querySelectorAll('.sgd'),function(x){x.onclick=function(){var d=x.getAttribute('data-d');if(d===sgDir)return;sgDir=d;lsSet('staffSgDir',d);sgRender();};});
+  [].forEach.call(p.querySelectorAll('.sgsel'),function(sel){sel.onchange=function(){
+    var k=sel.getAttribute('data-k'),x=null;
+    b.go.concat(b.back).forEach(function(y){if(sgKey(y)===k)x=y;});
+    if(!x)return;
+    if(sel.value===x.driver)delete sgPend[k];else sgPend[k]={dir:x.dir,store:x.store,name:x.name,driver:sel.value};
+    sgRender();updUnsaved();setSaveLabel();
+  };});
+}
+function sgSave(){
+  if(sgBusy)return;
+  var ch=Object.keys(sgPend).map(function(k){return sgPend[k];});
+  if(!ch.length){sgLoad(true);return;}
+  sgBusy=true;$('asave').disabled=true;setMsg('保存中...',false);
+  api('setSougeiAssigns',[attDay,ch]).then(function(r){
+    sgBoard=r;sgPend={};sgRender();updUnsaved();setSaveLabel();setMsg('保存しました ('+(r.saved||0)+' 件)  '+r.updated,false);
+    if(!attDirty)api('getAttendanceList',[attDay]).then(function(a){if(!attDirty)attRender(a);}).catch(function(){}); // 出勤簿の「送迎」の表示も新しくする
+  }).catch(function(e){setMsg('保存できませんでした: '+(e.message||e),true);}).then(function(){sgBusy=false;var b=$('asave');if(b)b.disabled=false;});
 }
 
 function vRoster(){
