@@ -1640,6 +1640,8 @@ function showApplicant(start) {
   ];
   // 面接中は 条件決定 → すぐ判定 (当日体入/後日体入…) で閉じる。体験入店チェック・クロージングは一日体験のあとに開く (2026-11-25 H)
   if (a.status === '面接中') pages.splice(3, 2);
+  // クロージング画面から開いた時 (一日体験のあと): 最後は判定ではなく「保存してクロージングへ戻る」(2026-11-25 H)
+  if (start && a.status !== '面接中') pages[pages.length - 1] = { t: '評価の保存', h: '<button class="pri big" id="tksave" style="width:100%">保存してクロージング画面へ戻る</button>' };
   pagerInit('pgwrap', pages, {
     extra: '<button id="isv">一時保存</button>',
     check: function (i) { return []; }, // 2026-11-25 身分証は必須ではなくなった (体験に進む時だけ検査)
@@ -1653,11 +1655,12 @@ function showApplicant(start) {
       $('idphotobtn').onclick = function () { $('idphotoin').click(); };
       $('idphotoin').onchange = function () { idPhotoPick(this.files && this.files[0]); this.value = ''; };
       $('card').onclick = function () { var e = $('edit1'); e.style.display = e.style.display === 'none' ? 'block' : 'none'; };
-      $('back').onclick = function () { if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+      $('back').onclick = function () { if (start && a.status !== '面接中') showClosing(a.id); else if (FROM === 'tainyu') showTainyu(TDATE); else showList(); };
+      if ($('tksave')) $('tksave').onclick = function () { $('tksave').disabled = true; saveAll(null, function () { msg('体験入店チェックを保存しました'); showClosing(a.id); }, function () { $('tksave').disabled = false; }); };
       var gk = document.querySelector('[data-k="genYomi"]');
       if (gk) gk.addEventListener('input', function (e) { if (!e.isComposing) { var v = kata(gk.value); if (v !== gk.value) gk.value = v; } });
       $('isv').onclick = function () { saveAll(null, function () { msg('一時保存しました ' + (CUR.a.updated || '')); }); };
-      $('jsave').onclick = function () {
+      if ($('jsave')) $('jsave').onclick = function () {
         var on = document.querySelector('#jchips .chip.on');
         if (!on) { msg('「当日体入」「後日体入」「保留」「お断り」のどれかを選んでください', true); return; }
         var v = on.getAttribute('data-v');
