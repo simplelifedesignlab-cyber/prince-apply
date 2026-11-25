@@ -423,6 +423,18 @@ function setErr(key, text) {
   if (e) e.textContent = text || '';
   if (w) { if (text) w.classList.add('bad'); else w.classList.remove('bad'); }
 }
+// 入力し直した欄の赤字はその場で消す (送信を押し直すまで残って「入れたのに進まない」と見えた・2026-11-25)
+function clearErrOnEdit(ev) {
+  var w = ev.target.closest && ev.target.closest('[id^="w_"]');
+  if (!w) return;
+  var k = w.id.slice(2);
+  if (/^wd\d$/.test(k)) k = 'wk'; // 曜日の赤字は「シフトについて」欄に出る
+  if (ev.type === 'click' && k !== 'wk') return; // クリックで消すのは「不定期/未定」だけ
+  setErr(k, '');
+  var st = document.getElementById('sendst');
+  if (st && /^入力が足りない/.test(st.textContent)) st.textContent = '';
+}
+['input', 'change', 'click'].forEach(function (t) { document.addEventListener(t, clearErrOnEdit, true); });
 function infoBind() {
   var fu = $('f_furigana');
   if (fu) {

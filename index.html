@@ -362,7 +362,7 @@ function infoSecs(a, req, kana) { // kana = 応募者画面の短いフォーム
   });
   S.push({ t: '経歴', h: h, h1: h1, h2: h.slice(h1.length) }); // h1 = 1 件目だけ (応募者画面) / h2 = 経歴 2 件目 (応募者画面では見えない箱に入れる)
   if (!req) { // 2026-11-17: 健康状態は応募者に聞かない。黒服の面接画面 (req=0) だけに出す (一日体験に進む前に必須・サーバ側 missingForPlan_ も検査)
-    h = '<div class="small">面接で黒服が聞いて入れてください (一日体験に進むのに必要)。あてはまるものを選び、「あり」の場合は内容も記入してください。</div>';
+    h = '<button type="button" class="pri" id="hallok" style="width:100%;margin-bottom:8px">すべて問題なし (4項目を「なし」にする)</button><div class="small">面接で黒服が聞いて入れてください (一日体験に進むのに必要)。あてはまるものを選び、「あり」の場合は内容も記入してください。</div>';
     HEALTH.forEach(function (x) {
       var p = healthSplit(a[x[0]]);
       h += fld(x[0], x[1], sel('f_' + x[0], ['なし', 'あり'], p[0], '選択'), 1) +
@@ -404,6 +404,18 @@ function setErr(key, text) {
   if (e) e.textContent = text || '';
   if (w) { if (text) w.classList.add('bad'); else w.classList.remove('bad'); }
 }
+// 入力し直した欄の赤字はその場で消す (送信を押し直すまで残って「入れたのに進まない」と見えた・2026-11-25)
+function clearErrOnEdit(ev) {
+  var w = ev.target.closest && ev.target.closest('[id^="w_"]');
+  if (!w) return;
+  var k = w.id.slice(2);
+  if (/^wd\d$/.test(k)) k = 'wk'; // 曜日の赤字は「シフトについて」欄に出る
+  if (ev.type === 'click' && k !== 'wk') return; // クリックで消すのは「不定期/未定」だけ
+  setErr(k, '');
+  var st = document.getElementById('sendst');
+  if (st && /^入力が足りない/.test(st.textContent)) st.textContent = '';
+}
+['input', 'change', 'click'].forEach(function (t) { document.addEventListener(t, clearErrOnEdit, true); });
 function infoBind() {
   var fu = $('f_furigana');
   if (fu) {
@@ -729,6 +741,7 @@ function pagerInit(box, pages, opt) {
     var er = opt.check ? opt.check(PG.i) : [];
     showErrors(er);
     if (er.length) return;
+    if (opt.soft && opt.soft(PG.i)) { ask('未入力の項目があります。このまま次へ進んでよろしいですか？', function () { pgGo(PG.i + 1); }); return; } // 2026-11-25 黒服画面だけ: 未入力でも確認のうえ進める
     pgGo(PG.i + 1);
   };
   pgGo(0);
