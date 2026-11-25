@@ -195,7 +195,7 @@ body:not(.ap) .prog::before,body:not(.ap) .prog::after{height:2px;border-radius:
 body:not(.ap) .prog::after{background:#1F2A44}
 body:not(.ap) .tabs button{background:transparent;color:#5A6275;border-radius:0;border-bottom:2px solid transparent}
 body:not(.ap) .tabs button.on{background:transparent;color:#1F2A44;font-weight:700;border-bottom:2px solid #1F2A44}
-body:not(.ap) .item{background:#fff!important}
+body:not(.ap) .item{background:#fff} /* 2026-11-25: 色は itemBg の inline で付ける (!important だと消える) */
 body:not(.ap) .badge{border-radius:3px;font-size:12px;font-weight:500;padding:1px 8px;background:#fff;border:1px solid #C3C8D1;color:#111}
 body:not(.ap) .item[data-st="面接中"] .badge{background:#fff;border:1px solid #1F2A44;color:#1F2A44}
 body:not(.ap) .item[data-st="一日体験予定"] .badge,body:not(.ap) .item[data-st="1日体験"] .badge,body:not(.ap) .item[data-st="再体験"] .badge{background:#E6E9F0;border-color:#E6E9F0;color:#1F2A44}
@@ -1411,7 +1411,7 @@ function moreOn(a) { return formTypeOf(a.store) !== 'full'; }
 function itemBg(a) {
   if (a.status === '面接中' && moreOn(a)) return a.moreDone ? '#fde0c2' : '#eeeeee';
   if (a.status === 'クロージング') return '#d9ead3';
-  return STC[a.status] || '#fff';
+  return '#fff'; // ほかの状態は今までどおり白 (CSS の !important で白だった見た目を変えない)
 }
 function moreBtnHtml(a, attr) { // 「面接入力」: 追加入力が済んだら押せない (QR を出さない)
   if (!moreOn(a)) return '<button type="button" ' + attr + '>来店</button>';
