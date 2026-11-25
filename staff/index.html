@@ -73,9 +73,9 @@ header h1{margin:0;font-size:19px;flex:1}
 @media (max-width:767px){ /* スマホ: PC と同じ表を横にスクロール。店番と名前は左に固定 */
  .sec.atsec{overflow-x:auto;-webkit-overflow-scrolling:touch}
  .ar,.arh{min-width:860px}.vr,.vrh{min-width:640px}
- .ar>:first-child,.arh>:first-child{position:sticky;left:0;z-index:2;background:#fff}
- .ar>:nth-child(2),.arh>:nth-child(2){position:sticky;left:34px;z-index:2;background:#fff}
- .arh{background:#fff}
+ .ar>:first-child,.arh>:first-child{position:sticky;left:0;z-index:2;background:inherit}
+ .ar>:nth-child(2),.arh>:nth-child(2){position:sticky;left:34px;z-index:2;background:inherit}
+ .ar,.arh{background:#fff}.ar.man{background:#FDEBD3}
 }
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .tsub{margin:-4px 0 12px 24px}.tsub a{display:inline-block;font-size:14px;font-weight:700;color:var(--pri);padding:6px 0}
