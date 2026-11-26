@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>送迎</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;font-size:16px;line-height:1.4;background:#fff;color:#1F2A44;overflow-wrap:anywhere}
+button,select,input{font-family:inherit}
+[hidden]{display:none!important}
+.page{max-width:820px;margin:0 auto;min-height:100vh;padding-bottom:40px}
+.top{display:flex;align-items:center;gap:10px;padding:14px 16px 4px}.top h1{margin:0;font-size:26px;font-weight:900}
+.tb{height:36px;padding:0 12px;border:1.5px solid #1F2A44;background:#fff;border-radius:18px;font-size:14px;font-weight:700;cursor:pointer;color:#1F2A44;display:inline-flex;align-items:center;text-decoration:none}
+.ib{width:44px;height:44px;border:1.5px solid #1F2A44;background:#fff;border-radius:22px;font-size:18px;font-weight:700;cursor:pointer;color:#1F2A44;flex-shrink:0}
+.tabs{display:flex;position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #E6E9F0;margin-top:6px}
+.tabs button{flex:1;height:48px;border:0;background:#fff;font-size:15px;font-weight:700;color:#6B7285;cursor:pointer;border-bottom:3px solid transparent}
+.tabs button.on{color:#1F2A44;border-bottom-color:#1F2A44}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px 20px}.nav b{font-size:20px;font-weight:900}.nav .r{display:flex;align-items:center;gap:4px}
+.sum{display:flex;gap:8px;padding:6px 16px 6px;flex-wrap:wrap;align-items:center}
+.sum .k{border:1px solid #D9DDE6;border-radius:10px;padding:5px 10px;display:flex;flex-direction:column;min-width:78px}
+.sum .k small{font-size:12px;color:#6B7285}.sum .k b{font-size:20px;font-weight:900}
+.sum .k.un b{color:#B91C1C}
+.lw{margin:4px 16px 8px;padding:8px 12px;border-radius:10px;background:#F3F5F9;font-size:13px;color:#4A5370}.lw b.ok{color:#15803D}.lw b.no{color:#B91C1C}
+.lh{margin:16px 16px 0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.lh b{font-size:18px;font-weight:900}.lh small{font-size:12px;color:#6B7285}
+.lr{display:flex;align-items:center;gap:10px;width:100%;min-height:60px;padding:6px 12px 6px 16px;border:0;border-bottom:1px solid #E6E9F0;background:#fff;text-align:left;cursor:pointer;color:#1F2A44;font-size:16px}
+.lr.cx{opacity:.55;cursor:default}
+.lr .tm{width:58px;flex-shrink:0;font-size:15px;font-weight:700;color:#4A5370}
+.lr .fl{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+.lr .nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.lr .nm b{font-size:17px;font-weight:900}
+.lr .sb{font-size:12px;color:#6B7285;white-space:normal}
+.lr .dr{flex-shrink:0;width:112px;text-align:right;font-size:14px;font-weight:700}.lr .dr small{display:block;font-size:12px;font-weight:400;color:#6B7285}
+.lr .dr.un{color:#B91C1C}
+.lr .go{flex-shrink:0;color:#9AA1B5}
+.tg{font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px;flex-shrink:0}
+.tg.dou{background:#DCFCE7;color:#15803D}.tg.vis{background:#E6E9F0;color:#2E4372}.tg.sh{background:#E6E9F0;color:#4A5370}.tg.cx{background:#FEE2E2;color:#B91C1C}
+.lnone{padding:14px 16px;font-size:14px;color:#8A92A6;border-bottom:1px solid #E6E9F0}
+.msg{padding:26px 16px;text-align:center;font-size:16px;color:#666}.err{color:#B91C1C}
+.upd{font-size:13px;color:#8A92A6;text-align:center;margin:14px 0 24px}
+.note{font-size:13px;color:#B91C1C;margin:6px 20px}
+.dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid #E6E9F0}
+.dow div{text-align:center;font-size:12px;font-weight:700;padding:5px 0;color:#6B7285}
+.dow div:nth-child(6){color:#1D5BD8}.dow div:last-child{color:#D92D20}
+.sgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid #E6E9F0}
+.sd{display:flex;flex-direction:column;gap:3px;min-height:120px;padding:4px 3px;border:0;border-right:1px solid #EEF0F4;border-bottom:1px solid #EEF0F4;background:#fff;cursor:pointer;text-align:left;color:#1F2A44;min-width:0;overflow:hidden}
+.sd:disabled{cursor:default;opacity:.45}
+.sd .n{font-size:13px;font-weight:700}.sd.today{background:#F3F5F9}.sd.today .n{color:#fff;background:#1F2A44;border-radius:11px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+.sd .cs{display:flex;flex-direction:column;gap:3px;min-width:0}
+.chip{display:block;font-size:12px;font-weight:700;line-height:17px;padding:1px 4px;border-radius:4px;background:#1F2A44;color:#fff;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.chip small{font-weight:400;opacity:.85;font-size:10px}
+.chip.l{background:#E6E9F0;color:#1F2A44}.chip.r{background:#FEE2E2;color:#B91C1C}
+.shnone{font-size:12px;color:#B0B6C6}
+.sdt{font-size:13px;color:#6B7285;padding:0 20px 8px}
+.dh{display:flex;align-items:center;padding:10px 8px 0 4px}
+.back{height:44px;display:flex;align-items:center;gap:2px;padding:0 10px;font-size:15px;font-weight:700;color:#1F2A44;border:0;background:none;cursor:pointer}
+.dt{padding:0 20px 10px}.dt b{font-size:26px;font-weight:900}.dt .s{display:block;font-size:13px;color:#6B7285}
+.kv{margin:0 16px;border-top:1px solid #E6E9F0}
+.kv div{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid #E6E9F0}.kv span{width:96px;flex-shrink:0;font-size:13px;color:#6B7285}.kv b{font-size:16px;font-weight:700}
+.fm{margin:16px 16px 0;display:flex;flex-direction:column;gap:10px}
+.fm label{font-size:13px;font-weight:700;color:#4A5370}
+.fm select{height:52px;border-radius:12px;border:1.5px solid #1F2A44;background:#fff;padding:0 12px;font-size:17px;width:100%;color:#1F2A44}
+.big{height:52px;border:0;border-radius:14px;font-size:16px;font-weight:900;cursor:pointer;background:#1F2A44;color:#fff;width:100%}
+.big:disabled{background:#E3E6EE;color:#8A92A6;cursor:default}
+.hint{font-size:12px;color:#6B7285}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1F2A44;color:#fff;border-radius:12px;padding:10px 16px;font-size:14px;max-width:90%;z-index:30}
+.ov{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,.35);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;z-index:20}
+.sheet{width:100%;max-width:480px;max-height:92vh;overflow-y:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px 16px 24px;display:flex;flex-direction:column;gap:10px}
+.sh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sh .t1{font-size:18px;font-weight:900;display:block}.sh .t2{font-size:13px;color:#6B7285;display:block}
+.sh .x{background:#F2F2F2;border:0}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid #E6E9F0}
+.srow>b{font-size:16px;font-weight:700}
+.sseg{display:flex;gap:6px}
+.sseg button{min-height:44px;min-width:72px;padding:0 14px;border-radius:22px;font-size:15px;font-weight:700;cursor:pointer;border:1.5px solid #C9CEDB;background:#fff;color:#1F2A44}
+.sseg button.on{border:0;background:#1F2A44;color:#fff}
+@media (max-width:640px){
+ #sDow{display:none}
+ .sgrid{display:block}
+ .sd{flex-direction:row;align-items:center;gap:10px;min-height:56px;width:100%;border-right:0;padding:6px 16px}
+ .sd .n,.sd.today .n{flex-shrink:0;width:72px;height:auto;display:block;background:none;color:#1F2A44;border-radius:0;font-weight:900}
+ .sd.today{background:#F3F5F9}
+ .lr .dr{width:92px}
+}
+</style></head><body>
+<div class="page">
+<div id="hd">
+  <div class="top"><a class="tb" id="toPortal" href="../staff/" hidden>← 黒服ポータル</a><h1>送迎</h1></div>
+  <div class="tabs" id="tabs"><button data-t="list">当日</button><button data-t="week">週間</button><button data-t="shift">週間シフト</button></div>
+</div>
+<!-- 当日 (一覧) -->
+<div id="vList" hidden>
+  <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button class="ib" id="lPrev" aria-label="前の日">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日">›</button></div></div>
+  <div class="sum" id="lSum"></div>
+  <div id="lNote"></div>
+  <div id="lBody"><div class="msg">読み込み中...</div></div>
+  <div class="upd" id="lUpd"></div>
+</div>
+<!-- 週間 (送迎の予定) -->
+<div id="vWeek" hidden>
+  <div class="nav"><b id="wTitle">&nbsp;</b><div class="r"><button class="ib" id="wPrev" aria-label="前の週">‹</button><button class="tb" id="wToday">今週</button><button class="ib" id="wNext" aria-label="次の週">›</button></div></div>
+  <div class="sdt">日を押すと、その日の一覧が開きます</div>
+  <div class="dow" id="wDow"><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div><div>日</div></div>
+  <div id="wBody"><div class="msg">読み込み中...</div></div>
+  <div class="upd" id="wUpd"></div>
+</div>
+<!-- 週間シフト (ドライバー出勤) -->
+<div id="vShift" hidden>
+  <div class="nav"><b id="sTitle">&nbsp;</b><div class="r"><button class="ib" id="sPrev" aria-label="前の週">‹</button><button class="tb" id="sToday">今週</button><button class="ib" id="sNext" aria-label="次の週">›</button></div></div>
+  <div class="sdt">日付を押して、その日に出られるドライバーを選びます (朝 = 行き / 帰り)。過ぎた日は変えられません</div>
+  <div class="dow" id="sDow"><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div><div>日</div></div>
+  <div id="sBody"><div class="msg">読み込み中...</div></div>
+  <div class="upd" id="sUpd"></div>
+</div>
+<!-- 1 人の送迎 (処理の画面) -->
+<div id="vRow" hidden>
+  <div class="dh"><button class="back" id="rBack"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>一覧</button></div>
+  <div class="dt"><b id="rName"></b><span class="s" id="rSub"></span></div>
+  <div class="kv" id="rKv"></div>
+  <div class="fm">
+    <label for="rDrv">ドライバー (付け替え)</label>
+    <select id="rDrv"></select>
+    <div class="hint" id="rHint"></div>
+    <button class="big" id="rSave" disabled>変更なし</button>
+  </div>
+  <div class="lw" id="rLw" style="margin-top:16px"></div>
+</div>
+</div>
+<!-- 出られるドライバーを選ぶ -->
+<div class="ov" id="ovSh" hidden><div class="sheet" role="dialog" aria-modal="true">
+  <div class="sh"><span><span class="t1" id="shT"></span><span class="t2">出られるものを押します (もう一度で取り消し)</span></span><button class="ib x" id="shClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+  <div id="shBody"></div>
+  <button class="big" id="shOk">決定</button>
+</div></div>
+<div class="toast" id="toast" hidden></div>
+<script>
+var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
+var $ = function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+// 鍵なし (2026-11-26 H)。古い URL の ?k= は読み捨てる。?as=staff = 黒服ポータルから来た印 (戻るリンクを出すだけ)
+try{
+  var u0=new URL(location.href),ch=false;
+  if(u0.searchParams.get('k')){u0.searchParams.delete('k');ch=true;}
+  if(u0.searchParams.get('as')==='staff'){try{sessionStorage.setItem('sgAs','staff');}catch(e){}u0.searchParams.delete('as');ch=true;}
+  if(ch)history.replaceState(null,'',u0.pathname+u0.search+u0.hash);
+  if(sessionStorage.getItem('sgAs')==='staff')$('toPortal').hidden=false;
+}catch(e){}
+function api(fn,args){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:''})}).then(function(r){return r.json();}).then(function(j){
+    if(!j||!j.ok)throw new Error(j&&j.error||'失敗しました');return j.result;});
+}
+function pad(n){return ('0'+n).slice(-2);}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parse(s){var p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2],12);}
+function shift(s,n){var d=parse(s);d.setDate(d.getDate()+n);return ymd(d);}
+var DOWS=['日','月','火','水','木','金','土'];
+function bizLocal(){return ymd(new Date(Date.now()-5*3600000));}
+function monOfS(s){var d=parse(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d);}
+function mdw(s){var p=parse(s);return (p.getMonth()+1)+'/'+p.getDate()+' ('+DOWS[p.getDay()]+')';}
+function md(s){return mdw(s).replace(/ \(.\)/,'');}
+function sErr(id,e){$(id).innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';}
+var toastT=0;
+function toast(m){if(!m)return;var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},3500);}
+var today=bizLocal();
+function carNo(no){return String(no||'').replace(/^\s*(NO\.?|No\.?|no\.?|ＮＯ|№)\s*/,'').replace(/\s*番\s*$/,'');}
+
+// ---------- 当日 (一覧) ----------
+// 2026-11-26 H: 当日の送迎が出勤簿のように上から一覧で出る。行き / 帰り・乗る子・時刻・乗る場所・ドライバー・車 NO。行を押すと処理の画面 (ドライバーの付け替え・LINE WORKS の状態)。並びは 時刻 → 同伴 → 来店 → 店番
+var listDay='', board=null, listSeq=0, rows={};
+function rkey(x){return x.dir+'|'+x.store+'|'+x.name;}
+function tmOf(x){return x.dir==='go'?(x.pick||x.time||''):(x.time||'');}
+function banN(x){var n=parseInt(x.ban,10);return isNaN(n)?9999:n;}
+function sortX(a,b){var ta=tmOf(a),tb=tmOf(b);if(ta!==tb)return !ta?1:!tb?-1:ta<tb?-1:1;var ra=a.dohan?0:a.visit?1:2,rb=b.dohan?0:b.visit?1:2;return ra-rb||banN(a)-banN(b)||(a.name<b.name?-1:a.name>b.name?1:0);}
+function loadList(){
+  var my=++listSeq;if(!listDay)listDay=today;
+  $('lTitle').textContent=mdw(listDay)+(listDay===today?' 今日':'');
+  $('lBody').innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSougeiBoard',[listDay]).then(function(r){if(my!==listSeq)return;setBoard(r);renderList();}).catch(function(e){if(my===listSeq)sErr('lBody',e);});
+}
+function setBoard(r){board=r;rows={};r.go.concat(r.back,r.cancelled).forEach(function(x){rows[rkey(x)]=x;});}
+function drvOf(name){var o=null;(board.drivers||[]).forEach(function(d){if(d.name===name)o=d;});return o;}
+function lineHtml(x,cx){
+  var tags='';
+  if(x.dohan)tags+='<span class="tg dou">同伴</span>';else if(x.visit)tags+='<span class="tg vis">来店</span>';
+  if(x.cancel)tags+='<span class="tg cx">'+esc(x.cancel)+'</span>';
+  var tm=x.dir==='go'?(x.pick?x.pick+' 迎え':(x.time||'—')):(x.time||'—');
+  var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
+  var d=drvOf(x.driver);
+  var dr=cx?'<span class="dr">送迎なし</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定</span>';
+  return '<button type="button" class="lr'+(cx?' cx':'')+'" data-k="'+esc(rkey(x))+'"'+(cx?' disabled':'')+'><span class="tm">'+esc(tm)+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span></span>'+dr+(cx?'':'<svg class="go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>')+'</button>';
+}
+function renderList(){
+  var r=board,h='';
+  $('lUpd').textContent='最終更新 '+r.updated;
+  $('lNote').innerHTML=r.notes&&r.notes.length?'<div class="note">'+r.notes.map(esc).join(' / ')+'</div>':'';
+  $('lSum').innerHTML='<div class="k"><small>行き</small><b>'+r.nGo+'</b></div><div class="k"><small>帰り</small><b>'+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>ドライバー未定</small><b>'+r.undecided+'</b></div><div class="k"><small>出勤ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
+  [['go','行き',r.go],['back','帰り',r.back]].forEach(function(s){
+    h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small></div>';
+    if(!s[2].length)h+='<div class="lnone">'+s[1]+'の送迎はありません</div>';
+    s[2].slice().sort(sortX).forEach(function(x){h+=lineHtml(x,false);});
+  });
+  if(r.cancelled.length){h+='<div class="lh"><b>当欠・欠勤</b><small>送迎なし '+r.cancelled.length+' 人</small></div>';r.cancelled.slice().sort(sortX).forEach(function(x){h+=lineHtml(x,true);});}
+  $('lBody').innerHTML=h;
+  [].forEach.call($('lBody').querySelectorAll('.lr:not(.cx)'),function(b){b.onclick=function(){openRow(b.getAttribute('data-k'));};});
+}
+$('lPrev').onclick=function(){listDay=shift(listDay||today,-1);loadList();};
+$('lNext').onclick=function(){listDay=shift(listDay||today,1);loadList();};
+$('lToday').onclick=function(){listDay=today;loadList();};
+
+// ---------- 処理の画面 ----------
+var curKey='', pushed=false, saving=false;
+function openRow(k){curKey=k;pushed=true;history.pushState(null,'','#r='+encodeURIComponent(k));route();}
+function renderRow(){
+  var x=rows[curKey];
+  if(!x){$('rName').textContent='見つかりません';$('rSub').textContent='一覧を読み直してください';$('rKv').innerHTML='';return;}
+  $('rName').textContent=x.name;
+  $('rSub').textContent=mdw(listDay)+' · '+(x.dir==='go'?'行き':'帰り')+' · '+x.shop+(x.ban?' '+x.ban+'番':'');
+  var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'—'),kv=[];
+  kv.push(['向き',x.dir==='go'?'行き (お迎え)':'帰り (お送り)']);
+  kv.push([x.dir==='go'?'乗る場所':'送り先',pl]);
+  kv.push([x.dir==='go'?'到着希望':'退勤',x.time||'—']);
+  if(x.pick)kv.push(['お迎え時刻',x.pick]);
+  kv.push(['便',(x.bin||'未定')+(x.order?' 順'+x.order:'')]);
+  if(x.dohan)kv.push(['同伴','あり']);else if(x.visit)kv.push(['来店','あり']);
+  if(x.by)kv.push(['最後に直した人',x.by]);
+  $('rKv').innerHTML=kv.map(function(p){return '<div><span>'+esc(p[0])+'</span><b>'+esc(p[1])+'</b></div>';}).join('');
+  var names=board.drivers.map(function(d){return d.name;});if(x.driver&&names.indexOf(x.driver)<0)names.unshift(x.driver);
+  $('rDrv').innerHTML='<option value="">未定</option>'+names.map(function(n){var d=drvOf(n);return '<option value="'+esc(n)+'"'+(n===x.driver?' selected':'')+'>'+esc(n)+(d&&d.on?' ○':'')+(d&&d.no?' (車 NO.'+esc(carNo(d.no))+')':'')+'</option>';}).join('');
+  $('rHint').textContent='○ = この日出勤の入力があるドライバー。保存すると出勤表の「送迎 当日」には 10 分以内に反映されます。';
+  rChanged();
+  var lw=board.lw||{};
+  $('rLw').innerHTML='<b>LINE WORKS</b>　<b class="'+(lw.sent?'ok':'no')+'">'+(lw.sent?'送った':'まだ')+'</b>'+(lw.at&&lw.known?' ('+esc(lw.at)+' の記録)':'')+'<br><small>'+esc(lw.text||'')+'</small><br><small>ここからは LINE WORKS へ送りません。送迎ログは 16:30 の自動送信が書くので、手で確定した分は「まだ」と出ることがあります。</small>';
+}
+function rChanged(){
+  var x=rows[curKey],ch=x&&$('rDrv').value!==x.driver;
+  $('rSave').disabled=!ch||saving;$('rSave').textContent=saving?'保存中...':(ch?'保存する':'変更なし');
+}
+$('rDrv').onchange=rChanged;
+$('rSave').onclick=function(){
+  var x=rows[curKey];if(!x||saving)return;
+  saving=true;rChanged();
+  api('setSougeiAssigns',[listDay,[{dir:x.dir,store:x.store,name:x.name,driver:$('rDrv').value}]]).then(function(r){
+    saving=false;setBoard(r);renderRow();toast('保存しました');
+  }).catch(function(e){saving=false;rChanged();window.alert(e.message||e);});
+};
+$('rBack').onclick=function(){if(pushed){pushed=false;history.back();}else{history.replaceState(null,'',location.pathname+location.search+'#t=list');route();}};
+
+// ---------- 週間 (送迎の予定) ----------
+var weekFrom='', weekData=null, weekSeq=0;
+function loadWeek(){
+  var my=++weekSeq;if(!weekFrom)weekFrom=monOfS(today);
+  $('wTitle').textContent=md(weekFrom)+' 〜 '+md(shift(weekFrom,6));
+  $('wBody').innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSougeiWeek',[weekFrom]).then(function(r){if(my!==weekSeq)return;weekData=r;renderWeek();}).catch(function(e){if(my===weekSeq)sErr('wBody',e);});
+}
+function renderWeek(){
+  var r=weekData,h='<div class="sgrid">';
+  for(var i=0;i<7;i++){
+    var d=shift(r.from,i),p=parse(d),x=r.days[d],ds=x.drivers.slice().sort(function(a,b){return a.name<b.name?-1:1;});
+    h+='<button type="button" class="sd'+(d===r.today?' today':'')+'" data-d="'+d+'"><span class="n">'+p.getDate()+'<span style="font-weight:400;font-size:12px;color:#6B7285"> ('+DOWS[p.getDay()]+')</span></span><span class="cs">'+
+      '<span class="chip l">行き '+x.nGo+' / 帰り '+x.nBack+'</span>'+(x.undecided?'<span class="chip r">未定 '+x.undecided+'</span>':(x.nGo+x.nBack?'<span class="shnone">ドライバー決定済み</span>':'<span class="shnone">送迎なし</span>'))+
+      ds.map(function(y){return '<span class="chip">'+esc(y.name)+' <small>'+(y.go&&y.back?'朝・帰':y.go?'朝':'帰')+'</small></span>';}).join('')+(ds.length?'':'<span class="shnone">ドライバー出勤なし</span>')+'</span></button>';
+  }
+  $('wBody').innerHTML=h+'</div>'+(r.notes&&r.notes.length?'<div class="note">'+r.notes.map(esc).join(' / ')+'</div>':'');
+  $('wUpd').textContent='最終更新 '+r.updated;
+  [].forEach.call($('wBody').querySelectorAll('.sd'),function(el){el.onclick=function(){listDay=el.getAttribute('data-d');setTab('list');};});
+}
+$('wPrev').onclick=function(){weekFrom=shift(weekFrom,-7);loadWeek();};
+$('wNext').onclick=function(){weekFrom=shift(weekFrom,7);loadWeek();};
+$('wToday').onclick=function(){weekFrom=monOfS(today);loadWeek();};
+
+// ---------- 週間シフト (ドライバー出勤) ----------
+// 日付を押す -> 出られるドライバーを選ぶ (他の人の分も触れる)。朝 = 行き / 帰り の区別はそのまま
+var shFrom='', shData=null, shSeq=0, shDay='', shDraft={}, shSaving=false;
+function loadShift(){
+  var my=++shSeq;if(!shFrom)shFrom=monOfS(today);
+  $('sTitle').textContent=md(shFrom)+' 〜 '+md(shift(shFrom,6));
+  $('sBody').innerHTML='<div class="msg">読み込み中...</div>';
+  api('getSougeiShiftBoard',[shFrom]).then(function(r){if(my!==shSeq)return;shData=r;today=r.today||today;renderShift();}).catch(function(e){if(my===shSeq)sErr('sBody',e);});
+}
+function renderShift(){
+  var r=shData,h='<div class="sgrid">';
+  for(var i=0;i<7;i++){
+    var d=shift(r.from,i),p=parse(d),past=d<r.today,cs=(r.days[d]||[]).slice().sort(function(a,b){return a.name<b.name?-1:1;});
+    h+='<button type="button" class="sd'+(d===r.today?' today':'')+'" data-d="'+d+'"'+(past?' disabled':'')+'><span class="n">'+p.getDate()+'<span style="font-weight:400;font-size:12px;color:#6B7285"> ('+DOWS[p.getDay()]+')</span></span><span class="cs">'+
+      (cs.length?cs.map(function(x){return '<span class="chip">'+esc(x.name)+' <small>'+(x.go&&x.back?'朝・帰':x.go?'朝':'帰')+'</small></span>';}).join(''):'<span class="shnone">入力なし</span>')+'</span></button>';
+  }
+  $('sBody').innerHTML=h+'</div>';
+  $('sUpd').textContent='最終更新 '+r.updated;
+  [].forEach.call($('sBody').querySelectorAll('.sd'),function(el){el.onclick=function(){openSh(el.getAttribute('data-d'));};});
+}
+function openSh(d){
+  shDay=d;shDraft={};
+  (shData.days[d]||[]).forEach(function(x){shDraft[x.name]={go:!!x.go,back:!!x.back};});
+  $('shT').textContent=mdw(d)+' の出勤';
+  drawSh();$('ovSh').hidden=false;
+}
+function drawSh(){
+  var r=shData,h='';
+  if(!r.drivers.length)h='<div class="msg">ドライバーが未登録です</div>';
+  r.drivers.forEach(function(n,i){
+    var c=shDraft[n]||{go:false,back:false};
+    h+='<div class="srow"><b>'+esc(n)+'</b><div class="sseg"><button type="button" data-n="'+i+'" data-w="go"'+(c.go?' class="on"':'')+'>朝</button><button type="button" data-n="'+i+'" data-w="back"'+(c.back?' class="on"':'')+'>帰り</button></div></div>';
+  });
+  $('shBody').innerHTML=h;
+  [].forEach.call($('shBody').querySelectorAll('button'),function(b){b.onclick=function(){
+    var n=r.drivers[+b.getAttribute('data-n')],w=b.getAttribute('data-w'),c=shDraft[n]||{go:false,back:false};
+    c[w]=!c[w];if(c.go||c.back)shDraft[n]=c;else delete shDraft[n];
+    drawSh();
+  };});
+  $('shOk').disabled=shSaving||!r.drivers.length;$('shOk').textContent=shSaving?'反映中...':'決定';
+}
+$('shOk').onclick=function(){
+  if(shSaving)return;shSaving=true;drawSh();
+  var as=Object.keys(shDraft).map(function(n){return {name:n,go:shDraft[n].go,back:shDraft[n].back};});
+  api('setSougeiShiftDay',[shDay,as]).then(function(r){shData=r;shSaving=false;$('ovSh').hidden=true;renderShift();toast('反映しました');}).catch(function(e){shSaving=false;drawSh();window.alert(e.message||e);});
+};
+$('shClose').onclick=function(){$('ovSh').hidden=true;};
+$('ovSh').onclick=function(e){if(e.target===$('ovSh'))$('ovSh').hidden=true;};
+$('sPrev').onclick=function(){shFrom=shift(shFrom,-7);loadShift();};
+$('sNext').onclick=function(){shFrom=shift(shFrom,7);loadShift();};
+$('sToday').onclick=function(){shFrom=monOfS(today);loadShift();};
+
+// ---------- 画面の切り替え ----------
+// #r=行 = 処理の画面 / #t=list|week|shift = タブ (何も無ければ 当日)
+function setTab(t){history.replaceState(null,'',location.pathname+location.search+'#t='+t);route();}
+[].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){setTab(b.getAttribute('data-t'));};});
+function route(){
+  var m=/^#r=(.+)$/.exec(location.hash),t=/^#t=(list|week|shift)$/.exec(location.hash);
+  $('ovSh').hidden=true;
+  ['vList','vWeek','vShift','vRow'].forEach(function(id){$(id).hidden=true;});
+  if(m){
+    $('hd').hidden=true;$('vRow').hidden=false;window.scrollTo(0,0);
+    try{curKey=decodeURIComponent(m[1]);}catch(e){curKey=m[1];}
+    if(board&&rows[curKey]){renderRow();return;}
+    $('rName').textContent='読み込み中...';$('rSub').textContent='';$('rKv').innerHTML='';
+    if(!listDay)listDay=today;
+    api('getSougeiBoard',[listDay]).then(function(r){setBoard(r);if(!$('vRow').hidden)renderRow();}).catch(function(e){$('rName').textContent='読み込めませんでした';$('rSub').textContent=String(e.message||e);});
+    return;
+  }
+  var tab=t?t[1]:'list';
+  $('hd').hidden=false;
+  [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.getAttribute('data-t')===tab?'on':'';});
+  $(tab==='list'?'vList':tab==='week'?'vWeek':'vShift').hidden=false;
+  if(tab==='list')loadList();else if(tab==='week')loadWeek();else loadShift();
+}
+window.addEventListener('popstate',route);
+route();
+</script>
+</body></html>

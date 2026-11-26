@@ -255,6 +255,7 @@ var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbB
 var INTERVIEW = 'https://simplelifedesignlab-cyber.github.io/prince-apply/interview/?mode=staff';
 var BOOK = 'https://docs.google.com/spreadsheets/d/1nOuWwEVRQcZfO73t8YzMKEeAEmMHjUW4WZ8EoCpPYxg/edit'; // 出勤表ブック (シフト表 = 日別タブ / 送迎の割り振り = 送迎 当日タブ)
 var SALON = 'https://simplelifedesignlab-cyber.github.io/prince-apply/salon/?as=staff'; // 美容室の画面 (美容師と同じ)。?as=staff = 黒服の鍵 (ivKey) で開く・鍵は URL に付けない
+var SOUGEI = 'https://simplelifedesignlab-cyber.github.io/prince-apply/sougei-board/?as=staff'; // 送迎の 3 タブの画面 (ドライバーと同じ・鍵なし)
 var STORES = [{id:'RegentClub千歳',s:'RC千歳',l:'regent'},{id:'328',s:'328',l:'328'},{id:'WAVE千歳',s:'WAVE千歳',l:'wave'},{id:'花もみじ千歳',s:'花もみじ千歳',l:'hanamomiji'}];
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -329,8 +330,8 @@ function top_(){ // 2026-11-25 H: 上の 3 つは今までどおりの入口・�
     '<button class="big" data-v="today">出勤一覧<small>4 店の出勤簿 (入力・追加出勤・同伴/来店)</small></button>'+
     '<a class="big" href="'+SALON+'">ヘアメイク管理<small>当日の予約・週間予約・週間シフト</small></a>'+
     sub('<a href="#hairpay">ヘアメイク 人数と金額</a>　<a href="'+SALON+'" target="_blank" rel="noopener">美容室を別タブで開く</a>')+
-    '<button class="big" data-v="trans">送迎管理<small>行き・帰りの一覧</small></button>'+
-    sub('<a href="'+BOOK+'#gid=1139586545" target="_blank" rel="noopener">送迎の割り振り (送迎 当日)</a>')+
+    '<a class="big" href="'+SOUGEI+'">送迎<small>当日の一覧・週間・ドライバー週間シフト</small></a>'+
+    sub('<a href="#trans">送迎管理 (行き・帰りの一覧)</a>　<a href="'+BOOK+'#gid=1139586545" target="_blank" rel="noopener">送迎の割り振り (送迎 当日)</a>')+
     cat('在籍Cast','売上管理・ランキング・在籍一覧・週間シフト',
       '<button class="big pk" data-v="sales">売上管理<small>日別売上と明細</small></button>'+
       '<button class="big pk" data-v="rank">ランキング<small>売上・本数・同伴</small></button>'+
