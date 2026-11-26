@@ -297,7 +297,7 @@ var rankTab = 'sales';
 var VIEWS = {
   today:{t:'出勤一覧',run:vToday,all:true},
   roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
-  hair:{t:'ヘアメイク管理',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}, post:{t:'投稿生成',run:vPost}
+  hairpay:{t:'ヘアメイク 人数と金額',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}, post:{t:'投稿生成',run:vPost}
 };
 var selCast = lsGet('staffCast') || '';
 function openCast(g){selCast=g;lsSet('staffCast',g);go('cast');}
@@ -327,8 +327,8 @@ function top_(){ // 2026-11-25 H: 上の 3 つは今までどおりの入口・�
   var cat=function(t,d,h){return '<details class="tcat"><summary>'+t+'<small>'+d+'</small></summary><div class="tcb">'+h+'</div></details>';};
   $('app').innerHTML=
     '<button class="big" data-v="today">出勤一覧<small>4 店の出勤簿 (入力・追加出勤・同伴/来店)</small></button>'+
-    '<button class="big" data-v="hair">ヘアメイク管理<small>人数と金額</small></button>'+
-    sub('<a href="'+SALON+'" target="_blank" rel="noopener">美容室の予約</a>')+
+    '<a class="big" href="'+SALON+'">ヘアメイク管理<small>当日の予約・週間予約・週間シフト</small></a>'+
+    sub('<a href="#hairpay">ヘアメイク 人数と金額</a>　<a href="'+SALON+'" target="_blank" rel="noopener">美容室を別タブで開く</a>')+
     '<button class="big" data-v="trans">送迎管理<small>行き・帰りの一覧</small></button>'+
     sub('<a href="'+BOOK+'#gid=1139586545" target="_blank" rel="noopener">送迎の割り振り (送迎 当日)</a>')+
     cat('在籍Cast','売上管理・ランキング・在籍一覧・週間シフト',
