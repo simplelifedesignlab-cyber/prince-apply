@@ -78,7 +78,7 @@ button:disabled{opacity:.5}
     invalid: 'このURLは無効です。メールのリンクをもう一度お確かめください。',
     closed: 'この面接のご予約は、すでに取り消されているか、変更できない状態です。',
     past: '面接の開始時刻を過ぎているため、こちらからはキャンセルできません。',
-    cancelled: 'この面接は、すでにキャンセルされています。'
+    cancelled: 'この面接のご予約は、すでにキャンセル済みです。'
   };
   function show(id) { ['loading', 'info', 'done', 'ng'].forEach(function (k) { $(k).hidden = k !== id; }); window.scrollTo(0, 0); }
   function post(fn) {
@@ -99,7 +99,6 @@ button:disabled{opacity:.5}
   }
   if (!/^[0-9a-f]{32}$/.test(TOKEN)) { ng('invalid'); return; }
   post('getCancelInfo').then(function (r) {
-    if (r.state === 'cancelled') { showDone(); return; }
     if (r.state !== 'ok') { ng(r.state); return; }
     $('hello').textContent = (r.callName ? r.callName + ' さん、' : '') + 'ご予約ありがとうございます。';
     $('iv').textContent = r.iv; $('store').textContent = r.store;
