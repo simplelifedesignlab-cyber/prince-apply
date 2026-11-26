@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>面接のご予約内容 | Prince 千歳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#E8578A;--pd:#C2336A;--bg:#FFF0F5;--line:#F6D3E0;--tx:#3a2a31}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Noto Sans JP',sans-serif;line-height:1.8;font-size:16px}
+header{background:var(--p);color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:19px;font-weight:700}
+main{max-width:520px;margin:0 auto;padding:16px 16px 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0}
+.card h2{margin:0 0 6px;font-size:15px;color:var(--pd);padding-left:10px;border-left:4px solid var(--p)}
+.big{font-size:20px;font-weight:700}
+dl{margin:0;font-size:15px}
+dt{float:left;clear:left;width:5.5em;color:#7a5a67}
+dd{margin:0 0 4px 5.5em}
+dd a{color:var(--pd)}
+button{font-family:inherit;font-size:17px;font-weight:700;min-height:52px;width:100%;border-radius:10px;border:2px solid var(--p);cursor:pointer;margin:6px 0}
+button.pri{background:var(--p);color:#fff}
+button.sub{background:#fff;color:var(--pd)}
+button:disabled{opacity:.5}
+.msg{text-align:center;font-size:18px;font-weight:700;color:var(--pd);margin:24px 0 8px}
+.note{font-size:14px;color:#7a5a67}
+.spin{display:inline-block;width:1em;height:1em;margin-right:.5em;vertical-align:-.15em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spn .8s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>面接のご予約内容</h1></header>
+<main>
+  <div id="loading" class="card" style="text-align:center"><span class="spin"></span>読み込み中...</div>
+
+  <div id="info" hidden>
+    <p id="hello"></p>
+    <div class="card"><h2>面接のご予約</h2><div class="big" id="iv"></div><div id="store"></div></div>
+    <div class="card"><h2>場所</h2>
+      <dl><dt>住所</dt><dd id="addr"></dd><dt>電話番号</dt><dd id="tel"></dd><dt>営業時間</dt><dd id="hours"></dd></dl>
+    </div>
+    <div id="askBox">
+      <p class="msg" style="margin-top:20px">面接をキャンセルしますか？</p>
+      <button id="btnCancel" class="pri" type="button">キャンセルする</button>
+    </div>
+    <div id="confirmBox" hidden>
+      <p class="msg">本当にキャンセルしてよろしいですか？</p>
+      <button id="btnYes" class="pri" type="button">はい、キャンセルする</button>
+      <button id="btnNo" class="sub" type="button">戻る</button>
+    </div>
+  </div>
+
+  <div id="done" hidden>
+    <p class="msg" id="doneMsg"></p>
+    <p class="note" id="doneSub" style="text-align:center"></p>
+  </div>
+
+  <div id="ng" hidden>
+    <p class="msg" id="ngMsg"></p>
+    <div class="card"><h2>お問い合わせ先</h2>
+      <p class="note" style="margin:0 0 8px">日時の変更やご不明な点は、求人 LINE かメールでお知らせください。</p>
+      <dl><dt>求人 LINE</dt><dd><a id="ctLine" target="_blank" rel="noopener"></a></dd><dt>メール</dt><dd><a id="ctMail"></a></dd></dl>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var EXEC = "https://script.google.com/macros/s/AKfycbwLAO53cj-BLqrkvFgpoJyUT-Lw0Voj-5WJjdo5aS5wFjGL7IUJgxlcG5FdVU_Hv3xS/exec";
+  var CONTACT = { line: 'https://line.me/R/ti/p/%40975trbew', mail: 'prince.chitose202405@gmail.com' }; // Spec.js CONTACT と同じ (公開済みの値)
+  var TOKEN = (new URLSearchParams(location.search).get('t') || '').trim().toLowerCase();
+  var $ = function (id) { return document.getElementById(id); };
+  var NG = {
+    invalid: 'このURLは無効です。メールのリンクをもう一度お確かめください。',
+    closed: 'この面接のご予約は、すでに取り消されているか、変更できない状態です。',
+    past: '面接の開始時刻を過ぎているため、こちらからはキャンセルできません。',
+    cancelled: 'この面接は、すでにキャンセルされています。'
+  };
+  function show(id) { ['loading', 'info', 'done', 'ng'].forEach(function (k) { $(k).hidden = k !== id; }); window.scrollTo(0, 0); }
+  function post(fn) {
+    return fetch(EXEC, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: [TOKEN] }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!j || !j.ok) throw new Error((j && j.error) || '通信に失敗しました'); return j.result; });
+  }
+  function ng(state, extra) {
+    $('ngMsg').textContent = extra || NG[state] || NG.invalid;
+    $('ctLine').textContent = CONTACT.line; $('ctLine').href = CONTACT.line;
+    $('ctMail').textContent = CONTACT.mail; $('ctMail').href = 'mailto:' + CONTACT.mail;
+    show('ng');
+  }
+  function fail(err) { ng('', '読み込めませんでした。時間をおいてもう一度お試しください。(' + (err && err.message || err) + ')'); }
+  function showDone() {
+    $('doneMsg').textContent = 'キャンセルされました。また機会がありましたらよろしくお願いします。';
+    show('done');
+  }
+  if (!/^[0-9a-f]{32}$/.test(TOKEN)) { ng('invalid'); return; }
+  post('getCancelInfo').then(function (r) {
+    if (r.state === 'cancelled') { showDone(); return; }
+    if (r.state !== 'ok') { ng(r.state); return; }
+    $('hello').textContent = (r.callName ? r.callName + ' さん、' : '') + 'ご予約ありがとうございます。';
+    $('iv').textContent = r.iv; $('store').textContent = r.store;
+    $('addr').textContent = r.addr; $('hours').textContent = r.hours;
+    if (r.tel) { var a = document.createElement('a'); a.textContent = r.tel; a.href = 'tel:' + r.tel.replace(/[^0-9+]/g, ''); $('tel').appendChild(a); }
+    $('btnCancel').onclick = function () { $('askBox').hidden = true; $('confirmBox').hidden = false; };
+    $('btnNo').onclick = function () { $('confirmBox').hidden = true; $('askBox').hidden = false; };
+    $('btnYes').onclick = function () {
+      $('btnYes').disabled = true; $('btnNo').disabled = true; $('btnYes').textContent = '処理中...';
+      post('cancelInterview').then(function (x) {
+        if (x.state === 'cancelled') showDone(); else ng(x.state);
+      }).catch(function (err) { $('btnYes').disabled = false; $('btnNo').disabled = false; $('btnYes').textContent = 'はい、キャンセルする'; alert('キャンセルできませんでした。もう一度お試しください。(' + (err && err.message || err) + ')'); });
+    };
+    show('info');
+  }).catch(fail);
+})();
+</script>
+</body>
+</html>
