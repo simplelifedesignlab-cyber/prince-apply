@@ -39,6 +39,7 @@ header h1{margin:0;font-size:19px;flex:1}
 .f .lb{font-size:10px;color:#5A6275;line-height:1.3}
 .f select,.f input{font:inherit;font-size:12px;color:#111;min-height:34px;border:1px solid #D5D9E0;border-radius:4px;background:#fff;padding:0 3px;width:100%;min-width:0}
 .f input::placeholder{color:#8A92A6;opacity:1}
+.f select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0h8L4 5z' fill='%235A6275'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;background-size:8px 5px;padding-right:14px} /* 2026-11-28 iPad (Safari) が select の色・幅を無視して「出勤」が欠け・同伴の緑が白抜けしたため、見た目を自前で描く */
 .f input:disabled,.f select:disabled{background:#F4F5F7;color:#333;opacity:1}
 .ar.abs .f.sx select{color:#b71c1c;font-weight:700}
 .f .ro{min-height:34px;display:flex;align-items:center;font-size:12px;color:#111;overflow-wrap:anywhere}
@@ -348,6 +349,8 @@ function route(){
 }
 $('back').onclick=function(){go(location.hash==='#cast'?'sales':'');};
 window.addEventListener('hashchange',route);
+// 2026-11-28: 時刻・数字の欄は押したら中身を全部選ぶ (iPad で押して打つと前の値の後ろに付いて「20:20:00」「120001500」になったため)
+document.addEventListener('focusin',function(e){var t=e.target,k=t&&t.getAttribute&&(t.getAttribute('data-f')||t.getAttribute('data-a'));if(t.tagName!=='INPUT'||!t.value||!/^(chg|tin|tout|hon|jonai|douN|dousub|sale\d+|locker|dress|shoes|charger)$/.test(k||'')||!t.closest('#att'))return;var v0=t.value,sel=function(){try{t.setSelectionRange(0,t.value.length);}catch(_){}};sel();setTimeout(function(){if(t.value===v0)sel();},0);});
 
 function top_(){ // 2026-11-25 H: 上の 3 つは今までどおりの入口・下はカテゴリ (押すと開く)
   var sub=function(h){return '<div class="tsub">'+h+'</div>';};
