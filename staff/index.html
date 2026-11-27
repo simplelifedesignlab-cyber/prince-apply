@@ -204,7 +204,7 @@ th,td{border-color:#E3E6EC}
 .ttab{min-height:46px;font:inherit;font-size:17px;font-weight:700;border:2px solid var(--pri);border-radius:6px;background:#fff;color:var(--priD);cursor:pointer}
 .ttab.on{background:var(--pri);color:#fff}
 .abar .aun{font-size:13px;font-weight:700;color:#b71c1c;white-space:nowrap}.abar .asy{font-size:12px;color:#5A6275;white-space:nowrap}
-.sl-cn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 8px}
+.sl-cn{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 8px}
 .sl-cn div{border:1px solid #C3C8D1;border-radius:6px;padding:4px 8px;background:#fff;display:flex;flex-direction:column}.sl-cn small{font-size:11px;color:#5A6275}.sl-cn b{font-size:18px}
 .sl-sub{font-size:12px;color:#5A6275;margin:0 0 8px}
 .slwrap,.sgwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -616,7 +616,7 @@ function slEntryHtml(e,i){
   if(vs&&!dh)sub.push('来店');
   if(e.special)sub.push('特別枠');
   sub.push(SLSHORT[e.store]||e.store||'');
-  sub.push(e.entry==='キャスト'?'希望時間':e.entry+'入力');
+  sub.push(e.any?(e.entry==='キャスト'?'希望 指定なし':e.entry+'入力'):(e.entry==='キャスト'?'希望時間':e.entry+'入力'));
   if(e.by&&e.status==='済')sub.push('担当 '+e.by);
   return '<button type="button" class="slc'+(e.manual&&e.entry==='黒服'?' man':'')+(e.over?' ovr':'')+'" data-i="'+i+'"><span class="slnm">'+(x&&x.ban?'<span class="ab">'+esc(x.ban)+'</span>':'')+'<b class="ag'+(dh?' dh':'')+'">'+esc(e.gen)+'</b><span class="slst '+st[0]+'">'+st[1]+'</span></span><span class="slsub'+(e.over?' r':'')+'">'+(e.over?'定員超過 · ':'')+esc(sub.join(' · '))+'</span></button>';
 }
@@ -628,11 +628,12 @@ function slRender(){
   var inSt=function(pl){return !attStore||!pl.stores||!pl.stores.length||pl.stores.indexOf(attStore)>=0;};
   var places=r.places.filter(inSt),keep=function(e){return e.kind==='free'||!attStore||e.store===attStore;};
   var rows=r.rows.filter(function(e){return keep(e)&&places.some(function(pl){return pl.place===e.place;});});
-  var sp=r.special.filter(keep);
+  var sp=r.special.filter(keep),anyL=(r.any||[]).filter(keep).sort(slSort); // 指定なし (着いた順)。並び = 同伴 → 来店 → 店番 (出勤簿の来店予定・キープで判断)。2026-11-27
   var duty=(r.onDuty||[]).map(function(x){return esc(x.name)+' '+esc(x.start)+'-'+esc(x.end);}).join('、');
-  var cn={b:0,d:0,n:0,f:0};rows.concat(sp).forEach(function(e){if(e.kind==='free')cn.f++;else{cn.b++;if(e.status==='済')cn.d++;if(e.status==='来ず')cn.n++;}});
-  h+='<div class="sl-cn"><div><small>希望時間</small><b>'+cn.b+'</b></div><div><small>対応済</small><b>'+cn.d+'</b></div><div><small>来なかった</small><b>'+cn.n+'</b></div><div><small>空き</small><b>'+cn.f+'</b></div></div>';
+  var cn={b:0,d:0,n:0,f:0};rows.concat(sp,anyL).forEach(function(e){if(e.any){if(e.status==='済')cn.d++;if(e.status==='来ず')cn.n++;}});rows.concat(sp).forEach(function(e){if(e.kind==='free')cn.f++;else{cn.b++;if(e.status==='済')cn.d++;if(e.status==='来ず')cn.n++;}});
+  h+='<div class="sl-cn"><div><small>時間指定</small><b>'+cn.b+'</b></div><div><small>指定なし</small><b>'+anyL.length+'</b></div><div><small>対応済</small><b>'+cn.d+'</b></div><div><small>来なかった</small><b>'+cn.n+'</b></div><div><small>空き</small><b>'+cn.f+'</b></div></div>';
   h+='<div class="sl-sub">'+(duty?'出勤の美容師: '+duty:'出勤の美容師の入力なし')+(attStore?'　/　'+esc(SLSHORT[attStore]||attStore)+' だけ表示':'')+(r.hourCap?'　/　1 時間 最大 '+r.hourCap+' 人':'')+'</div>';
+  if((r.overlaps||[]).length)h+='<div class="note" style="color:#B91C1C">時間指定の重なり (同じ場所・同じ時刻): '+r.overlaps.map(function(x){return esc(x.place)+' '+esc(x.time)+' '+x.n+'人';}).join(' / ')+'</div>';
   if(r.error)h+='<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>';
   var times=[];rows.forEach(function(e){if(times.indexOf(e.time)<0)times.push(e.time);});times.sort();
   if(!times.length)h+='<div class="msg">'+(r.canBook?'この日は表示する枠がありません (美容師の出勤が無い・または店の絞り込み)':'この日の枠はありません (予約できるのは今日から 14 日先まで)')+'</div>';
@@ -659,6 +660,7 @@ function slRender(){
     h+='</tbody></table></div>';
   }
   if(sp.length){h+='<div class="sec"><h3>特別枠 (撮影など)</h3>'+sp.slice().sort(slSort).map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">'+esc(e.time)+'</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
+  if(anyL.length){h+='<div class="sec"><h3>指定なし (着いた順) '+anyL.length+'人　<small style="font-weight:400">19:00〜22:00 の間に、できるだけ終わらせる</small></h3>'+anyL.map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">着順</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
   if(r.canBook)h+='<button type="button" class="slsp" id="slSpec">特別枠 (撮影など・時刻を選んで入れる)</button>';
   h+='<div class="note">黒服が代わりに入れた分は薄いオレンジ・同伴は緑の名前札。並びは 同伴 → 来店 → 店番。操作はすぐ保存されます (最終更新 '+esc(r.updated)+')</div>';
   p.innerHTML=h;
@@ -696,7 +698,7 @@ function slSug(){
   var pk=slAdd.picked;$('slaOk').disabled=!pk;$('slaOk').textContent=pk?pk.gen+' ('+(SLSHORT[pk.store]||pk.store)+') で確定':'名前を選ぶと確定できます';
 }
 function slOpenSt(e){
-  slCur=e;$('slsN').textContent=e.gen;$('slsS').textContent=e.time+' · '+(SLSHORT[e.store]||e.store)+(e.special?' · 特別枠':'');
+  slCur=e;$('slsN').textContent=e.gen;$('slsS').textContent=(e.any?'指定なし (着いた順)':e.time)+' · '+(SLSHORT[e.store]||e.store)+(e.special?' · 特別枠':'');$('slsCancel').style.display=e.any?'none':'';
   var names=slData.stylists||[],def=e.by||lsGet('salonStylist')||'';if(names.indexOf(def)<0)def='';
   $('slsSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');
   var free=e.tag==='撮影'&&e.fee==='無料';
@@ -709,6 +711,7 @@ function slDoSt(a){
   if(a==='done'&&!sty){window.alert('先に担当の美容師を選んでください');return;}
   if(a==='cancel'&&!window.confirm(slCur.gen+' さんをキャンセルします。この枠は空きに戻ります。よろしいですか？'))return;
   var e=slCur;if(a==='done'&&sty)lsSet('salonStylist',sty);
+  if(e.any)return slAct(function(){return api('setSalonAny',[attDay,e.store,e.gen,a,sty]);});
   slAct(function(){return api('setSalonSlot',[attDay,e.place,e.time,e.store,e.gen,a,sty]);});
 }
 function slBind(){

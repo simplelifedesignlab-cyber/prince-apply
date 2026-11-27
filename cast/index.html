@@ -145,38 +145,62 @@ function hairChoices(d) {
   return a.length ? a : data.hairOpts;
 }
 
-// 美容室の予約 (スイッチが入っている時だけ)。「保存」とは別に、押したその場で枠を取る
-function hairCall(d, fn, time) {
+// 美容室の希望 (スイッチが入っている時だけ)。「保存」とは別に、押したその場で出す
+// 2026-11-27 山本部長の流れ: 19:00〜22:00 の間に着いた順でできるだけ終わらせる。時間を決められるのは「同伴」と「撮影」の時だけ。ふつうは「指定なし (着いた順)」
+function hairCall(d, fn, time, kind) {
   d.hbusy = true; d.hmsg = ''; render();
   var done = function (r) {
     d.hbusy = false;
-    if (r) { d.hb = r.b; d.ho = r.o; d.hp = r.p || []; d.hnote = r.n || ''; d.hair = !!r.b; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; }
+    if (r) { d.hb = r.b; d.ho = r.o; d.hp = r.p || []; d.hnote = r.n || ''; d.ha = !!r.a; d.hdh = !!r.dh; d.hair = !!r.b || !!r.a; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; if (r.ok && fn !== 'reserve') d.hkind = ''; }
     render();
   };
   var run = google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { d.hbusy = false; d.hmsg = '通信できませんでした。もう一度押してください。'; d.hok = false; render(); });
-  if (fn === 'reserve') run.reserveHair(TOKEN, d.date, time); else run.cancelHair(TOKEN, d.date);
+  if (fn === 'reserve') run.reserveHair(TOKEN, d.date, time, kind); else if (fn === 'any') run.requestHairAny(TOKEN, d.date); else run.cancelHair(TOKEN, d.date);
 }
+// 送迎(行き)のある子の「一番早い時間」(未決・空 = 制限なし)。data.hairSougeiEarliest = 'HH:MM'
+function hairEarliestOk(d, t) { return !(d.go && data.hairSougeiEarliest) || t >= data.hairSougeiEarliest; }
 function hairBox(d) {
   var s = el('div', 'sub');
-  s.appendChild(el('label', 't', 'ヘアメイク 希望時間'));
+  s.appendChild(el('label', 't', 'ヘアメイク 希望'));
+  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」と「撮影」の時だけです'));
   var stale = d.shift !== d.savedShift, hp = d.hp || [];
   if (d.hnote) s.appendChild(el('p', 'hmsg ng', d.hnote));
-  if (d.hb) s.appendChild(el('p', 'booked', '希望時間 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
+  if (d.hb) s.appendChild(el('p', 'booked', '希望 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
+  else if (d.ha) s.appendChild(el('p', 'booked', '希望 指定なし (着いた順) を出しています'));
   if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した時間です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
   if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
-  else if (d.ho.length || hp.length) {
-    var sel = el('select'), b0 = el('option', '', d.hb ? '別の時間に変える' : '希望の時間を選んでください'); b0.value = ''; sel.appendChild(b0);
-    d.ho.map(function (t) { return { t: t, p: false }; }).concat(hp.map(function (t) { return { t: t, p: true }; })).sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }).forEach(function (o) {
-      var op = el('option', '', o.t + (o.p ? ' (優先で入れます)' : '')); op.value = o.t; if (o.t === d.hpick) op.selected = true; sel.appendChild(op);
-    });
-    sel.onchange = function () { d.hpick = sel.value; };
-    sel.disabled = !!d.hbusy; s.appendChild(sel);
-    var go = el('button', 'hbtn', d.hb ? '希望時間を変える' : '希望時間を出す'); go.type = 'button'; go.disabled = !!d.hbusy;
-    go.onclick = function () { if (!d.hpick) { d.hmsg = '時間を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick); };
-    s.appendChild(go);
-    s.appendChild(el('p', 'hint', '来店予定・同伴の方が優先です。お店が決めるまでは、時間が変わることがあります'));
-  } else if (!d.hb) s.appendChild(el('p', 'hint', 'この日は空きがありません。お店へ連絡してください'));
-  if (d.hb) {
+  else {
+    var kind = d.hkind || '';
+    var ch = el('div', 'chips');
+    ch.appendChild(chip('指定なし (着いた順)', !kind, function () { d.hkind = ''; d.hpick = ''; }));
+    ch.appendChild(chip('同伴 (時間を選ぶ)', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
+    ch.appendChild(chip('撮影 (時間を選ぶ)', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
+    s.appendChild(ch);
+    if (!kind) {
+      if (!d.ha) {
+        var ga = el('button', 'hbtn', d.hb ? '時間をやめて 指定なし (着いた順) にする' : '指定なし (着いた順) で希望を出す'); ga.type = 'button'; ga.disabled = !!d.hbusy;
+        ga.onclick = function () { hairCall(d, 'any'); };
+        s.appendChild(ga);
+      }
+    } else if (kind === '同伴' && !d.hdh) {
+      s.appendChild(el('p', 'hint', '同伴の予定が保存されていません。予定に「同伴」を入れて、一番下の「保存」を押してから選んでください'));
+    } else {
+      var opts0 = d.ho.map(function (t) { return { t: t, p: false }; }).concat(kind === '同伴' ? hp.map(function (t) { return { t: t, p: true }; }) : []).filter(function (o) { return hairEarliestOk(d, o.t); });
+      if (opts0.length) {
+        var sel = el('select'), b0 = el('option', '', d.hb ? '別の時間に変える' : kind + 'の時間を選んでください'); b0.value = ''; sel.appendChild(b0);
+        opts0.sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }).forEach(function (o) {
+          var op = el('option', '', o.t + (o.p ? ' (優先で入れます)' : '')); op.value = o.t; if (o.t === d.hpick) op.selected = true; sel.appendChild(op);
+        });
+        sel.onchange = function () { d.hpick = sel.value; };
+        sel.disabled = !!d.hbusy; s.appendChild(sel);
+        var go = el('button', 'hbtn', d.hb ? '希望の時間を変える' : kind + 'で希望を出す'); go.type = 'button'; go.disabled = !!d.hbusy;
+        go.onclick = function () { if (!d.hpick) { d.hmsg = '時間を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick, kind); };
+        s.appendChild(go);
+        s.appendChild(el('p', 'hint', 'お店が決めるまでは、時間が変わることがあります'));
+      } else s.appendChild(el('p', 'hint', 'この日は空きがありません。お店へ連絡してください'));
+    }
+  }
+  if (d.hb || d.ha) {
     s.appendChild(document.createElement('br'));
     var cx = el('button', 'hbtn sec', '希望を取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
     cx.onclick = function () { hairCall(d, 'cancel'); };
