@@ -303,6 +303,33 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
 .hdx .bhint{display:none}
 @media (max-width:900px){.hdx .at img{display:none}.hdx .at{padding:2px 8px}.hdx #adt{width:128px;font-size:14px}.hdx .ttab{padding:0 11px}header.tday .ht{margin-right:0}header.tday .en{display:none}} /* iPad 縦は店名と人数だけ (横にはみ出すため) */
 @media (max-width:640px){.hdx .ttabs{margin-left:0;flex:1 1 100%}.hdx .ttab{flex:1}.hdx .nav{flex:1 1 auto}.hdx #adt{flex:1;width:auto;min-width:0}.hdx .at .an2{display:none}}
+/* 2026-11-28 スマホ (<=640) の出勤一覧: 1 行目に 題名・3 タブ・TOP / 2 行目に 日付 / 3 行目に 店 (約 210px -> 3 行) */
+@media (max-width:640px){
+ header.tday:not(.tsh){gap:4px 6px;padding:5px 10px 6px}
+ header.tday:not(.tsh) .ht{order:1}
+ header.tday:not(.tsh) .hdx .ttabs{order:2;flex:1 1 0;min-width:0}
+ header.tday:not(.tsh) #back{order:3}
+ header.tday:not(.tsh) .hdx .nav{order:4;flex:1 1 100%}
+ header.tday:not(.tsh) .hdx .ttab{padding:0 4px;white-space:nowrap}
+ header.tday:not(.tsh) .hdx .at{min-height:34px}
+}
+/* 2026-11-28 シフト管理: 週の移動・3 タブ・店 (チップ) を濃紺の帯に入れる。表は残りの高さで縦にもスクロールし 見出しと名前の列が残る */
+.hdx .nav .t{flex:none;color:#fff;font-size:14px;white-space:nowrap;padding:0 6px}
+.hdx .sx{flex:0 0 auto;flex-direction:row;justify-content:center;align-items:center;gap:0;min-height:36px;padding:2px 18px;font-size:14px;font-weight:700;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:4px}
+.hdx .sx.on{background:#fff;color:var(--pri);border-color:#fff}
+.shg th{z-index:2}
+.card.shc{max-height:calc(100vh - 292px);max-height:calc(100dvh - 292px);min-height:200px;overflow:auto}
+#shp-cast>.cnt{font-size:14px;margin:0 2px 4px}
+#shp-cast .abar{margin-top:6px}
+@media (max-width:640px){
+ header.tsh{gap:4px 6px;padding:5px 10px 6px}
+ header.tsh .hdx .nav{order:2;flex:1 1 auto}
+ header.tsh #back{order:3}
+ header.tsh .hdx .ttabs{order:4}
+ .hdx .nav .t{font-size:13px;padding:0 2px}
+ .hdx .sx{flex:1 0 auto;padding:2px 8px}
+ .card.shc{max-height:calc(100vh - 340px);max-height:calc(100dvh - 340px)}
+}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div><div id="hdx" class="hdx" hidden></div></header>
 <div class="wrap" id="app"></div>
@@ -365,7 +392,7 @@ function route(){
   var v=location.hash.replace('#','');
   if(window.__shBack){window.__shBack=false;return;} // 2026-11-28 シフト管理の未保存の確認でキャンセルした回は何もしない (描き直すと入力が消える)
   if(v!=='shift'&&shDirty()&&!window.confirm('保存していない変更があります。捨てて移動しますか？')){window.__shBack=true;location.hash='shift';return;}
-  var hx=$('hdx');hx.innerHTML='';hx.hidden=true;document.querySelector('header').classList.remove('tday'); // 出勤一覧だけ 日付・店・タブを濃紺の帯に入れる
+  var hx=$('hdx');hx.innerHTML='';hx.hidden=true;document.querySelector('header').classList.remove('tday','tsh'); // 出勤一覧・シフト管理だけ 日付(週)・店・タブを濃紺の帯に入れる
   $('app').className=VIEWS[v]&&(VIEWS[v].all||v==='shift')?'wrap wide':'wrap'; // 2026-11-28 シフト管理は週表が広いので wide
   $('back').hidden=!VIEWS[v];
   $('back').textContent=v==='cast'?'← 売上':'← TOP';
@@ -373,8 +400,8 @@ function route(){
   $('ttl').textContent=VIEWS[v].t;
   var el=$('app');
   if(VIEWS[v].all){el.innerHTML='<div id="body"></div><div class="upd" id="upd"></div>';VIEWS[v].run();return;} // 店を選ばない画面 (出勤一覧 = 4 店まとめて)
-  el.innerHTML='<div class="stores" id="stores"></div><div id="body"></div><div class="upd" id="upd"></div>';
-  $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'"><img src="../logo/'+s.l+'.png" alt=""><span>'+esc(s.s)+'</span></button>';}).join('');
+  el.innerHTML=(v==='shift'?'':'<div class="stores" id="stores"></div>')+'<div id="body"></div><div class="upd" id="upd"></div>';
+  if(v==='shift')shHead();else $('stores').innerHTML=STORES.map(function(s){return '<button class="st'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'"><img src="../logo/'+s.l+'.png" alt=""><span>'+esc(s.s)+'</span></button>';}).join('');
   [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
   if(!store){$('body').innerHTML='<div class="msg">店舗を選んでください</div>';return;}
   $('body').innerHTML='<div class="msg">読み込み中...</div>';
@@ -953,6 +980,7 @@ function castPanel(id,gen){
 
 var DOWS=['日','月','火','水','木','金','土'];
 function weekNav(then){
+  if(location.hash==='#shift')return ''; // シフト管理は週の移動を濃紺の帯 (shHead) に出す
   return '<div class="nav"><button class="nb" id="pw">← 前</button><div class="t" id="wt"></div><button class="nb" id="nw">次 →</button></div>';
 }
 function bindWeek(w){
@@ -1005,21 +1033,35 @@ function shCell(c,d,biz){
   var h='<option value=""'+(cur?'':' selected')+'></option>'+opts.map(function(o){return '<option value="'+esc(o)+'"'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('');
   return '<td><select class="'+shCls(cur,!!ch)+'" data-id="'+esc(c.id)+'" data-g="'+esc(c.gen)+'" data-d="'+d.date+'" data-o="'+esc(s)+'">'+h+'</select>'+(x&&x.att?'<i class="ck">✔</i>':'')+'</td>';
 }
+function shMv(n){if(!shGuard())return;SHS.chg={};SHS.errs=[];var d=parse(weekStart);d.setDate(d.getDate()+n);weekStart=ymd(d);selDay=weekStart;route();}
+function shHead(){ // 2026-11-28 H「上部を使いすぎ」: 週の移動・3 タブ・店 (小さいチップ) を濃紺の帯に入れる (出勤一覧の vToday と同じ考え方)
+  var a=parse(weekStart),b=parse(weekStart);b.setDate(b.getDate()+6);
+  $('hdx').innerHTML='<div class="nav"><button class="nb" id="pw" aria-label="前の週">◀</button><div class="t" id="wt">'+(a.getMonth()+1)+'/'+a.getDate()+' 〜 '+(b.getMonth()+1)+'/'+b.getDate()+'</div><button class="nb" id="nw" aria-label="次の週">▶</button></div>'+
+    '<div class="ttabs">'+[['cast','キャスト'],['drv','ドライバー'],['hair','美容師']].map(function(t){return '<button class="ttab'+(SHS.tab===t[0]?' on':'')+'" data-sht="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+    '<div id="band"><div class="atabs">'+STORES.map(function(s){return '<button class="st sx'+(s.id===store?' on':'')+'" data-s="'+esc(s.id)+'">'+esc(s.s)+'</button>';}).join('')+'</div></div>';
+  $('hdx').hidden=false;var h=document.querySelector('header');h.classList.add('tday','tsh');
+  $('pw').onclick=function(){shMv(-7);};$('nw').onclick=function(){shMv(7);}; // 読み込み前・失敗時も押せる (読み込み後は shBind が付け直す)
+}
 function shInner(w){
   var biz=bizDay(),miss=w.casts.filter(function(c){return !c.submitted;}).length;
   var rows=w.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td>'+w.days.map(function(d){return shCell(c,d,biz);}).join('')+'</tr>';}).join('');
   var head='<tr><th>名前</th>'+w.days.map(function(d){return '<th>'+esc(d.label)+'<br>'+d.dow+'</th>';}).join('')+'</tr>';
   var sum='<tr class="sum"><td class="nm">出勤人数</td>'+w.days.map(function(d,i){return '<td id="shsum'+i+'"></td>';}).join('')+'</tr>';
-  var tabs='<div class="tabs">'+[['cast','キャスト'],['drv','ドライバー'],['hair','美容師']].map(function(t){return '<button class="tab'+(SHS.tab===t[0]?' on':'')+'" data-sht="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
   var legend='<div class="upd shl"><i style="background:#fff;border:1px solid #C3C8D1"></i>白＝キャストの入力　<i style="background:#FDEBD3"></i>オレンジ＝黒服が今変えた所　<i style="background:#E0E0E0"></i>灰＝休み　<i style="background:#FFF3B0"></i>黄＝未定　<i style="background:#f8c9c9"></i>赤＝当欠　✔＝出勤済み (今日の営業日より前の日は見るだけ)</div>';
   var errs=SHS.errs.length?'<div class="sher"><b>入れられなかった所</b>'+SHS.errs.map(function(e){var p=String(e.date).split('-');return '<div>'+esc(e.gen||'')+' '+(+p[1])+'/'+(+p[2])+'　'+esc(e.msg)+'</div>';}).join('')+'</div>':'';
-  return tabs+
+  return ''+
     '<div id="shp-cast"'+(SHS.tab==='cast'?'':' hidden')+'>'+(miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
       '<div class="card sc shc"><table class="shg" id="shgrid">'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+legend+errs+
       '<div class="abar"><button id="shsave" disabled>更新</button><span class="aun" id="shun"></span><span class="am2" id="shmsg"></span></div></div>'+
     '<div id="shp-drv"'+(SHS.tab==='drv'?'':' hidden')+'><div class="hd"><b>ドライバー出勤</b><span>○を押す／もう一度で取消　薄い○＝送迎予定にいる日 (押して確定)</span></div><div class="card sc dv" id="drv"><div class="msg" style="padding:12px">読み込み中...</div></div></div>'+
     '<div id="shp-hair"'+(SHS.tab==='hair'?'':' hidden')+'><div class="card"><div class="note" style="font-size:14px;margin:0 0 12px">美容師の週シフトは、美容室の本人用ページで黒服も入れられます。</div><a class="big" href="../salon/#t=shift" style="margin:0">美容師のシフトを入れる<small>美容室の画面 (週間シフト) を開く</small></a></div></div>';
 }
+function shFit(){ // 表の高さ = 画面の残り (ページ全体は縦に動かさず 表の中だけ動く = 見出し・名前の列が残る)。CSS の max-height は読み込み前の代わり
+  var c=document.querySelector('.card.shc');if(!c||!c.offsetParent)return;
+  var rest=document.documentElement.scrollHeight-c.offsetHeight;
+  c.style.maxHeight=Math.max(200,window.innerHeight-rest)+'px';
+}
+window.addEventListener('resize',function(){shFit();});
 function shUpd(){
   var n=shN(),b=$('shsave'),u=$('shun');
   if(b)b.disabled=!n||SHS.busy;
@@ -1029,8 +1071,7 @@ function shUpd(){
 function shBind(){
   var w=SHS.w;if(!w)return;
   // 週の移動は未保存なら確認 (bindWeek の後に付け直す)
-  var mv=function(n){if(!shGuard())return;SHS.chg={};SHS.errs=[];var d=parse(weekStart);d.setDate(d.getDate()+n);weekStart=ymd(d);selDay=weekStart;route();};
-  if($('pw')){$('pw').onclick=function(){mv(-7);};$('nw').onclick=function(){mv(7);};}
+  if($('pw')){$('pw').onclick=function(){shMv(-7);};$('nw').onclick=function(){shMv(7);};}
   [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){if(!shGuard())return;SHS.chg={};SHS.errs=[];store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
   [].forEach.call(document.querySelectorAll('[data-sht]'),function(b){b.onclick=function(){
     SHS.tab=b.getAttribute('data-sht');
@@ -1057,7 +1098,7 @@ function shBind(){
     }).catch(function(e){SHS.busy=false;shUpd();setMsg2(e.message||String(e),true);});
   };
   if($('drv'))loadDrv(w.weekStart);
-  shUpd();
+  shUpd();shFit();
 }
 function setMsg2(t,err){var m=$('shmsg');if(m){m.textContent=t||'';m.className='am2'+(err?' err':' ok');}}
 function vShift(){
