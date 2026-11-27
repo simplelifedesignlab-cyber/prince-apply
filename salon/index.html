@@ -164,6 +164,19 @@ body{background:var(--bg)}
 .lr,.rw{border-bottom-color:var(--priL)}
 .em{border-radius:4px}
 .whoBar{background:var(--bg);border-radius:4px}
+/* 2026-11-27 札 = ヘアメイク / キャンセル の 2 トグル */
+.tgs{display:flex;gap:6px;flex-shrink:0}
+.tgb{width:74px;height:46px;padding:0;border-radius:4px;border:1.5px solid var(--line);background:#fff;color:#6B7285;font-size:13px;font-weight:700;cursor:pointer}
+.tgb.hm.on{background:#15803D;border-color:#15803D;color:#fff}
+.tgb.cl.on{background:#C2410C;border-color:#C2410C;color:#fff}
+.lr.d1{background:#F0FDF4}.lr.nsh2{background:#FFF4EC}.rw.nsh2{background:#FFF4EC}
+.lr{padding-right:10px;gap:8px}.lr .tm{width:40px}
+.sum .cn{margin-bottom:6px}.cn.sm4 div b{font-size:24px}.cn.sm4 .op{flex:0 0 18px;border:0;padding:8px 0;align-items:center;justify-content:center;font-weight:900;color:#6B7285;font-size:16px}
+.sumMsg{margin:0 16px 4px;font-size:14px;font-weight:900}.sumMsg.ng{color:#B91C1C}.sumMsg.ok{color:#15803D}
+.sumSty{margin:0 16px 8px;font-size:13px;color:#4A4A4A}
+.styErr{margin:4px 16px 0;font-size:14px;font-weight:900;color:#B91C1C}
+.dtl{flex-shrink:0;border:0;background:none;color:#6B7285;font-size:12px;text-decoration:underline;cursor:pointer;height:44px;padding:0 4px}
+body.nostaff .moneyonly{display:none!important}
 </style></head><body>
 <div class="page">
 <div id="hd">
@@ -173,11 +186,11 @@ body{background:var(--bg)}
 <!-- 当日 (一覧) -->
 <div id="vList" hidden>
   <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button class="ib" id="lPrev" aria-label="前の日" style="border:1.5px solid #1F2A44">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日" style="border:1.5px solid #1F2A44">›</button></div></div>
-  <div class="cn" id="lCn"></div>
+  <div class="sum" id="lCn"></div>
   <div id="lNote"></div>
-  <div class="whoBar" id="lWho"><label for="lSty">担当 (あなたの名前)</label><select id="lSty"></select></div>
+  <div class="whoBar" id="lWho"><label for="lSty">担当 (あなたの名前)</label><select id="lSty"></select></div><div class="styErr" id="lErr" hidden>先に 担当 (あなたの名前) を選んでください</div>
   <div id="lBody"><div class="msg">読み込み中...</div></div>
-  <div id="lWalk" hidden><div class="lsec">予約なしで来た子</div><div class="lsub">名前の頭文字を打つと候補が出ます。押すと、その場で「対応済」になります</div><div style="margin:8px 16px 0"><input id="lName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="lSug"></div></div></div>
+  <div id="lWalk" hidden><div class="lsec">予約なしで来た子</div><div class="lsub">名前の頭文字を打つと候補が出ます。押すと、その場で「ヘアメイク」になります</div><div style="margin:8px 16px 0"><input id="lName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="lSug"></div></div></div>
   <button class="sp" id="lOpen">この日の予約画面を開く (空き枠・特別枠)</button>
   <div class="upd" id="lUpd"></div>
 </div>
@@ -207,11 +220,11 @@ body{background:var(--bg)}
     </div>
   </div>
   <div class="dt"><b id="dTitle">&nbsp;</b><span id="dSub"></span></div>
-  <div class="cn"><div><small>時間指定</small><b id="nB">-</b></div><div><small>指定なし</small><b id="nA">-</b></div><div><small style="color:#15803D">対応済</small><b id="nD">-</b></div><div><small style="color:#B45309">来なかった</small><b id="nN">-</b></div><div><small>空き</small><b id="nF">-</b></div></div>
+  <div class="sum" id="dCn"></div>
   <div id="dNote"></div>
-  <div class="whoBar" id="dWho"><label for="dSty">担当 (あなたの名前)</label><select id="dSty"></select></div>
+  <div class="whoBar" id="dWho"><label for="dSty">担当 (あなたの名前)</label><select id="dSty"></select></div><div class="styErr" id="dErr" hidden>先に 担当 (あなたの名前) を選んでください</div>
   <div class="rows" id="dRows"><div class="msg">読み込み中...</div></div>
-  <div id="dWalk" hidden><div class="lsec">予約なしで来た子</div><div class="lsub">名前の頭文字を打つと候補が出ます。押すと、その場で「対応済」になります</div><div style="margin:8px 16px 0"><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
+  <div id="dWalk" hidden><div class="lsec">予約なしで来た子</div><div class="lsub">名前の頭文字を打つと候補が出ます。押すと、その場で「ヘアメイク」になります</div><div style="margin:8px 16px 0"><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
   <button class="sp" id="dSpecial" hidden>特別枠 (撮影など・時刻を選んで入れる)</button>
   <div class="upd" id="dUpd"></div>
 </div>
@@ -224,18 +237,15 @@ body{background:var(--bg)}
   <label for="aName">名前 (最初の文字を打つと候補が出ます)</label><input id="aName" placeholder="例: あ" autocomplete="off" maxlength="30">
   <div class="sg" id="aSug"></div>
   <label for="aPlan">予定</label><select id="aPlan"><option>なし</option><option>同伴</option><option>優先</option><option>撮影</option></select>
-  <div id="aFeeBox" hidden><label for="aFee">美容室費</label><select id="aFee"><option>無料</option><option>有料</option></select><div class="hint" id="aFeeH"></div></div>
+  <div id="aFeeBox" class="moneyonly" hidden><label for="aFee" class="moneyonly">美容室費</label><select id="aFee"><option>無料</option><option>有料</option></select><div class="hint" id="aFeeH"></div></div>
   <button class="big" id="aOk" disabled>名前を選ぶと確定できます</button>
 </div></div>
-<!-- 対応を記録 -->
+<!-- 詳細 (黒服のみ: 枠を空けるキャンセル・美容室費) -->
 <div class="ov" id="ovSt" hidden><div class="sheet" id="shSt" role="dialog" aria-modal="true">
   <div class="sh"><span><span class="t1" id="sName"></span><span class="t2" id="sSub"></span></span><button class="ib x" id="sClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
-  <label for="sSty">担当</label><select id="sSty"></select>
-  <div class="hint" id="sHint"></div>
-  <button class="dn" id="sDone">対応した</button>
-  <div class="two"><button class="nsh" id="sNo">来なかった</button><button class="cnl" id="sCancel">キャンセル</button></div>
-  <span class="sm" id="sCnH">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</span>
-  <button class="rs" id="sReset">未対応に戻す</button>
+  <div id="sFeeBox"><label>美容室費 (撮影)</label><div class="two"><button class="cnl" id="sFree">無料</button><button class="cnl" id="sPaid">有料</button></div></div>
+  <div class="two" style="grid-template-columns:1fr"><button class="cnl" id="sCancel">枠を空ける (本当のキャンセル)</button></div>
+  <span class="sm" id="sCnH">枠を空けると、この枠は空きに戻り、ほかの子を入れられます。</span>
 </div></div>
 <!-- 出勤する美容師を選ぶ -->
 <div class="ov" id="ovSh" hidden><div class="sheet" id="shSh" role="dialog" aria-modal="true">
@@ -261,7 +271,7 @@ try{
   try{VIA=sessionStorage.getItem('salonAs')==='staff'?'staff':'';}catch(e){}
   if(VIA==='staff')KEY=localStorage.getItem('ivKey')||'';
 }catch(e){}
-if(VIA==='staff')$('toPortal').hidden=false;
+if(VIA==='staff')$('toPortal').hidden=false;else document.body.className='nostaff';
 function api(fn,args){
   return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();}).then(function(j){
     if(j&&j.needKey)throw new Error('読み込めませんでした (黒服の鍵が古い可能性があります。黒服ポータルを開き直してください)');
@@ -296,6 +306,8 @@ function loadList(){
   api('getSalonSlots',[listDay]).then(function(r){if(my!==listSeq)return;listData=r;today=r.today||today;renderList();}).catch(function(e){if(my===listSeq)sErr('lBody',e);});
 }
 function ovOf(e){var o=null;((listData&&listData.overlaps)||[]).forEach(function(x){if(x.place===e.place&&x.time===e.time)o=x;});return e.any?null:o;}
+function stOf(e){return e.status==='済'?'hm':e.status==='来ず'?'cl':'';}
+function btnsHtml(e){var st=stOf(e);return '<span class="tgs"><button type="button" class="tgb hm'+(st==='hm'?' on':'')+'" data-w="hm" aria-pressed="'+(st==='hm')+'">ヘアメイク</button><button type="button" class="tgb cl'+(st==='cl'?' on':'')+'" data-w="cl" aria-pressed="'+(st==='cl')+'">キャンセル</button></span>';}
 function lineHtml(e,i,multiPlace){
   var tags='',ov=ovOf(e);
   if(e.tag)tags+='<span class="tg '+(e.tag==='同伴'?'dou':e.tag==='優先'?'pri':'sat')+'">'+esc(e.tag==='優先'?'来店':e.tag)+'</span>';
@@ -303,10 +315,19 @@ function lineHtml(e,i,multiPlace){
   if(e.manual)tags+='<span class="tg man">手入力</span>';
   var sub=[SHORT[e.store]||e.store||''];
   sub.push(e.any?(e.entry==='キャスト'?'希望 指定なし':e.entry+'入力'):(e.entry==='キャスト'?'希望時間':e.entry+'入力'));
-  if(e.tag==='撮影'&&e.fee)sub.push('美容室費 '+e.fee);
   if(e.by&&e.status==='済')sub.push('担当 '+e.by);
-  var st=stLabel(e.status);
-  return '<div class="lr'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+'" data-i="'+i+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><span class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span><span class="sb'+(e.over?' r':'')+'">'+(e.over?'定員を超えています · ':'')+esc(sub.join(' · '))+'</span></span><button type="button" class="sbtn '+st[0]+'" aria-label="'+esc(e.gen)+(e.status==='済'?' を予約に戻す':' を済にする')+'">'+st[1]+'</button><button type="button" class="mo" aria-label="'+esc(e.gen)+' の詳細 (来なかった・キャンセル)">…</button></div>';
+  return '<div class="lr'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+(e.status==='来ず'?' nsh2':'')+'" data-i="'+i+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><span class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span><span class="sb'+(e.over?' r':'')+'">'+(e.over?'定員を超えています · ':'')+esc(sub.join(' · '))+'</span></span>'+btnsHtml(e)+'</div>';
+}
+// 集計: 予約 = ヘアメイク + キャンセル + まだ (札の総数・予約なしで来た子も含む)。元 = getSalonSlots の rows(booked)+special+any
+function allEntries(r){var a=[];(r.rows||[]).forEach(function(e){if(e.kind==='booked')a.push(e);});return a.concat(r.special||[]).concat(r.any||[]);}
+function summaryHtml(r,withFree){
+  var n=0,hm=0,cl=0,by={};
+  allEntries(r).forEach(function(e){n++;if(e.status==='済'){hm++;var k=e.by||'担当なし';by[k]=(by[k]||0)+1;}else if(e.status==='来ず')cl++;});
+  var rest=n-hm-cl,names=Object.keys(by).sort(function(a,b){return by[b]-by[a]||(a<b?-1:1);});
+  return '<div class="cn sm4"><div><small>予約</small><b>'+n+'</b></div><div class="op">＝</div><div><small style="color:#15803D">ヘアメイク</small><b>'+hm+'</b></div><div class="op">＋</div><div><small style="color:#C2410C">キャンセル</small><b>'+cl+'</b></div><div class="op">＋</div><div><small>まだ</small><b>'+rest+'</b></div></div>'+
+    '<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+'</div>'+
+    '<div class="sumSty">'+(names.length?'ヘアメイク '+names.map(function(k){return esc(k)+' '+by[k]+' 人';}).join('・'):'ヘアメイク まだいません')+'</div>'+
+    (withFree?'<div class="sumSty">空き '+r.counts.free+'</div>':'');
 }
 function renderList(){
   var r=listData,h='',ll=[];
@@ -314,7 +335,7 @@ function renderList(){
   $('lUpd').textContent='最終更新 '+r.updated;
   $('lNote').innerHTML=r.error?'<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>':'';
   $('lOpen').textContent=r.canBook?'この日の予約画面を開く (空き枠・特別枠)':'この日の予約画面を開く';
-  $('lCn').innerHTML='<div><small>時間指定</small><b>'+r.counts.booked+'</b></div><div><small>指定なし</small><b>'+(r.counts.any||0)+'</b></div><div><small style="color:#15803D">対応済</small><b>'+r.counts.done+'</b></div><div><small style="color:#B45309">来なかった</small><b>'+r.counts.noshow+'</b></div><div><small>空き</small><b>'+r.counts.free+'</b></div>';
+  $('lCn').innerHTML=r.reserve?summaryHtml(r,false):'';
   if(!r.reserve){$('lBody').innerHTML='<div class="msg">予約はまだ始まっていません</div>';return;}
   var groups=r.places.map(function(pl){return {name:pl.place,staff:pl.staff,items:[]};}),spx=[];
   r.rows.forEach(function(e){
@@ -344,9 +365,8 @@ function renderList(){
   if(!groups.length&&!spx.length&&!any.length)h='<div class="msg">表示する枠がありません</div>';
   $('lBody').innerHTML=h;
   [].forEach.call($('lBody').querySelectorAll('.lr'),function(row){
-    var b=row.querySelector('.sbtn'),e=ll[+row.getAttribute('data-i')];
-    b.onclick=row.querySelector('.fl').onclick=function(){quick(e,row,b,listDay);};
-    row.querySelector('.mo').onclick=function(){openSt(e,listData,listDay);};
+    var e=ll[+row.getAttribute('data-i')];
+    [].forEach.call(row.querySelectorAll('.tgb'),function(b){b.onclick=function(){tog(e,row,b.getAttribute('data-w'),listDay);};});
   });
 }
 $('lPrev').onclick=function(){listDay=shift(listDay||today,-1);loadList();};
@@ -465,7 +485,6 @@ function loadDay(){
   $('dRows').innerHTML='<div class="msg">読み込み中...</div>';
   api('getSalonSlots',[day]).then(function(r){if(my===daySeq)renderDay(r);}).catch(function(e){if(my===daySeq)$('dRows').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
-function stLabel(s){return s==='済'?['s1','対応済']:s==='来ず'?['s2','来なかった']:['s0','未対応'];}
 function renderDay(r){
   dayData=r;today=r.today||today;
   fillSty(r);$('dWalk').hidden=!(r.reserve&&r.date===r.today);renderWalk();
@@ -473,7 +492,7 @@ function renderDay(r){
   var duty=(r.onDuty||[]).map(function(x){return x.name+' '+x.start+'-'+x.end;}).join('、'), sub0=r.reserve&&r.places.length?'美容師 '+staffN+' 人 · 1 時間 最大 '+r.hourCap+' 人':'';
   $('dSub').textContent=sub0+(duty?(sub0?' · ':'')+'出勤 '+duty:''); // 出勤の美容師 (美容師シフト・表示だけ 2026-11-21)
   spStep=r.spStep||30;
-  $('nB').textContent=r.counts.booked;$('nA').textContent=r.counts.any||0;$('nD').textContent=r.counts.done;$('nN').textContent=r.counts.noshow;$('nF').textContent=r.counts.free;
+  $('dCn').innerHTML=r.reserve?summaryHtml(r,true):'';
   $('dNote').innerHTML=r.error?'<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>':'';
   $('dUpd').textContent='最終更新 '+r.updated;
   $('dSpecial').hidden=!(r.reserve&&r.canBook);
@@ -501,13 +520,12 @@ function renderDay(r){
     if(e.special)sub.push('特別枠');
     sub.push(SHORT[e.store]||e.store||'');
     if(multi&&!e.special)sub.push(e.place);
-    if(e.tag==='撮影'&&e.fee)sub.push('美容室費 '+e.fee);
+    if(VIA==='staff'&&e.tag==='撮影'&&e.fee)sub.push('美容室費 '+e.fee);
     if(e.by&&e.status==='済')sub.push('担当 '+e.by);
     if(e.manual)sub.push('入れた人 '+e.entry);
-    var st=stLabel(e.status);
-    h+='<div class="rw'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+'" data-k="'+esc(entKey(e))+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><div class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span>'+
+    h+='<div class="rw'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+(e.status==='来ず'?' nsh2':'')+'" data-k="'+esc(entKey(e))+'" data-i="'+i+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><div class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span>'+
       '<span class="sb'+(e.over?' r':'')+'">'+(e.over?'定員を超えています · ':'')+esc(sub.join(' · '))+'</span></div>'+
-      '<button class="sbtn '+st[0]+'" data-i="'+i+'" aria-label="'+esc(e.gen)+(e.status==='済'?' を予約に戻す':' を済にする')+'">'+st[1]+'</button><button class="mo" data-i="'+i+'" aria-label="'+esc(e.gen)+' の詳細 (来なかった・キャンセル)">…</button></div>';
+      btnsHtml(e)+(VIA==='staff'?'<button type="button" class="dtl" aria-label="'+esc(e.gen)+' の詳細">詳細</button>':'')+'</div>';
   });
   $('dRows').innerHTML=h;
   fitRows();
@@ -517,9 +535,9 @@ function renderDay(r){
   }
   [].forEach.call(document.querySelectorAll('#dRows .em'),function(el){el.onclick=function(){openAdd(list[+el.getAttribute('data-i')],false);};});
   [].forEach.call(document.querySelectorAll('#dRows .rw[data-k]'),function(row){
-    var b=row.querySelector('.sbtn'),i=+b.getAttribute('data-i');
-    b.onclick=row.querySelector('.fl').onclick=function(){quick(list[i],row,b,day);};
-    row.querySelector('.mo').onclick=function(){openSt(list[i],dayData,day);};
+    var i=+row.getAttribute('data-i');
+    [].forEach.call(row.querySelectorAll('.tgb'),function(b){b.onclick=function(){tog(list[i],row,b.getAttribute('data-w'),day);};});
+    var d=row.querySelector('.dtl');if(d)d.onclick=function(){openSt(list[i],dayData,day);};
   });
 }
 // 1 画面に収まるように行の高さを決める (48〜64px)
@@ -601,17 +619,17 @@ function fillSty(r){
 ['dSty','lSty'].forEach(function(id){$(id).onchange=function(){var v=$(id).value;$('dSty').value=v;$('lSty').value=v;if(v)lsSet('salonStylist',v);};}); // 2 つの画面で同じ名前
 function needSty(){
   var v=$('dSty').value;
-  if(!v){window.alert('先に上の「担当」で自分の名前を選んでください');($('vList').hidden?$('dSty'):$('lSty')).focus();return '';}
+  if(!v){var lst=!$('vList').hidden;$('lErr').hidden=!lst;$('dErr').hidden=lst;var sel=lst?$('lSty'):$('dSty');sel.scrollIntoView({block:'center'});try{sel.focus({preventScroll:true});}catch(e){}return '';}
   lsSet('salonStylist',v);return v;
 }
-// 済でなければ 済 (担当 = 選んだ名前)・済なら 確認して予約に戻す。押した札はすぐ「処理中」にして、返事が来るまで押せない
-function quick(e,row,b,dy){
+['dSty','lSty'].forEach(function(id){$(id).addEventListener('change',function(){$('lErr').hidden=true;$('dErr').hidden=true;});});
+// 2 つのトグル: ヘアメイク (済) / キャンセル (来ず)。ON を押すと reset・片方 ON 中にもう片方を押すとそのまま切り替え (サーバーに 1 回)。押した札はすぐ「処理中」にして、返事が来るまで押せない
+function tog(e,row,w,dy){
   if(busy||!e||e.kind==='free')return;
-  var back=e.status==='済',sty=back?(e.by||$('dSty').value):needSty();
-  if(back){if(!window.confirm(e.gen+' さんを予約に戻します。よろしいですか？'))return;}
-  else if(!sty)return;
-  var a=back?'reset':'done', undo=function(){row.classList.remove('pend');b.textContent=stLabel(e.status)[1];};
-  row.classList.add('pend');b.textContent='処理中…';
+  var cur=stOf(e),a,sty='';
+  if(w===cur)a='reset';else if(w==='hm'){a='done';sty=needSty();if(!sty)return;}else a='noshow';
+  var undo=function(){row.classList.remove('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent=b.getAttribute('data-w')==='hm'?'ヘアメイク':'キャンセル';});};
+  row.classList.add('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent='処理中…';});
   act(function(){return e.any?api('setSalonAny',[dy,e.store,e.gen,a,sty]):api('setSalonSlot',[dy,e.place,e.time,e.store,e.gen,a,sty]);},undo);
 }
 // 予約なしで来た子
@@ -642,36 +660,25 @@ function walkFor(box,inp,sug,dy){
 }
 [['wName'],['lName']].forEach(function(a){$(a[0]).oninput=function(){loadCast();renderWalk();};$(a[0]).onfocus=loadCast;});
 
-// ---------- 対応を記録 ----------
-var cur=null;
-var curDay='',curSrc=null;
+// ---------- 詳細 (黒服のみ) ----------
+var cur=null,curDay='';
 function openSt(e,src,dy){
-  cur=e;curDay=dy||day;curSrc=src||dayData;
+  cur=e;curDay=dy||day;
   $('sName').textContent=e.gen;
   $('sSub').textContent=(e.any?'指定なし (着いた順)':e.time)+' · '+(SHORT[e.store]||e.store)+(e.special?' · 特別枠':'');
   $('sCancel').style.display=e.any?'none':'';$('sCnH').style.display=e.any?'none':'';
-  var names=curSrc.stylists||[], def=e.by||lsGet('salonStylist')||'';
-  if(names.indexOf(def)<0)def='';
-  $('sSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');
-  var free=e.tag==='撮影'&&e.fee==='無料';
-  $('sHint').textContent=free?'撮影 (美容室費 無料): 給料引きには載りません。美容師の人数には数えるので、担当を選んでください':(names.length?'':'美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)');
+  var fee=!e.any&&e.tag==='撮影';$('sFeeBox').style.display=fee?'':'none';
+  $('sFree').style.fontWeight=e.fee==='無料'?'900':'700';$('sPaid').style.fontWeight=e.fee==='有料'?'900':'700';
+  $('sFree').style.background=e.fee==='無料'?'#E6E9F0':'#fff';$('sPaid').style.background=e.fee==='有料'?'#E6E9F0':'#fff';
   $('ovSt').hidden=false;
 }
-function doSt(a){
-  if(!cur)return;
-  var sty=$('sSty').value, free=cur.tag==='撮影'&&cur.fee==='無料';
-  if(a==='done'&&!sty){window.alert('先に担当の美容師を選んでください');return;}
-  if(a==='cancel'&&!window.confirm(cur.gen+' さんをキャンセルします。この枠は空きに戻ります。よろしいですか？'))return;
-  var e=cur;
-  if(a==='done'&&sty)lsSet('salonStylist',sty);
-  var dy=curDay;
-  if(e.any)return act(function(){return api('setSalonAny',[dy,e.store,e.gen,a,sty]);});
-  act(function(){return api('setSalonSlot',[dy,e.place,e.time,e.store,e.gen,a,sty]);});
-}
-$('sDone').onclick=function(){doSt('done');};
-$('sNo').onclick=function(){doSt('noshow');};
-$('sCancel').onclick=function(){doSt('cancel');};
-$('sReset').onclick=function(){doSt('reset');};
+function doFee(f){if(!cur)return;var e=cur,dy=curDay;act(function(){return api('setSalonFee',[dy,e.place,e.time,e.store,e.gen,f]);});}
+$('sFree').onclick=function(){doFee('無料');};
+$('sPaid').onclick=function(){doFee('有料');};
+$('sCancel').onclick=function(){
+  if(!cur||!window.confirm(cur.gen+' さんの枠を空けます (本当のキャンセル)。この枠は空きに戻ります。よろしいですか？'))return;
+  var e=cur,dy=curDay;act(function(){return api('setSalonSlot',[dy,e.place,e.time,e.store,e.gen,'cancel','']);});
+};
 $('sClose').onclick=closeSheets;
 $('ovSt').onclick=function(e){if(e.target===$('ovSt'))closeSheets();};
 
