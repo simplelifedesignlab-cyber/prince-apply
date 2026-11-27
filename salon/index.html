@@ -324,7 +324,7 @@ function renderList(){
     g.items.push(e);
   });
   r.special.forEach(function(e){spx.push(e);});
-  if(groups.length||spx.length)h+='<div class="lsec">時間指定 (同伴・撮影) 時刻順</div>';
+  if(groups.length||spx.length)h+='<div class="lsec">時間指定 (同伴・撮影・来店予定) 時刻順</div>';
   groups.forEach(function(g){
     var duty=(r.onDuty||[]).filter(function(x){return x.place===g.name;}).map(function(x){return x.name+' '+x.start+'-'+x.end;}).join('、');
     h+='<div class="lh"><b>'+esc(g.name)+'</b><small>美容師 '+g.staff+' 人'+(duty?' · 出勤 '+esc(duty):'')+' · 時間指定 '+g.items.length+'</small></div>';

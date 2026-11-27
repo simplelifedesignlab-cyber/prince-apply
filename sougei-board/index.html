@@ -251,7 +251,7 @@ function renderList(){
   fillDrv();
   $('lWalk').hidden=listDay>today;
   var okGo=r.go.filter(function(x){return x.ride==='済';}).length,okBack=r.back.filter(function(x){return x.ride==='済';}).length;
-  $('lSum').innerHTML='<div class="k"><small>行き (乗せた/全)</small><b>'+okGo+' / '+r.nGo+'</b></div><div class="k"><small>帰り (送った/全)</small><b>'+okBack+' / '+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>ドライバー未定</small><b>'+r.undecided+'</b></div><div class="k"><small>出勤ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
+  $('lSum').innerHTML='<div class="k"><small>行き 済/全</small><b>'+okGo+' / '+r.nGo+'</b></div><div class="k"><small>帰り 済/全</small><b>'+okBack+' / '+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>車 未定</small><b>'+r.undecided+'</b></div><div class="k"><small>ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
   [['go','行き',r.go],['back','帰り',r.back]].forEach(function(s){
     h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small></div>';
     if(!s[2].length)h+='<div class="lnone">'+s[1]+'の送迎はありません</div>';
