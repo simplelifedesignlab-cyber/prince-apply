@@ -25,17 +25,32 @@ button,select,input{font-family:inherit}
 .sum .k.un b{color:#B91C1C}
 .lw{margin:4px 16px 8px;padding:8px 12px;border-radius:10px;background:#F3F5F9;font-size:13px;color:#4A5370}.lw b.ok{color:#15803D}.lw b.no{color:#B91C1C}
 .lh{margin:16px 16px 0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.lh b{font-size:18px;font-weight:900}.lh small{font-size:12px;color:#6B7285}
-.lr{display:flex;align-items:center;gap:10px;width:100%;min-height:60px;padding:6px 12px 6px 16px;border:0;border-bottom:1px solid #E6E9F0;background:#fff;text-align:left;cursor:pointer;color:#1F2A44;font-size:16px}
-.lr.cx{opacity:.55;cursor:default}
+.lr{display:flex;align-items:stretch;width:100%;border-bottom:1px solid #E6E9F0;background:#fff;color:#1F2A44;font-size:16px}
+.lr.cx{opacity:.55}
+.lr.d{background:#F0FDF4}.lr.n{background:#FFF7ED}.lr.c{background:#F3F4F6}
+.lr.pend{opacity:.5;pointer-events:none}
+.lm{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:10px;min-height:64px;padding:6px 6px 6px 16px;border:0;background:none;text-align:left;cursor:pointer;color:inherit;font-size:16px}
+.lm:disabled{cursor:default}
+.rt{flex-shrink:0;width:104px;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.pl{min-width:92px;height:36px;padding:0 8px;border-radius:10px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.pl.p0{border:1.5px solid #1F2A44;color:#1F2A44;background:#fff}.pl.p1{background:#DCFCE7;color:#15803D}.pl.p2{background:#FEF3C7;color:#B45309}.pl.p3{background:#E5E7EB;color:#4B5563}
+.mo{flex-shrink:0;width:44px;border:0;background:none;font-size:22px;font-weight:900;color:#6B7285;cursor:pointer}
+.whoBar{display:flex;align-items:center;gap:10px;margin:8px 16px 0;padding:10px 12px;border-radius:10px;background:#F3F5F9}.whoBar label{font-size:13px;font-weight:900;flex-shrink:0}.whoBar select{flex:1;min-width:0;height:44px;font-size:16px;font-weight:700;border-radius:8px;border:1.5px solid #1F2A44;background:#fff;color:#1F2A44;padding:0 8px}
+.wbox{margin:8px 16px 0}.wbox input{width:100%;height:44px;font-size:16px;padding:0 12px;border:1.5px solid #CFD4E0;border-radius:10px;margin:8px 0}
+.wsub{margin:6px 16px 0;font-size:12px;font-weight:700;color:#6B7285}
+.sg{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.sg button{height:44px;padding:0 14px;border-radius:22px;font-size:15px;font-weight:700;cursor:pointer;border:1.5px solid #C9CEDB;background:#fff;color:#1F2A44}
+.sg .no{font-size:13px;color:#6B7285;align-self:center}
+.ab{flex-shrink:0;height:52px;border:1.5px solid #1F2A44;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;background:#fff;color:#1F2A44;width:100%}
+.ab.pr{border:0;background:#1F2A44;color:#fff}
 .lr .tm{width:58px;flex-shrink:0;font-size:15px;font-weight:700;color:#4A5370}
 .lr .fl{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
 .lr .nm{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.lr .nm b{font-size:17px;font-weight:900}
 .lr .sb{font-size:12px;color:#6B7285;white-space:normal}
-.lr .dr{flex-shrink:0;width:112px;text-align:right;font-size:14px;font-weight:700}.lr .dr small{display:block;font-size:12px;font-weight:400;color:#6B7285}
+.lr .dr{text-align:right;font-size:13px;font-weight:700}.lr .dr small{display:block;font-size:12px;font-weight:400;color:#6B7285}
 .lr .dr.un{color:#B91C1C}
-.lr .go{flex-shrink:0;color:#9AA1B5}
 .tg{font-size:11px;font-weight:700;border-radius:5px;padding:1px 6px;flex-shrink:0}
-.tg.dou{background:#DCFCE7;color:#15803D}.tg.vis{background:#E6E9F0;color:#2E4372}.tg.sh{background:#E6E9F0;color:#4A5370}.tg.cx{background:#FEE2E2;color:#B91C1C}
+.tg.ex{background:#EDE9FE;color:#6D28D9}.tg.dou{background:#DCFCE7;color:#15803D}.tg.vis{background:#E6E9F0;color:#2E4372}.tg.sh{background:#E6E9F0;color:#4A5370}.tg.cx{background:#FEE2E2;color:#B91C1C}
 .lnone{padding:14px 16px;font-size:14px;color:#8A92A6;border-bottom:1px solid #E6E9F0}
 .msg{padding:26px 16px;text-align:center;font-size:16px;color:#666}.err{color:#B91C1C}
 .upd{font-size:13px;color:#8A92A6;text-align:center;margin:14px 0 24px}
@@ -82,7 +97,7 @@ button,select,input{font-family:inherit}
  .sd{flex-direction:row;align-items:center;gap:10px;min-height:56px;width:100%;border-right:0;padding:6px 16px}
  .sd .n,.sd.today .n{flex-shrink:0;width:72px;height:auto;display:block;background:none;color:#1F2A44;border-radius:0;font-weight:900}
  .sd.today{background:#F3F5F9}
- .lr .dr{width:92px}
+ .rt{width:96px}
 }
 </style></head><body>
 <div class="page">
@@ -93,9 +108,11 @@ button,select,input{font-family:inherit}
 <!-- 当日 (一覧) -->
 <div id="vList" hidden>
   <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button class="ib" id="lPrev" aria-label="前の日">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日">›</button></div></div>
+  <div class="whoBar"><label for="lDrv">ドライバー (あなたの名前)</label><select id="lDrv"></select></div>
   <div class="sum" id="lSum"></div>
   <div id="lNote"></div>
   <div id="lBody"><div class="msg">読み込み中...</div></div>
+  <div id="lWalk" hidden><div class="lh"><b>予定に無い子</b></div><div class="wsub">行き / 帰りを選んで、名前の頭文字を打つと候補が出ます。押すと、その便に入って「済」になります</div><div class="wbox"><div class="sseg" id="wDir"><button type="button" data-d="go" class="on">行き</button><button type="button" data-d="back">帰り</button></div><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
   <div class="upd" id="lUpd"></div>
 </div>
 <!-- 週間 (送迎の予定) -->
@@ -134,21 +151,28 @@ button,select,input{font-family:inherit}
   <div id="shBody"></div>
   <button class="big" id="shOk">決定</button>
 </div></div>
+<!-- 札の「…」 (乗らなかった・キャンセル・戻す・詳細) -->
+<div class="ov" id="ovAct" hidden><div class="sheet" role="dialog" aria-modal="true">
+  <div class="sh"><span><span class="t1" id="acT"></span><span class="t2" id="acS"></span></span><button class="ib x" id="acClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+  <div id="acBody" style="display:flex;flex-direction:column;gap:10px"></div>
+</div></div>
 <div class="toast" id="toast" hidden></div>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-// 鍵なし (2026-11-26 H)。古い URL の ?k= は読み捨てる。?as=staff = 黒服ポータルから来た印 (戻るリンクを出すだけ)
+// 鍵なし (2026-11-26 H)。古い URL の ?k= は読み捨てる。?as=staff = 黒服ポータルから来た印 (戻るリンク・入れた人 = 黒服)
+var KEY='';
 try{
   var u0=new URL(location.href),ch=false;
   if(u0.searchParams.get('k')){u0.searchParams.delete('k');ch=true;}
   if(u0.searchParams.get('as')==='staff'){try{sessionStorage.setItem('sgAs','staff');}catch(e){}u0.searchParams.delete('as');ch=true;}
   if(ch)history.replaceState(null,'',u0.pathname+u0.search+u0.hash);
-  if(sessionStorage.getItem('sgAs')==='staff')$('toPortal').hidden=false;
+  if(sessionStorage.getItem('sgAs')==='staff'){$('toPortal').hidden=false;KEY=localStorage.getItem('ivKey')||'';} // 黒服ポータルから来た時だけ黒服の鍵を付ける = 「入れた人」が 黒服 になる (鍵は URL にも画面にも出さない)
 }catch(e){}
 function api(fn,args){
-  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:''})}).then(function(r){return r.json();}).then(function(j){
+  return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();}).then(function(j){
+    if(j&&j.needKey&&KEY){KEY='';return api(fn,args);} // 黒服の鍵が古い時は鍵なしでやり直す (送迎の画面は鍵なしで動く)
     if(!j||!j.ok)throw new Error(j&&j.error||'失敗しました');return j.result;});
 }
 function pad(n){return ('0'+n).slice(-2);}
@@ -164,6 +188,8 @@ function sErr(id,e){$(id).innerHTML='<div class="msg err">読み込めません�
 var toastT=0;
 function toast(m){if(!m)return;var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},3500);}
 var today=bizLocal();
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function carNo(no){return String(no||'').replace(/^\s*(NO\.?|No\.?|no\.?|ＮＯ|№)\s*/,'').replace(/\s*番\s*$/,'');}
 
 // ---------- 当日 (一覧) ----------
@@ -181,21 +207,29 @@ function loadList(){
 }
 function setBoard(r){board=r;rows={};r.go.concat(r.back,r.cancelled).forEach(function(x){rows[rkey(x)]=x;});}
 function drvOf(name){var o=null;(board.drivers||[]).forEach(function(d){if(d.name===name)o=d;});return o;}
+function rideLbl(x){var go=x.dir==='go';return x.ride==='済'?(go?'乗せた ✓':'送った ✓'):x.ride==='乗らず'?'乗らず':x.ride==='キャンセル'?'キャンセル':(go?'乗せる':'送る');}
+function rideN(x){return x.ride==='済'?1:x.ride==='乗らず'?2:x.ride==='キャンセル'?3:0;}
+// 札: 行の左 (名前) を 1 回押すと済・済をもう一度押すと確認して戻す。右の … は 乗らなかった / キャンセル / 詳細
 function lineHtml(x,cx){
   var tags='';
+  if(x.extra)tags+='<span class="tg ex">予定外</span>';
   if(x.dohan)tags+='<span class="tg dou">同伴</span>';else if(x.visit)tags+='<span class="tg vis">来店</span>';
   if(x.cancel)tags+='<span class="tg cx">'+esc(x.cancel)+'</span>';
   var tm=x.dir==='go'?(x.pick?x.pick+' 迎え':(x.time||'—')):(x.time||'—');
   var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
-  var d=drvOf(x.driver);
-  var dr=cx?'<span class="dr">送迎なし</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定</span>';
-  return '<button type="button" class="lr'+(cx?' cx':'')+'" data-k="'+esc(rkey(x))+'"'+(cx?' disabled':'')+'><span class="tm">'+esc(tm)+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span></span>'+dr+(cx?'':'<svg class="go" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg>')+'</button>';
+  var d=drvOf(x.driver),n=rideN(x);
+  var dr=cx?'<span class="dr">送迎なし</span>':x.ride?'<span class="dr">'+esc(x.rideBy||'')+(x.rideAt?'<small>'+esc(x.rideAt)+'</small>':'')+'</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定</span>';
+  var main='<span class="tm">'+esc(tm)+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span></span><span class="rt">'+(cx?'':'<span class="pl p'+n+'">'+rideLbl(x)+'</span>')+dr+'</span>';
+  return '<div class="lr'+(cx?' cx':(n?' '+['','d','n','c'][n]:''))+'" data-k="'+esc(rkey(x))+'"><button type="button" class="lm"'+(cx?' disabled':'')+'>'+main+'</button>'+(cx?'':'<button type="button" class="mo" aria-label="その他">…</button>')+'</div>';
 }
 function renderList(){
   var r=board,h='';
   $('lUpd').textContent='最終更新 '+r.updated;
   $('lNote').innerHTML=r.notes&&r.notes.length?'<div class="note">'+r.notes.map(esc).join(' / ')+'</div>':'';
-  $('lSum').innerHTML='<div class="k"><small>行き</small><b>'+r.nGo+'</b></div><div class="k"><small>帰り</small><b>'+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>ドライバー未定</small><b>'+r.undecided+'</b></div><div class="k"><small>出勤ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
+  fillDrv();
+  $('lWalk').hidden=listDay>today;
+  var okGo=r.go.filter(function(x){return x.ride==='済';}).length,okBack=r.back.filter(function(x){return x.ride==='済';}).length;
+  $('lSum').innerHTML='<div class="k"><small>行き (乗せた/全)</small><b>'+okGo+' / '+r.nGo+'</b></div><div class="k"><small>帰り (送った/全)</small><b>'+okBack+' / '+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>ドライバー未定</small><b>'+r.undecided+'</b></div><div class="k"><small>出勤ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
   [['go','行き',r.go],['back','帰り',r.back]].forEach(function(s){
     h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small></div>';
     if(!s[2].length)h+='<div class="lnone">'+s[1]+'の送迎はありません</div>';
@@ -203,8 +237,101 @@ function renderList(){
   });
   if(r.cancelled.length){h+='<div class="lh"><b>当欠・欠勤</b><small>送迎なし '+r.cancelled.length+' 人</small></div>';r.cancelled.slice().sort(sortX).forEach(function(x){h+=lineHtml(x,true);});}
   $('lBody').innerHTML=h;
-  [].forEach.call($('lBody').querySelectorAll('.lr:not(.cx)'),function(b){b.onclick=function(){openRow(b.getAttribute('data-k'));};});
+  [].forEach.call($('lBody').querySelectorAll('.lr:not(.cx)'),function(row){
+    var k=row.getAttribute('data-k');
+    row.querySelector('.lm').onclick=function(){quick(rows[k],row);};
+    row.querySelector('.mo').onclick=function(){openAct(k);};
+  });
+  renderWalk();
 }
+// ---- ドライバー (あなたの名前)。1 回選ぶと端末が覚える。黒服が代わりに押す時もここで選ぶ ----
+function fillDrv(){
+  var sel=$('lDrv'),cur=sel.value||lsGet('sgDriver')||'',ds=(board&&board.drivers)||[],ok=false;
+  ds.forEach(function(d){if(d.name===cur)ok=true;});
+  sel.innerHTML='<option value="">選んでください</option>'+ds.map(function(d){return '<option value="'+esc(d.name)+'">'+esc(d.name)+(d.on?' ○':'')+'</option>';}).join('');
+  sel.value=ok?cur:'';
+}
+$('lDrv').onchange=function(){if($('lDrv').value)lsSet('sgDriver',$('lDrv').value);};
+function needDrv(){
+  var v=$('lDrv').value;
+  if(!v){window.alert('先に上の「ドライバー」で自分の名前を選んでください');$('lDrv').focus();return '';}
+  lsSet('sgDriver',v);return v;
+}
+// ---- 書き込み (1 つずつ)。押した札はすぐ「処理中」にして、返事が来るまで押せない。失敗したら元に戻してエラー表示 ----
+var rbusy=false;
+function rowEl(k){var o=null;[].forEach.call($('lBody').querySelectorAll('.lr'),function(r){if(r.getAttribute('data-k')===k)o=r;});return o;}
+function rideDo(row,fn,args){
+  if(rbusy)return;rbusy=true;
+  if(row){row.classList.add('pend');var p=row.querySelector('.pl');if(p)p.textContent='処理中…';}
+  api(fn,args).then(function(r){rbusy=false;setBoard(r);if(!$('vList').hidden)renderList();toast(r.saved?'記録しました':'すでに同じ記録です');}).catch(function(e){rbusy=false;if(!$('vList').hidden)renderList();window.alert(e.message||e);});
+}
+function quick(x,row){
+  if(rbusy||!x)return;
+  var drv;
+  if(x.ride){
+    if(!window.confirm(x.name+' さんを「'+rideLbl(x).replace(' ✓','')+'」から元に戻します。よろしいですか？'))return;
+    drv=$('lDrv').value;
+    rideDo(row,'setSougeiRide',[listDay,x.dir,x.store,x.name,'reset',drv]);
+  }else{
+    drv=needDrv();if(!drv)return;
+    rideDo(row,'setSougeiRide',[listDay,x.dir,x.store,x.name,'done',drv]);
+  }
+}
+function openAct(k){
+  var x=rows[k];if(!x||rbusy)return;
+  $('acT').textContent=x.name;$('acS').textContent=mdw(listDay)+' · '+(x.dir==='go'?'行き':'帰り')+' · '+x.shop+(x.ride?' · いま「'+rideLbl(x).replace(' ✓','')+'」':'');
+  var go=x.dir==='go',bs=[];
+  if(x.ride!=='済')bs.push(['done',go?'乗せた':'送った','pr']);
+  if(x.ride!=='乗らず')bs.push(['noshow','乗らなかった','']);
+  if(x.ride!=='キャンセル')bs.push(['cancel','キャンセル','']);
+  if(x.ride)bs.push(['reset','元に戻す (未にする)','']);
+  if(!x.extra)bs.push(['detail','詳細・ドライバーの付け替え','']);
+  $('acBody').innerHTML=bs.map(function(b){return '<button type="button" class="ab '+b[2]+'" data-a="'+b[0]+'">'+esc(b[1])+'</button>';}).join('');
+  [].forEach.call($('acBody').querySelectorAll('button'),function(b){b.onclick=function(){
+    var a=b.getAttribute('data-a'),drv=$('lDrv').value;
+    if(a==='detail'){$('ovAct').hidden=true;openRow(k);return;}
+    if(a==='done'){drv=needDrv();if(!drv)return;}
+    $('ovAct').hidden=true;
+    rideDo(rowEl(k),'setSougeiRide',[listDay,x.dir,x.store,x.name,a,drv]);
+  };});
+  $('ovAct').hidden=false;
+}
+$('acClose').onclick=function(){$('ovAct').hidden=true;};
+$('ovAct').onclick=function(e){if(e.target===$('ovAct'))$('ovAct').hidden=true;};
+// ---- 予定に無い子 (在籍一覧から頭文字で探す。押すと即その便に足して済) ----
+var wDir='go',castAll=null,castLoading=false,castErr='',SHORT={'RegentClub千歳':'RC','328':'328','WAVE千歳':'WAVE','花もみじ千歳':'花もみじ'};
+function norm(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96);}).replace(/\s+/g,'');}
+function loadCast(){
+  if(castAll||castLoading)return;
+  castLoading=true;castErr='';
+  api('getSalonCastAll',[]).then(function(r){castAll=r.casts;castLoading=false;renderWalk();}).catch(function(e){castLoading=false;castErr=String(e&&e.message||e);renderWalk();});
+}
+function renderWalk(){
+  if($('lWalk').hidden)return;
+  var q=norm($('wName').value),h='';
+  [].forEach.call($('wDir').querySelectorAll('button'),function(b){b.className=b.getAttribute('data-d')===wDir?'on':'';});
+  if(!q){$('wSug').innerHTML='';return;}
+  if(!castAll&&castErr)h='<span class="no">名前の一覧を読み込めませんでした: '+esc(castErr)+'</span>';
+  else if(!castAll)h='<span class="no">名前の一覧を読み込み中...</span>';
+  else{
+    var hits=castAll.filter(function(c){return norm(c.gen).indexOf(q)===0;});
+    if(!hits.length)h='<span class="no">合う名前がありません</span>';
+    else hits.slice(0,8).forEach(function(c){h+='<button type="button" data-k="'+esc(c.store)+'|'+esc(c.gen)+'">'+esc(c.gen)+' · '+esc(SHORT[c.store]||c.store)+'</button>';});
+  }
+  $('wSug').innerHTML=h;
+  [].forEach.call($('wSug').querySelectorAll('button'),function(b){b.onclick=function(){
+    if(rbusy)return;
+    var k=b.getAttribute('data-k').split('|'),store=k[0],gen=k.slice(1).join('|'),ex=rows[wDir+'|'+store+'|'+gen];
+    if(ex&&!ex.cancel){window.alert(gen+' さんは '+(wDir==='go'?'行き':'帰り')+'の一覧にいます。一覧の札を押してください');return;}
+    var drv=needDrv();if(!drv)return;
+    b.textContent='処理中…';b.disabled=true;
+    $('wName').value='';
+    rideDo(null,'addSougeiWalkin',[listDay,wDir,store,gen,drv]);
+  };});
+}
+$('wName').oninput=function(){loadCast();renderWalk();};
+$('wName').onfocus=loadCast;
+[].forEach.call($('wDir').querySelectorAll('button'),function(b){b.onclick=function(){wDir=b.getAttribute('data-d');renderWalk();};});
 $('lPrev').onclick=function(){listDay=shift(listDay||today,-1);loadList();};
 $('lNext').onclick=function(){listDay=shift(listDay||today,1);loadList();};
 $('lToday').onclick=function(){listDay=today;loadList();};
@@ -329,7 +456,7 @@ function setTab(t){history.replaceState(null,'',location.pathname+location.searc
 [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){setTab(b.getAttribute('data-t'));};});
 function route(){
   var m=/^#r=(.+)$/.exec(location.hash),t=/^#t=(list|week|shift)$/.exec(location.hash);
-  $('ovSh').hidden=true;
+  $('ovSh').hidden=true;$('ovAct').hidden=true;
   ['vList','vWeek','vShift','vRow'].forEach(function(id){$(id).hidden=true;});
   if(m){
     $('hd').hidden=true;$('vRow').hidden=false;window.scrollTo(0,0);
