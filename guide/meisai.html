@@ -65,51 +65,37 @@ th{background:#E6E9F0;color:#1F2A44}
 .back a{color:#1F2A44}
 footer{text-align:center;font-size:12px;color:#777;padding:0 16px 36px}
 
-</style></head><body>
-<header class="top"><small>PRINCE CHITOSE / STAFF</small><h1>黒服向け 明細の説明書<br>美容室の明細・ドライバーの週払い</h1><p>明細は 自動で できます。もとになるのは、美容師さん・ドライバーさんが 画面で 押した 記録です。</p></header>
-<nav class="jump" aria-label="もくじ"><a href="#hair">1 美容室の明細</a><a href="#fee">2 有料・無料</a><a href="#drv">3 ドライバーの週払い</a><a href="#mail">4 中村本部長へ</a></nav>
+.big{font-size:17px;font-weight:900;color:#1F2A44;margin:6px 0}.calc{background:#F4F5F7;border-radius:8px;padding:10px 12px;font-size:17px;line-height:1.9}.calc b{font-size:20px}.shot img.a{height:auto}.todo{display:flex;gap:10px;align-items:center;margin:0 0 6px}.todo .no{width:36px;height:36px;font-size:18px}.todo h4{margin:0;font-size:18px}.when{display:inline-block;background:#1F2A44;color:#fff;border-radius:6px;padding:0 8px;font-size:13px;margin-bottom:4px}</style></head><body>
+<header class="top"><small>PRINCE CHITOSE / STAFF</small><h1>黒服向け 明細のこと</h1><p>明細は 自動で できます。黒服が やることは 3 つだけ。</p></header>
 <main>
-<div class="banner s">紙の予約票・手書きの集計は いりません。美容師さんは「ヘアメイク」、ドライバーさんは「乗せた / 送った」を 押すだけで、明細まで つながります。<div class="legend"><span><i></i>できている</span><span><i class="d"></i>準備中・確認中</span></div></div>
 
-<h2 id="hair">1　美容室の明細</h2>
-<div class="card"><h4>もとになる 記録</h4>
-<p>美容師さんが 美容室の画面 (当日タブ) で 押した ボタンです。</p>
-<table><tr><th>押したボタン</th><th>記録</th><th>明細では</th></tr>
-<tr><td><b>ヘアメイク</b> (緑)</td><td>済・担当の美容師名つき</td><td>その美容師の ヘアメイク人数に 入る</td></tr>
-<tr><td><b>キャンセル</b> (オレンジ)</td><td>来ず</td><td>人数にも 金額にも 入らない</td></tr>
-<tr><td>どちらも 押していない</td><td>予約のまま</td><td>入らない (当日タブで「まだ」に 数えられる)</td></tr></table>
-<p class="note">記録は Prince App の「美容室記録」タブ、女の子の給料から引く分は「美容室 給料引き(日別)」タブに 入ります。シートを 直接 さわる 必要は ありません。</p></div>
-<div class="card"><h4>いつ・どこに できるか</h4>
-<table><tr><th>いつ</th><th>どんな明細</th></tr>
-<tr><td><b>毎日 朝 6 時台</b></td><td>前の日 1 日分 (Google ドライブ「美容室 明細」の「日別」フォルダ)</td></tr>
-<tr><td><b>月曜 朝 6 時台</b></td><td>先週 1 週間分・月曜〜日曜 (「週別」フォルダ)</td></tr></table>
-<p>週別の明細には、美容師さんごとに <b>有料で 対応した 件数と 金額</b>、<b>無料の 数</b>、<b>来なかった (キャンセル) の 数</b> が 並びます。</p></div>
-<div class="card"><h4>数が 合っているかの 見方</h4>
-<p>美容室の画面の 当日タブの 上に「<b>予約 ＝ ヘアメイク ＋ キャンセル ＋ まだ</b>」と、美容師さんごとの ヘアメイク人数が 出ます。</p>
-<ol class="st"><li>「まだ」が 0 に なっていれば、全員 記録 済みです。</li><li>美容師さんごとの 人数の 合計 ＝ ヘアメイク の 数 です (同じ 記録から 数えるので 必ず 合います)。</li><li>「まだ」が 残っている 時は、その日の うちに 美容師さんに 押してもらいます。</li></ol></div>
+<div class="card"><span class="when">毎晩 お店が 終わる前</span>
+<div class="todo"><span class="no">1</span><h4>「まだ」が 0 か 見る</h4></div>
+<p>美容室の画面と 送迎の画面の 上に 出る 数字を 見ます。</p>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/g2_h7.png" alt="美容室の画面の上の数字" loading="lazy"></div><figcaption class="note">美容室の画面</figcaption></figure>
+<p class="big">「まだ」が 0 → OK</p>
+<p class="big">「まだ」が 残っている → その美容師さん・ドライバーさんに 押してもらう</p>
+<p class="note">押されていない 分は 明細に 入りません。</p>
+<p><a href="https://apply.prince-sapporo.jp/salon/">美容室の画面</a>　<a href="https://apply.prince-sapporo.jp/sougei-board/">送迎の画面</a></p></div>
 
-<h2 id="fee">2　有料・無料 (黒服だけが さわる)</h2>
-<div class="card"><p>美容師さんの 画面には お金の 表示を 出していません。有料・無料は お店 (黒服) が 決めます。</p>
-<ol class="st"><li>女の子が 入れた <b>撮影</b>の 予約は、最初は <b>有料</b> です。</li><li>お店が 確認して 無料に する 時は、黒服ポータル → ヘアメイク管理 で 美容室の画面を 開き、その日の 予約画面で 札の「<b>詳細</b>」→ 美容室費を 切り替えます。</li><li>ヘアメイク (済) に なった あとは 切り替えられません。先に 切り替えて ください。</li></ol>
-<p class="note"><span class="chip chk">確認中</span> 来なかった・キャンセルは 金額なし、は 今の 仮の 決めです。</p>
-<p class="note">同じ「詳細」から、枠を 空ける 本当の キャンセル も できます (美容師さんの「キャンセル」ボタンは 枠を 空けません)。</p></div>
+<div class="card"><span class="when">撮影を 無料に する 時だけ</span>
+<div class="todo"><span class="no">2</span><h4>ヘアメイクの 前に 無料に する</h4></div>
+<p>女の子が 入れた 撮影は 最初 <b>有料</b> です。</p>
+<ol class="st"><li>黒服ポータル → ヘアメイク管理</li><li>その子の 札の「<b>詳細</b>」</li><li>美容室費 を 無料に</li></ol>
+<p class="note">美容師さんが「ヘアメイク」を 押した あとは 変えられません。</p></div>
 
-<h2 id="drv">3　ドライバーの週払い明細</h2>
-<div class="card"><h4>計算</h4>
-<table><tr><th>項目</th><th>決まり</th></tr>
-<tr><td>日額</td><td>1 日 (1 回) <b>6,500 円</b></td></tr>
-<tr><td>共済費 (預かり)</td><td>1 週間の 合計に <b>10%</b> (円未満は 四捨五入)</td></tr>
-<tr><td>お支払い</td><td>合計 − 共済費</td></tr>
-<tr><td>まとめる 期間</td><td>月曜〜土曜 の 1 週間</td></tr></table>
-<p>例: 5 日 出勤 → 6,500 × 5 = 32,500 円、共済費 3,250 円、お支払い <b>29,250 円</b>。</p></div>
-<div class="card"><h4>明細 (PDF)</h4>
-<p>ドライバーさんごとに 1 枚。出勤した 日 (○)、日額 × 日数、預かり、お支払い額 が 載ります。</p>
-<p>ドライバーさんが 送迎の画面で 押した「乗せた / 送った」は、Prince App の「<b>送迎実績</b>」タブに 1 回 1 行で たまります。誰が 何人 乗せたかは ここで 確かめられます。</p>
-<p class="note"><span class="chip chk">確認中</span> 週払いの もとに なる 出勤は、黒服が ポータルで 付ける「送迎の実績 (○)」です。シフトに 入れた日・押した 記録を そのまま 支払いの 対象に するかは 確認中です。</p></div>
+<div class="card"><span class="when">月曜の 朝</span>
+<div class="todo"><span class="no">3</span><h4>明細を 見る</h4></div>
+<p class="big">美容室</p>
+<p>Google ドライブ の「<b>美容室 明細</b>」フォルダ に 自動で 入ります。</p>
+<p class="note">先週の 分 = 「週別」 / 毎日の 分 = 「日別」</p>
+<p class="big">ドライバーの 週払い</p>
+<div class="calc">6,500円 × 出た日数<br>− 共済費 10%<br>= お支払い</div>
+<p>例: 5 日 → 32,500 − 3,250 = <b>29,250 円</b></p></div>
 
-<h2 id="mail">4　中村本部長へ</h2>
-<div class="card"><p>毎週 <b>月曜の 朝</b> (10 時の 予定・仮)、前の 月曜〜土曜の 分の「<b>送迎の 週払い明細</b>」と「<b>美容師の 実績 (人数)</b>」を、1 通の メールで 中村本部長へ 送る 仕組みを 作ってあります。</p>
-<p class="note"><span class="chip wip">準備中</span> 送り先を まだ 入れていないので、<b>今は 止めてあります</b>。始める 時期は 確認中です。</p></div>
+<div class="banner" style="background:#E8E8EE"><b>まだ 決まっていないこと</b> (決まったら ここを 直します)
+<ul style="margin:4px 0 0;padding-left:1.2em;font-size:14px"><li>週払いの「出た日」を 何で 数えるか</li><li>中村本部長への 月曜の メール (送り先が 未定・今は 止めてある)</li></ul></div>
+
 <p class="back"><a href="./">← ご案内の トップへ</a></p>
 </main>
 <footer>Prince 千歳 / 黒服向け</footer></body></html>
