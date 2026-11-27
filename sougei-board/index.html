@@ -250,6 +250,7 @@ function lineHtml(x,cx){
   var tags='';
   if(x.extra)tags+='<span class="tg ex">予定外</span>';
   if(x.dohan)tags+='<span class="tg dou">同伴</span>';else if(x.visit)tags+='<span class="tg vis">来店</span>';
+  if(x.after)tags+='<span class="tg vis">アフター</span>';
   if(x.cancel)tags+='<span class="tg cx">'+esc(x.cancel)+'</span>';
   var tm=x.dir==='go'?(x.pick||x.time||'—'):(x.time||'—'),tmS=x.dir==='go'&&x.pick?'迎え':'';
   var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
@@ -375,6 +376,7 @@ function renderRow(){
   if(x.pick)kv.push(['お迎え時刻',x.pick]);
   kv.push(['便',(x.bin||'未定')+(x.order?' 順'+x.order:'')]);
   if(x.dohan)kv.push(['同伴','あり']);else if(x.visit)kv.push(['来店','あり']);
+  if(x.after)kv.push(['アフター','あり']);
   if(x.by)kv.push(['最後に直した人',x.by]);
   $('rKv').innerHTML=kv.map(function(p){return '<div><span>'+esc(p[0])+'</span><b>'+esc(p[1])+'</b></div>';}).join('');
   var names=board.drivers.map(function(d){return d.name;});if(x.driver&&names.indexOf(x.driver)<0)names.unshift(x.driver);
