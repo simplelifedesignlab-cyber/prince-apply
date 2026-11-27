@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1F2A44">
+<title>黒服向け 明細の説明書</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Noto Sans JP',system-ui,-apple-system,"Hiragino Sans",sans-serif;line-height:1.75;overflow-wrap:anywhere;word-break:normal}
+img{max-width:100%;height:auto}
+.shotwrap{margin:12px auto;text-align:center}
+.shot{position:relative;width:100%;max-width:330px;margin:0 auto;border:1px solid #cfd4dc;border-radius:12px;overflow:hidden;background:#fff}
+.shotwrap.wide .shot{max-width:100%}
+.shot img{display:block;width:100%;height:100%;object-fit:contain}
+.shot svg.ov{position:absolute;inset:0;width:100%;height:100%}
+.shotwrap figcaption{text-align:left;max-width:330px;margin:6px auto 0}
+.shotwrap.wide figcaption{max-width:100%}
+.sample{display:inline-block;font-size:.72em;font-weight:700;color:#7A4F00;background:#FFE7A3;border-radius:5px;padding:0 8px;margin-left:6px;white-space:nowrap}
+.chip{display:inline-block;font-weight:700;font-size:.78em;border-radius:12px;padding:0 10px;line-height:1.7;white-space:nowrap;vertical-align:.08em}
+.chip.ok{background:#DFF3E6;color:#14602F}
+.chip.wip{background:#FFE9C2;color:#7A4A00}
+.chip.chk{background:#E8E8EE;color:#444}
+
+body{font-size:16px;background:#F4F5F7;color:#111}
+.top{background:#1F2A44;color:#fff;padding:20px 16px 18px}
+.top small{display:block;font-size:11px;letter-spacing:.25em;opacity:.75}
+.top h1{margin:4px 0 4px;font-size:23px;line-height:1.4;font-weight:900}
+.top p{margin:2px 0 0;font-size:14px;opacity:.9}
+nav.jump{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff;border-bottom:1px solid #D8DCE6;position:sticky;top:0;z-index:5}
+nav.jump a{flex:none;text-decoration:none;font-weight:700;font-size:14px;color:#1F2A44;background:#E6E9F0;border-radius:16px;padding:6px 14px}
+main{max-width:560px;margin:0 auto;padding:0 14px 60px}
+h2{margin:32px 0 8px;font-size:20px;color:#fff;background:#1F2A44;border-radius:10px;padding:10px 14px;line-height:1.4}
+h3{margin:22px 0 6px;font-size:17px;color:#1F2A44;border-left:6px solid #1F2A44;padding-left:10px}
+.card{background:#fff;border:1px solid #D8DCE6;border-radius:12px;padding:12px 14px;margin:12px 0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card h4{margin:0 0 4px;font-size:16.5px;color:#1F2A44}
+details.card{padding:0}
+details.card>summary{list-style:none;cursor:pointer;padding:12px 14px;font-weight:900;font-size:17px;color:#1F2A44;display:flex;gap:10px;align-items:center}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary:after{content:"＋";margin-left:auto;font-size:20px;color:#1F2A44}
+details.card[open]>summary:after{content:"－"}
+details.card>.in{padding:0 14px 14px}
+.no{flex:none;width:30px;height:30px;border-radius:50%;background:#1F2A44;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px}
+ol.st{margin:6px 0;padding-left:1.4em}
+ol.st li{margin:4px 0}
+.note{font-size:13.5px;color:#55606E}
+.banner{border-radius:10px;padding:10px 12px;margin:12px 0;font-size:15px}
+.banner.t{background:#FFF4E5;border:1px solid #F3D3A0}
+.banner.s{background:#E6E9F0;border:1px solid #B9C0D2}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:14.5px;margin:8px 0}
+th,td{border:1px solid #D8DCE6;padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#E6E9F0;color:#1F2A44}
+.dia{background:#fff;border:1px solid #D8DCE6;border-radius:12px;padding:8px;margin:10px 0}
+.dia svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;margin:8px 0}
+.legend i{display:inline-block;width:28px;height:0;border-top:3px solid #1F2A44;vertical-align:middle;margin-right:5px}
+.legend i.d{border-top-style:dashed}
+.chip{margin-left:2px}
+.btnl{margin:8px 0;padding:0;list-style:none}
+.btnl li{display:flex;gap:8px;align-items:baseline;padding:6px 0;border-bottom:1px solid #E6E9F0}
+.btnl li b{flex:none;min-width:5.5em;color:#1F2A44}
+.back{display:block;text-align:center;margin:30px 0 0;font-weight:700}
+.back a{color:#1F2A44}
+footer{text-align:center;font-size:12px;color:#777;padding:0 16px 36px}
+
+</style></head><body>
+<header class="top"><small>PRINCE CHITOSE / STAFF</small><h1>黒服向け 明細の説明書<br>美容室の明細・ドライバーの週払い</h1><p>明細は 自動で できます。もとになるのは、美容師さん・ドライバーさんが 画面で 押した 記録です。</p></header>
+<nav class="jump" aria-label="もくじ"><a href="#hair">1 美容室の明細</a><a href="#fee">2 有料・無料</a><a href="#drv">3 ドライバーの週払い</a><a href="#mail">4 中村本部長へ</a></nav>
+<main>
+<div class="banner s">紙の予約票・手書きの集計は いりません。美容師さんは「ヘアメイク」、ドライバーさんは「乗せた / 送った」を 押すだけで、明細まで つながります。<div class="legend"><span><i></i>できている</span><span><i class="d"></i>準備中・確認中</span></div></div>
+
+<h2 id="hair">1　美容室の明細</h2>
+<div class="card"><h4>もとになる 記録</h4>
+<p>美容師さんが 美容室の画面 (当日タブ) で 押した ボタンです。</p>
+<table><tr><th>押したボタン</th><th>記録</th><th>明細では</th></tr>
+<tr><td><b>ヘアメイク</b> (緑)</td><td>済・担当の美容師名つき</td><td>その美容師の ヘアメイク人数に 入る</td></tr>
+<tr><td><b>キャンセル</b> (オレンジ)</td><td>来ず</td><td>人数にも 金額にも 入らない</td></tr>
+<tr><td>どちらも 押していない</td><td>予約のまま</td><td>入らない (当日タブで「まだ」に 数えられる)</td></tr></table>
+<p class="note">記録は Prince App の「美容室記録」タブ、女の子の給料から引く分は「美容室 給料引き(日別)」タブに 入ります。シートを 直接 さわる 必要は ありません。</p></div>
+<div class="card"><h4>いつ・どこに できるか</h4>
+<table><tr><th>いつ</th><th>どんな明細</th></tr>
+<tr><td><b>毎日 朝 6 時台</b></td><td>前の日 1 日分 (Google ドライブ「美容室 明細」の「日別」フォルダ)</td></tr>
+<tr><td><b>月曜 朝 6 時台</b></td><td>先週 1 週間分・月曜〜日曜 (「週別」フォルダ)</td></tr></table>
+<p>週別の明細には、美容師さんごとに <b>有料で 対応した 件数と 金額</b>、<b>無料の 数</b>、<b>来なかった (キャンセル) の 数</b> が 並びます。</p></div>
+<div class="card"><h4>数が 合っているかの 見方</h4>
+<p>美容室の画面の 当日タブの 上に「<b>予約 ＝ ヘアメイク ＋ キャンセル ＋ まだ</b>」と、美容師さんごとの ヘアメイク人数が 出ます。</p>
+<ol class="st"><li>「まだ」が 0 に なっていれば、全員 記録 済みです。</li><li>美容師さんごとの 人数の 合計 ＝ ヘアメイク の 数 です (同じ 記録から 数えるので 必ず 合います)。</li><li>「まだ」が 残っている 時は、その日の うちに 美容師さんに 押してもらいます。</li></ol></div>
+
+<h2 id="fee">2　有料・無料 (黒服だけが さわる)</h2>
+<div class="card"><p>美容師さんの 画面には お金の 表示を 出していません。有料・無料は お店 (黒服) が 決めます。</p>
+<ol class="st"><li>女の子が 入れた <b>撮影</b>の 予約は、最初は <b>有料</b> です。</li><li>お店が 確認して 無料に する 時は、黒服ポータル → ヘアメイク管理 で 美容室の画面を 開き、その日の 予約画面で 札の「<b>詳細</b>」→ 美容室費を 切り替えます。</li><li>ヘアメイク (済) に なった あとは 切り替えられません。先に 切り替えて ください。</li></ol>
+<p class="note"><span class="chip chk">確認中</span> 来なかった・キャンセルは 金額なし、は 今の 仮の 決めです。</p>
+<p class="note">同じ「詳細」から、枠を 空ける 本当の キャンセル も できます (美容師さんの「キャンセル」ボタンは 枠を 空けません)。</p></div>
+
+<h2 id="drv">3　ドライバーの週払い明細</h2>
+<div class="card"><h4>計算</h4>
+<table><tr><th>項目</th><th>決まり</th></tr>
+<tr><td>日額</td><td>1 日 (1 回) <b>6,500 円</b></td></tr>
+<tr><td>共済費 (預かり)</td><td>1 週間の 合計に <b>10%</b> (円未満は 四捨五入)</td></tr>
+<tr><td>お支払い</td><td>合計 − 共済費</td></tr>
+<tr><td>まとめる 期間</td><td>月曜〜土曜 の 1 週間</td></tr></table>
+<p>例: 5 日 出勤 → 6,500 × 5 = 32,500 円、共済費 3,250 円、お支払い <b>29,250 円</b>。</p></div>
+<div class="card"><h4>明細 (PDF)</h4>
+<p>ドライバーさんごとに 1 枚。出勤した 日 (○)、日額 × 日数、預かり、お支払い額 が 載ります。</p>
+<p>ドライバーさんが 送迎の画面で 押した「乗せた / 送った」は、Prince App の「<b>送迎実績</b>」タブに 1 回 1 行で たまります。誰が 何人 乗せたかは ここで 確かめられます。</p>
+<p class="note"><span class="chip chk">確認中</span> 週払いの もとに なる 出勤は、黒服が ポータルで 付ける「送迎の実績 (○)」です。シフトに 入れた日・押した 記録を そのまま 支払いの 対象に するかは 確認中です。</p></div>
+
+<h2 id="mail">4　中村本部長へ</h2>
+<div class="card"><p>毎週 <b>月曜の 朝</b> (10 時の 予定・仮)、前の 月曜〜土曜の 分の「<b>送迎の 週払い明細</b>」と「<b>美容師の 実績 (人数)</b>」を、1 通の メールで 中村本部長へ 送る 仕組みを 作ってあります。</p>
+<p class="note"><span class="chip wip">準備中</span> 送り先を まだ 入れていないので、<b>今は 止めてあります</b>。始める 時期は 確認中です。</p></div>
+<p class="back"><a href="./">← ご案内の トップへ</a></p>
+</main>
+<footer>Prince 千歳 / 黒服向け</footer></body></html>
