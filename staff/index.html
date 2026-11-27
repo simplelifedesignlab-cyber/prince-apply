@@ -273,8 +273,29 @@ th,td{border-color:#E3E6EC}
  .sgr.sgh{background:#fff}
  .sglw .li{flex-wrap:wrap}
 }
+/* 2026-11-28 出勤一覧: 日付・3 タブ・店を濃紺の帯に収める (H「上部を使いすぎ」) */
+header.tday{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 12px 8px}
+header.tday .in,header.tday .hdx{display:contents}
+header.tday .ht{order:1;flex:0 0 auto;margin-right:6px}
+header.tday #back{order:4;min-height:36px;padding:4px 12px}
+.hdx .nav{order:2;margin:0;gap:4px;flex:0 1 auto}
+.hdx .nb{min-height:36px;min-width:36px;padding:0 10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:4px}
+.hdx #adt{min-height:36px;width:150px;font:inherit;font-size:15px;font-weight:700;text-align:center;border:1px solid rgba(255,255,255,.35);border-radius:4px;background:#2E4372;color:#fff;color-scheme:dark;padding:0 6px}
+.hdx .ttabs{order:3;margin:0 0 0 auto;display:flex;gap:0;border:1px solid rgba(255,255,255,.4);border-radius:4px;overflow:hidden}
+.hdx .ttab{min-height:36px;font-size:14px;border:0;border-left:1px solid rgba(255,255,255,.25);border-radius:0;background:transparent;color:#fff;padding:0 18px}
+.hdx .ttab:first-child{border-left:0}
+.hdx .ttab.on{background:#fff;color:var(--pri)}
+.hdx #band{order:5;flex:1 1 100%;min-width:0}
+.hdx .atabs{display:flex;gap:6px;margin:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.hdx .at{flex:1 0 auto;flex-direction:row;justify-content:center;align-items:center;gap:8px;min-height:38px;padding:2px 10px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff}
+.hdx .at img{width:auto;height:22px;max-width:64px;padding:1px 4px}
+.hdx .at .an1{font-size:14px}.hdx .at .an2{font-size:11px;opacity:.75}
+.hdx .at.on{background:#fff;color:var(--pri);border-color:#fff}
+.hdx .bhint{display:none}
+@media (max-width:900px){.hdx .at img{display:none}.hdx .at{padding:2px 8px}} /* iPad 縦は店名と人数だけ (横にはみ出すため) */
+@media (max-width:640px){.hdx .ttabs{margin-left:0;flex:1 1 100%}.hdx .ttab{flex:1}.hdx .nav{flex:1 1 auto}.hdx #adt{flex:1;width:auto;min-width:0}.hdx .at .an2{display:none}}
 </style></head><body>
-<header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div></header>
+<header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div><div id="hdx" class="hdx" hidden></div></header>
 <div class="wrap" id="app"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -333,6 +354,7 @@ function bindCasts(){[].forEach.call(document.querySelectorAll('[data-g]'),funct
 function go(v){location.hash=v||'';}
 function route(){
   var v=location.hash.replace('#','');
+  var hx=$('hdx');hx.innerHTML='';hx.hidden=true;document.querySelector('header').classList.remove('tday'); // 出勤一覧だけ 日付・店・タブを濃紺の帯に入れる
   $('app').className=VIEWS[v]&&VIEWS[v].all?'wrap wide':'wrap';
   $('back').hidden=!VIEWS[v];
   $('back').textContent=v==='cast'?'← 売上':'← TOP';
@@ -411,7 +433,7 @@ function renderBand(){
   var tot=r?r.stores.reduce(function(a,s){return a+s.on.length;},0):0;
   if(r&&attStore&&!r.stores.some(function(s){return s.id===attStore;}))attStore='';
   b.innerHTML='<div class="atabs"><button class="at'+(attStore===''?' on':'')+'" data-as=""><span class="an1">全店</span><span class="an2">'+(tdTab==='att'?'見るだけ':'すべて')+(r?' ('+tot+'人)':'')+'</span></button>'+
-    (r?r.stores:STORES.map(function(s){return {id:s.id,short:s.s,on:[]};})).map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div><div class="bhint">店を押すと切り替わります (この端末で覚えます)</div>';
+    (r?r.stores:STORES.map(function(s){return {id:s.id,short:s.s,on:[]};})).map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2" title="予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'">予'+c.p+' 欠'+c.a+' 確'+c.f+'</span></button>';}).join('')+'</div><div class="bhint">店を押すと切り替わります (この端末で覚えます)</div>';
   [].forEach.call(b.querySelectorAll('.at'),function(x){x.onclick=function(){
     var v=x.getAttribute('data-as');if(v===attStore)return;
     if(!attLeave())return;
@@ -445,10 +467,12 @@ function tdSave(){
 function vToday(){
   if(!attDay)attDay=bizDay();
   var my=++seq;attDirty=false;sgPend={};sgBoard=null;slData=null;attData=null;
-  $('body').innerHTML='<div class="nav"><button class="nb" id="ap">← 前の日</button><input type="date" id="adt" value="'+esc(attDay)+'" style="flex:1;min-height:44px;font:inherit;font-size:17px;font-weight:700;text-align:center;border:1px solid #C3C8D1;border-radius:4px;background:#fff;min-width:0"><button class="nb" id="atd">今日</button><button class="nb" id="an">次の日 →</button></div>'+
-    '<div id="band"></div>'+
+  // 2026-11-28 H「上部を使いすぎ」: 日付・店・3 タブは濃紺の帯 (header) に入れる
+  $('hdx').innerHTML='<div class="nav"><button class="nb" id="ap" aria-label="前の日">◀</button><input type="date" id="adt" value="'+esc(attDay)+'"><button class="nb" id="an" aria-label="次の日">▶</button><button class="nb" id="atd">今日</button></div>'+
     '<div class="ttabs"><button class="ttab" data-t="att">出勤簿</button><button class="ttab" data-t="salon">美容室</button><button class="ttab" data-t="sougei">送迎</button></div>'+
-    '<div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
+    '<div id="band" title="店を押すと切り替わります (この端末で覚えます)"></div>';
+  $('hdx').hidden=false;document.querySelector('header').classList.add('tday');
+  $('body').innerHTML='<div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
     '<div class="abar"><button id="asave">更新</button><span class="aun" id="aun"></span><div class="am2 ok" id="amsg"></div><span class="asy" id="asy"></span></div>'+
     '<div class="slov" id="slAddOv" hidden><div class="slsheet"><div class="slsh"><b id="slaT"></b><button type="button" class="vx" id="slaX">閉じる</button></div>'+
       '<div id="slaTimeBox" hidden><label id="slaTimeLb">時刻 (15:00 から 30 分きざみ)</label><select id="slaTime"></select></div>'+
