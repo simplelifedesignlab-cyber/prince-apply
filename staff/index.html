@@ -448,14 +448,22 @@ function vToday(){
 }
 function attTimes(a,b){var o=[];for(var m=a*60;m<=b*60;m+=30)o.push(pad(Math.floor(m/60)%24)+':'+pad(m%60));return o;}
 var T_IN=attTimes(17,29),T_HAIR=attTimes(15,21),T_VIS=attTimes(19,27),T_NUM=['未定','1','2','3','4','5','6以上'];
-var SEAT_LAB={};for(var si=1;si<=20;si++)SEAT_LAB[String(si)]='卓'+si; // 2026-11-26 席の数字 = 卓番。値は 1〜20 のまま (並び・同期はそのまま)
-var T_SEAT=['VIP','ホール'].concat((function(){var a=[];for(var i=1;i<=20;i++)a.push(String(i));return a;})());
+// 2026-11-27 席・卓番は店ごとの一覧 (店長・現場から 11/26 に届いた卓の一覧)。ここ 1 か所だけ直す。
+// 値 = 出勤表の「席」列にそのまま入る短い名前 (10 文字まで)。VIP / ホール はキャストの入力 (希望) と同じ値で、黒服が卓番を選ぶと上書きされる
+function seatRng(pre,a,b){var o=[];for(var i=a;i<=b;i++)o.push(pre+i);return o;}
+var SEAT_BY_STORE={
+  '花もみじ千歳':seatRng('3F-',1,8).concat(seatRng('3F-C',1,3),['和VIP1','和VIP2','洋VIP1','洋VIP2','大VIP']),
+  '328':seatRng('C',1,6).concat(seatRng('B',1,5)),
+  'WAVE千歳':seatRng('A',1,13).concat(seatRng('B',1,6),['C1','VIP室']),
+  'RegentClub千歳':seatRng('BOX',1,7).concat(seatRng('C',1,4),seatRng('VIP',1,3))
+};
+function seatList(store){var l=['VIP','ホール'];(SEAT_BY_STORE[store]||[]).forEach(function(x){if(l.indexOf(x)<0)l.push(x);});return l;}
 // 選択肢。今の値が一覧に無い時 (19:15・当欠など) はその値を足す。lab = {値: 表示}
 function opts(list,cur,lab,blank){
   var l=list.slice();if(cur!==''&&l.indexOf(cur)<0)l.unshift(cur);
   return '<option value="">'+esc(blank||'')+'</option>'+l.map(function(x){return '<option value="'+esc(x)+'"'+(x===cur?' selected':'')+'>'+esc(lab&&lab[x]||x)+'</option>';}).join('');
 }
-function seatRank(s){if(s==='VIP')return 0;if(/^\d+$/.test(s))return 1+(+s)/1000;if(s==='ホール')return 2;return 3;}
+function seatRank(s,store){if(s==='VIP')return 0;var i=(SEAT_BY_STORE[store]||[]).indexOf(s);if(i>=0)return 1+i/1000;if(/^\d+$/.test(s))return 1+(+s)/1000;if(s==='ホール')return 2;return 3;}
 function attRender(r,msg,isErr){
   attData=r;attDirty=false;attBusy=false;
   var tag=function(t,c){return '<span class="tag'+(c?' '+c:'')+'">'+t+'</span>';};
@@ -505,19 +513,19 @@ function attRender(r,msg,isErr){
     h+='</div><datalist id="dl_cast">'+st.casts.map(function(g){return '<option value="'+esc(g)+'">';}).join('')+'</datalist>';
     // 同伴・来店 (同伴が上 → 席 VIP → 卓番 → ホール → 未定)
     var vs=st.on.filter(function(x){return x.dohan||x.visT||x.visN||x.keep||x.seat;});
-    vs.sort(function(a,b){return (a.dohan?0:1)-(b.dohan?0:1)||seatRank(a.seat)-seatRank(b.seat)||(a.visT<b.visT?-1:a.visT>b.visT?1:0)||(parseInt(a.ban,10)||9999)-(parseInt(b.ban,10)||9999);});
+    vs.sort(function(a,b){return (a.dohan?0:1)-(b.dohan?0:1)||seatRank(a.seat,st.id)-seatRank(b.seat,st.id)||(a.visT<b.visT?-1:a.visT>b.visT?1:0)||(parseInt(a.ban,10)||9999)-(parseInt(b.ban,10)||9999);});
     h+='<div class="sec atsec" id="vissec"><h3>同伴・来店</h3><div class="vrh"><span>種類</span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席・卓番</span><span></span></div>';
     h+=vs.length?vs.map(function(x){
       var dn=x.dohan&&['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+x.dohan:'';
       var kd=x.dohan?'同伴':'来店';
       return '<div class="vr'+(x.manual||String(x.visSrc||'').indexOf('手')>=0?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="f kd"><span class="lb">種類</span><select data-f="kind" data-o="'+kd+'" class="'+(x.dohan?'dh':'')+'"'+dis+'><option'+(kd==='来店'?' selected':'')+'>来店</option><option'+(kd==='同伴'?' selected':'')+'>同伴</option></select></div>'+
         '<div class="f nm"><span class="lb">源氏名</span><div class="ro"><b>'+esc(x.gen)+'</b></div></div>'+
-        f('t','時刻',sel('visT',T_VIS,x.visT))+f('k','客名(ボトル名)',inp('keep',x.keep,40))+f('s','人数',sel('visN',T_NUM,x.visN))+f('s','席・卓番',sel('seat',T_SEAT,x.seat,SEAT_LAB))+
+        f('t','時刻',sel('visT',T_VIS,x.visT))+f('k','客名(ボトル名)',inp('keep',x.keep,40))+f('s','人数',sel('visN',T_NUM,x.visN))+f('s','席・卓番',sel('seat',seatList(st.id),x.seat))+
         '<button type="button" class="vx" data-clr="1">消す</button></div>';
     }).join(''):'<div class="li" style="color:#888">同伴・来店の予定なし</div>';
     h+='<div class="li" style="font-size:12px;color:#5A6275;border-top:1px solid #EEF0F4">下に手入力 (出勤の人から選びます)</div>';
     for(var j=0;j<3;j++)h+='<div class="vr vn"><div class="f kd"><span class="lb">種類</span><select data-v="kind"><option>来店</option><option>同伴</option></select></div><div class="f nm"><span class="lb">源氏名</span><select data-v="gen"><option value=""></option>'+nm.map(function(g){return '<option>'+esc(g)+'</option>';}).join('')+'</select></div>'+
-      f('t','時刻','<select data-v="visT">'+opts(T_VIS,'')+'</select>')+f('k','客名(ボトル名)','<input data-v="keep" maxlength="40">')+f('s','人数','<select data-v="visN">'+opts(T_NUM,'')+'</select>')+f('s','席・卓番','<select data-v="seat">'+opts(T_SEAT,'',SEAT_LAB)+'</select>')+'<div class="vph"></div></div>';
+      f('t','時刻','<select data-v="visT">'+opts(T_VIS,'')+'</select>')+f('k','客名(ボトル名)','<input data-v="keep" maxlength="40">')+f('s','人数','<select data-v="visN">'+opts(T_NUM,'')+'</select>')+f('s','席・卓番','<select data-v="seat">'+opts(seatList(st.id),'')+'</select>')+'<div class="vph"></div></div>';
     h+='</div>';
   }
   h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
