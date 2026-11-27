@@ -36,7 +36,28 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .pbox{margin:6px 0 10px;padding:6px 8px;background:var(--priL);border-radius:10px}
 .pbox .plan{margin-top:0}
 .add{margin-top:6px;min-height:44px;font-size:16px;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:6px 14px;font-family:inherit;cursor:pointer}
-.ptog{display:block;width:100%;text-align:left;margin-top:12px;min-height:44px;font-size:16px;font-weight:700;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:8px 14px;font-family:inherit;cursor:pointer}
+.ptog{display:block;width:100%;text-align:left;margin-top:8px;min-height:44px;font-size:16px;font-weight:700;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:8px 14px;font-family:inherit;cursor:pointer}
+.card.day{padding:0;overflow:hidden}
+.dhd{display:flex;align-items:center;gap:8px;width:100%;min-height:52px;padding:8px 12px;border:0;background:transparent;font-family:inherit;font-size:16px;text-align:left;color:#333;cursor:pointer}
+.dhd b{flex:0 0 auto;font-size:17px;color:var(--priD)}
+.dhd .dsm{flex:1;min-width:0;font-size:14px;line-height:1.4;color:#666}
+.dhd .dar{flex:0 0 auto;color:var(--priD)}
+.dbody{padding:0 12px 12px}
+.rw{display:flex;align-items:flex-start;gap:8px;margin:8px 0}
+.rl{flex:0 0 40px;font-size:15px;font-weight:600;line-height:44px}
+.rc{flex:1;min-width:0;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rc select,.rc input[type=text]{flex:1 1 90px;width:auto;min-width:0}
+.chips.sm,.chips.seg{gap:6px}
+.chips.sm .chip,.chips.seg .chip{min-height:44px;font-size:15px;padding:4px 12px}
+.chips.seg .chip{border-radius:10px}
+.wknav{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:12px 0 0}
+.wkb{min-height:44px;font-size:15px;font-weight:700;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:6px 12px;font-family:inherit;cursor:pointer}
+.wkb:disabled{opacity:.35}
+.wkl{font-size:15px;font-weight:700;color:var(--priD);text-align:center}
+.hbx{margin:6px 0}
+.hbx select{margin-top:0}
+.hbx .hint{margin:2px 0 6px}
+.hbtn.sm{min-height:44px;font-size:14px;padding:4px 12px;margin:2px 6px 2px 0}
 .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 6px rgba(232,87,138,.08);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .bar .in{max-width:560px;margin:0 auto}
 #save{width:100%;min-height:48px;font-size:18px;font-weight:700;background:var(--pri);color:#fff;border:0;border-radius:12px;font-family:inherit;cursor:pointer}
@@ -165,25 +186,28 @@ function hairCall(d, fn, time, kind) {
 // 送迎(行き)のある子の「一番早い時間」(未決・空 = 制限なし)。data.hairSougeiEarliest = 'HH:MM'
 function hairEarliestOk(d, t) { return !(d.go && data.hairSougeiEarliest) || t >= data.hairSougeiEarliest; }
 function hairBox(d) {
-  var s = el('div', 'sub');
-  s.appendChild(el('label', 't', 'ヘアメイク 希望'));
-  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」「撮影」がある時だけです'));
+  var s = el('div', 'sub hbx');
   var stale = d.shift !== d.savedShift, hp = d.hp || [];
+  var fixed = !!(d.hb && d.hb.fixed); // 2026-11-20 中-1
+  var kind = d.hkind == null ? (d.hb ? 'x' : '') : d.hkind; // 'x' = 時間を出している (どの種類かは画面では分からないので、どれも選ばれた形にしない)
+  var ch = el('div', 'chips seg');
+  if (!fixed && !stale) {
+    ch.appendChild(chip('指定なし', kind === '', function () { d.hkind = ''; d.hpick = ''; }));
+    ch.appendChild(chip('同伴', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
+    ch.appendChild(chip('撮影', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
+  }
+  s.appendChild(rw('ヘア', ch));
+  // 2026-11-27 山本部長の流れ: 19:00〜22:00 の間に着いた順でできるだけ終わらせる。時間を決められるのは「同伴」と「撮影」の時だけ
+  s.appendChild(el('p', 'hint', '19-22時 着いた順。時間指定は同伴・撮影のみ'));
   if (d.hnote) s.appendChild(el('p', 'hmsg ng', d.hnote));
   if (d.hb) s.appendChild(el('p', 'booked', '希望 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
   else if (d.ha) s.appendChild(el('p', 'booked', '希望 指定なし (着いた順) を出しています'));
-  if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した時間です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
+  if (fixed) { s.appendChild(el('p', 'hint', '美容師が記録した時間です。変更・取り消しはお店へ連絡してください')); return s; }
   if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
   else {
-    var kind = d.hkind == null ? (d.hb ? 'x' : '') : d.hkind; // 'x' = 時間を出している (どの種類かは画面では分からないので、どれも選ばれた形にしない)
-    var ch = el('div', 'chips');
-    ch.appendChild(chip('指定なし (着いた順)', kind === '', function () { d.hkind = ''; d.hpick = ''; }));
-    ch.appendChild(chip('同伴 (時間を選ぶ)', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
-    ch.appendChild(chip('撮影 (時間を選ぶ)', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
-    s.appendChild(ch);
     if (!kind || kind === 'x') {
       if (!d.ha) {
-        var ga = el('button', 'hbtn', d.hb ? '時間をやめて 指定なし (着いた順) にする' : '指定なし (着いた順) で希望を出す'); ga.type = 'button'; ga.disabled = !!d.hbusy;
+        var ga = el('button', 'hbtn sm', d.hb ? '時間をやめて指定なしに' : '指定なしで希望を出す'); ga.type = 'button'; ga.disabled = !!d.hbusy;
         ga.onclick = function () { hairCall(d, 'any'); };
         s.appendChild(ga);
       }
@@ -194,22 +218,21 @@ function hairBox(d) {
     } else {
       var opts0 = d.ho.map(function (t) { return { t: t, p: false }; }).concat(kind === '同伴' ? hp.map(function (t) { return { t: t, p: true }; }) : []).filter(function (o) { return hairEarliestOk(d, o.t); });
       if (opts0.length) {
-        var sel = el('select'), b0 = el('option', '', d.hb ? '別の時間に変える' : kind + 'の時間を選んでください'); b0.value = ''; sel.appendChild(b0);
+        var sel = el('select'), b0 = el('option', '', d.hb ? '別の時間に変える' : kind + 'の時間を選ぶ'); b0.value = ''; sel.appendChild(b0);
         opts0.sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; }).forEach(function (o) {
           var op = el('option', '', o.t + (o.p ? ' (優先で入れます)' : '')); op.value = o.t; if (o.t === d.hpick) op.selected = true; sel.appendChild(op);
         });
         sel.onchange = function () { d.hpick = sel.value; };
-        sel.disabled = !!d.hbusy; s.appendChild(sel);
-        var go = el('button', 'hbtn', d.hb ? '希望の時間を変える' : kind + 'で希望を出す'); go.type = 'button'; go.disabled = !!d.hbusy;
+        sel.disabled = !!d.hbusy;
+        var go = el('button', 'hbtn sm', d.hb ? '時間を変える' : kind + 'で希望を出す'); go.type = 'button'; go.disabled = !!d.hbusy;
         go.onclick = function () { if (!d.hpick) { d.hmsg = '時間を選んでください'; d.hok = false; render(); return; } hairCall(d, 'reserve', d.hpick, kind); };
-        s.appendChild(go);
+        s.appendChild(rw('時間', sel, go));
         s.appendChild(el('p', 'hint', 'お店が決めるまでは、時間が変わることがあります'));
       } else s.appendChild(el('p', 'hint', 'この日は空きがありません。お店へ連絡してください'));
     }
   }
   if (d.hb || d.ha) {
-    s.appendChild(document.createElement('br'));
-    var cx = el('button', 'hbtn sec', '希望を取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
+    var cx = el('button', 'hbtn sec sm', '希望を取り消す'); cx.type = 'button'; cx.disabled = !!d.hbusy;
     cx.onclick = function () { hairCall(d, 'cancel'); };
     s.appendChild(cx);
   }
@@ -250,26 +273,99 @@ function renderSougei() {
   box.appendChild(card);
 }
 
+// 1 週間 (月〜日) 単位の表示。各日はタイトルバー 1 行 + 押すと展開 (2026-11-27 H「1カテゴリー1行」)
+var curWeek = null, openDays = {};
+function monOf(ds) { var t = Date.parse(ds + 'T00:00:00Z'); return t - ((new Date(t).getUTCDay() + 6) % 7) * 86400000; }
+function mdl(t) { var x = new Date(t); return (x.getUTCMonth() + 1) + '/' + x.getUTCDate(); }
+function rw(label) { // 左にラベル・右に入力を横並びの 1 行
+  var r = el('div', 'rw'); r.appendChild(el('span', 'rl', label));
+  var c = el('div', 'rc'); for (var i = 1; i < arguments.length; i++) c.appendChild(arguments[i]);
+  r.appendChild(c); return r;
+}
+function daySum(d) {
+  if (!d.shift) return '未入力';
+  if (d.shift === '休み') return '休み';
+  var p = [], dh = 0, vs = 0;
+  p.push('出勤 ' + (isT(d.shift) ? d.shift + '-' + (d.leave || data.leaveOpts[0]) : d.shift));
+  d.plans.forEach(function (x) { if (String(x.n || '').trim() || x.c || x.s || x.t) { if (x.k === '同伴') dh++; else vs++; } });
+  if (dh) p.push('同伴' + dh);
+  if (vs) p.push('来店' + vs);
+  if (d.go || d.back) p.push('送迎 ' + (d.go && d.back ? '行き/帰り' : d.go ? '行き' : '帰り'));
+  if (data.hairOn) { if (d.hb) p.push('ヘア ' + d.hb.time); else if (d.ha) p.push('ヘア 指定なし'); }
+  else if (d.hair) p.push('ヘア あり');
+  return p.join('・');
+}
+
 function render() {
   renderSougei();
   var box = document.getElementById('days');
   box.innerHTML = '';
+  var weeks = [];
+  data.days.forEach(function (d) { var m = monOf(d.date); if (weeks.indexOf(m) < 0) weeks.push(m); });
+  if (weeks.indexOf(curWeek) < 0) curWeek = monOf(data.days[0].date); // 初期は今日を含む週
+  var wi = weeks.indexOf(curWeek);
+  var nav = el('div', 'wknav');
+  var pv = el('button', 'wkb', '◂ 前の週'); pv.type = 'button'; pv.disabled = wi <= 0;
+  pv.onclick = function () { curWeek = weeks[wi - 1]; render(); };
+  var nx = el('button', 'wkb', '次の週 ▸'); nx.type = 'button'; nx.disabled = wi >= weeks.length - 1;
+  nx.onclick = function () { curWeek = weeks[wi + 1]; render(); };
+  nav.appendChild(pv); nav.appendChild(el('span', 'wkl', mdl(curWeek) + '〜' + mdl(curWeek + 6 * 86400000))); nav.appendChild(nx);
+  box.appendChild(nav);
   data.days.forEach(function (d) {
-    var rest = d.shift === '休み';
-    var card = el('div', 'card' + (rest ? ' rest' : ''));
-    card.appendChild(el('h2', '', d.label));
+    if (monOf(d.date) !== curWeek) return;
+    var rest = d.shift === '休み', open = !!openDays[d.date];
+    var card = el('div', 'card day' + (rest ? ' rest' : ''));
+    var hd = el('button', 'dhd'); hd.type = 'button';
+    hd.appendChild(el('b', '', d.label)); hd.appendChild(el('span', 'dsm', daySum(d))); hd.appendChild(el('span', 'dar', open ? '▾' : '▸'));
+    hd.onclick = function () { openDays[d.date] = !open; render(); };
+    card.appendChild(hd);
+    if (!open) { box.appendChild(card); return; }
+    var bd = el('div', 'dbody');
+    card.appendChild(bd);
 
-    card.appendChild(el('label', 't', '出勤'));
     var sel = el('select');
     [''].concat(data.shiftOpts).forEach(function (o) {
       var op = el('option', '', o === '' ? '選んでください' : o); op.value = o; if (o === d.shift) op.selected = true; sel.appendChild(op);
     });
     sel.onchange = function () { d.shift = sel.value; render(); };
-    card.appendChild(sel);
+    if (isT(d.shift)) bd.appendChild(rw('出勤', sel, mkSel(data.leaveOpts, d.leave || data.leaveOpts[0], null, function (v) { d.leave = v; })));
+    else bd.appendChild(rw('出勤', sel));
 
-    if (isT(d.shift)) {
-      card.appendChild(el('label', 't', '退勤の希望'));
-      card.appendChild(mkSel(data.leaveOpts, d.leave || data.leaveOpts[0], null, function (v) { d.leave = v; }));
+    if (!rest) {
+      var ch = el('div', 'chips sm');
+      ch.appendChild(chip('行き ' + (d.go ? 'あり' : 'なし'), d.go, function () { d.go = !d.go; }));
+      ch.appendChild(chip('帰り ' + (d.back ? 'あり' : 'なし'), d.back, function () { d.back = !d.back; }));
+      if (!data.hairOn) ch.appendChild(chip('ヘア ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
+      bd.appendChild(rw('送迎', ch));
+
+      if (d.go) {
+        bd.appendChild(rw('迎え',
+          mkSel(data.pickOpts.map(function (o) { return o; }), d.pick || '自宅', null, function (v) { d.pick = v; render(); }),
+          mkSel(data.arriveOpts, d.arrive || (isT(d.shift) ? d.shift : ''), isT(d.shift) ? null : '出勤に合わせる', function (v) { d.arrive = v; })));
+        if ((d.pick || '自宅') === 'その他') {
+          var po = el('input'); po.type = 'text'; po.maxLength = 40; po.placeholder = '迎えの場所を書いてください'; po.value = d.pickOther || '';
+          po.oninput = function () { d.pickOther = po.value; };
+          bd.appendChild(rw('', po));
+        }
+      }
+      if (d.back) {
+        var ac = el('div', 'chips sm');
+        ac.appendChild(chip('アフター ' + (d.after ? 'あり' : 'なし'), d.after, function () { d.after = !d.after; }));
+        bd.appendChild(rw('送り', mkSel(data.dropOpts, d.drop || '自宅', null, function (v) { d.drop = v; render(); }), ac));
+        if ((d.drop || '自宅') === 'その他') {
+          var dof = el('input'); dof.type = 'text'; dof.maxLength = 40; dof.placeholder = '送り先を書いてください'; dof.value = d.dropOther || '';
+          dof.oninput = function () { d.dropOther = dof.value; };
+          bd.appendChild(rw('', dof));
+        }
+        if (d.after) bd.appendChild(el('p', 'hint', 'アフターの日は 3:00 までの帰りになります'));
+      }
+      if (data.hairOn) bd.appendChild(hairBox(d));
+      else if (d.hair) {
+        var hs = mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; });
+        var hasPlan = d.plans.some(function (p) { return p.k === '同伴' && String(p.n || '').trim(); });
+        if (hasPlan) bd.appendChild(rw('ヘア', hs, el('span', 'prio', '優先')));
+        else bd.appendChild(rw('ヘア', hs));
+      }
     }
 
     // 2026-11-27 H「出勤だけの子もいる アコーディオンにして」: 予定は畳んでおき、入っている日だけ開いて出す
@@ -277,7 +373,7 @@ function render() {
     if (d.popen === undefined) d.popen = filled > 0;
     var tg = el('button', 'ptog', (d.popen ? '▾ ' : '▸ ') + '予定 (同伴・来店予定)' + (filled ? ' ' + filled + '件' : '')); tg.type = 'button';
     tg.onclick = function () { d.popen = !d.popen; render(); };
-    card.appendChild(tg);
+    bd.appendChild(tg);
     if (d.popen) {
     while (d.plans.length < 2) d.plans.push({ k: data.planKinds[0], n: '', c: '', s: '', t: '' }); // 空の行を最初から 2 つ出す
     d.plans.forEach(function (p, i) {
@@ -295,64 +391,16 @@ function render() {
       r2.appendChild(mkSel(data.visSeats, p.s || '', '席 (ホール / VIP)', function (v) { p.s = v; }));
       if (p.k === '来店予定') r2.appendChild(mkSel(data.visTimes, p.t || '', '時間', function (v) { p.t = v; }));
       pb.appendChild(r2);
-      card.appendChild(pb);
+      bd.appendChild(pb);
     });
     var add = el('button', 'add', '＋ 予定を追加'); add.type = 'button';
     add.onclick = function () { d.plans.push({ k: data.planKinds[0], n: '', c: '', s: '', t: '' }); render(); };
-    card.appendChild(add);
+    bd.appendChild(add);
     }
 
-    if (!rest) {
-      card.appendChild(el('label', 't', data.hairOn ? '送迎' : '送迎・ヘアメイク'));
-      var ch = el('div', 'chips');
-      ch.appendChild(chip('送迎 行き(朝) ' + (d.go ? 'あり' : 'なし'), d.go, function () { d.go = !d.go; }));
-      ch.appendChild(chip('送迎 帰り ' + (d.back ? 'あり' : 'なし'), d.back, function () { d.back = !d.back; }));
-      if (!data.hairOn) ch.appendChild(chip('ヘアメイク ' + (d.hair ? 'あり' : 'なし'), d.hair, function () { d.hair = !d.hair; }));
-      card.appendChild(ch);
-      if (data.hairOn) card.appendChild(hairBox(d));
-
-      if (d.go) {
-        var s1 = el('div', 'sub');
-        s1.appendChild(el('label', 't', '迎えの場所'));
-        s1.appendChild(mkSel(data.pickOpts.map(function (o) { return o; }), d.pick || '自宅', null, function (v) { d.pick = v; render(); }));
-        if ((d.pick || '自宅') === 'その他') {
-          var po = el('input'); po.type = 'text'; po.maxLength = 40; po.placeholder = '場所を書いてください'; po.value = d.pickOther || '';
-          po.oninput = function () { d.pickOther = po.value; };
-          s1.appendChild(po);
-        } else if ((d.pick || '自宅') === '自宅') s1.appendChild(el('p', 'hint', '登録してある住所に迎えに行きます'));
-        s1.appendChild(el('label', 't', '到着の希望時刻'));
-        s1.appendChild(mkSel(data.arriveOpts, d.arrive || (isT(d.shift) ? d.shift : ''), isT(d.shift) ? null : '出勤時刻に合わせる', function (v) { d.arrive = v; }));
-        card.appendChild(s1);
-      }
-      if (d.back) {
-        var s2 = el('div', 'sub');
-        s2.appendChild(el('label', 't', '帰りの送り先'));
-        s2.appendChild(mkSel(data.dropOpts, d.drop || '自宅', null, function (v) { d.drop = v; render(); }));
-        if ((d.drop || '自宅') === 'その他') {
-          var dof = el('input'); dof.type = 'text'; dof.maxLength = 40; dof.placeholder = '送り先を書いてください'; dof.value = d.dropOther || '';
-          dof.oninput = function () { d.dropOther = dof.value; };
-          s2.appendChild(dof);
-        }
-        var ac = el('div', 'chips'); ac.style.marginTop = '8px';
-        ac.appendChild(chip('アフター ' + (d.after ? 'あり' : 'なし'), d.after, function () { d.after = !d.after; }));
-        s2.appendChild(ac);
-        if (d.after) s2.appendChild(el('p', 'hint', 'アフターの日は 3:00 までの帰りになります'));
-        card.appendChild(s2);
-      }
-      if (d.hair && !data.hairOn) {
-        var s3 = el('div', 'sub');
-        s3.appendChild(el('label', 't', 'ヘアメイクの希望時間'));
-        s3.appendChild(mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; }));
-        var hasPlan = d.plans.some(function (p) { return p.k === '同伴' && String(p.n || '').trim(); });
-        if (hasPlan) { s3.appendChild(el('span', 'prio', '優先')); s3.appendChild(el('p', 'hint', '同伴の日は優先で入れます')); }
-        card.appendChild(s3);
-      }
-    }
-
-    card.appendChild(el('label', 't', '連絡(キャンセル・変更など)'));
-    var nt = el('input'); nt.type = 'text'; nt.maxLength = 100; nt.placeholder = '店に伝えたいことがあれば'; nt.value = d.note || '';
+    var nt = el('input'); nt.type = 'text'; nt.maxLength = 100; nt.placeholder = '店に伝えたいこと (キャンセル・変更など)'; nt.value = d.note || '';
     nt.oninput = function () { d.note = nt.value; };
-    card.appendChild(nt);
+    bd.appendChild(rw('連絡', nt));
     box.appendChild(card);
   });
 }
