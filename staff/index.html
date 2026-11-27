@@ -410,7 +410,10 @@ function route(){
 $('back').onclick=function(){go(location.hash==='#cast'?'sales':'');};
 window.addEventListener('hashchange',route);
 // 2026-11-28: 時刻・数字の欄は押したら中身を全部選ぶ (iPad で押して打つと前の値の後ろに付いて「20:20:00」「120001500」になったため)
-document.addEventListener('focusin',function(e){var t=e.target,k=t&&t.getAttribute&&(t.getAttribute('data-f')||t.getAttribute('data-a'));if(t.tagName!=='INPUT'||!t.value||!/^(chg|tin|tout|hon|jonai|douN|dousub|sale\d+|locker|dress|shoes|charger)$/.test(k||'')||!t.closest('#att'))return;var v0=t.value,sel=function(){try{t.setSelectionRange(0,t.value.length);}catch(_){}};sel();setTimeout(function(){if(t.value===v0)sel();},0);});
+document.addEventListener('focusin',function(e){var t=e.target,k=t&&t.getAttribute&&(t.getAttribute('data-f')||t.getAttribute('data-a'));if(t.tagName!=='INPUT'||!t.value||!/^(chg|tin|tout|hon|jonai|douN|dousub|sale\d+|locker|dress|shoes|charger)$/.test(k||'')||!t.closest('#att'))return;var v0=t.value,sel=function(){try{t.setSelectionRange(0,t.value.length);}catch(_){}};t._selP=1;sel();setTimeout(function(){if(t.value===v0)sel();},0);});
+// iPad (WebKit) はタップを離した時に指の位置へカーソルを置き直して全選択を消す → 打つと前の値の途中に入る (11/28 モックで 6/10 回)。フォーカス直後の 1 回だけ離した時の動きを止めて選び直す
+['mouseup','touchend'].forEach(function(ev){document.addEventListener(ev,function(e){var t=e.target;if(!t||!t._selP)return;t._selP=0;if(ev==='mouseup'||document.activeElement===t){e.preventDefault();try{t.setSelectionRange(0,t.value.length);}catch(_){}}},true);});
+document.addEventListener('keydown',function(e){if(e.target)e.target._selP=0;},true);
 
 function top_(){ // 2026-11-25 H: 上の 3 つは今までどおりの入口・下はカテゴリ (押すと開く)
   var sub=function(h){return '<div class="tsub">'+h+'</div>';};
