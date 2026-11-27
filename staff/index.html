@@ -422,7 +422,7 @@ function vToday(){
     '<div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
     '<div class="abar"><button id="asave">更新</button><span class="aun" id="aun"></span><div class="am2 ok" id="amsg"></div><span class="asy" id="asy"></span></div>'+
     '<div class="slov" id="slAddOv" hidden><div class="slsheet"><div class="slsh"><b id="slaT"></b><button type="button" class="vx" id="slaX">閉じる</button></div>'+
-      '<div id="slaTimeBox" hidden><label>時刻 (15:00 から 30 分きざみ)</label><select id="slaTime"></select></div>'+
+      '<div id="slaTimeBox" hidden><label id="slaTimeLb">時刻 (15:00 から 30 分きざみ)</label><select id="slaTime"></select></div>'+
       '<label>店舗</label><select id="slaStore"></select><label>名前 (最初の文字を打つと候補が出ます)</label><input id="slaName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="slsg" id="slaSug"></div>'+
       '<label>予定</label><select id="slaPlan"><option>なし</option><option>同伴</option><option>優先</option><option>撮影</option></select>'+
       '<div id="slaFeeBox" hidden><label>美容室費</label><select id="slaFee"><option>無料</option><option>有料</option></select><div class="slhint" id="slaFeeH"></div></div>'+
@@ -624,6 +624,7 @@ function slRender(){
   var p=$('salonPane'),r=slData;if(!p||!r)return;
   slList=[];
   var h='',dis=r.canBook?'':' disabled';
+  slSpStep=r.spStep||30;
   if(!r.reserve){p.innerHTML='<div class="msg">予約はまだ始まっていません</div>';return;}
   var inSt=function(pl){return !attStore||!pl.stores||!pl.stores.length||pl.stores.indexOf(attStore)>=0;};
   var places=r.places.filter(inSt),keep=function(e){return e.kind==='free'||!attStore||e.store===attStore;};
@@ -660,7 +661,7 @@ function slRender(){
     h+='</tbody></table></div>';
   }
   if(sp.length){h+='<div class="sec"><h3>特別枠 (撮影など)</h3>'+sp.slice().sort(slSort).map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">'+esc(e.time)+'</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
-  if(anyL.length){h+='<div class="sec"><h3>指定なし (着いた順) '+anyL.length+'人　<small style="font-weight:400">19:00〜22:00 の間に、できるだけ終わらせる</small></h3>'+anyL.map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">着順</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
+  if(anyL.length){h+='<div class="sec"><h3>指定なし (着いた順) '+anyL.length+'人　<small style="font-weight:400">19:00〜22:00 の間に、できるだけ終わらせる'+'</small></h3>'+anyL.map(function(e){slList.push(e);var i=slList.length-1;return '<div class="slrow"><span class="sltm">着順</span>'+slEntryHtml(e,i)+'</div>';}).join('')+'</div>';}
   if(r.canBook)h+='<button type="button" class="slsp" id="slSpec">特別枠 (撮影など・時刻を選んで入れる)</button>';
   h+='<div class="note">黒服が代わりに入れた分は薄いオレンジ・同伴は緑の名前札。並びは 同伴 → 来店 → 店番。操作はすぐ保存されます (最終更新 '+esc(r.updated)+')</div>';
   p.innerHTML=h;
@@ -674,8 +675,11 @@ function slAct(fn){
   fn().then(function(r){if(r&&r.rows){slData=r;slClose();slRender();slToast(r.msg);setMsg('',false);}}).catch(function(e){window.alert(e.message||e);}).then(function(){slBusy=false;$('salonPane').style.opacity='';});
 }
 function slClose(){$('slAddOv').hidden=true;$('slStOv').hidden=true;}
+var slSpStep=30; // 特別枠の時刻のきざみ = 美容設定の枠の長さ (getSalonSlots の spStep)
+function slFillSp(){var o='';for(var m=15*60;m<=22*60+30;m+=slSpStep)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('slaTime').innerHTML=o;$('slaTimeLb').textContent='時刻 (15:00 から '+slSpStep+' 分きざみ)';}
 function slOpenAdd(slot,special){
   slAdd={slot:slot,special:special,picked:null};
+  if(special)slFillSp();
   $('slaT').textContent=special?'特別枠に入れる':slot.time+' の空きに入れる';
   $('slaTimeBox').hidden=!special;$('slaStore').value=attStore||'';$('slaName').value='';$('slaPlan').value='なし';$('slaFee').value='無料';
   slPlan();slSug();$('slAddOv').hidden=false;
@@ -723,7 +727,7 @@ function slDoSt(a){
 }
 function slBind(){
   $('slaStore').innerHTML='<option value="">店舗を選ぶ (全部から探す)</option>'+STORES.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.s)+'</option>';}).join('');
-  (function(){var o='';for(var m=15*60;m<=22*60+30;m+=30)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('slaTime').innerHTML=o;})();
+  slFillSp();
   $('slaStore').onchange=function(){slAdd.picked=null;slSug();};
   $('slaName').oninput=function(){slAdd.picked=null;slSug();};
   $('slaPlan').onchange=slPlan;$('slaFee').onchange=slPlan;

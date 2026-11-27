@@ -108,6 +108,10 @@ button,select,input{font-family:inherit}
 .sbtn.s0{border:1.5px solid #1A1A1A;background:#fff;color:#1A1A1A}
 .sbtn.s1{border:0;background:#DCFCE7;color:#15803D}
 .sbtn.s2{border:0;background:#FEF3C7;color:#B45309}
+.rw.d1{background:#F0FDF4}.rw .fl{cursor:pointer}.rw.pend{opacity:.5;pointer-events:none}
+.mo{flex-shrink:0;width:36px;height:44px;border:0;background:none;font-size:20px;font-weight:900;color:#6B6B6B;cursor:pointer}
+.whoBar{display:flex;align-items:center;gap:10px;margin:10px 16px 0;padding:10px 12px;border-radius:10px;background:#F3F3F3}.whoBar label{font-size:13px;font-weight:900;flex-shrink:0}.whoBar select{flex:1;height:44px;font-size:16px;font-weight:700;border-radius:8px;border:1.5px solid #1A1A1A;background:#fff}
+#dWalk input{width:100%;height:44px;font-size:16px;padding:0 12px;border:1.5px solid #CFCFCF;border-radius:10px;margin-bottom:8px}
 .msg{padding:26px 16px;text-align:center;font-size:16px;color:#666}
 .err{color:#d93025}
 .sp{margin:14px 16px 6px;height:52px;border:1.5px solid #1A1A1A;border-radius:14px;background:#fff;font-size:16px;font-weight:700;cursor:pointer;color:#1A1A1A;width:calc(100% - 32px)}
@@ -180,7 +184,9 @@ button,select,input{font-family:inherit}
   <div class="dt"><b id="dTitle">&nbsp;</b><span id="dSub"></span></div>
   <div class="cn"><div><small>時間指定</small><b id="nB">-</b></div><div><small>指定なし</small><b id="nA">-</b></div><div><small style="color:#15803D">対応済</small><b id="nD">-</b></div><div><small style="color:#B45309">来なかった</small><b id="nN">-</b></div><div><small>空き</small><b id="nF">-</b></div></div>
   <div id="dNote"></div>
+  <div class="whoBar" id="dWho"><label for="dSty">担当 (あなたの名前)</label><select id="dSty"></select></div>
   <div class="rows" id="dRows"><div class="msg">読み込み中...</div></div>
+  <div id="dWalk" hidden><div class="lsec">予約なしで来た子</div><div class="lsub">名前の頭文字を打つと候補が出ます。押すと、その場で「対応済」になります</div><div style="margin:8px 16px 0"><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
   <button class="sp" id="dSpecial" hidden>特別枠 (撮影など・時刻を選んで入れる)</button>
   <div class="upd" id="dUpd"></div>
 </div>
@@ -188,7 +194,7 @@ button,select,input{font-family:inherit}
 <!-- 空きに入れる -->
 <div class="ov" id="ovAdd" hidden><div class="sheet" id="shAdd" role="dialog" aria-modal="true">
   <div class="sh"><span class="t1" id="aTitle"></span><button class="ib x" id="aClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
-  <div id="aTimeBox" hidden><label for="aTime">時刻 (15:00 から 30 分きざみ)</label><select id="aTime"></select></div>
+  <div id="aTimeBox" hidden><label for="aTime" id="aTimeLb">時刻 (15:00 から 30 分きざみ)</label><select id="aTime"></select></div>
   <label for="aStore">店舗</label><select id="aStore"></select>
   <label for="aName">名前 (最初の文字を打つと候補が出ます)</label><input id="aName" placeholder="例: あ" autocomplete="off" maxlength="30">
   <div class="sg" id="aSug"></div>
@@ -432,9 +438,11 @@ function loadDay(){
 function stLabel(s){return s==='済'?['s1','対応済']:s==='来ず'?['s2','来なかった']:['s0','未対応'];}
 function renderDay(r){
   dayData=r;today=r.today||today;
+  fillSty(r);$('dWalk').hidden=!(r.reserve&&r.date===r.today);renderWalk();
   var multi=r.places.length>1, staffN=0;r.places.forEach(function(p){staffN+=p.staff;});
   var duty=(r.onDuty||[]).map(function(x){return x.name+' '+x.start+'-'+x.end;}).join('、'), sub0=r.reserve&&r.places.length?'美容師 '+staffN+' 人 · 1 時間 最大 '+r.hourCap+' 人':'';
   $('dSub').textContent=sub0+(duty?(sub0?' · ':'')+'出勤 '+duty:''); // 出勤の美容師 (美容師シフト・表示だけ 2026-11-21)
+  spStep=r.spStep||30;
   $('nB').textContent=r.counts.booked;$('nA').textContent=r.counts.any||0;$('nD').textContent=r.counts.done;$('nN').textContent=r.counts.noshow;$('nF').textContent=r.counts.free;
   $('dNote').innerHTML=r.error?'<div class="note">枠を読み込めませんでした: '+esc(r.error)+'</div>':'';
   $('dUpd').textContent='最終更新 '+r.updated;
@@ -467,9 +475,9 @@ function renderDay(r){
     if(e.by&&e.status==='済')sub.push('担当 '+e.by);
     if(e.manual)sub.push('入れた人 '+e.entry);
     var st=stLabel(e.status);
-    h+='<div class="rw'+(e.over?' ovr':'')+'" data-k="'+esc(entKey(e))+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><div class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span>'+
+    h+='<div class="rw'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+'" data-k="'+esc(entKey(e))+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><div class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span>'+
       '<span class="sb'+(e.over?' r':'')+'">'+(e.over?'定員を超えています · ':'')+esc(sub.join(' · '))+'</span></div>'+
-      '<button class="sbtn '+st[0]+'" data-i="'+i+'" aria-label="'+esc(e.gen)+' の対応を記録">'+st[1]+'</button></div>';
+      '<button class="sbtn '+st[0]+'" data-i="'+i+'" aria-label="'+esc(e.gen)+' を済にする">'+st[1]+'</button><button class="mo" data-i="'+i+'" aria-label="'+esc(e.gen)+' の詳細 (来なかった・キャンセル)">…</button></div>';
   });
   $('dRows').innerHTML=h;
   fitRows();
@@ -478,7 +486,11 @@ function renderDay(r){
     focusKey='';
   }
   [].forEach.call(document.querySelectorAll('#dRows .em'),function(el){el.onclick=function(){openAdd(list[+el.getAttribute('data-i')],false);};});
-  [].forEach.call(document.querySelectorAll('#dRows .sbtn'),function(el){el.onclick=function(){openSt(list[+el.getAttribute('data-i')]);};});
+  [].forEach.call(document.querySelectorAll('#dRows .rw[data-k]'),function(row){
+    var b=row.querySelector('.sbtn'),i=+b.getAttribute('data-i');
+    b.onclick=row.querySelector('.fl').onclick=function(){quick(list[i],row,b);};
+    row.querySelector('.mo').onclick=function(){openSt(list[i]);};
+  });
 }
 // 1 画面に収まるように行の高さを決める (48〜64px)
 function fitRows(){
@@ -491,10 +503,10 @@ var toastT=0;
 // 【注意】で始まる返事 (給料引き(日別)の更新失敗など) は 3.5 秒で消えるトーストにせず、アラートで止めて見せる
 function toast(m){if(!m)return;if(m.indexOf('【注意】')>=0)window.alert(m);var t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},3500);}
 // 書き込みは 1 つずつ。終わったら返ってきた最新の一覧で描き直す (一覧に戻った時は取り直す)
-function act(fn){
+function act(fn,fail){
   if(busy)return;
   busy=true;document.body.style.opacity='.6';
-  fn().then(function(r){if(r&&r.rows){closeSheets();renderDay(r);toast(r.msg);}}).catch(function(e){window.alert(e.message||e);}).then(function(){busy=false;document.body.style.opacity='';});
+  fn().then(function(r){if(r&&r.rows){closeSheets();renderDay(r);toast(r.msg);}}).catch(function(e){if(fail)fail();window.alert(e.message||e);}).then(function(){busy=false;document.body.style.opacity='';});
 }
 function closeSheets(){$('ovAdd').hidden=true;$('ovSt').hidden=true;}
 
@@ -502,9 +514,12 @@ function closeSheets(){$('ovAdd').hidden=true;$('ovSt').hidden=true;}
 var add={slot:null,special:false,picked:null}, castAll=null, castLoading=false, castErr='';
 function norm(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96);}).replace(/\s+/g,'');}
 $('aStore').innerHTML='<option value="">店舗を選ぶ (全部から探す)</option>'+STORES.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.s)+'</option>';}).join('');
-(function(){var o='';for(var m=15*60;m<=22*60+30;m+=30)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('aTime').innerHTML=o;})();
+var spStep=30; // 特別枠の時刻のきざみ = 美容設定の枠の長さ (getSalonSlots の spStep)
+function fillSpT(){var o='';for(var m=15*60;m<=22*60+30;m+=spStep)o+='<option>'+pad(Math.floor(m/60))+':'+pad(m%60)+'</option>';$('aTime').innerHTML=o;$('aTimeLb').textContent='時刻 (15:00 から '+spStep+' 分きざみ)';}
+fillSpT();
 function openAdd(slot,special){
   add={slot:slot,special:special,picked:null};
+  if(special)fillSpT();
   $('aTitle').textContent=special?'特別枠に入れる':slot.time+' の空きに入れる';
   $('aTimeBox').hidden=!special;$('aStore').value='';$('aName').value='';$('aPlan').value='なし';$('aFee').value='無料';
   planChange();renderSug();$('ovAdd').hidden=false;
@@ -545,6 +560,57 @@ $('aOk').onclick=function(){
   act(function(){return api('bookSalonManual',[day,add.special?'':add.slot.place,add.special?$('aTime').value:add.slot.time,p.store,p.gen,'',plan,fee,add.special]);});
 };
 $('dSpecial').onclick=function(){openAdd(null,true);};
+
+// ---------- 札を 1 回押すと済 (紙の予約票のように) ----------
+function fillSty(r){
+  var names=r.stylists||[], sel=$('dSty'), v=sel.value||lsGet('salonStylist')||'';
+  if(names.indexOf(v)<0)v='';
+  sel.innerHTML='<option value="">自分の名前を選ぶ</option>'+names.map(function(n){return '<option'+(n===v?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  $('dWho').hidden=!r.reserve;
+}
+$('dSty').onchange=function(){if($('dSty').value)lsSet('salonStylist',$('dSty').value);};
+function needSty(){
+  var v=$('dSty').value;
+  if(!v){window.alert('先に上の「担当」で自分の名前を選んでください');$('dSty').focus();return '';}
+  lsSet('salonStylist',v);return v;
+}
+// 済でなければ 済 (担当 = 選んだ名前)・済なら 確認して予約に戻す。押した札はすぐ「処理中」にして、返事が来るまで押せない
+function quick(e,row,b){
+  if(busy||!e||e.kind==='free')return;
+  var back=e.status==='済',sty=back?(e.by||$('dSty').value):needSty();
+  if(back){if(!window.confirm(e.gen+' さんを予約に戻します。よろしいですか？'))return;}
+  else if(!sty)return;
+  var a=back?'reset':'done', undo=function(){row.classList.remove('pend');b.textContent=stLabel(e.status)[1];};
+  row.classList.add('pend');b.textContent='処理中…';
+  act(function(){return e.any?api('setSalonAny',[day,e.store,e.gen,a,sty]):api('setSalonSlot',[day,e.place,e.time,e.store,e.gen,a,sty]);},undo);
+}
+// 予約なしで来た子
+function loadCast(){
+  if(castAll||castLoading)return;
+  castLoading=true;castErr='';
+  api('getSalonCastAll',[]).then(function(r){castAll=r.casts;castLoading=false;renderWalk();}).catch(function(e){castLoading=false;castErr=String(e&&e.message||e);renderWalk();});
+}
+function renderWalk(){
+  if($('dWalk').hidden)return;
+  var q=norm($('wName').value),h='';
+  if(!q){$('wSug').innerHTML='';return;}
+  if(!castAll&&castErr)h='<span class="no">名前の一覧を読み込めませんでした: '+esc(castErr)+'</span>';
+  else if(!castAll)h='<span class="no">名前の一覧を読み込み中...</span>';
+  else{
+    var hits=castAll.filter(function(c){return norm(c.gen).indexOf(q)===0;});
+    if(!hits.length)h='<span class="no">合う名前がありません</span>';
+    else hits.slice(0,8).forEach(function(c){h+='<button type="button" data-k="'+esc(c.store)+'|'+esc(c.gen)+'">'+esc(c.gen)+' · '+esc(SHORT[c.store]||c.store)+'</button>';});
+  }
+  $('wSug').innerHTML=h;
+  [].forEach.call(document.querySelectorAll('#wSug button'),function(b){b.onclick=function(){
+    if(busy)return;var sty=needSty();if(!sty)return;
+    var k=b.getAttribute('data-k').split('|');b.textContent='処理中…';b.disabled=true;
+    act(function(){return api('addSalonWalkin',[day,k[0],k.slice(1).join('|'),sty]);},function(){b.disabled=false;renderWalk();});
+    $('wName').value='';
+  };});
+}
+$('wName').oninput=function(){loadCast();renderWalk();};
+$('wName').onfocus=loadCast;
 
 // ---------- 対応を記録 ----------
 var cur=null;

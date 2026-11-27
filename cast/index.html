@@ -151,7 +151,7 @@ function hairCall(d, fn, time, kind) {
   d.hbusy = true; d.hmsg = ''; render();
   var done = function (r) {
     d.hbusy = false;
-    if (r) { d.hb = r.b; d.ho = r.o; d.hp = r.p || []; d.hnote = r.n || ''; d.ha = !!r.a; d.hdh = !!r.dh; d.hair = !!r.b || !!r.a; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; if (r.ok && fn !== 'reserve') d.hkind = ''; }
+    if (r) { d.hb = r.b; d.ho = r.o; d.hp = r.p || []; d.hnote = r.n || ''; d.ha = !!r.a; d.hdh = !!r.dh; d.hvs = !!r.hv; d.hair = !!r.b || !!r.a; d.hairTime = r.b ? r.b.time : ''; d.hpick = ''; d.hmsg = r.msg; d.hok = !!r.ok; if (r.ok && fn !== 'reserve') d.hkind = ''; }
     render();
   };
   var run = google.script.run.withSuccessHandler(done).withFailureHandler(function (e) { d.hbusy = false; d.hmsg = '通信できませんでした。もう一度押してください。'; d.hok = false; render(); });
@@ -162,7 +162,7 @@ function hairEarliestOk(d, t) { return !(d.go && data.hairSougeiEarliest) || t >
 function hairBox(d) {
   var s = el('div', 'sub');
   s.appendChild(el('label', 't', 'ヘアメイク 希望'));
-  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」と「撮影」の時だけです'));
+  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」「撮影」「来店予定」がある時だけです'));
   var stale = d.shift !== d.savedShift, hp = d.hp || [];
   if (d.hnote) s.appendChild(el('p', 'hmsg ng', d.hnote));
   if (d.hb) s.appendChild(el('p', 'booked', '希望 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
@@ -174,6 +174,7 @@ function hairBox(d) {
     var ch = el('div', 'chips');
     ch.appendChild(chip('指定なし (着いた順)', kind === '', function () { d.hkind = ''; d.hpick = ''; }));
     ch.appendChild(chip('同伴 (時間を選ぶ)', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
+    ch.appendChild(chip('来店予定 (時間を選ぶ)', kind === '来店予定', function () { d.hkind = '来店予定'; d.hpick = ''; }));
     ch.appendChild(chip('撮影 (時間を選ぶ)', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
     s.appendChild(ch);
     if (!kind || kind === 'x') {
@@ -182,6 +183,8 @@ function hairBox(d) {
         ga.onclick = function () { hairCall(d, 'any'); };
         s.appendChild(ga);
       }
+    } else if (kind === '来店予定' && !d.hvs) {
+      s.appendChild(el('p', 'hint', '来店予定が保存されていません。来店の予定 (時間・人数など) を入れて、一番下の「保存」を押してから選んでください'));
     } else if (kind === '同伴' && !d.hdh) {
       s.appendChild(el('p', 'hint', '同伴の予定が保存されていません。予定に「同伴」を入れて、一番下の「保存」を押してから選んでください'));
     } else {
