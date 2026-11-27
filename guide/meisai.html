@@ -65,36 +65,43 @@ th{background:#E6E9F0;color:#1F2A44}
 .back a{color:#1F2A44}
 footer{text-align:center;font-size:12px;color:#777;padding:0 16px 36px}
 
-.big{font-size:17px;font-weight:900;color:#1F2A44;margin:6px 0}.calc{background:#F4F5F7;border-radius:8px;padding:10px 12px;font-size:17px;line-height:1.9}.calc b{font-size:20px}.shot img.a{height:auto}.todo{display:flex;gap:10px;align-items:center;margin:0 0 6px}.todo .no{width:36px;height:36px;font-size:18px}.todo h4{margin:0;font-size:18px}.when{display:inline-block;background:#1F2A44;color:#fff;border-radius:6px;padding:0 8px;font-size:13px;margin-bottom:4px}</style></head><body>
-<header class="top"><small>PRINCE CHITOSE / STAFF</small><h1>黒服向け 明細のこと</h1><p>明細は 自動で できます。黒服が やることは 3 つだけ。</p></header>
+.calc{background:#F4F5F7;border-radius:8px;padding:10px 12px;font-size:17px;line-height:1.9;font-weight:700;color:#1F2A44}.shot img.a{height:auto}.tt{font-size:18.5px!important;margin:4px 0 8px!important}.when{display:inline-block;background:#1F2A44;color:#fff;border-radius:6px;padding:0 8px;font-size:13px}.ok,.ng{border-radius:8px;padding:8px 12px;margin:6px 0;font-size:16px;font-weight:700}.ok{background:#DFF3E6;color:#14602F}.ng{background:#FDE3E1;color:#9B1C1C}.lk{display:flex;gap:10px;flex-wrap:wrap}.lk a{flex:1;text-align:center;font-weight:700;text-decoration:none;color:#fff;background:#1F2A44;border-radius:8px;padding:10px 6px}</style></head><body>
+<header class="top"><small>PRINCE CHITOSE / STAFF</small><h1>黒服向け 明細のこと</h1><p>明細は アプリの 記録から 作ります。黒服が やるのは 下の 4 つです。</p></header>
 <main>
 
 <div class="card"><span class="when">毎晩 お店が 終わる前</span>
-<div class="todo"><span class="no">1</span><h4>「まだ」が 0 か 見る</h4></div>
-<p>美容室の画面と 送迎の画面の 上に 出る 数字を 見ます。</p>
-<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/g2_h7.png" alt="美容室の画面の上の数字" loading="lazy"></div><figcaption class="note">美容室の画面</figcaption></figure>
-<p class="big">「まだ」が 0 → OK</p>
-<p class="big">「まだ」が 残っている → その美容師さん・ドライバーさんに 押してもらう</p>
+<h4 class="tt">「まだ」が 0 か 見る</h4>
+<p>美容室と 送迎の 画面の 上の 数字を 見ます。</p>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/mz_h.png" alt="美容室の画面の上の数字" loading="lazy"></div><figcaption class="note">美容室 (まだ 1 人 = 赤い字が 出る)</figcaption></figure>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/mz_d.png" alt="送迎の画面の上の数字" loading="lazy"></div><figcaption class="note">送迎 (行き・帰り)</figcaption></figure>
+<div class="ok"><b>0</b> なら OK</div>
+<div class="ng"><b>1 以上</b> なら、その日の うちに 美容師さん・ドライバーさんに 押してもらう</div>
 <p class="note">押されていない 分は 明細に 入りません。</p>
-<p><a href="https://apply.prince-sapporo.jp/salon/">美容室の画面</a>　<a href="https://apply.prince-sapporo.jp/sougei-board/">送迎の画面</a></p></div>
+<p class="lk"><a href="https://apply.prince-sapporo.jp/salon/?as=staff">美容室の画面</a><a href="https://apply.prince-sapporo.jp/sougei-board/">送迎の画面</a></p></div>
 
 <div class="card"><span class="when">撮影を 無料に する 時だけ</span>
-<div class="todo"><span class="no">2</span><h4>ヘアメイクの 前に 無料に する</h4></div>
-<p>女の子が 入れた 撮影は 最初 <b>有料</b> です。</p>
-<ol class="st"><li>黒服ポータル → ヘアメイク管理</li><li>その子の 札の「<b>詳細</b>」</li><li>美容室費 を 無料に</li></ol>
-<p class="note">美容師さんが「ヘアメイク」を 押した あとは 変えられません。</p></div>
+<h4 class="tt">美容師さんが 押す 前に 無料に する</h4>
+<p>女の子が 入れた 撮影は 最初 <b>有料</b> です。黒服ポータルの「<b>ヘアメイク管理</b>」から 開きます。</p>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/mz_f0.png" alt="この日の予約画面を開くボタン" loading="lazy"></div></figure>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/mz_f1.png" alt="予約の行の詳細ボタン" loading="lazy"></div></figure>
+<figure class="shotwrap wide"><div class="shot"><img class="a" src="img/mz_f2.png" alt="美容室費の無料ボタン" loading="lazy"></div></figure>
+<p class="note">「ヘアメイク」が 押された あとは 変えられません。同じ 画面の「枠を空ける」は、予約を 本当に 取り消す 時 だけ 使います。</p></div>
 
-<div class="card"><span class="when">月曜の 朝</span>
-<div class="todo"><span class="no">3</span><h4>明細を 見る</h4></div>
-<p class="big">美容室</p>
-<p>Google ドライブ の「<b>美容室 明細</b>」フォルダ に 自動で 入ります。</p>
-<p class="note">先週の 分 = 「週別」 / 毎日の 分 = 「日別」</p>
-<p class="big">ドライバーの 週払い</p>
-<div class="calc">6,500円 × 出た日数<br>− 共済費 10%<br>= お支払い</div>
-<p>例: 5 日 → 32,500 − 3,250 = <b>29,250 円</b></p></div>
+<div class="card"><span class="when">ドライバーさんが 出た 日</span>
+<h4 class="tt">「ドライバー出勤」に ○ を 付ける</h4>
+<p><b>週払いは この ○ の 数で 計算します。</b>ドライバーさんが 画面で 押す「乗せた」だけでは 数えません。</p>
+<ol class="st"><li>黒服ポータル →「送迎」の 下の「<b>送迎管理 (行き・帰りの一覧)</b>」</li><li>いちばん 下の「<b>ドライバー出勤</b>」</li><li>出た 日に ○ を 押す (もう 一度 押すと 消える)</li></ol>
+<p class="note">薄い ○ は「予定に 入っている 日」です。押すと 決まった ○ に なります。月〜土で 1 週間です。</p>
+<div class="calc">週払い ＝ 6,500円 × ○の数<br>− 共済費 10%</div>
+<p>例: ○ 5 つ → 32,500 − 3,250 = <b>29,250 円</b></p></div>
 
-<div class="banner" style="background:#E8E8EE"><b>まだ 決まっていないこと</b> (決まったら ここを 直します)
-<ul style="margin:4px 0 0;padding-left:1.2em;font-size:14px"><li>週払いの「出た日」を 何で 数えるか</li><li>中村本部長への 月曜の メール (送り先が 未定・今は 止めてある)</li></ul></div>
+<div class="card"><span class="when">お給料の 前</span>
+<h4 class="tt">美容室代を 女の子の お給料から 引く</h4>
+<ol class="st"><li>Prince App の シート「<b>美容室 給料引き(日別)</b>」タブを 開く</li><li>日付・店・女の子・金額 の 行を 見て、お給料から 引く</li><li>引いたら「<b>引いた</b>」に チェック</li></ol>
+<p class="note">ここに 入るのは、<b>有料</b>で「ヘアメイク」が 押された 分 だけ です (無料・キャンセルは 入りません)。</p></div>
+
+<div class="banner" style="background:#E8E8EE"><b>まだ 動いていないこと</b> (動いたら ここを 直します)
+<ul style="margin:4px 0 0;padding-left:1.2em;font-size:14px"><li>美容室の 明細 PDF を 毎朝 Google ドライブ「美容室 明細」に 自動で 置く (仕組みは できていて、始める 前)</li><li>週払い 明細 PDF と 美容師の 実績を 月曜に 中村本部長へ メール (送り先が 未定・止めてある)</li></ul></div>
 
 <p class="back"><a href="./">← ご案内の トップへ</a></p>
 </main>

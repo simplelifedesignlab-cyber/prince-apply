@@ -345,7 +345,7 @@ function renderList(){
     g.items.push(e);
   });
   r.special.forEach(function(e){spx.push(e);});
-  if(groups.length||spx.length)h+='<div class="lsec">時間指定 (同伴・撮影・来店予定) 時刻順</div>';
+  if(groups.length||spx.length)h+='<div class="lsec">時間指定 (同伴・撮影) 時刻順</div>';
   groups.forEach(function(g){
     var duty=(r.onDuty||[]).filter(function(x){return x.place===g.name;}).map(function(x){return x.name+' '+x.start+'-'+x.end;}).join('、');
     h+='<div class="lh"><b>'+esc(g.name)+'</b><small>美容師 '+g.staff+' 人'+(duty?' · 出勤 '+esc(duty):'')+' · 時間指定 '+g.items.length+'</small></div>';
@@ -360,7 +360,7 @@ function renderList(){
   if(any.length){
     var hasTag=any.some(function(x){return x.tag;}),hasNo=any.some(function(x){return !x.tag;}),lastG='';
     h+='<div class="lsec">指定なし (着いた順) '+any.length+'人</div><div class="lsub">19:00〜22:00 の間に、着いた順でできるだけ終わらせる</div>';
-    any.forEach(function(e){var g=e.tag?'a':'b';if(g!==lastG&&hasTag&&hasNo)h+='<div class="lsub">'+(g==='a'?'同伴・来店予定あり':'その他')+'</div>';lastG=g;ll.push(e);h+=lineHtml(e,ll.length-1);});
+    any.forEach(function(e){var g=e.tag?'a':'b';if(g!==lastG&&hasTag&&hasNo)h+='<div class="lsub">'+(g==='a'?'同伴':'その他')+'</div>';lastG=g;ll.push(e);h+=lineHtml(e,ll.length-1);});
   }
   if(!groups.length&&!spx.length&&!any.length)h='<div class="msg">表示する枠がありません</div>';
   $('lBody').innerHTML=h;
@@ -504,7 +504,7 @@ function renderDay(r){
   list.forEach(function(e,i){
     if(e.any){
       if(!anyHd){anyHd=true;h+='<div class="lsec">指定なし (着いた順)</div><div class="lsub">19:00〜22:00 の間に、着いた順でできるだけ終わらせる</div>';}
-      var g0=e.tag?'a':'b';if(g0!==lastG&&hasTag&&hasNo)h+='<div class="lsub">'+(g0==='a'?'同伴・来店予定あり':'その他')+'</div>';lastG=g0;
+      var g0=e.tag?'a':'b';if(g0!==lastG&&hasTag&&hasNo)h+='<div class="lsub">'+(g0==='a'?'同伴':'その他')+'</div>';lastG=g0;
     }
     if(e.kind==='free'){
       h+='<div class="rw"><span class="tm">'+esc(e.time)+'</span><button class="em" data-i="'+i+'"'+(r.canBook?'':' disabled')+'><span class="l"><b>空き</b>'+((e.note||multi)?'<small>'+(e.note?esc(e.note)+' さんはキャンセル':'')+(e.note&&multi?' · ':'')+(multi?esc(e.place):'')+'</small>':'')+'</span>'+

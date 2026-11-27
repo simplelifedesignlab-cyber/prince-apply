@@ -38,93 +38,23 @@ th{background:var(--navyL);color:var(--navy)}
 .sc img{max-width:none;width:760px}
 footer{text-align:center;font-size:12px;color:#777;padding:0 16px 32px}
 </style></head><body>
-<header><small>PRINCE CHITOSE</small><h1>黒服向け ご案内<br>美容室アプリと、送迎の今の状況</h1></header>
-<nav><a href="#a">A 美容室のアプリ</a><a href="#b">B 送迎の今の状況</a></nav>
+<header><small>PRINCE CHITOSE</small><h1>黒服向け ご案内<br>説明書と、送迎の今の状況</h1></header>
+<nav><a href="#g">説明書</a><a href="#b">送迎の今の状況</a></nav>
 <main>
 
-<h2 style="margin-top:20px">説明書 (図でわかる)</h2>
+<h2 id="g" style="margin-top:20px">説明書 (図でわかる)</h2>
 <div class="card">
 <p>スマホで見やすい、図と画面つきの説明書です。自分の役割のページを開いてください。</p>
 <ul style="list-style:none;padding:0;margin:8px 0">
-<li style="margin:8px 0"><a href="hair.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">美容師さん向け (漫画でわかるガイド)</a></li>
-<li style="margin:8px 0"><a href="driver.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">送迎ドライバーさん向け (流れ図)</a></li>
+<li style="margin:8px 0"><a href="hair.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">美容師さん向け (ヘアメイク・キャンセルの押し方)</a></li>
+<li style="margin:8px 0"><a href="driver.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">送迎ドライバーさん向け (乗せた・キャンセルの押し方)</a></li>
 <li style="margin:8px 0"><a href="recruit.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">LINE 求人の説明書 (横型スライド・応募から採用まで)</a></li>
-<li style="margin:8px 0"><a href="staff.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">黒服向け (つながりの図と業務の手順)</a></li><li style="margin:8px 0"><a href="meisai.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">黒服向け (美容室の明細・ドライバーの週払い)</a></li>
+<li style="margin:8px 0"><a href="staff.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">黒服向け (つながりの図と業務の手順)</a></li><li style="margin:8px 0"><a href="meisai.html" style="display:block;text-decoration:none;font-weight:700;color:#1F2A44;background:#E6E9F0;border-radius:10px;padding:12px 14px">黒服向け 明細のこと (毎晩の確認・撮影の無料・週払い)</a></li>
 </ul></div>
 
 <p>各店舗の担当 (黒服) の方向けのページです。画面の写真は、テスト用の子 (「テストてじゅん」) で試したものです。本物のキャストの名前・連絡先は載せていません。</p>
 
-<h2 id="a">A 美容室のアプリ</h2>
-
-<h3>1. どこから開く?</h3>
-<div class="card">
-<ul>
-<li><b>美容師さん</b> … LINE で送った URL から開く。</li>
-<li><b>黒服</b> … 黒服ポータルの「美容室」ボタンから開く。</li>
-<li><b>キャスト</b> … マイページから予約する。</li>
-</ul>
-<p class="note">この3つのどこから入れても、同じ予約表につながります。</p>
-</div>
-
-<h3>2. 画面の見かた</h3>
-
-<h4 style="margin:18px 0 0;color:#1F2A44">1 ページ目: カレンダー</h4>
-<figure class="ph"><img src="img/a1_cal.png" alt="美容室のカレンダー画面" loading="lazy">
-<figcaption>1 か月の予定が出ます。日ごとに、時間ごとの色の帯 (19時・20時・21時・22時) で人数がわかります。美容師さんが入れる人数をこえると、帯が<b>赤い枠</b>になります (あふれ)。日をタップすると、その日の詳しい画面に進みます。</figcaption></figure>
-
-<h4 style="margin:18px 0 0;color:#1F2A44">2 ページ目: その日の詳細</h4>
-<figure class="ph"><img src="img/a2_day.png" alt="その日の予約と空き枠の画面" loading="lazy">
-<figcaption>予約が入った枠 (ここでは「撮影」で「対応済」) と、<b>空いている枠</b>が時間順に並びます。空き枠には「入れる」ボタンがあります。</figcaption></figure>
-
-<h4 style="margin:18px 0 0;color:#1F2A44">「空きに入れる」画面</h4>
-<figure class="ph"><img src="img/a4_add_suggest.png" alt="空きに入れる画面 名前の候補" loading="lazy">
-<figcaption>お店を選び、名前は<b>最初の文字</b>を打つと候補が出ます。候補から選んでください。</figcaption></figure>
-<figure class="ph"><img src="img/a5_add_ready.png" alt="空きに入れる画面 予定の選択" loading="lazy">
-<figcaption>「予定」は <span class="pill">なし</span> <span class="pill">同伴</span> <span class="pill">優先</span> <span class="pill">撮影</span> から選びます。名前を選ぶと、いちばん下のボタンで確定できます。</figcaption></figure>
-
-<h4 style="margin:18px 0 0;color:#1F2A44">「特別枠」(撮影など)</h4>
-<figure class="ph"><img src="img/a9_special.png" alt="特別枠の画面" loading="lazy">
-<figcaption>通常の枠とは別に、<b>15:00 から</b> (30 分きざみ) の時刻を自分で選んで入れられます。「撮影」を選ぶと、<b>美容室費 (無料 / 有料)</b> を選ぶ欄が出ます。</figcaption></figure>
-
-<h4 style="margin:18px 0 0;color:#1F2A44">「対応を記録」画面</h4>
-<figure class="ph"><img src="img/a7_status.png" alt="対応を記録する画面" loading="lazy">
-<figcaption>予約の行をタップすると出ます。担当の美容師さんを選んで、次の3つから選びます。
-<br>・<b>対応した</b>
-<br>・<b>来なかった</b>
-<br>・<b>キャンセル</b> … 押すと、その枠は<b>空きに戻り</b>、ほかの子を入れられます。</figcaption></figure>
-
-<h3>3. お金の流れ</h3>
-<div class="card">
-<h4>給料から引くのは「有料で対応した」分だけ</h4>
-<table>
-<tr><th>状態</th><th>給料から</th></tr>
-<tr><td>有料で対応した</td><td><b>引く</b></td></tr>
-<tr><td>撮影で美容室費が無料</td><td>引かない</td></tr>
-<tr><td>来なかった</td><td>引かない</td></tr>
-<tr><td>キャンセル</td><td>引かない</td></tr>
-</table>
-<p class="note">この「来なかった・キャンセルは引かない」は、いまの仮の決めです。変わったらこのページを直します。</p>
-</div>
-
-<div class="card">
-<h4>黒服がやること</h4>
-<p>シートの「<b>美容室 給料引き(日別)</b>」タブを見て、その分を給料から引き、<b>「引いた」にチェック</b>を入れてください。</p>
-<figure><div class="sc"><img src="img/a_pay_tab.png" alt="美容室 給料引き(日別) タブ" loading="lazy"></div>
-<figcaption>有料で対応した分だけが、日付・店・キャスト・金額で並びます。「引いた」の四角にチェックを入れます。(この画面はテストの2行です)</figcaption></figure>
-</div>
-
-<h3>4. 美容師さんの明細 (請求書)</h3>
-<div class="card">
-<ul>
-<li><b>毎朝 6 時台</b> … 前の日の分の PDF が、Drive の「美容室 明細」に自動でできます。</li>
-<li><b>月曜の 6 時台</b> … 前の週 (月曜から日曜) の分の PDF が、同じ場所にできます。</li>
-</ul>
-<p class="note">メールは送りません。Drive のフォルダに PDF が置かれるだけです。</p>
-<figure><img src="img/a_pdf.png" alt="美容師 週別明細の見本" loading="lazy">
-<figcaption>週別の明細の1ページ目 <span class="sample">見本</span><br>PDF と同じ形で作った見本です (テストの予約の数字)。美容師さんごとに、有料で対応した件数・金額・無料・来なかった・キャンセルの数が並びます。</figcaption></figure>
-</div>
-
-<h2 id="b">B 送迎の今の状況</h2>
+<h2 id="b">送迎の今の状況</h2>
 
 <h3>1. 今の状態</h3>
 <div class="ok"><b>仕組みはできていて、テストは合格しています。</b></div>
@@ -138,7 +68,7 @@ footer{text-align:center;font-size:12px;color:#777;padding:0 16px 32px}
 <li><b>毎日 16:30</b> に、その日の出勤と送迎の希望を読む。</li>
 <li>方面・便・車の席・ドライバーさんごとの条件 (例: 「プリンスビルから乗る子だけ」の工藤さん) を見て、<b>だれをどの車に乗せるか</b>を割り振る。</li>
 <li>ドライバーさんへ、<b>LINE WORKS</b> で連絡する。</li>
-<li>キャストへ、<b>メール</b>で、乗る便・車・ナンバー・色・乗る場所を連絡する。</li>
+<li>キャストへ、<b>メール</b>で、乗る便・車・ナンバー・乗る場所を連絡する。</li>
 <li>取り消しが出たら、シートに<b>赤く</b>出す。</li>
 <li>決まらなかった子がいたら、<b>知らせる</b>。</li>
 </ul>
@@ -176,7 +106,6 @@ footer{text-align:center;font-size:12px;color:#777;padding:0 16px 32px}
 <ul>
 <li>高橋さんの「近場」は、どこまでか。</li>
 <li>小野さんの、金曜と祝日の前の帰りを、入れてよいか。</li>
-<li>ドライバーさんごとの車の色。</li>
 </ul>
 <p class="note">答えが来たら、このページを直します。それまでは、安全な側 (入れない) で動きます。</p>
 </div>
