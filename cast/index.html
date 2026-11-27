@@ -334,8 +334,8 @@ function render() {
         var s3 = el('div', 'sub');
         s3.appendChild(el('label', 't', 'ヘアメイクの希望時間'));
         s3.appendChild(mkSel(hairChoices(d), d.hairTime, 'おまかせ', function (v) { d.hairTime = v; }));
-        var hasPlan = d.plans.some(function (p) { return String(p.n || '').trim(); }) || !!d.vt;
-        if (hasPlan) { s3.appendChild(el('span', 'prio', '優先')); s3.appendChild(el('p', 'hint', '同伴・来店予定の日は優先で入れます')); }
+        var hasPlan = d.plans.some(function (p) { return p.k === '同伴' && String(p.n || '').trim(); });
+        if (hasPlan) { s3.appendChild(el('span', 'prio', '優先')); s3.appendChild(el('p', 'hint', '同伴の日は優先で入れます')); }
         card.appendChild(s3);
       }
     }
