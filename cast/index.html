@@ -162,7 +162,7 @@ function hairEarliestOk(d, t) { return !(d.go && data.hairSougeiEarliest) || t >
 function hairBox(d) {
   var s = el('div', 'sub');
   s.appendChild(el('label', 't', 'ヘアメイク 希望'));
-  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」「撮影」「来店予定」がある時だけです'));
+  s.appendChild(el('p', 'hint', 'ヘアメイクは 19:00〜22:00 の間に、着いた順でできるだけ終わらせます。時間を決められるのは「同伴」「撮影」がある時だけです'));
   var stale = d.shift !== d.savedShift, hp = d.hp || [];
   if (d.hnote) s.appendChild(el('p', 'hmsg ng', d.hnote));
   if (d.hb) s.appendChild(el('p', 'booked', '希望 ' + d.hb.time + ' ' + d.hb.place + ' (出ています)'));
@@ -174,7 +174,6 @@ function hairBox(d) {
     var ch = el('div', 'chips');
     ch.appendChild(chip('指定なし (着いた順)', kind === '', function () { d.hkind = ''; d.hpick = ''; }));
     ch.appendChild(chip('同伴 (時間を選ぶ)', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
-    ch.appendChild(chip('来店予定 (時間を選ぶ)', kind === '来店予定', function () { d.hkind = '来店予定'; d.hpick = ''; }));
     ch.appendChild(chip('撮影 (時間を選ぶ)', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
     s.appendChild(ch);
     if (!kind || kind === 'x') {
