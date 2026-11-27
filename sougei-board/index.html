@@ -30,12 +30,7 @@ button,select,input{font-family:inherit}
 .lr.cx{opacity:.55}
 .lr.d{background:#F0FDF4}.lr.n{background:#FFF7ED}.lr.c{background:var(--bg)}
 .lr.pend{opacity:.5;pointer-events:none}
-.lm{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:10px;min-height:64px;padding:6px 6px 6px 16px;border:0;background:none;text-align:left;cursor:pointer;color:inherit;font-size:16px}
-.lm:disabled{cursor:default}
 .rt{flex-shrink:0;width:104px;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.pl{min-width:92px;height:36px;padding:0 8px;border-radius:4px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-.pl.p0{border:1.5px solid var(--pri);color:var(--pri);background:#fff}.pl.p1{background:#DCFCE7;color:#15803D}.pl.p2{background:#FEF3C7;color:#B45309}.pl.p3{background:#E5E7EB;color:#4B5563}
-.mo{flex-shrink:0;width:44px;border:0;background:none;font-size:22px;font-weight:900;color:#6B7285;cursor:pointer}
 .whoBar{display:flex;align-items:center;gap:10px;margin:8px 16px 0;padding:10px 12px;border-radius:4px;background:var(--bg)}.whoBar label{font-size:13px;font-weight:900;flex-shrink:0}.whoBar select{flex:1;min-width:0;height:44px;font-size:16px;font-weight:700;border-radius:4px;border:1.5px solid var(--pri);background:#fff;color:var(--pri);padding:0 8px}
 .wbox{margin:8px 16px 0}.wbox input{width:100%;height:44px;font-size:16px;padding:0 12px;border:1.5px solid var(--line);border-radius:4px;margin:8px 0}
 .wsub{margin:6px 16px 0;font-size:12px;font-weight:700;color:#6B7285}
@@ -112,7 +107,7 @@ body{background:var(--bg)}
 .tabs{margin-top:0}
 .nav b{letter-spacing:.01em}
 .ib,.tb{border-radius:4px}
-.sbtn,.mo,.lm,.lr{-webkit-tap-highlight-color:transparent}
+.sbtn,.lr{-webkit-tap-highlight-color:transparent}
 .sum{gap:0;padding:0;margin:8px 16px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-wrap:nowrap}
 .sum .k{flex:1 1 0;min-width:0;border:0;border-left:1px solid var(--priL);border-radius:0;padding:8px 8px 6px;display:flex;flex-direction:column}
 .sum .k:first-child{border-left:0}
@@ -121,6 +116,28 @@ body{background:var(--bg)}
 .sum .k.un b{color:#B91C1C}
 .lw{border-radius:4px}
 .whoBar{border-radius:4px}
+/* 2026-11-27 札 = 乗せた(送った) / キャンセル の 2 トグル (美容室と同じ) */
+.cn{gap:0;padding:0;margin:8px 16px 6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-wrap:nowrap}
+.cn div{flex:1 1 0;min-width:0;border:0;border-left:1px solid var(--priL);border-radius:0;padding:8px 8px 6px;display:flex;flex-direction:column}
+.cn div:first-child{border-left:0}
+.cn div small{font-size:11px;color:#6B7285;white-space:normal;line-height:1.25;letter-spacing:0}
+.cn div b{font-size:26px;line-height:1.15;font-weight:900;color:var(--pri)}
+.cn.sm4 div b{font-size:24px}.cn.sm4 .op{flex:0 0 18px;border:0;padding:8px 0;align-items:center;justify-content:center;font-weight:900;color:#6B7285;font-size:16px}
+@media(max-width:420px){.cn small{font-size:10px}.cn div{padding:8px 4px 6px}.cn b{font-size:22px}}
+.sumMsg{margin:0 16px 4px;font-size:14px;font-weight:900}.sumMsg.ng{color:#B91C1C}.sumMsg.ok{color:#15803D}
+.sumSty{margin:0 16px 8px;font-size:13px;color:#4A4A4A}
+.styErr{margin:4px 16px 0;font-size:14px;font-weight:900;color:#B91C1C}
+.tgs{display:flex;gap:6px;flex-shrink:0}
+.tgb{width:70px;height:46px;padding:0;border-radius:4px;border:1.5px solid var(--line);background:#fff;color:#6B7285;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.tgb.hm.on{background:#15803D;border-color:#15803D;color:#fff}
+.tgb.cl.on{background:#C2410C;border-color:#C2410C;color:#fff}
+.lr{padding:8px 10px 8px 16px;gap:8px;align-items:center}
+.lr.d{background:#F0FDF4}.lr.n{background:#FFF4EC}
+.lr .tm{width:auto;min-width:44px;white-space:nowrap;font-size:14px}.lr .tm small{display:block;font-size:11px;font-weight:400;color:#6B7285}
+.lr .nm b{white-space:nowrap}
+.lr .dr{text-align:left;display:block}.lr .dr small{display:inline;margin-left:6px}
+.lr .rc{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end}
+.dtl{border:0;background:none;color:#6B7285;font-size:12px;text-decoration:underline;cursor:pointer;height:32px;padding:0 4px}
 </style></head><body>
 <div class="page">
 <div id="hd">
@@ -131,10 +148,11 @@ body{background:var(--bg)}
 <div id="vList" hidden>
   <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button class="ib" id="lPrev" aria-label="前の日">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日">›</button></div></div>
   <div class="whoBar"><label for="lDrv">ドライバー (あなたの名前)</label><select id="lDrv"></select></div>
-  <div class="sum" id="lSum"></div>
+  <div class="styErr" id="lErr" hidden>先に ドライバー (あなたの名前) を選んでください</div>
+  <div id="lSum"></div>
   <div id="lNote"></div>
   <div id="lBody"><div class="msg">読み込み中...</div></div>
-  <div id="lWalk" hidden><div class="lh"><b>予定に無い子</b></div><div class="wsub">行き / 帰りを選んで、名前の頭文字を打つと候補が出ます。押すと、その便に入って「済」になります</div><div class="wbox"><div class="sseg" id="wDir"><button type="button" data-d="go" class="on">行き</button><button type="button" data-d="back">帰り</button></div><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
+  <div id="lWalk" hidden><div class="lh"><b>予定に無い子</b></div><div class="wsub">行き / 帰りを選んで、名前の頭文字を打つと候補が出ます。押すと、その便に入って「乗せた」「送った」になります</div><div class="wbox"><div class="sseg" id="wDir"><button type="button" data-d="go" class="on">行き</button><button type="button" data-d="back">帰り</button></div><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
   <div class="upd" id="lUpd"></div>
 </div>
 <!-- 週間 (送迎の予定) -->
@@ -173,24 +191,19 @@ body{background:var(--bg)}
   <div id="shBody"></div>
   <button class="big" id="shOk">決定</button>
 </div></div>
-<!-- 札の「…」 (乗らなかった・キャンセル・戻す・詳細) -->
-<div class="ov" id="ovAct" hidden><div class="sheet" role="dialog" aria-modal="true">
-  <div class="sh"><span><span class="t1" id="acT"></span><span class="t2" id="acS"></span></span><button class="ib x" id="acClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
-  <div id="acBody" style="display:flex;flex-direction:column;gap:10px"></div>
-</div></div>
 <div class="toast" id="toast" hidden></div>
 <script>
 var EXEC = "https://script.google.com/macros/s/AKfycbyAasZtWwNfYKyYRbV41yncBNdbBrtXHzcXknU-aG6-xHuo7xWtdg8NoxWDxhkwTzBq/exec";
 var $ = function(id){return document.getElementById(id);};
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 // 鍵なし (2026-11-26 H)。古い URL の ?k= は読み捨てる。?as=staff = 黒服ポータルから来た印 (戻るリンク・入れた人 = 黒服)
-var KEY='';
+var KEY='',STAFF=false;
 try{
   var u0=new URL(location.href),ch=false;
   if(u0.searchParams.get('k')){u0.searchParams.delete('k');ch=true;}
   if(u0.searchParams.get('as')==='staff'){try{sessionStorage.setItem('sgAs','staff');}catch(e){}u0.searchParams.delete('as');ch=true;}
   if(ch)history.replaceState(null,'',u0.pathname+u0.search+u0.hash);
-  if(sessionStorage.getItem('sgAs')==='staff'){$('toPortal').hidden=false;KEY=localStorage.getItem('ivKey')||'';} // 黒服ポータルから来た時だけ黒服の鍵を付ける = 「入れた人」が 黒服 になる (鍵は URL にも画面にも出さない)
+  if(sessionStorage.getItem('sgAs')==='staff'){STAFF=true;$('toPortal').hidden=false;KEY=localStorage.getItem('ivKey')||'';} // 黒服ポータルから来た時だけ黒服の鍵を付ける = 「入れた人」が 黒服 になる (鍵は URL にも画面にも出さない)
 }catch(e){}
 function api(fn,args){
   return fetch(EXEC,{method:'POST',credentials:'omit',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:args||[],k:KEY})}).then(function(r){return r.json();}).then(function(j){
@@ -229,20 +242,36 @@ function loadList(){
 }
 function setBoard(r){board=r;rows={};r.go.concat(r.back,r.cancelled).forEach(function(x){rows[rkey(x)]=x;});}
 function drvOf(name){var o=null;(board.drivers||[]).forEach(function(d){if(d.name===name)o=d;});return o;}
-function rideLbl(x){var go=x.dir==='go';return x.ride==='済'?(go?'乗せた ✓':'送った ✓'):x.ride==='乗らず'?'乗らず':x.ride==='キャンセル'?'キャンセル':(go?'乗せる':'送る');}
-function rideN(x){return x.ride==='済'?1:x.ride==='乗らず'?2:x.ride==='キャンセル'?3:0;}
-// 札: 行の左 (名前) を 1 回押すと済・済をもう一度押すと確認して戻す。右の … は 乗らなかった / キャンセル / 詳細
+function stOf(x){return x.ride==='済'?'hm':(x.ride==='乗らず'||x.ride==='キャンセル')?'cl':'';}
+function hmLbl(x){return x.dir==='go'?'乗せた':'送った';}
+// 札: 右に 2 ボタン [乗せた/送った] [キャンセル]。1 回押すと ON・もう 1 回で OFF (reset)。乗らず も キャンセル ON として出す
+function btnsHtml(x){var st=stOf(x);return '<span class="tgs"><button type="button" class="tgb hm'+(st==='hm'?' on':'')+'" data-w="hm" aria-pressed="'+(st==='hm')+'">'+hmLbl(x)+'</button><button type="button" class="tgb cl'+(st==='cl'?' on':'')+'" data-w="cl" aria-pressed="'+(st==='cl')+'">キャンセル</button></span>';}
 function lineHtml(x,cx){
   var tags='';
   if(x.extra)tags+='<span class="tg ex">予定外</span>';
   if(x.dohan)tags+='<span class="tg dou">同伴</span>';else if(x.visit)tags+='<span class="tg vis">来店</span>';
   if(x.cancel)tags+='<span class="tg cx">'+esc(x.cancel)+'</span>';
-  var tm=x.dir==='go'?(x.pick?x.pick+' 迎え':(x.time||'—')):(x.time||'—');
+  var tm=x.dir==='go'?(x.pick||x.time||'—'):(x.time||'—'),tmS=x.dir==='go'&&x.pick?'迎え':'';
   var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
-  var d=drvOf(x.driver),n=rideN(x);
+  var d=drvOf(x.driver),st=stOf(x);
   var dr=cx?'<span class="dr">送迎なし</span>':x.ride?'<span class="dr">'+esc(x.rideBy||'')+(x.rideAt?'<small>'+esc(x.rideAt)+'</small>':'')+'</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定</span>';
-  var main='<span class="tm">'+esc(tm)+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span></span><span class="rt">'+(cx?'':'<span class="pl p'+n+'">'+rideLbl(x)+'</span>')+dr+'</span>';
-  return '<div class="lr'+(cx?' cx':(n?' '+['','d','n','c'][n]:''))+'" data-k="'+esc(rkey(x))+'"><button type="button" class="lm"'+(cx?' disabled':'')+'>'+main+'</button>'+(cx?'':'<button type="button" class="mo" aria-label="その他">…</button>')+'</div>';
+  var main='<span class="tm">'+esc(tm)+(tmS?'<small>'+tmS+'</small>':'')+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span>'+dr+'</span>';
+  var rc=cx?'':'<span class="rc">'+btnsHtml(x)+(STAFF&&!x.extra?'<button type="button" class="dtl" aria-label="'+esc(x.name)+' の詳細">詳細</button>':'')+'</span>';
+  return '<div class="lr'+(cx?' cx':(st==='hm'?' d':st==='cl'?' n':''))+'" data-k="'+esc(rkey(x))+'">'+main+rc+'</div>';
+}
+// 集計: 予定 = 乗せた(送った) + キャンセル + まだ。予定 = その便の札の総数 (予定外を含む・送迎なし扱いは数えない)。ドライバー別 = 済の札の rideBy
+function sumRow(lbl,list,ok){
+  var n=list.length,hm=0,cl=0;
+  list.forEach(function(x){var st=stOf(x);if(st==='hm')hm++;else if(st==='cl')cl++;});
+  return {n:n,hm:hm,cl:cl,rest:n-hm-cl,html:'<div class="cn sm4"><div><small>'+lbl+' 予定</small><b>'+n+'</b></div><div class="op">＝</div><div><small style="color:#15803D">'+ok+'</small><b>'+hm+'</b></div><div class="op">＋</div><div><small style="color:#C2410C">キャンセル</small><b>'+cl+'</b></div><div class="op">＋</div><div><small>まだ</small><b>'+(n-hm-cl)+'</b></div></div>'};
+}
+function summaryHtml(r){
+  var g=sumRow('行き',r.go,'乗せた'),b=sumRow('帰り',r.back,'送った'),rest=g.rest+b.rest,by={};
+  [[r.go,'go'],[r.back,'back']].forEach(function(p){p[0].forEach(function(x){if(stOf(x)==='hm'){var k=x.rideBy||'ドライバー不明';(by[k]=by[k]||{go:0,back:0})[p[1]]++;}});});
+  var names=Object.keys(by).sort(function(a,c){return (by[c].go+by[c].back)-(by[a].go+by[a].back)||(a<c?-1:1);});
+  return g.html+b.html+'<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+'</div>'+
+    '<div class="sumSty">'+(names.length?names.map(function(k){return esc(k)+' 行き '+by[k].go+'・帰り '+by[k].back;}).join(' / '):'ドライバー別: まだいません')+'</div>'+
+    (STAFF?'<div class="sumSty">車 未定 '+r.undecided+'</div>':'');
 }
 function renderList(){
   var r=board,h='';
@@ -250,8 +279,7 @@ function renderList(){
   $('lNote').innerHTML=r.notes&&r.notes.length?'<div class="note">'+r.notes.map(esc).join(' / ')+'</div>':'';
   fillDrv();
   $('lWalk').hidden=listDay>today;
-  var okGo=r.go.filter(function(x){return x.ride==='済';}).length,okBack=r.back.filter(function(x){return x.ride==='済';}).length;
-  $('lSum').innerHTML='<div class="k"><small>行き 済/全</small><b>'+okGo+' / '+r.nGo+'</b></div><div class="k"><small>帰り 済/全</small><b>'+okBack+' / '+r.nBack+'</b></div><div class="k'+(r.undecided?' un':'')+'"><small>車 未定</small><b>'+r.undecided+'</b></div><div class="k"><small>ドライバー</small><b>'+r.drivers.filter(function(d){return d.on;}).length+'</b></div>';
+  $('lSum').innerHTML=summaryHtml(r);
   [['go','行き',r.go],['back','帰り',r.back]].forEach(function(s){
     h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small></div>';
     if(!s[2].length)h+='<div class="lnone">'+s[1]+'の送迎はありません</div>';
@@ -261,8 +289,8 @@ function renderList(){
   $('lBody').innerHTML=h;
   [].forEach.call($('lBody').querySelectorAll('.lr:not(.cx)'),function(row){
     var k=row.getAttribute('data-k');
-    row.querySelector('.lm').onclick=function(){quick(rows[k],row);};
-    row.querySelector('.mo').onclick=function(){openAct(k);};
+    [].forEach.call(row.querySelectorAll('.tgb'),function(b){b.onclick=function(){tog(rows[k],row,b.getAttribute('data-w'));};});
+    var dt=row.querySelector('.dtl');if(dt)dt.onclick=function(){openRow(k);};
   });
   renderWalk();
 }
@@ -273,53 +301,27 @@ function fillDrv(){
   sel.innerHTML='<option value="">選んでください</option>'+ds.map(function(d){return '<option value="'+esc(d.name)+'">'+esc(d.name)+(d.on?' ○':'')+'</option>';}).join('');
   sel.value=ok?cur:'';
 }
-$('lDrv').onchange=function(){if($('lDrv').value)lsSet('sgDriver',$('lDrv').value);};
+$('lDrv').onchange=function(){if($('lDrv').value){lsSet('sgDriver',$('lDrv').value);$('lErr').hidden=true;}};
 function needDrv(){
   var v=$('lDrv').value;
-  if(!v){window.alert('先に上の「ドライバー」で自分の名前を選んでください');$('lDrv').focus();return '';}
-  lsSet('sgDriver',v);return v;
+  if(!v){$('lErr').hidden=false;var sel=$('lDrv');sel.scrollIntoView({block:'center'});try{sel.focus({preventScroll:true});}catch(e){}return '';}
+  $('lErr').hidden=true;lsSet('sgDriver',v);return v;
 }
 // ---- 書き込み (1 つずつ)。押した札はすぐ「処理中」にして、返事が来るまで押せない。失敗したら元に戻してエラー表示 ----
 var rbusy=false;
 function rowEl(k){var o=null;[].forEach.call($('lBody').querySelectorAll('.lr'),function(r){if(r.getAttribute('data-k')===k)o=r;});return o;}
 function rideDo(row,fn,args){
   if(rbusy)return;rbusy=true;
-  if(row){row.classList.add('pend');var p=row.querySelector('.pl');if(p)p.textContent='処理中…';}
+  if(row){row.classList.add('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent='処理中…';});}
   api(fn,args).then(function(r){rbusy=false;setBoard(r);if(!$('vList').hidden)renderList();toast(r.saved?'記録しました':'すでに同じ記録です');}).catch(function(e){rbusy=false;if(!$('vList').hidden)renderList();window.alert(e.message||e);});
 }
-function quick(x,row){
+// 2 つのトグル: 乗せた(送った)=済 / キャンセル。ON をもう 1 回押すと reset・片方 ON 中にもう片方を押すとそのまま切り替え (サーバーに 1 回)
+function tog(x,row,w){
   if(rbusy||!x)return;
-  var drv;
-  if(x.ride){
-    if(!window.confirm(x.name+' さんを「'+rideLbl(x).replace(' ✓','')+'」から元に戻します。よろしいですか？'))return;
-    drv=$('lDrv').value;
-    rideDo(row,'setSougeiRide',[listDay,x.dir,x.store,x.name,'reset',drv]);
-  }else{
-    drv=needDrv();if(!drv)return;
-    rideDo(row,'setSougeiRide',[listDay,x.dir,x.store,x.name,'done',drv]);
-  }
+  var cur=stOf(x),a,drv=$('lDrv').value;
+  if(w===cur)a='reset';else if(w==='hm'){a='done';drv=needDrv();if(!drv)return;}else a='cancel';
+  rideDo(row,'setSougeiRide',[listDay,x.dir,x.store,x.name,a,drv]);
 }
-function openAct(k){
-  var x=rows[k];if(!x||rbusy)return;
-  $('acT').textContent=x.name;$('acS').textContent=mdw(listDay)+' · '+(x.dir==='go'?'行き':'帰り')+' · '+x.shop+(x.ride?' · いま「'+rideLbl(x).replace(' ✓','')+'」':'');
-  var go=x.dir==='go',bs=[];
-  if(x.ride!=='済')bs.push(['done',go?'乗せた':'送った','pr']);
-  if(x.ride!=='乗らず')bs.push(['noshow','乗らなかった','']);
-  if(x.ride!=='キャンセル')bs.push(['cancel','キャンセル','']);
-  if(x.ride)bs.push(['reset','元に戻す (未にする)','']);
-  if(!x.extra)bs.push(['detail','詳細・ドライバーの付け替え','']);
-  $('acBody').innerHTML=bs.map(function(b){return '<button type="button" class="ab '+b[2]+'" data-a="'+b[0]+'">'+esc(b[1])+'</button>';}).join('');
-  [].forEach.call($('acBody').querySelectorAll('button'),function(b){b.onclick=function(){
-    var a=b.getAttribute('data-a'),drv=$('lDrv').value;
-    if(a==='detail'){$('ovAct').hidden=true;openRow(k);return;}
-    if(a==='done'){drv=needDrv();if(!drv)return;}
-    $('ovAct').hidden=true;
-    rideDo(rowEl(k),'setSougeiRide',[listDay,x.dir,x.store,x.name,a,drv]);
-  };});
-  $('ovAct').hidden=false;
-}
-$('acClose').onclick=function(){$('ovAct').hidden=true;};
-$('ovAct').onclick=function(e){if(e.target===$('ovAct'))$('ovAct').hidden=true;};
 // ---- 予定に無い子 (在籍一覧から頭文字で探す。押すと即その便に足して済) ----
 var wDir='go',castAll=null,castLoading=false,castErr='',SHORT={'RegentClub千歳':'RC','328':'328','WAVE千歳':'WAVE','花もみじ千歳':'花もみじ'};
 function norm(s){return String(s||'').normalize('NFKC').toLowerCase().replace(/[ァ-ヶ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-96);}).replace(/\s+/g,'');}
@@ -478,7 +480,7 @@ function setTab(t){history.replaceState(null,'',location.pathname+location.searc
 [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){setTab(b.getAttribute('data-t'));};});
 function route(){
   var m=/^#r=(.+)$/.exec(location.hash),t=/^#t=(list|week|shift)$/.exec(location.hash);
-  $('ovSh').hidden=true;$('ovAct').hidden=true;
+  $('ovSh').hidden=true;
   ['vList','vWeek','vShift','vRow'].forEach(function(id){$(id).hidden=true;});
   if(m){
     $('hd').hidden=true;$('vRow').hidden=false;window.scrollTo(0,0);
