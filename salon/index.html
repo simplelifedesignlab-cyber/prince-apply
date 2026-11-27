@@ -85,7 +85,7 @@ button,select,input{font-family:inherit}
 .dt span{font-size:13px;color:#6B6B6B}
 .cn{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:0 16px 12px}
 .cn div{border-radius:10px;border:1px solid #E5E5E5;padding:6px 8px;display:flex;flex-direction:column}
-.cn small{font-size:12px;color:#6B6B6B}.cn b{font-size:20px;font-weight:900}
+.cn small{font-size:12px;color:#6B6B6B;white-space:nowrap}@media(max-width:420px){.cn small{font-size:11px}.cn div{padding:6px 6px}}.cn b{font-size:20px;font-weight:900}
 .rows{border-top:1px solid #EDEDED}
 .rw{display:flex;align-items:center;gap:10px;height:var(--rh,64px);padding:0 12px 0 16px;border-bottom:1px solid #EDEDED}
 .rw .tm{width:46px;flex-shrink:0;font-size:15px;font-weight:700;color:#4A4A4A}
@@ -203,7 +203,7 @@ button,select,input{font-family:inherit}
   <div class="hint" id="sHint"></div>
   <button class="dn" id="sDone">対応した</button>
   <div class="two"><button class="nsh" id="sNo">来なかった</button><button class="cnl" id="sCancel">キャンセル</button></div>
-  <span class="sm">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</span>
+  <span class="sm" id="sCnH">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</span>
   <button class="rs" id="sReset">未対応に戻す</button>
 </div></div>
 <!-- 出勤する美容師を選ぶ -->
@@ -552,7 +552,7 @@ function openSt(e){
   cur=e;
   $('sName').textContent=e.gen;
   $('sSub').textContent=(e.any?'指定なし (着いた順)':e.time)+' · '+(SHORT[e.store]||e.store)+(e.special?' · 特別枠':'');
-  $('sCancel').style.display=e.any?'none':'';
+  $('sCancel').style.display=e.any?'none':'';$('sCnH').style.display=e.any?'none':'';
   var names=dayData.stylists||[], def=e.by||lsGet('salonStylist')||'';
   if(names.indexOf(def)<0)def='';
   $('sSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');

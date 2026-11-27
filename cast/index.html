@@ -170,13 +170,13 @@ function hairBox(d) {
   if (d.hb && d.hb.fixed) { s.appendChild(el('p', 'hint', '美容師が記録した時間です。変更・取り消しはお店へ連絡してください')); return s; } // 2026-11-20 中-1
   if (stale) s.appendChild(el('p', 'hint', '出勤を変えた時は、先に一番下の「保存」を押してください'));
   else {
-    var kind = d.hkind || '';
+    var kind = d.hkind == null ? (d.hb ? 'x' : '') : d.hkind; // 'x' = 時間を出している (どの種類かは画面では分からないので、どれも選ばれた形にしない)
     var ch = el('div', 'chips');
-    ch.appendChild(chip('指定なし (着いた順)', !kind, function () { d.hkind = ''; d.hpick = ''; }));
+    ch.appendChild(chip('指定なし (着いた順)', kind === '', function () { d.hkind = ''; d.hpick = ''; }));
     ch.appendChild(chip('同伴 (時間を選ぶ)', kind === '同伴', function () { d.hkind = '同伴'; d.hpick = ''; }));
     ch.appendChild(chip('撮影 (時間を選ぶ)', kind === '撮影', function () { d.hkind = '撮影'; d.hpick = ''; }));
     s.appendChild(ch);
-    if (!kind) {
+    if (!kind || kind === 'x') {
       if (!d.ha) {
         var ga = el('button', 'hbtn', d.hb ? '時間をやめて 指定なし (着いた順) にする' : '指定なし (着いた順) で希望を出す'); ga.type = 'button'; ga.disabled = !!d.hbusy;
         ga.onclick = function () { hairCall(d, 'any'); };
