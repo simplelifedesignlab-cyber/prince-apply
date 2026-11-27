@@ -430,7 +430,7 @@ function vToday(){
     '<div class="slov" id="slStOv" hidden><div class="slsheet"><div class="slsh"><span><b id="slsN"></b><small id="slsS" style="display:block;color:#5A6275"></small></span><button type="button" class="vx" id="slsX">閉じる</button></div>'+
       '<label>担当</label><select id="slsSty"></select><div class="slhint" id="slsH"></div>'+
       '<button type="button" class="slbig" id="slsDone">対応した</button><div class="sl2"><button type="button" id="slsNo">来なかった</button><button type="button" id="slsCancel">キャンセル</button></div>'+
-      '<small style="color:#5A6275">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</small><button type="button" class="vx" id="slsReset">未対応に戻す</button></div></div>'+
+      '<small style="color:#5A6275">キャンセルにすると、この枠は空きに戻り、ほかの子を入れられます。</small><button type="button" class="vx" id="slsReset">未対応に戻す</button><button type="button" class="vx" id="slsFee" hidden style="min-height:46px;border:1px solid #1F2A44;color:#1F2A44;font-weight:700"></button></div></div>'+
     '<div class="sltoast" id="sltoast" hidden></div>';
   var mv=function(d){if(!attLeave()){$('adt').value=attDay;return;}attDay=d;vToday();};
   $('ap').onclick=function(){var x=parse(attDay);x.setDate(x.getDate()-1);mv(ymd(x));};
@@ -703,7 +703,14 @@ function slOpenSt(e){
   $('slsSty').innerHTML='<option value="">担当を選ぶ</option>'+names.map(function(n){return '<option'+(n===def?' selected':'')+'>'+esc(n)+'</option>';}).join('');
   var free=e.tag==='撮影'&&e.fee==='無料';
   $('slsH').textContent=free?'撮影 (美容室費 無料): 給料引きには載りません。美容師の人数には数えるので、担当を選んでください':(names.length?'':'美容師が未登録です (Prince App の「美容師」タブに名前と有効のチェックを入れてください)');
+  var fb=$('slsFee');fb.hidden=!(e.tag==='撮影'&&!e.any&&e.status!=='済'&&(e.fee==='有料'||e.fee==='無料'));fb.textContent=e.fee==='有料'?'美容室費: 有料 → 無料にする':'美容室費: 無料 → 有料に戻す';
   $('slStOv').hidden=false;
+}
+function slDoFee(){
+  if(!slCur||slCur.tag!=='撮影')return;
+  var e=slCur,to=e.fee==='有料'?'無料':'有料';
+  if(!window.confirm(e.gen+' さんの撮影の美容室費を '+to+' にします。よろしいですか？'))return;
+  slAct(function(){return api('setSalonFee',[attDay,e.place,e.time,e.store,e.gen,to]);});
 }
 function slDoSt(a){
   if(!slCur)return;
@@ -727,7 +734,7 @@ function slBind(){
     var plan=$('slaPlan').value,fee=plan==='撮影'?$('slaFee').value:'';
     slAct(function(){return api('bookSalonManual',[attDay,slAdd.special?'':slAdd.slot.place,slAdd.special?$('slaTime').value:slAdd.slot.time,pk.store,pk.gen,'',plan,fee,slAdd.special]);});
   };
-  $('slsDone').onclick=function(){slDoSt('done');};$('slsNo').onclick=function(){slDoSt('noshow');};$('slsCancel').onclick=function(){slDoSt('cancel');};$('slsReset').onclick=function(){slDoSt('reset');};
+  $('slsDone').onclick=function(){slDoSt('done');};$('slsNo').onclick=function(){slDoSt('noshow');};$('slsCancel').onclick=function(){slDoSt('cancel');};$('slsReset').onclick=function(){slDoSt('reset');};$('slsFee').onclick=slDoFee;
 }
 
 // ---- 送迎タブ (2026-11-25)。ドライバーごとに 1 枚・プルダウンで担当を替える → 更新で 出勤表の送迎割当 へ書く。LINE WORKS へは送らない (状態を見せるだけ) ----
