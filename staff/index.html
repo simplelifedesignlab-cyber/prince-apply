@@ -56,6 +56,13 @@ header h1{margin:0;font-size:19px;flex:1}
 .abar button{min-height:46px;min-width:140px;font:inherit;font-size:16px;font-weight:700;border:0;border-radius:4px;background:var(--pri);color:#fff;cursor:pointer}
 .abar button:disabled{opacity:.5;cursor:default}
 .abar .am2{flex:1;font-size:13px}.abar .am2.err{color:#b71c1c;font-weight:700}.abar .am2.ok{color:#2e7d32}
+.shg{min-width:600px}.shg th,.shg td{padding:3px 2px}.shg td{position:relative}.shg td.nm{min-width:92px;max-width:130px;z-index:1;padding-left:8px}.shg th:first-child{position:sticky;left:0;z-index:3}
+.shs{-webkit-appearance:none;appearance:none;font:inherit;font-size:13px;color:#111;width:100%;min-width:60px;min-height:34px;border:1px solid #C3C8D1;border-radius:4px;background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0h8L4 5z' fill='%235A6275'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;background-size:8px 5px;padding:0 14px 0 4px;text-align:center;text-align-last:center;cursor:pointer}
+.shs.off{background-color:#E0E0E0;color:#777}.shs.und{background-color:#FFF3B0}.shs.chg{background-color:#FDEBD3;border-color:#E3A04A;font-weight:700}
+.shg .ck{position:absolute;right:4px;top:2px;font-size:10px;line-height:1;font-style:normal;font-weight:700;color:#2e7d32;pointer-events:none}
+.shl i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px;vertical-align:-2px}.shl{line-height:1.9}
+.sher{margin:8px 0;padding:8px 12px;border:1px solid #e57373;border-radius:4px;background:#fff;color:#b71c1c;font-size:13px}.sher b{display:block;margin-bottom:2px}
+#shgrid td.shab{min-width:60px}.card.shc{padding:0}
 @media all{ /* 2026-11-25 H: スマホも PC と同じ並び (横スクロール) */
   /* 2026-11-28: 列 = 店番 名前 状態 出勤 退勤 変更 勤務H 担当 方面 美容 朝 帰 送迎額 ロッカー ドレス 靴 充電器 メモ。PC 1280 / iPad 1024 で収まる幅 */
  .ar,.arh{display:grid;grid-template-columns:30px minmax(104px,1.7fr) 52px 62px 62px 60px 34px 42px 42px 58px 66px 66px 56px repeat(4,minmax(28px,.45fr)) minmax(44px,1fr);gap:0 4px;align-items:center;padding:4px 8px}
@@ -356,8 +363,10 @@ function bindCasts(){[].forEach.call(document.querySelectorAll('[data-g]'),funct
 function go(v){location.hash=v||'';}
 function route(){
   var v=location.hash.replace('#','');
+  if(window.__shBack){window.__shBack=false;return;} // 2026-11-28 シフト管理の未保存の確認でキャンセルした回は何もしない (描き直すと入力が消える)
+  if(v!=='shift'&&shDirty()&&!window.confirm('保存していない変更があります。捨てて移動しますか？')){window.__shBack=true;location.hash='shift';return;}
   var hx=$('hdx');hx.innerHTML='';hx.hidden=true;document.querySelector('header').classList.remove('tday'); // 出勤一覧だけ 日付・店・タブを濃紺の帯に入れる
-  $('app').className=VIEWS[v]&&VIEWS[v].all?'wrap wide':'wrap';
+  $('app').className=VIEWS[v]&&(VIEWS[v].all||v==='shift')?'wrap wide':'wrap'; // 2026-11-28 シフト管理は週表が広いので wide
   $('back').hidden=!VIEWS[v];
   $('back').textContent=v==='cast'?'← 売上':'← TOP';
   if(!VIEWS[v]){$('ttl').textContent='黒服ポータル';top_();return;}
@@ -964,26 +973,99 @@ function dayBtns(w){
   return '<div class="days">'+w.days.map(function(d){return '<button class="dy'+(d.date===selDay?' on':'')+'" data-d="'+d.date+'">'+esc(d.label)+'<br>'+d.dow+'</button>';}).join('')+'</div>';
 }
 
+// ---- シフト管理 (2026-11-28): 黒服がキャストの週シフトを入れる。キャスト = 週表のセルが select (今日の営業日以降) / ドライバー = 送迎の週表 / 美容師 = 美容室の画面へ ----
+// SHIFT_OPTS は cast-app / staff-portal Code.js と同じ値 (休み・未定・19:00〜24:00 の 30 分刻み)
+var SHIFT_OPTS=['休み','未定'].concat((function(){var a=[];for(var m=19*60;m<=24*60;m+=30)a.push(pad(Math.floor(m/60))+':'+pad(m%60));return a;})());
+var SHS={chg:{},w:null,tab:'cast',busy:false,errs:[]};
+function shN(){return Object.keys(SHS.chg).length;}
+function shDirty(){return !!$('shgrid')&&shN()>0;}
+function shGuard(){return !shDirty()||window.confirm('保存していない変更があります。捨てて移動しますか？');}
+function shCls(s,chg,abs){return 'shs'+(chg?' chg':s==='休み'?' off':s==='未定'?' und':'');}
+function shEff(c,k,d){var x=c.days[d],o=x?x.shift:'',ch=SHS.chg[c.id+'|'+d];return ch?ch.shift:o;}
+function shSums(){
+  var w=SHS.w;if(!w)return;
+  w.days.forEach(function(d,i){
+    var n=0;w.casts.forEach(function(c){var x=c.days[d.date];if(x&&x.absent)return;if(/^\d\d:\d\d$/.test(shEff(c,0,d.date)))n++;});
+    var e=$('shsum'+i);if(e)e.textContent=n;
+  });
+}
+function shCell(c,d,biz){
+  var x=c.days[d.date],s=x?x.shift:'';
+  if(x&&x.absent)return '<td class="c-abs shab">欠</td>';
+  var editable=d.date>=biz&&c.id;
+  if(!editable){
+    var tip=!c.id&&d.date>=biz?' title="在籍ID が無いので入れられません"':'';
+    if(!s)return '<td'+tip+'></td>';
+    if(s==='休み')return '<td class="c-off"'+tip+'>休</td>';
+    if(s==='未定')return '<td class="c-und"'+tip+'>未定</td>';
+    return '<td class="c-on"'+tip+'>'+esc(s)+(x&&x.att?' ✔':'')+'</td>';
+  }
+  var k=c.id+'|'+d.date,ch=SHS.chg[k],cur=ch?ch.shift:s,opts=SHIFT_OPTS.slice();
+  if(cur&&opts.indexOf(cur)<0)opts.unshift(cur);
+  var h='<option value=""'+(cur?'':' selected')+'></option>'+opts.map(function(o){return '<option value="'+esc(o)+'"'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('');
+  return '<td><select class="'+shCls(cur,!!ch)+'" data-id="'+esc(c.id)+'" data-g="'+esc(c.gen)+'" data-d="'+d.date+'" data-o="'+esc(s)+'">'+h+'</select>'+(x&&x.att?'<i class="ck">✔</i>':'')+'</td>';
+}
+function shInner(w){
+  var biz=bizDay(),miss=w.casts.filter(function(c){return !c.submitted;}).length;
+  var rows=w.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td>'+w.days.map(function(d){return shCell(c,d,biz);}).join('')+'</tr>';}).join('');
+  var head='<tr><th>名前</th>'+w.days.map(function(d){return '<th>'+esc(d.label)+'<br>'+d.dow+'</th>';}).join('')+'</tr>';
+  var sum='<tr class="sum"><td class="nm">出勤人数</td>'+w.days.map(function(d,i){return '<td id="shsum'+i+'"></td>';}).join('')+'</tr>';
+  var tabs='<div class="tabs">'+[['cast','キャスト'],['drv','ドライバー'],['hair','美容師']].map(function(t){return '<button class="tab'+(SHS.tab===t[0]?' on':'')+'" data-sht="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>';
+  var legend='<div class="upd shl"><i style="background:#fff;border:1px solid #C3C8D1"></i>白＝キャストの入力　<i style="background:#FDEBD3"></i>オレンジ＝黒服が今変えた所　<i style="background:#E0E0E0"></i>灰＝休み　<i style="background:#FFF3B0"></i>黄＝未定　<i style="background:#f8c9c9"></i>赤＝当欠　✔＝出勤済み (今日の営業日より前の日は見るだけ)</div>';
+  var errs=SHS.errs.length?'<div class="sher"><b>入れられなかった所</b>'+SHS.errs.map(function(e){var p=String(e.date).split('-');return '<div>'+esc(e.gen||'')+' '+(+p[1])+'/'+(+p[2])+'　'+esc(e.msg)+'</div>';}).join('')+'</div>':'';
+  return tabs+
+    '<div id="shp-cast"'+(SHS.tab==='cast'?'':' hidden')+'>'+(miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
+      '<div class="card sc shc"><table class="shg" id="shgrid">'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+legend+errs+
+      '<div class="abar"><button id="shsave" disabled>更新</button><span class="aun" id="shun"></span><span class="am2" id="shmsg"></span></div></div>'+
+    '<div id="shp-drv"'+(SHS.tab==='drv'?'':' hidden')+'><div class="hd"><b>ドライバー出勤</b><span>○を押す／もう一度で取消　薄い○＝送迎予定にいる日 (押して確定)</span></div><div class="card sc dv" id="drv"><div class="msg" style="padding:12px">読み込み中...</div></div></div>'+
+    '<div id="shp-hair"'+(SHS.tab==='hair'?'':' hidden')+'><div class="card"><div class="note" style="font-size:14px;margin:0 0 12px">美容師の週シフトは、美容室の本人用ページで黒服も入れられます。</div><a class="big" href="../salon/#t=shift" style="margin:0">美容師のシフトを入れる<small>美容室の画面 (週間シフト) を開く</small></a></div></div>';
+}
+function shUpd(){
+  var n=shN(),b=$('shsave'),u=$('shun');
+  if(b)b.disabled=!n||SHS.busy;
+  if(u)u.textContent=n?'未保存 '+n+' 件':'';
+  shSums();
+}
+function shBind(){
+  var w=SHS.w;if(!w)return;
+  // 週の移動は未保存なら確認 (bindWeek の後に付け直す)
+  var mv=function(n){if(!shGuard())return;SHS.chg={};SHS.errs=[];var d=parse(weekStart);d.setDate(d.getDate()+n);weekStart=ymd(d);selDay=weekStart;route();};
+  if($('pw')){$('pw').onclick=function(){mv(-7);};$('nw').onclick=function(){mv(7);};}
+  [].forEach.call(document.querySelectorAll('.st'),function(b){b.onclick=function(){if(!shGuard())return;SHS.chg={};SHS.errs=[];store=b.getAttribute('data-s');lsSet('staffStore',store);route();};});
+  [].forEach.call(document.querySelectorAll('[data-sht]'),function(b){b.onclick=function(){
+    SHS.tab=b.getAttribute('data-sht');
+    [].forEach.call(document.querySelectorAll('[data-sht]'),function(x){x.classList.toggle('on',x===b);});
+    ['cast','drv','hair'].forEach(function(t){var e=$('shp-'+t);if(e)e.hidden=t!==SHS.tab;});
+  };});
+  [].forEach.call(document.querySelectorAll('#shgrid select'),function(sel){sel.onchange=function(){
+    var id=sel.getAttribute('data-id'),d=sel.getAttribute('data-d'),o=sel.getAttribute('data-o'),k=id+'|'+d,v=sel.value;
+    if(v===o||!v)delete SHS.chg[k];else SHS.chg[k]={id:id,gen:sel.getAttribute('data-g'),date:d,shift:v};
+    if(!v)sel.value=o; // 空には戻せない (消す操作は無い) = 元の値に戻す
+    sel.className=shCls(sel.value,!!SHS.chg[k]);
+    shUpd();
+  };});
+  if($('shsave'))$('shsave').onclick=function(){
+    var cells=Object.keys(SHS.chg).map(function(k){return SHS.chg[k];});
+    if(!cells.length||SHS.busy)return;
+    SHS.busy=true;shUpd();setMsg2('保存しています...',false);
+    api('setCastShifts',[store,cells]).then(function(r){
+      SHS.busy=false;SHS.w=r.week;SHS.errs=r.errors||[];
+      var keep={};SHS.errs.forEach(function(e){keep[e.id+'|'+e.date]=1;});
+      var nc={};Object.keys(SHS.chg).forEach(function(k){if(keep[k])nc[k]=SHS.chg[k];});SHS.chg=nc; // 入れられなかった所はオレンジのまま残す
+      $('shroot').innerHTML=shInner(r.week);shBind();
+      setMsg2('保存しました ('+(r.saved||0)+' 件)'+(SHS.errs.length?'　入れられなかった所 '+SHS.errs.length+' 件':''),SHS.errs.length>0);
+    }).catch(function(e){SHS.busy=false;shUpd();setMsg2(e.message||String(e),true);});
+  };
+  if($('drv'))loadDrv(w.weekStart);
+  shUpd();
+}
+function setMsg2(t,err){var m=$('shmsg');if(m){m.textContent=t||'';m.className='am2'+(err?' err':' ok');}}
 function vShift(){
+  SHS.chg={};SHS.errs=[];SHS.busy=false;
   loadWeek(function(w){
-    var sums=w.days.map(function(){return 0;}), miss=0;
-    var rows=w.casts.map(function(c){
-      var tds=w.days.map(function(d,i){
-        var x=c.days[d.date], s=x?x.shift:'';
-        if(x&&x.absent)return '<td class="c-abs">欠</td>';
-        if(!s){ if(!c.submitted){return '<td class="c-miss">未</td>';} return '<td></td>'; }
-        if(s==='休み')return '<td class="c-off">休</td>';
-        if(s==='未定')return '<td class="c-und">未定</td>';
-        sums[i]++; return '<td class="c-on">'+esc(s)+(x.att?' ✔':'')+'</td>';
-      }).join('');
-      if(!c.submitted)miss++;
-      return '<tr><td class="nm">'+esc(c.gen)+'</td>'+tds+'</tr>';
-    }).join('');
-    var head='<tr><th>名前</th>'+w.days.map(function(d){return '<th>'+esc(d.label)+'<br>'+d.dow+'</th>';}).join('')+'</tr>';
-    var sum='<tr class="sum"><td class="nm">出勤人数</td>'+sums.map(function(n){return '<td>'+n+'</td>';}).join('')+'</tr>';
-    return (miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
-      '<div class="card sc"><table>'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+
-      '<div class="upd">赤枠＝未提出　黄＝未定　灰＝休み　赤＝当欠　✔＝出勤済み</div>';
+    SHS.w=w;
+    setTimeout(shBind,0);
+    return '<div id="shroot">'+shInner(w)+'</div>';
   });
 }
 function exText(x,skipKeys){
