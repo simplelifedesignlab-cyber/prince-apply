@@ -281,6 +281,8 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
 .hdx .nav{order:2;margin:0;gap:4px;flex:0 1 auto}
 .hdx .nb{min-height:36px;min-width:36px;padding:0 10px;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.35);background:transparent;color:#fff;border-radius:4px}
 .hdx #adt{min-height:36px;width:150px;font:inherit;font-size:15px;font-weight:700;text-align:center;border:1px solid rgba(255,255,255,.35);border-radius:4px;background:#2E4372;color:#fff;color-scheme:dark;padding:0 6px}
+.hdx .nb.on{background:#fff;color:var(--pri);border-color:#fff}
+.hdx .adow{font-size:14px;font-weight:700;color:#fff;white-space:nowrap;margin:0 4px}
 .hdx .ttabs{order:3;margin:0 0 0 auto;display:flex;gap:0;border:1px solid rgba(255,255,255,.4);border-radius:4px;overflow:hidden}
 .hdx .ttab{min-height:36px;font-size:14px;border:0;border-left:1px solid rgba(255,255,255,.25);border-radius:0;background:transparent;color:#fff;padding:0 18px}
 .hdx .ttab:first-child{border-left:0}
@@ -292,7 +294,7 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
 .hdx .at .an1{font-size:14px}.hdx .at .an2{font-size:11px;opacity:.75}
 .hdx .at.on{background:#fff;color:var(--pri);border-color:#fff}
 .hdx .bhint{display:none}
-@media (max-width:900px){.hdx .at img{display:none}.hdx .at{padding:2px 8px}} /* iPad 縦は店名と人数だけ (横にはみ出すため) */
+@media (max-width:900px){.hdx .at img{display:none}.hdx .at{padding:2px 8px}.hdx #adt{width:128px;font-size:14px}.hdx .ttab{padding:0 11px}header.tday .ht{margin-right:0}header.tday .en{display:none}} /* iPad 縦は店名と人数だけ (横にはみ出すため) */
 @media (max-width:640px){.hdx .ttabs{margin-left:0;flex:1 1 100%}.hdx .ttab{flex:1}.hdx .nav{flex:1 1 auto}.hdx #adt{flex:1;width:auto;min-width:0}.hdx .at .an2{display:none}}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div><div id="hdx" class="hdx" hidden></div></header>
@@ -468,7 +470,7 @@ function vToday(){
   if(!attDay)attDay=bizDay();
   var my=++seq;attDirty=false;sgPend={};sgBoard=null;slData=null;attData=null;
   // 2026-11-28 H「上部を使いすぎ」: 日付・店・3 タブは濃紺の帯 (header) に入れる
-  $('hdx').innerHTML='<div class="nav"><button class="nb" id="ap" aria-label="前の日">◀</button><input type="date" id="adt" value="'+esc(attDay)+'"><button class="nb" id="an" aria-label="次の日">▶</button><button class="nb" id="atd">今日</button></div>'+
+  $('hdx').innerHTML='<div class="nav"><button class="nb" id="ap" aria-label="前の日">◀</button><input type="date" id="adt" value="'+esc(attDay)+'"><button class="nb" id="an" aria-label="次の日">▶</button><span class="adow" id="adow"></span><button class="nb" id="atd">今日</button></div>'+
     '<div class="ttabs"><button class="ttab" data-t="att">出勤簿</button><button class="ttab" data-t="salon">美容室</button><button class="ttab" data-t="sougei">送迎</button></div>'+
     '<div id="band" title="店を押すと切り替わります (この端末で覚えます)"></div>';
   $('hdx').hidden=false;document.querySelector('header').classList.add('tday');
@@ -526,10 +528,10 @@ function attRender(r,msg,isErr){
   var logo={};STORES.forEach(function(x){logo[x.id]=x;});
   var isAbs=function(c){return !!c.absent;};
   var cnt=function(s){var ab=s.on.filter(isAbs).length;return {p:s.on.length,a:ab,f:s.on.length-ab};};
-  var tot=r.stores.reduce(function(a,s){var c=cnt(s);return {p:a.p+c.p,a:a.a+c.a,f:a.f+c.f};},{p:0,a:0,f:0});
   if(attStore&&!r.stores.some(function(s){return s.id===attStore;}))attStore='';
   var edit=!!attStore,dis=edit?'':' disabled';
-  var h='<div class="hd"><b>'+esc(r.date.slice(5).replace('-','/'))+'('+esc(r.dow)+')'+(r.date===r.today?' 今日':'')+'</b><span>出勤予定 '+tot.p+'人 / 当欠 '+tot.a+'人 / 確定 '+tot.f+'人</span></div>';
+  var h=''; // 2026-11-28 H「ここも 1 行に」: 日付の見出し行はやめ、曜日・今日は濃紺の帯の日付の横へ (人数は店の帯と各店の見出しにある)
+  var dw=$('adow');if(dw)dw.textContent='('+r.dow+')';var td=$('atd');if(td)td.classList.toggle('on',r.date===r.today); // 今日を見ている時は「今日」ボタンが白
   if(r.error)h+='<div class="msg err" style="padding:10px">出勤表を読めませんでした<br><small>'+esc(r.error)+'</small></div>';
   var f=function(cls,label,inner){return '<label class="f '+cls+'"><span class="lb">'+label+'</span>'+inner+'</label>';};
   var fd=function(cls,label,inner){return '<div class="f '+cls+'"><span class="lb">'+label+'</span>'+inner+'</div>';};
