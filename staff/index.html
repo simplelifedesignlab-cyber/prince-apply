@@ -3,6 +3,11 @@
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#1F2A44">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Prince 黒服">
 <title>黒服ポータル</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
@@ -51,7 +56,8 @@ header h1{margin:0;font-size:19px;flex:1}
 .abar button:disabled{opacity:.5;cursor:default}
 .abar .am2{flex:1;font-size:13px}.abar .am2.err{color:#b71c1c;font-weight:700}.abar .am2.ok{color:#2e7d32}
 @media all{ /* 2026-11-25 H: スマホも PC と同じ並び (横スクロール) */
- .ar,.arh{display:grid;grid-template-columns:30px minmax(96px,1.5fr) 56px 74px 74px 62px minmax(54px,.9fr) minmax(54px,.9fr) repeat(4,minmax(28px,.45fr)) minmax(48px,1.2fr);gap:0 4px;align-items:center;padding:4px 8px}
+  /* 2026-11-28: 列 = 店番 名前 状態 出勤 退勤 変更 勤務H 担当 方面 美容 朝 帰 送迎額 ロッカー ドレス 靴 充電器 メモ。PC 1280 / iPad 1024 で収まる幅 */
+ .ar,.arh{display:grid;grid-template-columns:30px minmax(104px,1.7fr) 52px 62px 62px 60px 34px 42px 42px 58px 66px 66px 56px repeat(4,minmax(28px,.45fr)) minmax(44px,1fr);gap:0 4px;align-items:center;padding:4px 8px}
  .r2,.r3,.dtl{display:contents}
  .ar .ng .ag{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
  .ar .f,.vr .f{width:auto!important;min-width:0}
@@ -70,15 +76,35 @@ header h1{margin:0;font-size:19px;flex:1}
  .adh{font-size:10px;color:#5A6275;padding-bottom:0;padding-top:6px}
  .ad .f.nmi{width:auto}
 }
-@media (max-width:767px){ /* スマホ: PC と同じ表を横にスクロール。店番と名前は左に固定 */
+.arh span{white-space:nowrap;overflow:hidden}
+.ar .ag.dh{padding:1px 8px;max-width:100%}
+.ar>.nt{grid-column:1/-1;font-size:12px;line-height:1.4;color:#333;padding:0 0 2px 34px;overflow-wrap:anywhere}
+.nt b{color:#b71c1c;font-weight:700}.nt .nc{color:#5A6275}
+.ag.dh+.dc,.dc{font-size:11px;font-weight:700;color:#2e7d32;white-space:nowrap}
+.f .ro.hs{font-size:12px;color:#333}
+.ar.sr,.arh.srh{grid-template-columns:30px minmax(84px,1.2fr) repeat(3,42px) repeat(10,minmax(52px,1fr)) minmax(62px,1fr)}
+.ar.sr .f input{text-align:right;padding:0 4px}
+.arh.srh{display:grid;font-size:10px;color:#5A6275;padding:6px 8px 0}
+.ax,.axh{display:grid;grid-template-columns:30px minmax(90px,1.2fr) 56px 56px minmax(120px,1.5fr) minmax(120px,1.5fr) 70px;gap:0 6px;align-items:center;padding:5px 12px;border-top:1px solid #EEF0F4;font-size:13px}
+.axh{font-size:10px;color:#5A6275;padding-top:6px;padding-bottom:0}
+.ax .gn{font-weight:700}.ax span{min-width:0;overflow-wrap:anywhere}
+.calc{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:flex-end;padding:8px 12px;border-top:1px solid #EEF0F4;background:#F4F5F7}
+.calc .f{width:auto}.calc input{width:120px;text-align:right}
+.calc .cv{min-height:34px;min-width:84px;display:flex;align-items:center;justify-content:flex-end;font-weight:700;color:var(--pri);font-size:14px}
+.bhint{font-size:12px;color:#5A6275;margin:-6px 2px 10px}
+.at{border-width:2px}.at.on .an2{opacity:1}
+.ad,.adh{grid-template-columns:minmax(140px,240px) 74px 74px 62px 62px 74px minmax(100px,1fr)!important}
+@media (max-width:820px){ /* iPad 縦 (768〜820)・スマホ: PC と同じ表を横にスクロール。店番と名前は左に固定 (2026-11-28 767 → 820) */
  .sec.atsec{overflow-x:auto;-webkit-overflow-scrolling:touch}
- .ar,.arh{min-width:860px}.vr,.vrh{min-width:640px}
+ .ar,.arh{min-width:960px}.ar.sr,.arh.srh{min-width:940px}.vr,.vrh{min-width:640px}
+ .ar>.nt{position:sticky;left:0;width:calc(100vw - 40px);max-width:900px;grid-column:1/-1}
  .ar>:first-child,.arh>:first-child{position:sticky;left:0;z-index:2;background:inherit}
  .ar>:nth-child(2),.arh>:nth-child(2){position:sticky;left:34px;z-index:2;background:inherit}
  .ar,.arh{background:#fff}.ar.man{background:#FDEBD3}
  .ar>:first-child,.arh>:first-child{margin-right:-4px;padding-right:4px}
  .atsec>h3{position:sticky;left:0}
  .ar>:first-child,.ar>:nth-child(2){align-self:stretch;display:flex;align-items:center}
+ .ar>.nt{align-self:auto;display:block}
 }
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 .tsub{margin:-4px 0 12px 24px}.tsub a{display:inline-block;font-size:14px;font-weight:700;color:var(--pri);padding:6px 0}
@@ -382,7 +408,7 @@ function renderBand(){
   var tot=r?r.stores.reduce(function(a,s){return a+s.on.length;},0):0;
   if(r&&attStore&&!r.stores.some(function(s){return s.id===attStore;}))attStore='';
   b.innerHTML='<div class="atabs"><button class="at'+(attStore===''?' on':'')+'" data-as=""><span class="an1">全店</span><span class="an2">'+(tdTab==='att'?'見るだけ':'すべて')+(r?' ('+tot+'人)':'')+'</span></button>'+
-    (r?r.stores:STORES.map(function(s){return {id:s.id,short:s.s,on:[]};})).map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div>';
+    (r?r.stores:STORES.map(function(s){return {id:s.id,short:s.s,on:[]};})).map(function(s){var c=cnt(s),lg=logo[s.id];return '<button class="at'+(attStore===s.id?' on':'')+'" data-as="'+esc(s.id)+'">'+(lg?'<img src="../logo/'+lg.l+'.png" alt="">':'')+'<span class="an1">'+esc(s.short)+'</span><span class="an2">予定 '+c.p+' / 当欠 '+c.a+' / 確定 '+c.f+'</span></button>';}).join('')+'</div><div class="bhint">店を押すと切り替わります (この端末で覚えます)</div>';
   [].forEach.call(b.querySelectorAll('.at'),function(x){x.onclick=function(){
     var v=x.getAttribute('data-as');if(v===attStore)return;
     if(!attLeave())return;
@@ -447,6 +473,9 @@ function vToday(){
   }).catch(function(e){if(my===seq&&$('att'))$('att').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
 function attTimes(a,b){var o=[];for(var m=a*60;m<=b*60;m+=30)o.push(pad(Math.floor(m/60)%24)+':'+pad(m%60));return o;}
+var SOUGEI_AMT=['500','600','700','800','900','1000','1100','1200','1300','1400','1500','1600'],AREA_ORD=['千歳','恵庭','苫小牧','札幌','北広島','岩見沢'],SALE_STORE='花もみじ千歳';
+function areaRank(a){a=String(a||'');for(var i=0;i<AREA_ORD.length;i++)if(a.indexOf(AREA_ORD[i])>=0)return i;return AREA_ORD.length;}
+function dohanMark(v){v=String(v||'').trim();if(!v)return '';var n=parseInt(v,10)||0;return n>1?'◯'+n:'◯';}
 var T_IN=attTimes(17,29),T_HAIR=attTimes(15,21),T_VIS=attTimes(19,27),T_NUM=['未定','1','2','3','4','5','6以上'];
 // 2026-11-27 席・卓番は店ごとの一覧 (店長・現場から 11/26 に届いた卓の一覧)。ここ 1 か所だけ直す。
 // 値 = 出勤表の「席」列にそのまま入る短い名前 (10 文字まで)。VIP / ホール はキャストの入力 (希望) と同じ値で、黒服が卓番を選ぶと上書きされる
@@ -487,29 +516,43 @@ function attRender(r,msg,isErr){
     var hairCell=x.hairBook?'<span class="ro">予約 '+esc(x.hairBook)+'</span>':sel('hairT',T_HAIR,x.hairT||(x.hairWish?'◯':''),{'◯':'◯ 時間未定'});
     var stv=x.absent==='当欠'?'当欠':(x.absent?'欠勤':'出勤');
     var stSel='<select class="stt"'+dis+'>'+['出勤','欠勤'].concat(stv==='当欠'?['当欠']:[]).map(function(o){return '<option'+(o===stv?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
-    var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);if(x.after)sm.push('アフター');if(x.castNote)sm.push('キャストから: '+x.castNote);
+    var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);
     return '<div class="ar'+(x.manual?' man':'')+(x.absent?' abs':'')+'" data-gen="'+esc(x.gen)+'">'+
-      '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span></span>'+
+      '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span>'+(x.dohan?'<span class="dc" title="同伴">'+dohanMark(x.dohan)+'</span>':'')+'</span>'+
       '<label class="f sx"><span class="lb"></span>'+stSel+'</label>'+
-      '<div class="r2">'+f('t','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+fd('h','美容',hairCell)+'</div>'+
-      '<div class="r3">'+fd('sg','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+'<button type="button" class="dtb">詳細 ▼</button></div>'+
+      '<div class="r2">'+f('t','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+f('t','変更','<input data-f="chg" data-o="'+esc(x.change)+'" value="'+esc(x.change)+'" list="dl_in" maxlength="8" autocomplete="off"'+dis+'>')+fd('h','勤務H','<span class="ro" title="出勤・退勤から自動計算">'+esc(x.hours)+'</span>')+fd('h','担当','<span class="ro" title="'+esc(x.tanto)+'">'+esc(x.tanto)+'</span>')+fd('h','方面','<span class="ro" title="'+esc(x.area)+'">'+esc(x.area)+'</span>')+fd('h','美容',hairCell)+'</div>'+
+      '<div class="r3">'+fd('sg','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+f('s','送迎額','<select data-f="sougei" data-o="'+esc(x.sougei)+'" data-num="1"'+dis+'>'+opts(SOUGEI_AMT,x.sougei)+'</select>')+'<button type="button" class="dtb">詳細 ▼</button></div>'+
       '<div class="dtl">'+f('s','ロッカー',inp('locker',x.locker,20))+f('s','ドレス',inp('dress',x.dress,20))+f('s','靴',inp('shoes',x.shoes,20))+f('s','充電器',inp('charger',x.charger,20))+f('m','メモ',inp('memo',x.memo,100))+'</div>'+
-      (sm.length?'<div class="sum">'+esc(sm.join(' / '))+'</div>':'')+'</div>';
+      (sm.length?'<div class="sum">'+esc(sm.join(' / '))+'</div>':'')+
+      (x.castNote||x.after?'<div class="nt" title="'+esc((x.after?'アフター ':'')+(x.castNote?'連絡: '+x.castNote:''))+'">'+(x.after?'<b>アフター</b> ':'')+(x.castNote?'<span class="nc">連絡</span> '+esc(x.castNote):'')+'</div>':'')+'</div>';
+  };
+  var salesRow=function(x){
+    var nin=function(fld,val,max){return '<label class="f n"><span class="lb"></span><input data-f="'+fld+'" data-o="'+esc(val)+'" data-num="1" value="'+esc(val)+'" maxlength="'+max+'" inputmode="numeric" autocomplete="off"'+dis+'></label>';};
+    var ro=function(c){return '<label class="f n"><span class="lb"></span><span class="ro">'+esc(c)+'</span></label>';};
+    return '<div class="ar sr'+(x.manual?' man':'')+'" data-gen="'+esc(x.gen)+'"><span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag">'+esc(x.gen)+'</span></span>'+
+      nin('hon',x.hon,4)+nin('jonai',x.jonai,4)+nin('douN',x.douN,4)+[0,1,2,3,4,5,6,7,8,9].map(function(i){return nin('sale'+(i+1),(x.sale||[])[i]||'',9);}).join('')+nin('dousub',x.dousub,9)+'</div>';
+  };
+  var auxList=function(s){
+    var it=s.on.filter(function(x){return !x.absent&&(x.go||x.back||x.hairWish);}).sort(function(a,b){return areaRank(a.area)-areaRank(b.area)||(a.tanto<b.tanto?-1:a.tanto>b.tanto?1:0)||((parseInt(a.ban,10)||9999)-(parseInt(b.ban,10)||9999));});
+    var cell=function(on,a,b){return on?([a,b].filter(String).join(' ')||'◯'):'';};
+    return '<div class="sec atsec"><h3>送迎・ヘアメイク　'+esc(s.short)+'　'+it.length+'人</h3><div class="axh ax"><span>店番</span><span>源氏名</span><span>担当</span><span>方面</span><span>行き送迎</span><span>帰り送迎</span><span>ヘア時間</span></div>'+
+      (it.length?it.map(function(x){return '<div class="ax"><span>'+esc(x.ban)+'</span><span class="gn">'+esc(x.gen)+'</span><span>'+esc(x.tanto)+'</span><span>'+esc(x.area)+'</span><span>'+esc(cell(x.go,x.pick,x.arrive))+'</span><span>'+esc(cell(x.back,x.drop,[x.leaveW,x.after?'アフター':''].filter(String).join(' ')))+'</span><span>'+esc(x.hairBook||(x.hairWish?(x.hairT||'◯'):''))+'</span></div>';}).join(''):'<div class="li" style="color:#888">送迎・ヘアメイクの予定なし</div>')+'</div>';
   };
   h+='<datalist id="dl_in">'+T_IN.map(function(t){return '<option value="'+t+'">';}).join('')+'</datalist><datalist id="dl_out">'+['ラスト'].concat(T_IN).map(function(t){return '<option value="'+t+'">';}).join('')+'</datalist>';
   var shown=r.stores.filter(function(s){return !attStore||s.id===attStore;});
   shown.forEach(function(s){
     var c=cnt(s);
     h+='<div class="sec atsec"><h3>'+esc(s.short)+'　予定 '+c.p+'人 / 当欠 '+c.a+'人 / 確定 '+c.f+'人'+(s.undecided?'　未定 '+s.undecided+'人':'')+(s.off?'　休み '+s.off+'人':'')+'<span class="lks">'+tl('salon','美容室 ↗')+tl('sougei','送迎 ↗')+'</span></h3>';
-    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>'+tl('salon','美容室 ↗')+'</span><span>'+tl('sougei','送迎 朝 ↗','go')+'</span><span>'+tl('sougei','送迎 帰 ↗','back')+'</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
+    if(s.on.length)h+='<div class="arh"><span>店番</span><span>源氏名</span><span></span><span>出勤</span><span>退勤</span><span>変更</span><span>勤務H</span><span>担当</span><span>方面</span><span>'+tl('salon','美容室 ↗')+'</span><span>'+tl('sougei','送迎 朝 ↗','go')+'</span><span>'+tl('sougei','送迎 帰 ↗','back')+'</span><span>送迎額</span><span>ロッカー</span><span>ドレス</span><span>靴</span><span>充電器</span><span>メモ</span></div>';
     h+=s.on.length?s.on.map(rowHtml).join(''):'<div class="li" style="color:#888">出勤予定なし</div>';
     h+='</div>';
   });
   if(edit){
     var st=shown[0],nm=st.on.map(function(x){return x.gen;});
     h+='<div class="sec atsec" id="addsec"><h3>追加出勤 (手入力)　名前と出勤時刻を入れて「更新」</h3>';
-    h+='<div class="adh"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span></div>';
-    for(var i=0;i<3;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+'</div>';
+    h+='<div class="adh"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span><span>行き送迎</span><span>帰り送迎</span><span>ヘア時間</span><span>メモ</span></div>';
+    var adSel=function(a){return '<select data-a="'+a+'"><option value="">なし</option><option value="あり">あり</option></select>';};
+    for(var i=0;i<5;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+f('s','行き送迎',adSel('go'))+f('s','帰り送迎',adSel('back'))+f('t','ヘア時間','<select data-a="hairT">'+opts(T_HAIR,'')+'</select>')+f('m','メモ','<input data-a="memo" maxlength="100" autocomplete="off">')+'</div>';
     h+='</div><datalist id="dl_cast">'+st.casts.map(function(g){return '<option value="'+esc(g)+'">';}).join('')+'</datalist>';
     // 同伴・来店 (同伴が上 → 席 VIP → 卓番 → ホール → 未定)
     var vs=st.on.filter(function(x){return x.dohan||x.visT||x.visN||x.keep||x.seat;});
@@ -519,7 +562,7 @@ function attRender(r,msg,isErr){
       var dn=x.dohan&&['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+x.dohan:'';
       var kd=x.dohan?'同伴':'来店';
       return '<div class="vr'+(x.manual||String(x.visSrc||'').indexOf('手')>=0?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="f kd"><span class="lb">種類</span><select data-f="kind" data-o="'+kd+'" class="'+(x.dohan?'dh':'')+'"'+dis+'><option'+(kd==='来店'?' selected':'')+'>来店</option><option'+(kd==='同伴'?' selected':'')+'>同伴</option></select></div>'+
-        '<div class="f nm"><span class="lb">源氏名</span><div class="ro"><b>'+esc(x.gen)+'</b></div></div>'+
+        '<div class="f nm"><span class="lb">源氏名</span><div class="ro"><b>'+esc(x.gen)+'</b>'+(x.dohan?' <span class="dc">'+dohanMark(x.dohan)+'</span>':'')+'</div></div>'+
         f('t','時刻',sel('visT',T_VIS,x.visT))+f('k','客名(ボトル名)',inp('keep',x.keep,200))+f('s','人数',sel('visN',T_NUM,x.visN))+f('s','席・卓番',sel('seat',seatList(st.id),x.seat))+
         '<button type="button" class="vx" data-clr="1">消す</button></div>';
     }).join(''):'<div class="li" style="color:#888">同伴・来店の予定なし</div>';
@@ -528,6 +571,14 @@ function attRender(r,msg,isErr){
       f('t','時刻','<select data-v="visT">'+opts(T_VIS,'')+'</select>')+f('k','客名(ボトル名)','<input data-v="keep" maxlength="40">')+f('s','人数','<select data-v="visN">'+opts(T_NUM,'')+'</select>')+f('s','席・卓番','<select data-v="seat">'+opts(seatList(st.id),'')+'</select>')+'<div class="vph"></div></div>';
     h+='</div>';
   }
+  if(attStore===SALE_STORE){ // 花もみじだけ: 売上ブロック (出勤表 日別の右側と同じ列) + 見るだけの電卓
+    var hj=shown[0];
+    h+='<div class="sec atsec" id="salesec"><h3>売上 (花もみじ・数字だけ)　入れたら「更新」　下の電卓は見るだけ (保存されません)</h3><div class="arh srh"><span>店番</span><span>源氏名</span><span>本指</span><span>場内</span><span>同伴本数</span>'+['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'].map(function(n){return '<span>売上'+n+'</span>';}).join('')+'<span>同伴小計</span></div>';
+    var sl=hj.on.filter(function(x){return !x.absent;});
+    h+=sl.length?sl.map(salesRow).join(''):'<div class="li" style="color:#888">出勤予定なし</div>';
+    h+='<div class="calc"><div class="f"><span class="lb" style="display:block">伝票合計</span><input id="calcIn" data-nodirty="1" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="伝票合計"></div><div class="f"><span class="lb" style="display:block">15%抜き</span><div class="cv" id="calc1"></div></div><div class="f"><span class="lb" style="display:block">税10%抜き</span><div class="cv" id="calc2"></div></div>'+[2,3,4,5].map(function(n){return '<div class="f"><span class="lb" style="display:block">'+n+'人割り</span><div class="cv" id="calcN'+n+'"></div></div>';}).join('')+'</div></div>';
+  }
+  h+=shown.map(auxList).join('');
   h+='<div class="sec"><h3>ヘアメイク 出勤の美容師</h3>'+(r.hairStaff.length?r.hairStaff.map(function(x){return '<div class="li"><span>'+esc(x.name)+'<small>'+esc(x.place)+'</small></span><b>'+esc(x.start)+'〜'+esc(x.end)+'</b></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
   h+='<div class="sec"><h3>送迎 出勤のドライバー (朝=行き / 帰り)</h3>'+(r.drivers.length?r.drivers.map(function(x){return '<div class="li"><span>'+esc(x.name)+'</span><span>'+(x.go?tag('朝'+(x.goT?' '+esc(x.goT):'')):'')+(x.back?tag('帰り'+(x.backT?' '+esc(x.backT):'')):'')+'</span></div>';}).join(''):'<div class="li" style="color:#888">入力なし</div>')+'</div>';
   if(r.notes&&r.notes.length)h+='<div class="note">'+r.notes.map(esc).join(' / ')+'</div>';
@@ -537,7 +588,7 @@ function attRender(r,msg,isErr){
   [].forEach.call(document.querySelectorAll('#att .tl'),function(a){a.onclick=function(ev){ev.preventDefault();if(a.getAttribute('data-dir')){sgDir=a.getAttribute('data-dir');lsSet('staffSgDir',sgDir);}setTab(a.getAttribute('data-tab'));};});
   renderBand();updSync();updUnsaved();setSaveLabel();
   if(slData&&tdTab==='salon')slRender();if(sgBoard&&tdTab==='sougei')sgRender();
-  [].forEach.call(document.querySelectorAll('#att input,#att select'),function(el){el.addEventListener('change',function(){attDirty=true;updUnsaved();if(el.getAttribute('data-hint')){el.classList.toggle('hint',el.value==='');}});el.addEventListener('input',function(){attDirty=true;updUnsaved();});});
+  [].forEach.call(document.querySelectorAll('#att input:not([data-nodirty]),#att select'),function(el){el.addEventListener('change',function(){attDirty=true;updUnsaved();if(el.getAttribute('data-hint')){el.classList.toggle('hint',el.value==='');}});el.addEventListener('input',function(){attDirty=true;updUnsaved();});});
   [].forEach.call(document.querySelectorAll('.vx'),function(b){b.onclick=function(){var row=b.parentNode;['visT','keep','visN','seat'].forEach(function(k){var e=row.querySelector('[data-f="'+k+'"]');if(e){e.value='';attDirty=true;}});};});
   [].forEach.call(document.querySelectorAll('.stt'),function(sel){sel.onchange=function(){
     var row=sel.closest('.ar'),t=row.querySelector('[data-f="tout"]');
@@ -546,17 +597,28 @@ function attRender(r,msg,isErr){
     attDirty=true;};});
   [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',sel.value==='同伴');});});
   [].forEach.call(document.querySelectorAll('.dtb'),function(b){b.onclick=function(){var row=b.closest('.ar');row.classList.toggle('open');b.textContent=row.classList.contains('open')?'詳細 ▲':'詳細 ▼';};});
+  var ci=$('calcIn');if(ci)ci.addEventListener('input',function(){ // 出勤表 日別の電卓と同じ: 15%抜き -> 税10%抜き -> n 人割り (どれも百円未満切り捨て = ROUNDDOWN(x,-2))
+    var v=parseInt(ci.value.normalize('NFKC').replace(/[,円\s]/g,''),10),rd=function(n){return Math.floor(n/100)*100;},fmt=function(n){return n.toLocaleString('ja-JP');};
+    var ok=!isNaN(v)&&v>=0,a=ok?rd(Math.floor(v*20/23)):0,b=ok?rd(Math.floor(a*10/11)):0; // 整数だけで割る (小数の誤差で 100 円ずれない)
+    $('calc1').textContent=ok?fmt(a):'';$('calc2').textContent=ok?fmt(b):'';
+    [2,3,4,5].forEach(function(n){$('calcN'+n).textContent=ok?fmt(rd(Math.floor(b/n))):'';});
+  });
 }
 function attCollect(){
   var p={rows:[],adds:[],visits:[]},seen={};
-  [].forEach.call(document.querySelectorAll('.ar[data-gen]:not(.ad)'),function(row){
-    var o={gen:row.getAttribute('data-gen')},n=0;
-    [].forEach.call(row.querySelectorAll('[data-f]'),function(e){if(e.value!==e.getAttribute('data-o')){o[e.getAttribute('data-f')]=e.value;n++;}});
-    if(n)p.rows.push(o);
+  [].forEach.call(document.querySelectorAll('.ar[data-gen]:not(.ad)'),function(row){ // 売上の行 (.sr) も同じ人の行に合流させる (人ごとに 1 件)
+    var g=row.getAttribute('data-gen'),o=seen[g]||{gen:g},n=0;
+    [].forEach.call(row.querySelectorAll('[data-f]'),function(e){
+      var v=e.value;
+      if(e.getAttribute('data-num')){v=v.normalize('NFKC').replace(/[,円¥\s]/g,'');if(!/^\d*$/.test(v))throw new Error(g+' の数字の欄は数字だけ入れてください');}
+      if(v!==e.getAttribute('data-o')){o[e.getAttribute('data-f')]=v;n++;}
+    });
+    if(n&&!seen[g]){seen[g]=o;p.rows.push(o);}else if(n)seen[g]=o;
   });
   [].forEach.call(document.querySelectorAll('.ad'),function(row){
     var g=row.querySelector('[data-a="gen"]').value.trim(),a=row.querySelector('[data-a="tin"]').value,b=row.querySelector('[data-a="tout"]').value;
-    if(g||a||b)p.adds.push({gen:g,tin:a,tout:b});
+    var q=function(k){var e=row.querySelector('[data-a="'+k+'"]');return e?e.value:'';};
+    if(g||a||b)p.adds.push({gen:g,tin:a,tout:b,go:q('go'),back:q('back'),hairT:q('hairT'),memo:q('memo')});
   });
   [].forEach.call(document.querySelectorAll('.vr[data-gen]'),function(row){
     var o={gen:row.getAttribute('data-gen')},n=0;
