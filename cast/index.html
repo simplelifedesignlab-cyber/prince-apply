@@ -31,6 +31,10 @@ select,input[type=text]{width:100%;min-height:44px;font-size:16px;padding:6px 10
 .plan select{flex:0 0 112px;width:112px}
 .plan input{flex:1;min-width:0}
 .plan .sama{flex:0 0 auto;font-size:16px}
+.plan2{display:flex;gap:6px;margin:0 0 6px}
+.plan2 select{flex:1;min-width:0;width:auto;margin:0}
+.pbox{margin:6px 0 10px;padding:6px 8px;background:var(--priL);border-radius:10px}
+.pbox .plan{margin-top:0}
 .add{margin-top:6px;min-height:44px;font-size:16px;background:var(--priL);color:var(--priD);border:0;border-radius:10px;padding:6px 14px;font-family:inherit;cursor:pointer}
 .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 6px rgba(232,87,138,.08);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
 .bar .in{max-width:560px;margin:0 auto}
@@ -268,30 +272,27 @@ function render() {
     }
 
     card.appendChild(el('label', 't', '予定'));
-    while (d.plans.length < 2) d.plans.push({ k: data.planKinds[0], n: '' }); // 空の行を最初から 2 つ出す
+    while (d.plans.length < 2) d.plans.push({ k: data.planKinds[0], n: '', c: '', s: '', t: '' }); // 空の行を最初から 2 つ出す
     d.plans.forEach(function (p, i) {
+      var pb = el('div', 'pbox');
       var row = el('div', 'plan');
       var k = el('select');
       data.planKinds.forEach(function (o) { var op = el('option', '', o); op.value = o; if (o === p.k) op.selected = true; k.appendChild(op); });
-      k.onchange = function () { p.k = k.value; };
-      var n = el('input'); n.type = 'text'; n.maxLength = 30; n.placeholder = 'お客様の名前'; n.value = p.n || '';
+      k.onchange = function () { p.k = k.value; if (p.k !== '来店予定') p.t = ''; render(); };
+      var n = el('input'); n.type = 'text'; n.maxLength = 30; n.placeholder = 'お客様の名前 (ボトル名)'; n.value = p.n || '';
       n.oninput = function () { p.n = n.value; };
       row.appendChild(k); row.appendChild(n); row.appendChild(el('span', 'sama', '様'));
-      card.appendChild(row);
+      pb.appendChild(row);
+      var r2 = el('div', 'plan2');
+      r2.appendChild(mkSel(data.visNums, p.c || '', '人数', function (v) { p.c = v; }));
+      r2.appendChild(mkSel(data.visSeats, p.s || '', '席 (ホール / VIP)', function (v) { p.s = v; }));
+      if (p.k === '来店予定') r2.appendChild(mkSel(data.visTimes, p.t || '', '時間', function (v) { p.t = v; }));
+      pb.appendChild(r2);
+      card.appendChild(pb);
     });
     var add = el('button', 'add', '＋ 予定を追加'); add.type = 'button';
-    add.onclick = function () { d.plans.push({ k: data.planKinds[0], n: '' }); render(); };
+    add.onclick = function () { d.plans.push({ k: data.planKinds[0], n: '', c: '', s: '', t: '' }); render(); };
     card.appendChild(add);
-
-    if (!rest) { // 来店の予定 (2026-11-24 山本さんの要望): わかる範囲で。時間を入れると「来店予定あり」になり、ヘアメイクの希望時間は優先になる
-      var vb = el('div', 'sub');
-      vb.appendChild(el('label', 't', '来店の予定 (わかる範囲で)'));
-      vb.appendChild(mkSel(data.visTimes, d.vt || '', '来店予定の時間', function (v) { d.vt = v; render(); }));
-      vb.appendChild(mkSel(data.visNums, d.vn || '', '人数', function (v) { d.vn = v; }));
-      vb.appendChild(mkSel(data.visKeeps, d.vk || '', 'キープボトル', function (v) { d.vk = v; }));
-      vb.appendChild(mkSel(data.visSeats, d.vs || '', '席 (ホール / VIP)', function (v) { d.vs = v; }));
-      card.appendChild(vb);
-    }
 
     if (!rest) {
       card.appendChild(el('label', 't', data.hairOn ? '送迎' : '送迎・ヘアメイク'));
@@ -357,15 +358,15 @@ document.getElementById('save').onclick = function () {
   btn.disabled = true; btn.textContent = '保存中…'; msg.className = ''; msg.textContent = '';
   var payload = data.days.map(function (d) {
     return { date: d.date, shift: d.shift, go: d.go, back: d.back, hair: d.hair,
-      leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note, vt: d.vt, vn: d.vn, vk: d.vk, vs: d.vs,
-      plans: d.plans.filter(function (p) { return String(p.n || '').trim(); }) };
+      leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note,
+      plans: d.plans.filter(function (p) { return String(p.n || '').trim() || p.c || p.s || p.t; }) };
   });
   google.script.run.withSuccessHandler(function (res) {
     saving = false; btn.disabled = false; btn.textContent = '保存';
     msg.className = 'ok'; msg.textContent = '保存しました';
     if (res && res.sougei !== undefined) data.sougei = res.sougei; // 送迎をなしにした時、「今日の送迎」を更新する (W9)
     if (res && res.pastDropped) { msg.className = 'ng'; msg.textContent = '日付が変わったので、昨日の分は保存しませんでした。開き直してください'; }
-    data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim(); }); });
+    data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim() || p.c || p.s || p.t; }); });
     if (data.hairOn) { // 出勤を変えた日は空き時刻も変わるので読み直す
       google.script.run.withSuccessHandler(function (r) { if (r && r.ok) { data = r; render(); } }).withFailureHandler(function () {}).getPage(TOKEN);
       return;
