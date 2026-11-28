@@ -330,6 +330,27 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
  .hdx .sx{flex:1 0 auto;padding:2px 8px}
  .card.shc{max-height:calc(100vh - 340px);max-height:calc(100dvh - 340px)}
 }
+/* 面接枠 (2026-11-28): 月カレンダー (hair-shift.tpl の .dow/.grid/.cell を黒服配色で) + 日別の 時刻×店 の表 */
+.ivw{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+@media(min-width:900px){.ivw{grid-template-columns:minmax(380px,460px) minmax(0,1fr)}}
+.ivst{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 8px}
+.ivst .st{min-height:52px;justify-content:center;padding:4px 2px;font-size:13px;gap:2px}.ivst .st img{height:26px}
+.ivw .dow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid #C3C8D1;background:#fff}
+.ivw .dow div{text-align:center;font-size:12px;font-weight:700;padding:5px 0;color:#5A6275}.ivw .dow div:first-child{color:#B42318}.ivw .dow div:last-child{color:#2E4372}
+.ivw .grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-auto-rows:minmax(66px,auto);background:#fff;border-left:1px solid #E3E6EC}
+.ivw .cell{display:flex;flex-direction:column;gap:2px;padding:3px 2px;border:0;border-right:1px solid #E3E6EC;border-bottom:1px solid #E3E6EC;min-width:0;overflow:hidden;background:#fff;color:#1F2A44;text-align:left;font-family:inherit;cursor:pointer}
+.ivw .cell.empty{cursor:default;background:#F4F5F7}.ivw .cell.nodata{cursor:default;background:#F4F5F7;color:#9AA1B0}
+.ivw .cell .n{display:inline-flex;align-items:center;height:22px;padding-left:4px;font-size:12px;font-weight:700}
+.ivw .cell.today .n{justify-content:center;width:22px;padding:0;margin-left:2px;border-radius:11px;background:#1F2A44;color:#fff}
+.ivw .cell.on{background:#E6E9F0;box-shadow:inset 0 0 0 2px #2E4372}
+.ivw .cell.past{opacity:.55}
+.ivw .chip{display:block;font-size:11px;font-weight:700;line-height:15px;padding:1px 3px;border-radius:3px;overflow:hidden;white-space:nowrap}
+.ivw .chip.b{background:#1F2A44;color:#fff}.ivw .chip.f{background:#fff;color:#2E4372;box-shadow:inset 0 0 0 1px #C3C8D1}
+.ivd h3{margin:0 0 6px;font-size:17px;color:#1F2A44}.ivd .sm{font-size:13px;font-weight:400;color:#5A6275;margin:0 0 8px}
+.ivt{min-width:560px;table-layout:fixed}.ivt th:first-child,.ivt td:first-child{width:56px;position:sticky;left:0;background:#F4F5F7;z-index:2;font-weight:700;color:#1F2A44}
+.ivt td{height:44px;white-space:normal;overflow-wrap:anywhere;font-size:13px;line-height:1.3}
+.ivt td.bk{background:#E6E9F0;color:#1F2A44;font-weight:700}.ivt td.bk small{display:block;font-size:11px;font-weight:400;color:#5A6275}
+.ivt td.fr{color:#9AA1B0}.ivt tr.pst td{opacity:.45}.ivt tr.pst td:first-child{opacity:1;color:#9AA1B0}
 </style></head><body>
 <header><div class="in"><div class="ht"><div class="en">PRINCE CHITOSE</div><h1 id="ttl">黒服ポータル</h1></div><button id="back" hidden>← TOP</button></div><div id="hdx" class="hdx" hidden></div></header>
 <div class="wrap" id="app"></div>
@@ -381,7 +402,7 @@ var rankTab = 'sales';
 
 var VIEWS = {
   today:{t:'出勤一覧',run:vToday,all:true},
-  roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans},
+  roster:{t:'在籍一覧',run:vRoster}, shift:{t:'シフト管理',run:vShift}, trans:{t:'送迎管理',run:vTrans}, iv:{t:'面接枠',run:vIv,all:true},
   hairpay:{t:'ヘアメイク 人数と金額',run:vHair}, sales:{t:'売上管理',run:vSales}, rank:{t:'ランキング',run:vRank}, cast:{t:'キャスト明細',run:vCast}, post:{t:'投稿生成',run:vPost}
 };
 var selCast = lsGet('staffCast') || '';
@@ -429,9 +450,10 @@ function top_(){ // 2026-11-25 H: 上の 3 つは今までどおりの入口・�
       '<button class="big pk" data-v="rank">ランキング<small>売上・本数・同伴</small></button>'+
       '<button class="big" data-v="roster">在籍一覧<small>キャストの名簿</small></button>'+
       '<button class="big" data-v="shift">週間シフト<small>1週間の出勤表</small></button>')+
-    cat('面接管理','面接開始・クロージング',
+    cat('面接管理','面接開始・クロージング・面接枠',
       '<a class="big" href="'+INTERVIEW+'" target="_blank" rel="noopener">面接開始<small>面接の画面を開く</small></a>'+
-      '<a class="big" href="'+INTERVIEW+'&f=closing" target="_blank" rel="noopener">クロージング<small>体験後の打診・入店</small></a>')+
+      '<a class="big" href="'+INTERVIEW+'&f=closing" target="_blank" rel="noopener">クロージング<small>体験後の打診・入店</small></a>'+
+      '<button class="big" data-v="iv">面接枠<small>面接の予約と空きをカレンダーで見る</small></button>')+
     cat('投稿生成','あとで作り直し',
       '<button class="big" data-v="post">投稿生成<small>お知らせ文を作って投稿予定へ</small></button>')+
     '<div class="upd">黒服ポータル</div>';
@@ -1149,6 +1171,68 @@ function loadDrv(ws){
     };});
   }).catch(function(e){if(my===seq&&$('drv'))$('drv').innerHTML='<div class="msg err" style="padding:12px">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
+// 面接枠 (2026-11-28 H 指示・見るだけ)。月カレンダー + 日を押すと 時刻×店 の表。正 = Prince App の「面接枠」タブ (getInterviewSlots)
+var ivMonth=ymd(new Date()).slice(0,7), ivSel='', ivStore=lsGet('staffIvStore')||'', ivData=null;
+if(!STORES.some(function(s){return s.id===ivStore;}))ivStore='';
+function ivPast(d,t){ // 0:00・0:30 は同じ営業日の深夜 = 翌日の時刻
+  var h=+t.split(':')[0],m=+t.split(':')[1],x=parse(d);x.setHours(h,m,0,0);if(h<16)x.setDate(x.getDate()+1);return x.getTime()<Date.now();
+}
+function ivCols(r){var c=[];r.stores.forEach(function(s,i){if(!ivStore||s===ivStore)c.push(i);});return c;}
+function ivCount(r,d){
+  var day=r.days[d];if(!day)return null;
+  var cols=ivCols(r),b=0,f=0;
+  day.slots.forEach(function(sl){var p=ivPast(d,sl.t);cols.forEach(function(i){if(sl.c[i])b++;else if(!p)f++;});});
+  return {b:b,f:f};
+}
+function vIv(){
+  var my=++seq;
+  api('getInterviewSlots',[ivMonth]).then(function(r){
+    if(my!==seq)return;
+    ivData=r;
+    var first=Object.keys(r.days).sort()[0]||'';
+    if(!ivSel||ivSel.slice(0,7)!==r.month||!r.days[ivSel])ivSel=(bizDay().slice(0,7)===r.month&&r.days[bizDay()])?bizDay():first;
+    fin(my,r,ivHtml(r));ivBind();
+  }).catch(function(e){fail(my,e);});
+}
+function ivHtml(r){
+  var p=r.month.split('-'),y=+p[0],mo=+p[1],lead=new Date(y,mo-1,1,12).getDay(),last=new Date(y,mo,0).getDate(),t=bizDay(),h='';
+  h+='<div class="ivw"><div class="ivc"><div class="ivst"><button class="st'+(ivStore?'':' on')+'" data-s=""><span>全店</span></button>'+STORES.map(function(s){return '<button class="st'+(s.id===ivStore?' on':'')+'" data-s="'+esc(s.id)+'"><img src="../logo/'+s.l+'.png" alt=""><span>'+esc(s.s)+'</span></button>';}).join('')+'</div>';
+  h+='<div class="nav"><button class="nb" id="ivp">‹</button><div class="t">'+y+'年'+mo+'月</div><button class="nb" id="ivn">›</button></div>';
+  h+='<div class="dow">'+DOWS.map(function(x){return '<div>'+x+'</div>';}).join('')+'</div><div class="grid">';
+  for(var i=0;i<lead;i++)h+='<div class="cell empty"></div>';
+  for(var d=1;d<=last;d++){
+    var k=r.month+'-'+pad(d),c=ivCount(r,k);
+    h+=(c?'<button class="cell'+(k===t?' today':'')+(k===ivSel?' on':'')+(k<t?' past':'')+'" data-d="'+k+'">':'<div class="cell nodata'+(k===t?' today':'')+'">')+'<span class="n">'+d+'</span>'+(c?'<span class="chip b">予約 '+c.b+'</span>'+(k<t?'':'<span class="chip f">空き '+c.f+'</span>'):'')+(c?'</button>':'</div>');
+  }
+  h+='</div><div class="sm" style="margin-top:8px;font-size:12px;font-weight:400;line-height:1.5;color:#5A6275">予約 = 応募者が面接枠を取った数 / 空き = これから取れる枠 ('+(ivStore?esc(ivStore):'4 店の合計')+')。日曜は枠なし・枠は 14 日先まで。見るだけで、ここからは変えられません。</div></div>';
+  h+='<div class="ivd" id="ivday">'+ivDayHtml(r)+'</div></div>';
+  return h;
+}
+function ivDayHtml(r){
+  var d=ivSel,day=r.days[d];
+  if(!d||!day)return '<div class="msg">日を選んでください<br><small>枠がある日 (日曜以外・14 日先まで) を押すと一覧が出ます</small></div>';
+  var cols=ivCols(r),c=ivCount(r,d),p=d.split('-');
+  var h='<h3>'+(+p[1])+'/'+(+p[2])+'（'+esc(DOWS[parse(d).getDay()])+'）'+(d===bizDay()?' 今日':'')+'</h3><div class="sm">予約 '+c.b+' / '+(d<bizDay()?'過去の日':'空き '+c.f)+'</div>';
+  h+='<div class="sc"><table class="ivt"'+(cols.length>1?'':' style="min-width:0"')+'><tr><th>時刻</th>'+cols.map(function(i){return '<th>'+esc(r.stores[i])+'</th>';}).join('')+'</tr>';
+  day.slots.forEach(function(sl){
+    h+='<tr'+(ivPast(d,sl.t)?' class="pst"':'')+'><td>'+esc(sl.t)+'</td>'+cols.map(function(i){
+      var a=sl.c[i];
+      if(!a)return '<td class="fr">空</td>';
+      return '<td class="bk">'+esc(a.n)+'<small>'+esc(a.s||'状態なし')+(a.w&&a.w!==r.stores[i]?'・希望 '+esc(a.w):'')+'</small></td>';
+    }).join('')+'</tr>';
+  });
+  return h+'</table></div>';
+}
+function ivBind(){
+  [].forEach.call(document.querySelectorAll('.ivst .st'),function(b){b.onclick=function(){ivStore=b.getAttribute('data-s');lsSet('staffIvStore',ivStore);$('body').innerHTML=ivHtml(ivData);ivBind();};});
+  $('ivp').onclick=function(){ivShift(-1);};$('ivn').onclick=function(){ivShift(1);};
+  [].forEach.call(document.querySelectorAll('.ivw .cell[data-d]'),function(b){b.onclick=function(){
+    ivSel=b.getAttribute('data-d');$('body').innerHTML=ivHtml(ivData);ivBind();
+    if(window.innerWidth<900){var e=$('ivday');if(e&&e.scrollIntoView)e.scrollIntoView({behavior:'smooth',block:'start'});}
+  };});
+}
+function ivShift(n){var p=ivMonth.split('-'),x=new Date(+p[0],+p[1]-1+n,1,12);ivMonth=x.getFullYear()+'-'+pad(x.getMonth()+1);ivSel='';$('body').innerHTML='<div class="msg">読み込み中...</div>';vIv();}
+
 function vHair(){
   loadWeek(function(w){
     var arr=w.casts.filter(function(c){var x=c.days[selDay];return x&&x.hair;}).map(function(c){var x=c.days[selDay];return {c:c,x:x,p:!!(x.plan||x.planN>0)};});
