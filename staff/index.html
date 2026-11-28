@@ -65,7 +65,7 @@ header h1{margin:0;font-size:19px;flex:1}
 #shgrid td.shab{min-width:60px}.card.shc{padding:0}
 @media all{ /* 2026-11-25 H: スマホも PC と同じ並び (横スクロール) */
   /* 2026-11-28: 列 = 店番 名前 状態 出勤 退勤 変更 勤務H 担当 方面 美容 朝 帰 送迎額 ロッカー ドレス 靴 充電器 メモ。PC 1280 / iPad 1024 で収まる幅 */
- .ar,.arh{display:grid;grid-template-columns:30px minmax(104px,1.7fr) 52px 62px 62px 60px 34px 42px 42px 58px 66px 66px 56px repeat(4,minmax(28px,.45fr)) minmax(44px,1fr);gap:0 4px;align-items:center;padding:4px 8px}
+ .ar,.arh{display:grid;grid-template-columns:30px minmax(104px,1.7fr) 52px 92px 62px 60px 34px 42px 42px 58px 66px 66px 56px repeat(4,minmax(28px,.45fr)) minmax(44px,1fr);gap:0 4px;align-items:center;padding:4px 8px}
  .r2,.r3,.dtl{display:contents}
  .ar .ng .ag{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
  .ar .f,.vr .f{width:auto!important;min-width:0}
@@ -117,6 +117,12 @@ header h1{margin:0;font-size:19px;flex:1}
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
 /* 2026-11-28 H: 追加出勤は最初ボタンだけ (押すたびに 1 行出る)・連絡は 2 行で切って「続き」 */
 .ad.off,.adh.off{display:none!important}
+/* 2026-11-28 「今」ボタン (出勤欄の右)。PC/iPad は出勤の列を 62 -> 90px に広げて並べる・スマホのカードは大きめ (40x36) */
+.tinw{display:flex;gap:3px;min-width:0}.tinw input{flex:1 1 auto;min-width:0}
+.nowb{flex:none;width:30px;min-height:30px;height:30px;padding:0;border:1px solid var(--priD);border-radius:4px;background:#fff;color:var(--priD);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.nowb:disabled{opacity:.4;cursor:default}
+#anew{position:sticky;top:0;z-index:5;margin:0 0 6px;padding:5px 10px;border:1px solid #2E4372;border-radius:4px;background:#E6E9F0;color:#1F2A44;font-size:12px;font-weight:700}
+#anew[hidden]{display:none}
 .adbar{padding:8px 12px;border-top:1px solid #EEF0F4}
 .adbtn{min-height:40px;padding:0 18px;border:1px solid var(--priD);border-radius:4px;background:#fff;color:var(--priD);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .adbtn:disabled{opacity:.5;cursor:default}
@@ -128,13 +134,14 @@ header h1{margin:0;font-size:19px;flex:1}
 @media (max-width:600px){
  .arh:not(.srh),.adh,.vrh,.vph{display:none!important}
  .lks{display:inline}
- .ar:not(.sr){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:end;min-width:0;padding:10px;margin:8px;border:1px solid #C3C8D1;border-radius:6px}
+ .ar:not(.sr){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:end;min-width:0;padding:10px;margin:8px;border:1px solid #C3C8D1;border-radius:6px}
  .ar:not(.sr)>*{position:static;margin:0;padding:0;align-self:end;min-width:0}
  .ar:not(.sr)>.ab{order:1;grid-column:span 1;align-self:center;font-size:18px}
  .ar:not(.sr)>.ng{order:2;grid-column:span 3;align-self:center}
  .ar:not(.sr)>.ng .ag{font-size:17px}
  .ar:not(.sr) .f .lb{display:block}
  .ar:not(.sr) .f select,.ar:not(.sr) .f input{height:36px;min-height:36px;font-size:13px}
+ .ar:not(.sr) .nowb{width:40px;height:36px;min-height:36px;font-size:14px}.ar:not(.sr) .tinw{gap:3px}.ar:not(.sr) .tinw input{padding:0 2px}
  .ar:not(.sr)>.f.sx{order:3}.ar:not(.sr) .k-tin{order:4}.ar:not(.sr) .k-tout{order:5}.ar:not(.sr) .k-chg{order:6}
  .ar:not(.sr) .k-hair{order:7}.ar:not(.sr) .k-go{order:8}.ar:not(.sr) .k-back{order:9}.ar:not(.sr) .k-sougei{order:10}
  .ar:not(.sr) .k-locker{order:11;grid-column:span 2}.ar:not(.sr) .k-dress{order:12;grid-column:span 2}.ar:not(.sr) .k-shoes{order:13;grid-column:span 2}.ar:not(.sr) .k-charger{order:14;grid-column:span 2}
@@ -556,7 +563,7 @@ var HELP={
  band:'店の切り替え\n店の名前を押すと、その店だけを表示・入力できます。「全店」は見るだけ (入力欄は灰色)。\n名前の下の 予=出勤予定 欠=当欠・欠勤 確=確定 (予−欠)。選んだ店はこの端末が覚えています。',
  asave:'更新ボタン\n出勤簿 (店を選んだ時): 入れた所だけ保存して読み直します。変更が無い時・全店の時は読み直しだけです。\n美容室タブ: 読み直し (予約の操作はその場で保存されます)。\n送迎タブ: ドライバーを替えた時だけ「更新」で保存されます。\n保存していない人の数が、橙の「未保存 ○ 件」で出ます (欄の数ではなく人の数)。',
  attCols:'項目の見方\n状態=出勤 / 欠勤。出勤・退勤=時刻 (薄い文字の「アプリ」はキャストがアプリに入れた予定で、見本の表示です)。変更=出勤表の「変更時間」の欄。勤務H=出勤・退勤からの自動計算 (入力できません)。担当・方面=キャストの申告。美容=ヘアメイクの予約時刻。朝・帰=送迎ありの印と、乗る場所・ドライバー (赤い「未定」=ドライバーがまだ決まっていない)。送迎額=その日の送迎額 (円)。\n見出しの「未定 ○人」は、その日のシフトが未定の人数です。',
- hdState:'状態\n「出勤」「欠勤」を選びます。欠勤にすると名前が赤い取り消し線になり、退勤の欄に「欠勤」と入ります (出勤に戻すと空に戻ります)。\n「当欠」は出勤表にすでに付いている印で、ここからは選べません。',
+ hdState:'状態\n「出勤」「欠勤」「当欠」を選びます。\n欠勤 = 前もっての休み (月一覧では「休」)。当欠 = 当日の欠 (月一覧では「欠」)。\nどちらも名前が赤い取り消し線になり、退勤の欄に「欠勤」「当欠」と入ります (出勤に戻すと空に戻ります)。',
  hdChg:'変更\n出勤表の「変更時間」の欄です。出勤時刻をその日だけ変えたい時などに入れます (例 20:30)。\n時刻の形になっていない数字は保存できません。数字を含まない短い文字 (休 など) はそのまま入ります。',
  hdFare:'送迎額\nその日の送迎額 (円) を 500〜1600 から選びます。選ぶと、出勤表の「送迎額」の欄に保存されます。',
  add:'追加出勤\n「＋ 追加出勤」を押すたびに、入力の行が 1 行ずつ出ます (最大 5 行)。\n名前は在籍から選ぶか直接入力し、出勤・退勤などを入れて、下の「更新」で保存します。\n保存すると、出勤簿に薄いオレンジの行 (手入力) で出ます。',
@@ -729,7 +736,7 @@ function vToday(){
     '<div class="ttabs"><button class="ttab" data-t="att">出勤簿</button><button class="ttab" data-t="salon">美容室</button><button class="ttab" data-t="sougei">送迎</button></div>'+
     '<div id="band" title="店を押すと切り替わります (この端末で覚えます)"></div>';
   $('hdx').hidden=false;document.querySelector('header').classList.add('tday');
-  $('body').innerHTML='<div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
+  $('body').innerHTML='<div id="anew" hidden>新しい情報があります (保存後に反映)</div><div id="att"><div class="msg">読み込み中...</div></div><div id="salonPane" hidden></div><div id="sgPane" hidden></div>'+
     '<div class="abar"><button id="asave">更新</button>'+hq('asave')+'<span class="aun" id="aun"></span><div class="am2 ok" id="amsg"></div><span class="asy" id="asy"></span></div>'+
     '<div class="slov" id="slAddOv" hidden><div class="slsheet"><div class="slsh"><b id="slaT"></b><button type="button" class="vx" id="slaX">閉じる</button></div>'+
       '<div id="slaTimeBox" hidden><label id="slaTimeLb">時刻 (15:00 から 30 分きざみ)</label><select id="slaTime"></select></div>'+
@@ -756,9 +763,44 @@ function vToday(){
     attRender(r);
   }).catch(function(e){if(my===seq&&$('att'))$('att').innerHTML='<div class="msg err">読み込めませんでした<br><small>'+esc(e.message||e)+'</small></div>';});
 }
+// 2026-11-28 自動更新: 出勤簿を開いている間 60 秒おき (画面が裏の時は止める) に読む。未保存の入力・入力中・開いている窓が 1 つでもあれば描き直さず、違いがある時だけ上に「新しい情報があります」。
+// 描き直す直前にもう一度確かめる (読んでいる間に入力が始まっても消えない)。詳細の開閉・追加出勤の行・ページの位置は描き直しの前後で戻す
+var atAuto={busy:0,t:0,last:0};
+function atSig(r){var o={};for(var k in r)if(k!=='updated')o[k]=r[k];return JSON.stringify(o);}
+function atQuiet(){ // 描き直してよい状態か (入力・選択・窓・保存中・送迎の未保存が無い)
+  if(!attData||attBusy||tdTab!=='att'||!$('att')||$('att').hidden)return false;
+  if(unsavedN()>0)return false;
+  var ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#att')&&/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName))return false;
+  if(document.querySelector('.slov:not([hidden])'))return false;
+  return true;
+}
+function atTick(){
+  if(document.hidden||atAuto.busy||!attDay||!attData||tdTab!=='att'||!$('att'))return;
+  var my=seq,day=attDay;atAuto.busy=1;atAuto.last=Date.now();
+  api('getAttendanceList',[day]).then(function(r){
+    atAuto.busy=0;
+    if(my!==seq||day!==attDay||!r||r.error||!attData||r.date!==attData.date)return;
+    var same=atSig(r)===atSig(attData),an=$('anew');
+    if(same){if(an&&atQuiet())an.hidden=true;return;}
+    if(!atQuiet()){if(an)an.hidden=false;return;}
+    var op=[].map.call(document.querySelectorAll('#att .ar.open'),function(e){return e.getAttribute('data-gen');}),ad=document.querySelectorAll('#addsec .ad:not(.off)').length,y=window.scrollY;
+    attRender(r);
+    op.forEach(function(g){[].forEach.call(document.querySelectorAll('#att .ar:not(.sr)'),function(e){if(e.getAttribute('data-gen')===g){e.classList.add('open');var b=e.querySelector('.dtb');if(b)b.textContent='詳細 ▲';}});});
+    for(var i=0;i<ad;i++){var ab=$('addbtn');if(ab&&!ab.disabled)ab.onclick();}
+    var f=document.activeElement;if(f&&f!==document.body&&f.blur)f.blur();
+    window.scrollTo(0,y);
+  }).catch(function(){atAuto.busy=0;});
+}
+if(!window.__atAutoOn){window.__atAutoOn=1;
+  setInterval(function(){if(!document.hidden)atTick();},60000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-atAuto.last>30000)atTick();});
+}
 function attTimes(a,b){var o=[];for(var m=a*60;m<=b*60;m+=30)o.push(pad(Math.floor(m/60)%24)+':'+pad(m%60));return o;}
 var SOUGEI_AMT=['500','600','700','800','900','1000','1100','1200','1300','1400','1500','1600'],AREA_ORD=['千歳','恵庭','苫小牧','札幌','北広島','岩見沢'],SALE_STORE='花もみじ千歳';
 function areaRank(a){a=String(a||'');for(var i=0;i<AREA_ORD.length;i++)if(a.indexOf(AREA_ORD[i])>=0)return i;return AREA_ORD.length;}
+// 同伴の組数 (2026-11-28): データの「同伴」列の数 = 日別の ◯2 の 2。1 組=「同伴」・2 組以上=「同伴 2組」。保存は kind にそのまま送る (saveAttendance が数字にする)
+function dohanKind(v){var n=parseInt(String(v||'').trim(),10)||0;return n>1?'同伴 '+n+'組':'同伴';}
+function kindOpts(cur){var l=['来店','同伴','同伴 2組','同伴 3組'];if(l.indexOf(cur)<0)l.push(cur);return l.map(function(o){return '<option'+(o===cur?' selected':'')+'>'+o+'</option>';}).join('');}
 function dohanMark(v){v=String(v||'').trim();if(!v)return '';var n=parseInt(v,10)||0;return n>1?'◯'+n:'◯';}
 var T_IN=attTimes(17,29),T_HAIR=attTimes(15,21),T_VIS=attTimes(19,27),T_NUM=['未定','1','2','3','4','5','6以上'];
 // 2026-11-27 席・卓番は店ごとの一覧 (店長・現場から 11/26 に届いた卓の一覧)。ここ 1 か所だけ直す。
@@ -778,7 +820,7 @@ function opts(list,cur,lab,blank){
 }
 function seatRank(s,store){if(s==='VIP')return 0;var i=(SEAT_BY_STORE[store]||[]).indexOf(s);if(i>=0)return 1+i/1000;if(/^\d+$/.test(s))return 1+(+s)/1000;if(s==='ホール')return 2;return 3;}
 function attRender(r,msg,isErr){
-  attData=r;attDirty=false;attBusy=false;
+  attData=r;attDirty=false;attBusy=false;var an=$('anew');if(an)an.hidden=true;var sb0=$('asave');if(sb0&&!sgBusy)sb0.disabled=false; // 2026-11-28 保存・読み直しの後に「更新」が押せないままになっていたので戻す
   var tag=function(t,c){return '<span class="tag'+(c?' '+c:'')+'">'+t+'</span>';};
   var logo={};STORES.forEach(function(x){logo[x.id]=x;});
   var isAbs=function(c){return !!c.absent;};
@@ -799,12 +841,12 @@ function attRender(r,msg,isErr){
   var rowHtml=function(x){
     var hairCell=x.hairBook?'<span class="ro">予約 '+esc(x.hairBook)+'</span>':sel('hairT',T_HAIR,x.hairT||(x.hairWish?'◯':''),{'◯':'◯ 時間未定'});
     var stv=x.absent==='当欠'?'当欠':(x.absent?'欠勤':'出勤');
-    var stSel='<select class="stt"'+dis+'>'+['出勤','欠勤'].concat(stv==='当欠'?['当欠']:[]).map(function(o){return '<option'+(o===stv?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+    var stSel='<select class="stt"'+dis+'>'+['出勤','欠勤','当欠'].map(function(o){return '<option'+(o===stv?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
     var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);
     return '<div class="ar'+(x.manual?' man':'')+(x.absent?' abs':'')+'" data-gen="'+esc(x.gen)+'">'+
       '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span>'+(x.dohan?'<span class="dc" title="同伴">'+dohanMark(x.dohan)+'</span>':'')+'</span>'+
       '<label class="f sx"><span class="lb">状態</span>'+stSel+'</label>'+
-      '<div class="r2">'+f('t k-tin','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t k-tout','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+f('t k-chg','変更','<input data-f="chg" data-o="'+esc(x.change)+'" value="'+esc(x.change)+'" list="dl_in" maxlength="8" autocomplete="off"'+dis+'>')+fd('h k-h','勤務H','<span class="ro" title="出勤・退勤から自動計算">'+esc(x.hours)+'</span>')+fd('h k-tanto','担当','<span class="ro" title="'+esc(x.tanto)+'">'+esc(x.tanto)+'</span>')+fd('h k-area','方面','<span class="ro" title="'+esc(x.area)+'">'+esc(x.area)+'</span>')+fd('h k-hair','美容',hairCell)+'</div>'+
+      '<div class="r2">'+fd('t k-tin','出勤','<span class="tinw">'+inpT('tin',x.tin,x.arrive||x.shift,'dl_in')+'<button type="button" class="nowb" title="今の時刻を出勤に入れる (保存は「更新」)"'+dis+'>今</button></span>')+f('t k-tout','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+f('t k-chg','変更','<input data-f="chg" data-o="'+esc(x.change)+'" value="'+esc(x.change)+'" list="dl_in" maxlength="8" autocomplete="off"'+dis+'>')+fd('h k-h','勤務H','<span class="ro" title="出勤・退勤から自動計算">'+esc(x.hours)+'</span>')+fd('h k-tanto','担当','<span class="ro" title="'+esc(x.tanto)+'">'+esc(x.tanto)+'</span>')+fd('h k-area','方面','<span class="ro" title="'+esc(x.area)+'">'+esc(x.area)+'</span>')+fd('h k-hair','美容',hairCell)+'</div>'+
       '<div class="r3">'+fd('sg k-go','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg k-back','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+f('s k-sougei','送迎額','<select data-f="sougei" data-o="'+esc(x.sougei)+'" data-num="1"'+dis+'>'+opts(SOUGEI_AMT,x.sougei)+'</select>')+'<button type="button" class="dtb">詳細 ▼</button></div>'+
       '<div class="dtl">'+f('s k-locker','ロッカー',inp('locker',x.locker,20))+f('s k-dress','ドレス',inp('dress',x.dress,20))+f('s k-shoes','靴',inp('shoes',x.shoes,20))+f('s k-charger','充電器',inp('charger',x.charger,20))+f('m k-memo','メモ',inp('memo',x.memo,100))+'</div>'+
       (sm.length?'<div class="sum">'+esc(sm.join(' / '))+'</div>':'')+
@@ -845,14 +887,14 @@ function attRender(r,msg,isErr){
     h+='<div class="sec atsec" id="vissec"><h3>同伴・来店'+hq('visit')+'</h3><div class="vrh"><span>種類</span><span>源氏名</span><span>時刻</span><span>客名(ボトル名)</span><span>人数</span><span>席・卓番</span><span></span></div>';
     h+=vs.length?vs.map(function(x){
       var dn=x.dohan&&['1','あり','○','TRUE'].indexOf(x.dohan.toUpperCase())<0?' '+x.dohan:'';
-      var kd=x.dohan?'同伴':'来店';
-      return '<div class="vr'+(x.manual||String(x.visSrc||'').indexOf('手')>=0?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="f kd"><span class="lb">種類</span><select data-f="kind" data-o="'+kd+'" class="'+(x.dohan?'dh':'')+'"'+dis+'><option'+(kd==='来店'?' selected':'')+'>来店</option><option'+(kd==='同伴'?' selected':'')+'>同伴</option></select></div>'+
+      var kd=x.dohan?dohanKind(x.dohan):'来店';
+      return '<div class="vr'+(x.manual||String(x.visSrc||'').indexOf('手')>=0?' man':'')+'" data-gen="'+esc(x.gen)+'"><div class="f kd"><span class="lb">種類</span><select data-f="kind" data-o="'+kd+'" class="'+(x.dohan?'dh':'')+'"'+dis+'>'+kindOpts(kd)+'</select></div>'+
         '<div class="f nm"><span class="lb">源氏名</span><div class="ro"><b>'+esc(x.gen)+'</b>'+(x.dohan?' <span class="dc">'+dohanMark(x.dohan)+'</span>':'')+'</div></div>'+
         f('t','時刻',sel('visT',T_VIS,x.visT))+f('k','客名(ボトル名)',inp('keep',x.keep,200))+f('s','人数',sel('visN',T_NUM,x.visN))+f('s','席・卓番',sel('seat',seatList(st.id),x.seat))+
         '<button type="button" class="vx" data-clr="1">消す</button></div>';
     }).join(''):'<div class="li" style="color:#888">同伴・来店の予定なし</div>';
     h+='<div class="li" style="font-size:12px;color:#5A6275;border-top:1px solid #EEF0F4">下に手入力 (出勤の人から選びます)</div>';
-    for(var j=0;j<3;j++)h+='<div class="vr vn"><div class="f kd"><span class="lb">種類</span><select data-v="kind"><option>来店</option><option>同伴</option></select></div><div class="f nm"><span class="lb">源氏名</span><select data-v="gen"><option value=""></option>'+nm.map(function(g){return '<option>'+esc(g)+'</option>';}).join('')+'</select></div>'+
+    for(var j=0;j<3;j++)h+='<div class="vr vn"><div class="f kd"><span class="lb">種類</span><select data-v="kind"><option>来店</option><option>同伴</option><option>同伴 2組</option><option>同伴 3組</option></select></div><div class="f nm"><span class="lb">源氏名</span><select data-v="gen"><option value=""></option>'+nm.map(function(g){return '<option>'+esc(g)+'</option>';}).join('')+'</select></div>'+
       f('t','時刻','<select data-v="visT">'+opts(T_VIS,'')+'</select>')+f('k','客名(ボトル名)','<input data-v="keep" maxlength="40">')+f('s','人数','<select data-v="visN">'+opts(T_NUM,'')+'</select>')+f('s','席・卓番','<select data-v="seat">'+opts(seatList(st.id),'')+'</select>')+'<div class="vph"></div></div>';
     h+='</div>';
   }
@@ -877,10 +919,11 @@ function attRender(r,msg,isErr){
   [].forEach.call(document.querySelectorAll('.vx'),function(b){b.onclick=function(){var row=b.parentNode;['visT','keep','visN','seat'].forEach(function(k){var e=row.querySelector('[data-f="'+k+'"]');if(e){e.value='';attDirty=true;}});};});
   [].forEach.call(document.querySelectorAll('.stt'),function(sel){sel.onchange=function(){
     var row=sel.closest('.ar'),t=row.querySelector('[data-f="tout"]');
-    if(sel.value==='欠勤'){t.value='欠勤';row.classList.add('abs');}
+    if(sel.value==='欠勤'||sel.value==='当欠'){t.value=sel.value;row.classList.add('abs');} // 2026-11-28 当欠も選べる (退勤欄に「当欠」= saveAttendance が 当欠☑ にする)
     else{if(t.value==='欠勤'||t.value==='当欠')t.value='';row.classList.remove('abs');}
     attDirty=true;};});
-  [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',sel.value==='同伴');});});
+  [].forEach.call(document.querySelectorAll('.nowb'),function(b){b.onclick=function(){nowIn(b);};});
+  [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',/^同伴/.test(sel.value));});});
   var ab=$('addbtn');if(ab)ab.onclick=function(){
     var r=document.querySelector('#addsec .ad.off');if(!r)return;
     r.classList.remove('off');var hd=document.querySelector('#addsec .adh');if(hd)hd.classList.remove('off');
@@ -896,6 +939,15 @@ function attRender(r,msg,isErr){
     $('calc1').textContent=ok?fmt(a):'';$('calc2').textContent=ok?fmt(b):'';
     [2,3,4,5].forEach(function(n){$('calcN'+n).textContent=ok?fmt(rd(Math.floor(b/n))):'';});
   });
+}
+// 2026-11-28 「来た」ワンタップ: 出勤欄に今の時刻 (分まで・時刻の欄は H:MM を受けるので丸めない。0〜4 時台は 25:10 のように 24 を足す = 朝 5 時切り替え)。保存はしない (「更新」で保存)
+function nowIn(b){
+  var row=b.closest('.ar'),t=row&&row.querySelector('[data-f="tin"]');if(!t||t.disabled)return;
+  var d=new Date(),h=d.getHours(),v=pad(h<5?h+24:h)+':'+pad(d.getMinutes());
+  if(t.value&&t.value!==v&&!window.confirm('出勤の時刻 '+t.value+' を '+v+' に変えますか？'))return;
+  t.value=v;
+  var st=row.querySelector('.stt');if(st&&st.value!=='出勤'){st.value='出勤';st.dispatchEvent(new Event('change'));} // 当欠・欠勤の人が来た = 出勤に戻す (退勤の「当欠」「欠勤」も消える)
+  t.dispatchEvent(new Event('input',{bubbles:true}));
 }
 function ntFit(){ // 連絡が 2 行に収まらない時だけ「続き」を出す (開いている間は「畳む」を残す)
   [].forEach.call(document.querySelectorAll('#att .nt'),function(n){var x=n.querySelector('.ntx'),b=n.querySelector('.ntb');if(!x||!b)return;if(n.classList.contains('open')){b.hidden=false;return;}b.hidden=!(x.scrollHeight>x.clientHeight+1);});
@@ -929,7 +981,7 @@ function attCollect(){
   });
   [].forEach.call(document.querySelectorAll('.vn'),function(row){
     var v={};['gen','visT','keep','visN','seat','kind'].forEach(function(k){v[k]=row.querySelector('[data-v="'+k+'"]').value.trim();});
-    var dh=v.kind==='同伴';if(!dh)delete v.kind; // 来店のままなら種類は送らない (すでに同伴の人を来店に戻さない)
+    var dh=/^同伴/.test(v.kind);if(!dh)delete v.kind; // 来店のままなら種類は送らない (すでに同伴の人を来店に戻さない)
     if(!v.gen){if(v.visT||v.keep||v.visN||v.seat||dh)throw new Error('下の手入力の行は、源氏名を選んでください');return;}
     if(!(v.visT||v.keep||v.visN||v.seat||dh))return;
     p.visits.push(v);
