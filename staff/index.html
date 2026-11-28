@@ -983,7 +983,7 @@ function attCollect(){
     [].forEach.call(row.querySelectorAll('[data-f]'),function(e){
       var v=e.value;
       if(e.getAttribute('data-num')){v=v.normalize('NFKC').replace(/[,円¥\s]/g,'');if(!/^\d*$/.test(v))throw new Error(g+' の数字の欄は数字だけ入れてください');}
-      if(v!==e.getAttribute('data-o')){o[e.getAttribute('data-f')]=v;n++;}
+      if(v!==e.getAttribute('data-o')){var fk=e.getAttribute('data-f');o[fk]=v;(o.base=o.base||{})[fk]=e.getAttribute('data-o')||'';n++;} // base = 読み込んだ時の値。保存時に他の人が先に変えていないか見張る (2026-11-29)
     });
     if(n&&!seen[g]){seen[g]=o;p.rows.push(o);}else if(n)seen[g]=o;
   });
@@ -994,7 +994,7 @@ function attCollect(){
   });
   [].forEach.call(document.querySelectorAll('.vr[data-gen]'),function(row){
     var o={gen:row.getAttribute('data-gen')},n=0;
-    [].forEach.call(row.querySelectorAll('[data-f]'),function(e){if(e.value!==e.getAttribute('data-o')){o[e.getAttribute('data-f')]=e.value;n++;}});
+    [].forEach.call(row.querySelectorAll('[data-f]'),function(e){if(e.value!==e.getAttribute('data-o')){var fk=e.getAttribute('data-f');o[fk]=e.value;(o.base=o.base||{})[fk]=e.getAttribute('data-o')||'';n++;}});
     if(n)p.visits.push(o);
   });
   [].forEach.call(document.querySelectorAll('.vn'),function(row){
@@ -1015,6 +1015,11 @@ function attSave(){
   attBusy=true;btn.disabled=true;show(n?'保存中...':'読み直し中...',false);
   var call=(attStore&&n)?api('saveAttendance',[attDay,attStore,p]):api('getAttendanceList',[attDay]);
   call.then(function(r){
+    var cf=(r&&r.conflicts)||[];
+    if(cf.length){ // 他の人が先に変えていた欄は上書きしていない (画面は今の値に読み直した)
+      attRender(r,'保存しました ('+(r.saved||0)+' 件)。ただし他の人が先に変えていた欄は上書きしていません: '+cf.slice(0,6).map(function(c){return c.gen+' の'+c.label+' (今は「'+(c.theirs===''?'空':c.theirs)+'」)';}).join('、')+(cf.length>6?' ほか '+(cf.length-6)+' 件':'')+'。内容を確かめて、もう一度入れて保存してください  '+r.updated,true);
+      return;
+    }
     attRender(r,attStore&&n?'保存しました ('+(r.saved||0)+' 件)  '+r.updated:'読み直しました  '+r.updated,false);
   }).catch(function(e){
     attBusy=false;var b=$('asave');if(b)b.disabled=false;

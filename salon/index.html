@@ -372,7 +372,7 @@ function lineHtml(e,i,multiPlace){
 function allEntries(r){var a=[];(r.rows||[]).forEach(function(e){if(e.kind==='booked')a.push(e);});return a.concat(r.special||[]).concat(r.any||[]);}
 function summaryHtml(r,withFree){
   var n=0,hm=0,cl=0,by={};
-  allEntries(r).forEach(function(e){n++;if(e.status==='済'){hm++;var k=e.by||'担当なし';by[k]=(by[k]||0)+1;}else if(e.status==='来ず')cl++;});
+  allEntries(r).forEach(function(e){n++;if(e.status==='済'){hm++;var k=e.by||(e.tag==='撮影'?'撮影 (担当の入力なし)':'担当なし'); // 無料撮影は担当を入れない決まりなので「担当なし」と紛らわしくないよう言い分ける (2026-11-29)by[k]=(by[k]||0)+1;}else if(e.status==='来ず')cl++;});
   var rest=n-hm-cl,names=Object.keys(by).sort(function(a,b){return by[b]-by[a]||(a<b?-1:1);});
   return '<div class="cn sm4"><div><small>予約</small><b>'+n+'</b></div><div class="op">＝</div><div><small style="color:#15803D">ヘアメイク</small><b>'+hm+'</b></div><div class="op">＋</div><div><small style="color:#C2410C">キャンセル</small><b>'+cl+'</b></div><div class="op">＋</div><div><small>まだ</small><b>'+rest+'</b></div></div>'+
     '<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+hq('sum')+'</div>'+
@@ -459,7 +459,7 @@ $('wToday').onclick=function(){weekFrom=monOfS(today);loadWeek();};
 
 // ---------- 週間シフト ----------
 // 日付を押す -> 出勤する美容師が自分の名前を選ぶ (他の人の分も触れる)。時刻は場所のふだんの時刻 (すでに入っている人の時刻は変えない)
-var shFrom='', shData=null, shSeq=0, shDay='', shDraft={}, shSaving=false;
+var shFrom='', shData=null, shSeq=0, shDay='', shDraft={}, shBase={}, shSaving=false;
 function loadShift(){
   var my=++shSeq;if(!shFrom)shFrom=monOfS(today);
   $('sTitle').textContent=mdw(shFrom).replace(/ \(.\)/,'')+' 〜 '+mdw(shift(shFrom,6)).replace(/ \(.\)/,'');
@@ -478,8 +478,8 @@ function renderShift(){
   [].forEach.call($('sBody').querySelectorAll('.sd'),function(el){el.onclick=function(){openSh(el.getAttribute('data-d'));};});
 }
 function openSh(d){
-  shDay=d;shDraft={};
-  (shData.days[d]||[]).forEach(function(x){shDraft[x.name]=x.place;});
+  shDay=d;shDraft={};shBase={};
+  (shData.days[d]||[]).forEach(function(x){shDraft[x.name]=x.place;shBase[x.name]=x.place;}); // shBase = 開いた時の出勤。決定の時に他の人が先に変えていないか見張る (2026-11-29)
   $('shT').textContent=mdw(d)+' の出勤';
   drawSh();$('ovSh').hidden=false;
 }
@@ -500,7 +500,7 @@ function drawSh(){
 $('shOk').onclick=function(){
   if(shSaving)return;shSaving=true;drawSh();
   var as=Object.keys(shDraft).map(function(n){return {name:n,place:shDraft[n]};});
-  api('setHairShiftDay',[shDay,as]).then(function(r){shData=r;shSaving=false;$('ovSh').hidden=true;renderShift();toast('反映しました');}).catch(function(e){shSaving=false;drawSh();window.alert(e.message||e);});
+  api('setHairShiftDay',[shDay,as,shBase]).then(function(r){shData=r;shSaving=false;$('ovSh').hidden=true;renderShift();toast('反映しました');}).catch(function(e){shSaving=false;drawSh();var m=String(e.message||e);window.alert(m);if(m.indexOf('他の人が先に')===0){$('ovSh').hidden=true;loadShift();}}); // 他の人が先に変えていた = 閉じて最新を読み直す
 };
 $('shClose').onclick=function(){$('ovSh').hidden=true;};
 $('ovSh').onclick=function(e){if(e.target===$('ovSh'))$('ovSh').hidden=true;};
