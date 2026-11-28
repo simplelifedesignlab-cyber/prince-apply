@@ -115,6 +115,49 @@ header h1{margin:0;font-size:19px;flex:1}
  .ar>.nt{align-self:auto;display:block}
 }
 @media (max-width:767px){.atabs{grid-template-columns:repeat(2,1fr)}.atabs .at:first-child{grid-column:1/-1}}
+/* 2026-11-28 H: 追加出勤は最初ボタンだけ (押すたびに 1 行出る)・連絡は 2 行で切って「続き」 */
+.ad.off,.adh.off{display:none!important}
+.adbar{padding:8px 12px;border-top:1px solid #EEF0F4}
+.adbtn{min-height:40px;padding:0 18px;border:1px solid var(--priD);border-radius:4px;background:#fff;color:var(--priD);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.adbtn:disabled{opacity:.5;cursor:default}
+.ntx{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.nt.open .ntx{display:block;overflow:visible}
+.ntb{display:block;min-height:32px;padding:0 6px;margin-left:-6px;border:0;background:none;color:var(--priD);font:inherit;font-size:12px;font-weight:700;text-decoration:underline;cursor:pointer}
+.ntb[hidden]{display:none}
+/* 2026-11-28 H: スマホ (<=600px) の出勤簿は 1 人 = 1 枚のカード。同じ input/select を grid で並べ替える (保存は data-f/data-o のまま・要素は二重に作らない)。PC・iPad (601px 以上) は横の表のまま */
+@media (max-width:600px){
+ .arh:not(.srh),.adh,.vrh,.vph{display:none!important}
+ .lks{display:inline}
+ .ar:not(.sr){display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:end;min-width:0;padding:10px;margin:8px;border:1px solid #C3C8D1;border-radius:6px}
+ .ar:not(.sr)>*{position:static;margin:0;padding:0;align-self:end;min-width:0}
+ .ar:not(.sr)>.ab{order:1;grid-column:span 1;align-self:center;font-size:18px}
+ .ar:not(.sr)>.ng{order:2;grid-column:span 3;align-self:center}
+ .ar:not(.sr)>.ng .ag{font-size:17px}
+ .ar:not(.sr) .f .lb{display:block}
+ .ar:not(.sr) .f select,.ar:not(.sr) .f input{height:36px;min-height:36px;font-size:13px}
+ .ar:not(.sr)>.f.sx{order:3}.ar:not(.sr) .k-tin{order:4}.ar:not(.sr) .k-tout{order:5}.ar:not(.sr) .k-chg{order:6}
+ .ar:not(.sr) .k-hair{order:7}.ar:not(.sr) .k-go{order:8}.ar:not(.sr) .k-back{order:9}.ar:not(.sr) .k-sougei{order:10}
+ .ar:not(.sr) .k-locker{order:11;grid-column:span 2}.ar:not(.sr) .k-dress{order:12;grid-column:span 2}.ar:not(.sr) .k-shoes{order:13;grid-column:span 2}.ar:not(.sr) .k-charger{order:14;grid-column:span 2}
+ .ar:not(.sr) .k-memo{order:15;grid-column:1/-1}
+ .ar:not(.sr) .k-h,.ar:not(.sr) .k-tanto,.ar:not(.sr) .k-area{order:16;flex-direction:row;align-items:baseline;gap:4px;align-self:start;font-size:11px;color:#5A6275}
+ .ar:not(.sr) .k-area{grid-column:span 2}
+ .ar:not(.sr) .k-h .lb,.ar:not(.sr) .k-tanto .lb,.ar:not(.sr) .k-area .lb{flex:none}
+ .ar:not(.sr) .k-h .ro,.ar:not(.sr) .k-tanto .ro,.ar:not(.sr) .k-area .ro{display:inline;height:auto;min-height:0;line-height:1.35;font-size:11px;color:#5A6275;white-space:normal;overflow:visible}
+ .ar:not(.sr)>.nt{order:20;grid-column:1/-1;width:auto;max-width:none;padding:2px 0 0;align-self:start}
+ .ar:not(.sr) .f.sg .sgt{display:block;line-height:12px;margin-top:1px}
+ /* 同伴・来店 */
+ .vr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;min-width:0;padding:8px 10px;align-items:end}
+ .vr .f select,.vr .f input,.vr .vx{height:36px;min-height:36px;font-size:13px}
+ .vr .f .lb,.ad .f .lb{display:block}
+ .vr>.f.k{min-width:0}
+ .vr>:nth-child(1){order:1}.vr>:nth-child(2){order:2;grid-column:span 2}.vr>:nth-child(7){order:3}
+ .vr>:nth-child(3){order:4}.vr>:nth-child(5){order:5}.vr>:nth-child(6){order:6;grid-column:span 2}.vr>:nth-child(4){order:7;grid-column:1/-1}
+ /* 追加出勤 */
+ .ad{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:6px;padding:8px 10px;align-items:end}
+ .ad .f select,.ad .f input{height:36px;min-height:36px;font-size:13px}
+ .ad>:nth-child(1){grid-column:1/-1}.ad>:nth-child(6),.ad>:nth-child(7){grid-column:span 2}
+ .sec.atsec .ar:not(.sr),.sec.atsec .vr,.sec.atsec .ad{min-width:0}
+}
 .tsub{margin:-4px 0 12px 24px}.tsub a{display:inline-block;font-size:14px;font-weight:700;color:var(--pri);padding:6px 0}
 .tcat{margin:12px 0;background:#fff;border:1px solid #C3C8D1;border-radius:12px}.tcat summary{cursor:pointer;list-style:none;padding:14px 16px;font-size:18px;font-weight:700;color:var(--pri)}
 .tcat summary::-webkit-details-marker{display:none}.tcat summary{position:relative;padding-right:44px}.tcat summary::after{content:'＋';position:absolute;right:16px;top:14px}.tcat[open] summary::after{content:'－'}
@@ -313,6 +356,13 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
  header.tday:not(.tsh) .hdx .ttab{padding:0 4px;white-space:nowrap}
  header.tday:not(.tsh) .hdx .at{min-height:34px}
 }
+/* 2026-11-28 スマホの店チップ (全店・RC・328・WAVE・花もみじ) を右で切らさず 1 行に収める */
+@media (max-width:640px){
+ .hdx .atabs{gap:4px}
+ .hdx .at{flex:1 1 auto;min-width:0;padding:2px 6px}
+ .hdx .at .an1{font-size:13px;white-space:nowrap}
+}
+@media (max-width:360px){.hdx .at{padding:2px 4px}.hdx .at .an1{font-size:12px}}
 /* 2026-11-28 シフト管理: 週の移動・3 タブ・店 (チップ) を濃紺の帯に入れる。表は残りの高さで縦にもスクロールし 見出しと名前の列が残る */
 .hdx .nav .t{flex:none;color:#fff;font-size:14px;white-space:nowrap;padding:0 6px}
 .hdx .sx{flex:0 0 auto;flex-direction:row;justify-content:center;align-items:center;gap:0;min-height:36px;padding:2px 18px;font-size:14px;font-weight:700;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:4px}
@@ -609,12 +659,12 @@ function attRender(r,msg,isErr){
     var sm=[];if(x.locker)sm.push('ロッカー'+x.locker);if(x.dress)sm.push('ドレス'+x.dress);if(x.shoes)sm.push('靴'+x.shoes);if(x.charger)sm.push('充電器'+x.charger);if(x.memo)sm.push('メモ: '+x.memo);
     return '<div class="ar'+(x.manual?' man':'')+(x.absent?' abs':'')+'" data-gen="'+esc(x.gen)+'">'+
       '<span class="ab">'+esc(x.ban)+'</span><span class="ng"><span class="ag'+(x.dohan?' dh':'')+'">'+esc(x.gen)+'</span>'+(x.dohan?'<span class="dc" title="同伴">'+dohanMark(x.dohan)+'</span>':'')+'</span>'+
-      '<label class="f sx"><span class="lb"></span>'+stSel+'</label>'+
-      '<div class="r2">'+f('t','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+f('t','変更','<input data-f="chg" data-o="'+esc(x.change)+'" value="'+esc(x.change)+'" list="dl_in" maxlength="8" autocomplete="off"'+dis+'>')+fd('h','勤務H','<span class="ro" title="出勤・退勤から自動計算">'+esc(x.hours)+'</span>')+fd('h','担当','<span class="ro" title="'+esc(x.tanto)+'">'+esc(x.tanto)+'</span>')+fd('h','方面','<span class="ro" title="'+esc(x.area)+'">'+esc(x.area)+'</span>')+fd('h','美容',hairCell)+'</div>'+
-      '<div class="r3">'+fd('sg','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+f('s','送迎額','<select data-f="sougei" data-o="'+esc(x.sougei)+'" data-num="1"'+dis+'>'+opts(SOUGEI_AMT,x.sougei)+'</select>')+'<button type="button" class="dtb">詳細 ▼</button></div>'+
-      '<div class="dtl">'+f('s','ロッカー',inp('locker',x.locker,20))+f('s','ドレス',inp('dress',x.dress,20))+f('s','靴',inp('shoes',x.shoes,20))+f('s','充電器',inp('charger',x.charger,20))+f('m','メモ',inp('memo',x.memo,100))+'</div>'+
+      '<label class="f sx"><span class="lb">状態</span>'+stSel+'</label>'+
+      '<div class="r2">'+f('t k-tin','出勤',inpT('tin',x.tin,x.arrive||x.shift,'dl_in'))+f('t k-tout','退勤',inpT('tout',x.tout,x.leaveW,'dl_out'))+f('t k-chg','変更','<input data-f="chg" data-o="'+esc(x.change)+'" value="'+esc(x.change)+'" list="dl_in" maxlength="8" autocomplete="off"'+dis+'>')+fd('h k-h','勤務H','<span class="ro" title="出勤・退勤から自動計算">'+esc(x.hours)+'</span>')+fd('h k-tanto','担当','<span class="ro" title="'+esc(x.tanto)+'">'+esc(x.tanto)+'</span>')+fd('h k-area','方面','<span class="ro" title="'+esc(x.area)+'">'+esc(x.area)+'</span>')+fd('h k-hair','美容',hairCell)+'</div>'+
+      '<div class="r3">'+fd('sg k-go','送迎 朝',goSel('go',x.go)+sgt(x.go,x.goT||x.arrive,x.goBin,x.goDrv))+fd('sg k-back','帰',goSel('back',x.back)+sgt(x.back,x.leaveW,x.backBin,x.backDrv))+f('s k-sougei','送迎額','<select data-f="sougei" data-o="'+esc(x.sougei)+'" data-num="1"'+dis+'>'+opts(SOUGEI_AMT,x.sougei)+'</select>')+'<button type="button" class="dtb">詳細 ▼</button></div>'+
+      '<div class="dtl">'+f('s k-locker','ロッカー',inp('locker',x.locker,20))+f('s k-dress','ドレス',inp('dress',x.dress,20))+f('s k-shoes','靴',inp('shoes',x.shoes,20))+f('s k-charger','充電器',inp('charger',x.charger,20))+f('m k-memo','メモ',inp('memo',x.memo,100))+'</div>'+
       (sm.length?'<div class="sum">'+esc(sm.join(' / '))+'</div>':'')+
-      (x.castNote||x.after?'<div class="nt" title="'+esc((x.after?'アフター ':'')+(x.castNote?'連絡: '+x.castNote:''))+'">'+(x.after?'<b>アフター</b> ':'')+(x.castNote?'<span class="nc">連絡</span> '+esc(x.castNote):'')+'</div>':'')+'</div>';
+      (x.castNote||x.after?'<div class="nt" title="'+esc((x.after?'アフター ':'')+(x.castNote?'連絡: '+x.castNote:''))+'"><div class="ntx">'+(x.after?'<b>アフター</b> ':'')+(x.castNote?'<span class="nc">連絡</span> '+esc(x.castNote):'')+'</div><button type="button" class="ntb" hidden>続き ▼</button></div>':'')+'</div>';
   };
   var salesRow=function(x){
     var nin=function(fld,val,max){return '<label class="f n"><span class="lb"></span><input data-f="'+fld+'" data-o="'+esc(val)+'" data-num="1" value="'+esc(val)+'" maxlength="'+max+'" inputmode="numeric" autocomplete="off"'+dis+'></label>';};
@@ -640,9 +690,10 @@ function attRender(r,msg,isErr){
   if(edit){
     var st=shown[0],nm=st.on.map(function(x){return x.gen;});
     h+='<div class="sec atsec" id="addsec"><h3>追加出勤 (手入力)　名前と出勤時刻を入れて「更新」</h3>';
-    h+='<div class="adh"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span><span>行き送迎</span><span>帰り送迎</span><span>ヘア時間</span><span>メモ</span></div>';
+    h+='<div class="adbar"><button type="button" class="adbtn" id="addbtn">＋ 追加出勤</button></div>'; // 2026-11-28 H: 最初はボタンだけ。押すたびに 1 行ずつ出る (最大 5 行)。行は最初から描いて隠すので、入力欄・attCollect・未保存の数え方は今のまま
+    h+='<div class="adh off"><span>源氏名 (在籍から選ぶか、直接入力)</span><span>出勤</span><span>退勤</span><span>行き送迎</span><span>帰り送迎</span><span>ヘア時間</span><span>メモ</span></div>';
     var adSel=function(a){return '<select data-a="'+a+'"><option value="">なし</option><option value="あり">あり</option></select>';};
-    for(var i=0;i<5;i++)h+='<div class="ad"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+f('s','行き送迎',adSel('go'))+f('s','帰り送迎',adSel('back'))+f('t','ヘア時間','<select data-a="hairT">'+opts(T_HAIR,'')+'</select>')+f('m','メモ','<input data-a="memo" maxlength="100" autocomplete="off">')+'</div>';
+    for(var i=0;i<5;i++)h+='<div class="ad off"><div class="f nmi"><span class="lb">源氏名 (在籍から選ぶか、直接入力)</span><input data-a="gen" list="dl_cast" maxlength="40" autocomplete="off"></div>'+f('t','出勤','<input data-a="tin" list="dl_in" maxlength="8" autocomplete="off">')+f('t','退勤','<input data-a="tout" list="dl_out" maxlength="8" autocomplete="off">')+f('s','行き送迎',adSel('go'))+f('s','帰り送迎',adSel('back'))+f('t','ヘア時間','<select data-a="hairT">'+opts(T_HAIR,'')+'</select>')+f('m','メモ','<input data-a="memo" maxlength="100" autocomplete="off">')+'</div>';
     h+='</div><datalist id="dl_cast">'+st.casts.map(function(g){return '<option value="'+esc(g)+'">';}).join('')+'</datalist>';
     // 同伴・来店 (同伴が上 → 席 VIP → 卓番 → ホール → 未定)
     var vs=st.on.filter(function(x){return x.dohan||x.visT||x.visN||x.keep||x.seat;});
@@ -686,6 +737,14 @@ function attRender(r,msg,isErr){
     else{if(t.value==='欠勤'||t.value==='当欠')t.value='';row.classList.remove('abs');}
     attDirty=true;};});
   [].forEach.call(document.querySelectorAll('.f.kd select'),function(sel){sel.addEventListener('change',function(){sel.classList.toggle('dh',sel.value==='同伴');});});
+  var ab=$('addbtn');if(ab)ab.onclick=function(){
+    var r=document.querySelector('#addsec .ad.off');if(!r)return;
+    r.classList.remove('off');var hd=document.querySelector('#addsec .adh');if(hd)hd.classList.remove('off');
+    if(!document.querySelector('#addsec .ad.off')){ab.disabled=true;ab.textContent='追加出勤は 5 行まで';}
+    var gi=r.querySelector('[data-a="gen"]');if(gi)gi.focus();
+  };
+  [].forEach.call(document.querySelectorAll('#att .ntb'),function(b){b.onclick=function(){var n=b.parentNode;n.classList.toggle('open');b.textContent=n.classList.contains('open')?'畳む ▲':'続き ▼';};});
+  ntWatch();
   [].forEach.call(document.querySelectorAll('.dtb'),function(b){b.onclick=function(){var row=b.closest('.ar');row.classList.toggle('open');b.textContent=row.classList.contains('open')?'詳細 ▲':'詳細 ▼';};});
   var ci=$('calcIn');if(ci)ci.addEventListener('input',function(){ // 出勤表 日別の電卓と同じ: 15%抜き -> 税10%抜き -> n 人割り (どれも百円未満切り捨て = ROUNDDOWN(x,-2))
     var v=parseInt(ci.value.normalize('NFKC').replace(/[,円\s]/g,''),10),rd=function(n){return Math.floor(n/100)*100;},fmt=function(n){return n.toLocaleString('ja-JP');};
@@ -693,6 +752,15 @@ function attRender(r,msg,isErr){
     $('calc1').textContent=ok?fmt(a):'';$('calc2').textContent=ok?fmt(b):'';
     [2,3,4,5].forEach(function(n){$('calcN'+n).textContent=ok?fmt(rd(Math.floor(b/n))):'';});
   });
+}
+function ntFit(){ // 連絡が 2 行に収まらない時だけ「続き」を出す (開いている間は「畳む」を残す)
+  [].forEach.call(document.querySelectorAll('#att .nt'),function(n){var x=n.querySelector('.ntx'),b=n.querySelector('.ntb');if(!x||!b)return;if(n.classList.contains('open')){b.hidden=false;return;}b.hidden=!(x.scrollHeight>x.clientHeight+1);});
+}
+function ntWatch(){ // 幅・フォント・タブの出し入れで 2 行に収まるかが変わるので、大きさが変わるたびに測り直す
+  if(window.__ntRO){try{window.__ntRO.disconnect();}catch(_){}window.__ntRO=null;}
+  ntFit();
+  if(window.ResizeObserver){var ro=new ResizeObserver(function(){ntFit();});[].forEach.call(document.querySelectorAll('#att .ntx'),function(x){ro.observe(x);});window.__ntRO=ro;}
+  else if(!window.__ntRz){window.__ntRz=1;window.addEventListener('resize',ntFit);}
 }
 function attCollect(){
   var p={rows:[],adds:[],visits:[]},seen={};
