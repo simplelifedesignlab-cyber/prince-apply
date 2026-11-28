@@ -5,7 +5,7 @@
 <meta name="theme-color" content="#1F2A44">
 <title>送迎</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
-<style>:root{--pri:#1F2A44;--priD:#2E4372;--priL:#E6E9F0;--bg:#F4F5F7;--line:#C3C8D1;--tx:#1a1a1a}
+<style>:root{--pri:#1F2A44;--priD:#2E4372;--priL:#E6E9F0;--bg:#F4F5F7;--line:#C3C8D1;--tx:#1a1a1a;--c-sougei:#E07B12;--c-sougeiD:#B45F06;--c-sougeiT:#FEF1E1;--hc:var(--c-sougei);--hcD:var(--c-sougeiD);--hcT:var(--c-sougeiT);--st-warn:#E3A04A;--st-warnT:#FDEBD3;--st-err:#D92D20;--st-ok:#12B76A;--st-ro:#8A92A6}
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
@@ -138,34 +138,83 @@ body{background:var(--bg)}
 .lr .dr{text-align:left;display:block}.lr .dr small{display:inline;margin-left:6px}
 .lr .rc{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end}
 .dtl{border:0;background:none;color:#6B7285;font-size:12px;text-decoration:underline;cursor:pointer;height:32px;padding:0 4px}
+
+/* 2026-11-28 色ナビ + 「?」ヘルプ (ui_spec) */
+.top{border-bottom:4px solid var(--hc)}
+.top .tw{border-left:5px solid var(--hc);padding-left:10px}
+.top .hq{margin-left:auto}
+.top .hq i{background:transparent;border-color:rgba(255,255,255,.8);color:#fff}
+.top .hq:hover i,.top .hq[aria-expanded=true] i{background:#fff;color:var(--pri);border-color:#fff}
+.tabs button.on{color:var(--pri);border-bottom-color:var(--hc);background:var(--hcT)}
+.nav .tb{border-color:var(--hc);color:var(--hcD)}
+.nav .r{gap:2px}
+.lh{border-left:4px solid var(--hc);padding-left:8px}
+.dt{border-left:5px solid var(--hc);margin:0 16px 10px;padding:0 0 0 12px}
+.big{background:var(--hcD)}
+.sseg button.on{background:var(--hcD)}
+.sheet .sh .t1{color:var(--hcD)}
+.sheet{border-top:4px solid var(--hc)}
+.sumMsg{display:flex;align-items:center;gap:2px}
+.sh>.hq{margin-left:auto}
+.dh .hq{margin-left:auto}
+.tip{display:flex;align-items:flex-start;gap:6px;margin:8px 16px 4px;padding:7px 4px 7px 12px;background:var(--hcT);border-left:4px solid var(--hc);border-radius:4px;font-size:13px;line-height:1.55;color:#33384a}
+.tip span{flex:1;min-width:0;padding-top:3px}
+.tip button{flex-shrink:0;width:32px;height:32px;border:0;background:none;font-size:20px;line-height:1;color:#6B7285;cursor:pointer;border-radius:4px}
+.rowhint{display:flex;align-items:center;gap:0;margin:2px 16px 0;font-size:12px;color:#6B7285}
+.lbq{display:flex;align-items:center;gap:0}
+.hq{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;border:0;background:none;cursor:pointer;vertical-align:middle;flex-shrink:0;-webkit-appearance:none;appearance:none;border-radius:50%}
+.hq i{display:flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--priD);font:700 12px/1 'Noto Sans JP',sans-serif;font-style:normal;pointer-events:none}
+.hq:hover i,.hq[aria-expanded=true] i{background:var(--pri);color:#fff;border-color:var(--pri)}
+.hq:focus-visible{outline:2px solid var(--hc);outline-offset:0}
+.hqp{position:fixed;z-index:60;left:8px;top:8px;width:280px;max-width:calc(100vw - 16px);background:#fff;border-radius:8px;border-left:4px solid var(--hc);box-shadow:0 0 0 1px var(--line),0 8px 24px rgba(31,42,68,.28);padding:10px 12px 10px 12px;font-size:13px;line-height:1.65;color:#1a1a1a;overflow-wrap:anywhere}
+.hqp b.t{display:block;font-size:14px;font-weight:900;color:var(--hcD);margin-bottom:3px}
+.hqp p{margin:0}.hqp p+p{margin-top:4px}
+.top .tb,.nav .tb{white-space:nowrap;flex-shrink:0}
+.top .tw small{white-space:nowrap}
+@media(max-width:360px){.top{gap:8px;padding-left:12px;padding-right:10px}.top .tw{padding-left:8px}.top .tw small{letter-spacing:.08em}.nav{padding-left:14px;padding-right:6px}.nav b{font-size:18px}.nav .r{gap:0}}
+.sd.today .n{background:var(--hcD)}
+.whoBar{border-left:4px solid var(--hc)}
+.whoBar select{min-width:0}
+@media(max-width:420px){.whoBar label{flex-shrink:1;line-height:1.25}.whoBar select{min-width:130px}}
+@media(max-width:360px){.whoBar{gap:4px;padding:10px 8px}.whoBar label{font-size:12px}}
+.lh .hq{margin:-6px 0}
+.lh{align-items:center}
+.kv span{display:flex;align-items:center}
+.kv .hq{margin:-6px 0}
+.fm .lbq label{flex:0 1 auto}
+@media (max-width:640px){.sd.today .n{background:none}}
 </style></head><body>
 <div class="page">
 <div id="hd">
-  <div class="top"><a class="tb" id="toPortal" href="../staff/" hidden>← 黒服ポータル</a><span class="tw"><small>PRINCE CHITOSE</small><h1>送迎</h1></span></div>
+  <div class="top"><a class="tb" id="toPortal" href="../staff/" hidden>← 黒服ポータル</a><span class="tw"><small>PRINCE CHITOSE</small><h1>送迎</h1></span><button type="button" class="hq" data-h="screen" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div>
   <div class="tabs" id="tabs"><button data-t="list">当日</button><button data-t="week">週間</button><button data-t="shift">週間シフト</button></div>
 </div>
 <!-- 当日 (一覧) -->
 <div id="vList" hidden>
-  <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button class="ib" id="lPrev" aria-label="前の日">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日">›</button></div></div>
-  <div class="whoBar"><label for="lDrv">ドライバー (あなたの名前)</label><select id="lDrv"></select></div>
+  <div class="tip" data-tip="list"><span>この画面でできること: 送迎の一覧を見て、乗せた子に「乗せた」(帰りは「送った」) を押します。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button type="button" class="hq" data-h="date" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><button class="ib" id="lPrev" aria-label="前の日">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日">›</button></div></div>
+  <div class="whoBar"><label for="lDrv">ドライバー (あなたの名前)</label><button type="button" class="hq" data-h="drv" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><select id="lDrv"></select></div>
   <div class="styErr" id="lErr" hidden>先に ドライバー (あなたの名前) を選んでください</div>
   <div id="lSum"></div>
   <div id="lNote"></div>
+  <div class="rowhint">札と印の見かた<button type="button" class="hq" data-h="btns" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div>
   <div id="lBody"><div class="msg">読み込み中...</div></div>
-  <div id="lWalk" hidden><div class="lh"><b>予定に無い子</b></div><div class="wsub">行き / 帰りを選んで、名前の頭文字を打つと候補が出ます。押すと、その便に入って「乗せた」「送った」になります</div><div class="wbox"><div class="sseg" id="wDir"><button type="button" data-d="go" class="on">行き</button><button type="button" data-d="back">帰り</button></div><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
+  <div id="lWalk" hidden><div class="lh"><b>予定に無い子</b><button type="button" class="hq" data-h="walk" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div><div class="wsub">行き / 帰りを選んで、名前の頭文字を打つと候補が出ます。押すと、その便に入って「乗せた」「送った」になります</div><div class="wbox"><div class="sseg" id="wDir"><button type="button" data-d="go" class="on">行き</button><button type="button" data-d="back">帰り</button></div><input id="wName" placeholder="例: あ" autocomplete="off" maxlength="30"><div class="sg" id="wSug"></div></div></div>
   <div class="upd" id="lUpd"></div>
 </div>
 <!-- 週間 (送迎の予定) -->
 <div id="vWeek" hidden>
-  <div class="nav"><b id="wTitle">&nbsp;</b><div class="r"><button class="ib" id="wPrev" aria-label="前の週">‹</button><button class="tb" id="wToday">今週</button><button class="ib" id="wNext" aria-label="次の週">›</button></div></div>
-  <div class="sdt">日を押すと、その日の一覧が開きます</div>
+  <div class="tip" data-tip="week"><span>この画面でできること: 1 週間の送迎の人数と、出勤するドライバーを見ます。日を押すと、その日の一覧が開きます。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="nav"><b id="wTitle">&nbsp;</b><div class="r"><button type="button" class="hq" data-h="weekmove" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><button class="ib" id="wPrev" aria-label="前の週">‹</button><button class="tb" id="wToday">今週</button><button class="ib" id="wNext" aria-label="次の週">›</button></div></div>
+  <div class="sdt">日を押すと、その日の一覧が開きます<button type="button" class="hq" data-h="wlegend" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div>
   <div class="dow" id="wDow"><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div><div>日</div></div>
   <div id="wBody"><div class="msg">読み込み中...</div></div>
   <div class="upd" id="wUpd"></div>
 </div>
 <!-- 週間シフト (ドライバー出勤) -->
 <div id="vShift" hidden>
-  <div class="nav"><b id="sTitle">&nbsp;</b><div class="r"><button class="ib" id="sPrev" aria-label="前の週">‹</button><button class="tb" id="sToday">今週</button><button class="ib" id="sNext" aria-label="次の週">›</button></div></div>
+  <div class="tip" data-tip="shift"><span>この画面でできること: 日付を押して、その日に出られるドライバーを選びます。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="nav"><b id="sTitle">&nbsp;</b><div class="r"><button type="button" class="hq" data-h="weekmove" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><button class="ib" id="sPrev" aria-label="前の週">‹</button><button class="tb" id="sToday">今週</button><button class="ib" id="sNext" aria-label="次の週">›</button></div></div>
   <div class="sdt">日付を押して、その日に出られるドライバーを選びます (朝 = 行き / 帰り)。過ぎた日は変えられません</div>
   <div class="dow" id="sDow"><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div><div>日</div></div>
   <div id="sBody"><div class="msg">読み込み中...</div></div>
@@ -173,11 +222,12 @@ body{background:var(--bg)}
 </div>
 <!-- 1 人の送迎 (処理の画面) -->
 <div id="vRow" hidden>
-  <div class="dh"><button class="back" id="rBack"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>一覧</button></div>
+  <div class="tip" data-tip="row"><span>この画面でできること: この子を乗せるドライバーを付け替えます。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="dh"><button class="back" id="rBack"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>一覧</button><button type="button" class="hq" data-h="screen" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div>
   <div class="dt"><b id="rName"></b><span class="s" id="rSub"></span></div>
   <div class="kv" id="rKv"></div>
   <div class="fm">
-    <label for="rDrv">ドライバー (付け替え)</label>
+    <div class="lbq"><label for="rDrv">ドライバー (付け替え)</label><button type="button" class="hq" data-h="reassign" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button></div>
     <select id="rDrv"></select>
     <div class="hint" id="rHint"></div>
     <button class="big" id="rSave" disabled>変更なし</button>
@@ -187,7 +237,7 @@ body{background:var(--bg)}
 </div>
 <!-- 出られるドライバーを選ぶ -->
 <div class="ov" id="ovSh" hidden><div class="sheet" role="dialog" aria-modal="true">
-  <div class="sh"><span><span class="t1" id="shT"></span><span class="t2">出られるものを押します (もう一度で取り消し)</span></span><button class="ib x" id="shClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+  <div class="sh"><span><span class="t1" id="shT"></span><span class="t2">出られるものを押します (もう一度で取り消し)</span></span><button type="button" class="hq" data-h="shsheet" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><button class="ib x" id="shClose" aria-label="閉じる"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
   <div id="shBody"></div>
   <button class="big" id="shOk">決定</button>
 </div></div>
@@ -270,7 +320,7 @@ function summaryHtml(r){
   var g=sumRow('行き',r.go,'乗せた'),b=sumRow('帰り',r.back,'送った'),rest=g.rest+b.rest,by={};
   [[r.go,'go'],[r.back,'back']].forEach(function(p){p[0].forEach(function(x){if(stOf(x)==='hm'){var k=x.rideBy||'ドライバー不明';(by[k]=by[k]||{go:0,back:0})[p[1]]++;}});});
   var names=Object.keys(by).sort(function(a,c){return (by[c].go+by[c].back)-(by[a].go+by[a].back)||(a<c?-1:1);});
-  return g.html+b.html+'<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+'</div>'+
+  return g.html+b.html+'<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+hq('sum')+'</div>'+
     '<div class="sumSty">'+(names.length?names.map(function(k){return esc(k)+'　行き '+by[k].go+'・帰り '+by[k].back;}).join(' / '):'ドライバー別: まだいません')+'</div>'+
     (STAFF?'<div class="sumSty">車 未定 '+r.undecided+'</div>':'');
 }
@@ -282,7 +332,7 @@ function renderList(){
   $('lWalk').hidden=listDay>today;
   $('lSum').innerHTML=summaryHtml(r);
   [['go','行き',r.go],['back','帰り',r.back]].forEach(function(s){
-    h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small></div>';
+    h+='<div class="lh"><b>'+s[1]+'</b><small>'+s[2].length+' 人</small>'+hq('dir_'+s[0])+'</div>';
     if(!s[2].length)h+='<div class="lnone">'+s[1]+'の送迎はありません</div>';
     s[2].slice().sort(sortX).forEach(function(x){h+=lineHtml(x,false);});
   });
@@ -378,13 +428,13 @@ function renderRow(){
   if(x.dohan)kv.push(['同伴','あり']);else if(x.visit)kv.push(['来店','あり']);
   if(x.after)kv.push(['アフター','あり']);
   if(x.by)kv.push(['最後に直した人',x.by]);
-  $('rKv').innerHTML=kv.map(function(p){return '<div><span>'+esc(p[0])+'</span><b>'+esc(p[1])+'</b></div>';}).join('');
+  $('rKv').innerHTML=kv.map(function(p){return '<div><span>'+esc(p[0])+(p[0]==='便'?hq('bin'):'')+'</span><b>'+esc(p[1])+'</b></div>';}).join('');
   var names=board.drivers.map(function(d){return d.name;});if(x.driver&&names.indexOf(x.driver)<0)names.unshift(x.driver);
   $('rDrv').innerHTML='<option value="">未定</option>'+names.map(function(n){var d=drvOf(n);return '<option value="'+esc(n)+'"'+(n===x.driver?' selected':'')+'>'+esc(n)+(d&&d.on?' ○':'')+(d&&d.no?' (車 NO.'+esc(carNo(d.no))+')':'')+'</option>';}).join('');
   $('rHint').textContent='○ = この日出勤の入力があるドライバー。保存すると出勤表の「送迎 当日」には 10 分以内に反映されます。';
   rChanged();
   var lw=board.lw||{};
-  $('rLw').innerHTML='<b>LINE WORKS</b>　<b class="'+(lw.sent?'ok':'no')+'">'+(lw.sent?'送った':'まだ')+'</b>'+(lw.at&&lw.known?' ('+esc(lw.at)+' の記録)':'')+'<br><small>'+esc(lw.text||'')+'</small><br><small>ここからは LINE WORKS へ送りません。送迎ログは 16:30 の自動送信が書くので、手で確定した分は「まだ」と出ることがあります。</small>';
+  $('rLw').innerHTML='<b>LINE WORKS</b>'+hq('lw')+'　<b class="'+(lw.sent?'ok':'no')+'">'+(lw.sent?'送った':'まだ')+'</b>'+(lw.at&&lw.known?' ('+esc(lw.at)+' の記録)':'')+'<br><small>'+esc(lw.text||'')+'</small><br><small>ここからは LINE WORKS へ送りません。送迎ログは 16:30 の自動送信が書くので、手で確定した分は「まだ」と出ることがあります。</small>';
 }
 function rChanged(){
   var x=rows[curKey],ch=x&&$('rDrv').value!==x.driver;
@@ -481,6 +531,7 @@ $('sToday').onclick=function(){shFrom=monOfS(today);loadShift();};
 function setTab(t){history.replaceState(null,'',location.pathname+location.search+'#t='+t);route();}
 [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){setTab(b.getAttribute('data-t'));};});
 function route(){
+  if(window.hqClose)window.hqClose();
   var m=/^#r=(.+)$/.exec(location.hash),t=/^#t=(list|week|shift)$/.exec(location.hash);
   $('ovSh').hidden=true;
   ['vList','vWeek','vShift','vRow'].forEach(function(id){$(id).hidden=true;});
@@ -500,6 +551,71 @@ function route(){
   if(tab==='list')loadList();else if(tab==='week')loadWeek();else loadShift();
 }
 window.addEventListener('popstate',route);
+var HELP={
+ "screen_list": "当日 (その日の送迎の一覧)\n「行き」(お迎え) と「帰り」(お送り) に分かれ、時刻の早い順に並びます。\n乗せた子に「乗せた」(帰りは「送った」) を押します。\n押す前に、上の「ドライバー」で自分の名前を選びます。",
+ "screen_week": "週間 (送迎の予定)\n日ごとに、行き・帰りの人数と、出勤するドライバーが出ます。\n赤い「未定」は、ドライバーが決まっていない人数です。\n日を押すと、その日の一覧が開きます。",
+ "screen_shift": "週間シフト (ドライバーの出勤)\n日付を押して、その日に出られるドライバーを選びます。朝 = 行き、帰り = 帰りの送迎です。\n過ぎた日は変えられません。\n選んだら「決定」を押すと保存されます。",
+ "screen_row": "1 人の送迎\nここでは、乗せるドライバーの付け替えができます。\n「保存する」を押すと反映されます。出勤表の「送迎 当日」には 10 分以内に反映されます。\nLINE WORKS へは、ここからは送りません。",
+ "date": "日付を動かす\n‹ で前の日、› で次の日、「今日」で今日に戻ります。\n日付が変わるのは朝 5 時です (朝 5 時までは前の日として扱います)。",
+ "weekmove": "週を動かす\n‹ で前の週、› で次の週、「今週」で今週に戻ります。\n月曜から日曜までの 1 週間が出ます。",
+ "drv": "ドライバー (あなたの名前)\n「乗せた」「送った」を押す時や、予定に無い子を足す時に、誰が乗せたかを記録するので、先に選びます。\n1 回選ぶと、この端末が覚えます。\n名前の ○ は、その日の出勤の入力があるドライバーです。",
+ "sum": "上の数字の見かた\n「行き 予定」はその便の人数です。予定 ＝ 乗せた (送った) ＋ キャンセル ＋ まだ。\n「まだ」が 0 になれば、全員押し終わりです。\nその下に、ドライバーごとの行き・帰りの人数が出ます。",
+ "btns": "札と印の見かた\n「乗せた」(帰りは「送った」) を押すと緑になり、もう一度押すと元に戻ります。「キャンセル」は乗らなかった子 (橙) です。\n印: 同伴 / 来店 / アフター / 予定外 (予定に無いのに乗せた子)。「迎え」は、お迎えの時刻です。\n赤い「ドライバー未定」は、まだ決まっていません。「車 NO.」はそのドライバーの車の番号です。\n「詳細」(黒服の画面だけ) から、ドライバーを付け替えます。",
+ "dir_go": "行き (お迎え)\n出勤する子を、乗る場所 (自宅など) まで迎えに行く送迎です。\n時刻は、お迎えの時刻があればそれ、無ければ到着希望の時刻です。",
+ "dir_back": "帰り (お送り)\n仕事が終わった子を、送り先まで送る送迎です。時刻は退勤の時刻です。\n「便」= まとめて送る時間のまとまり (1:00・1:30・アフターなど)。\n「店スタッフ」の便は店のスタッフが送るので、ドライバーは要りません。",
+ "walk": "予定に無い子\n予定に入っていない子を乗せた時に使います。行き / 帰りを選び、名前の最初の文字を打つと、候補が出ます。\n候補を押すと、その便に入って、すぐ「乗せた」「送った」になります。\n先にドライバーを選びます。今日までの日だけ使えます。",
+ "wlegend": "週間の見かた\n「行き 3 / 帰り 5」は、その日の人数です。\n赤い「未定 N」は、ドライバーが決まっていない人数。「ドライバー決定済み」は全員決まっています。\n濃い札は、その日に出勤するドライバーです (朝 = 行き・帰 = 帰り)。",
+ "shsheet": "出られるドライバーを選ぶ\nドライバーごとに、出られる方を押します (朝 = 行き / 帰り)。もう一度押すと取り消しです。\n両方とも外すと、その日は出勤なしになります。\n「決定」を押すと保存されます。",
+ "reassign": "ドライバーの付け替え\nこの子を乗せるドライバーを選び直します。「未定」にもできます。\n○ は、その日の出勤の入力があるドライバーです。\n選んだら「保存する」を押します (変えていない時は押せません)。",
+ "bin": "便と順\n便 = まとめて送る時間のまとまりです。「未定」は、まだ便が決まっていません。\n順 = その便の中の順番です。",
+ "lw": "LINE WORKS の状態\n送迎の連絡を LINE WORKS へ送ったかどうかの記録です。\n16:30 の自動送信より前や、手で直した分は「まだ」と出ることがあります。\nここからは LINE WORKS へ送りません。"
+};
+window.hqScreen=function(){return $('vRow').hidden?'screen_'+(!$('vWeek').hidden?'week':!$('vShift').hidden?'shift':'list'):'screen_row';};
+
+// ---------- 色ナビ + 「?」ヘルプ (2026-11-28) ----------
+function hq(k){return '<button type="button" class="hq" data-h="'+k+'" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button>';}
+(function(){
+  var pop=null,cur=null;
+  function close(){if(pop&&pop.parentNode)pop.parentNode.removeChild(pop);pop=null;if(cur){try{cur.setAttribute('aria-expanded','false');}catch(e){}cur=null;}}
+  function keyOf(b){var k=b.getAttribute('data-h');return k==='screen'&&window.hqScreen?window.hqScreen():k;}
+  function place(){
+    if(!pop||!cur)return;
+    if(!document.body.contains(cur)){close();return;}
+    var r=cur.getBoundingClientRect(),vw=document.documentElement.clientWidth,vh=window.innerHeight;
+    if(r.bottom<0||r.top>vh){close();return;}
+    var w=pop.offsetWidth,h=pop.offsetHeight,l=Math.max(8,Math.min(r.left+r.width/2-w/2,vw-w-8)),t=r.bottom+4;
+    if(t+h>vh-8&&r.top-h-4>=8)t=r.top-h-4;
+    t=Math.max(8,Math.min(t,vh-h-8));
+    pop.style.left=l+'px';pop.style.top=t+'px';
+  }
+  function open(b){
+    close();
+    var s=HELP[keyOf(b)];if(!s)return;
+    var p=s.split('\n');
+    pop=document.createElement('div');pop.className='hqp';pop.setAttribute('role','note');
+    pop.innerHTML='<b class="t">'+esc(p[0])+'</b>'+p.slice(1).map(function(x){return '<p>'+esc(x)+'</p>';}).join('');
+    document.body.appendChild(pop);cur=b;b.setAttribute('aria-expanded','true');place();
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest?e.target.closest('.hq'):null;if(!b)return;
+    e.preventDefault();e.stopPropagation();
+    if(b===cur){close();return;}open(b);
+  },true);
+  document.addEventListener('pointerdown',function(e){
+    if(!pop||pop.contains(e.target))return;
+    var b=e.target.closest?e.target.closest('.hq'):null;if(b&&b===cur)return;close();
+  },true);
+  document.addEventListener('keydown',function(e){if((e.key==='Escape'||e.key==='Esc')&&pop){var b=cur;close();try{b.focus();}catch(x){}}});
+  window.addEventListener('resize',place);window.addEventListener('scroll',place,true);
+  window.hqClose=close;
+})();
+[].forEach.call(document.querySelectorAll('.hq'),function(b){var s=HELP[b.getAttribute('data-h')];if(s)b.setAttribute('aria-label',s.split('\n')[0]+' のヘルプ');});
+[].forEach.call(document.querySelectorAll('.tip'),function(t){
+  var k='ptip_sougei_'+t.getAttribute('data-tip');
+  if(lsGet(k)==='1')t.hidden=true;
+  t.querySelector('button').onclick=function(){t.hidden=true;lsSet(k,'1');};
+});
+
 route();
 </script>
 </body></html>
