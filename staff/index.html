@@ -563,7 +563,7 @@ var HELP={
  visit:'同伴・来店\n上の行: 出勤表にある同伴・来店の予定です。種類・時刻・客名・人数・席/卓番を直して「更新」で保存します。「消す」を押すと、その行の時刻・客名・人数・席を空にします。\n下の 3 行は手入力です (出勤の人から名前を選びます)。\n席・卓番を入れると、キャストの入力で上書きされなくなります。',
  salesIn:'売上 (花もみじだけ)\n本指・場内・同伴本数・売上①〜⑩ に、数字だけを入れて「更新」で保存します。\n下の電卓は見るだけで、保存されません (伝票合計から 15%抜き → 税 10%抜き → 人数割りを出します)。',
  slPane:'美容室の予約\n縦=時間、横=美容師の枠です。名前の札を押すと「対応した / 来なかった / キャンセル」を選べます (対応した時は担当の美容師を選びます)。「空き」を押すと人を入れられます。\n操作はその場で保存されます。上の数字は 時間指定・指定なし・対応済・来なかった・空き の数です。',
- sgPane:'送迎の割り振り\n「行き」「帰り」を切り替えて、人ごとのドライバーを選びます。\n変えた行は黄色になり、下の「更新」で保存されます (出勤表の「送迎 当日」シートには 10 分以内に反映)。\n赤い「未定」=ドライバーがまだ決まっていません。LINE WORKS へは、ここからは送りません。',
+ sgPane:'送迎の割り振り\n「行き」「帰り」を切り替えて、人ごとのドライバーを選びます。\n変えた行は黄色になり、下の「更新」で保存されます (出勤表の「送迎 当日」シートには 10 分以内に反映)。\n赤い「未定」=ドライバーがまだ決まっていません。LINE WORKS へは、ここからは送りません。\n「方面未入力」=その子の方面が出勤表の「キャスト」に入っていないので、自動の割り振りに乗りません。方面を入れると次から自動で入ります (今は、ここで手で選べます)。',
  shHead:'シフト管理\n◀ ▶ で週を移動します。\nキャスト=週のシフトを選んで入れる / ドライバー=出勤の○を押す / 美容師=美容室の画面で入れます。店の名前で店を切り替えます。\n変更があると未保存の件数が出て、移動する時は確認が出ます。',
  shLegend:'色の意味\n白=キャストが入れた予定 / オレンジ=今あなたが変えた所 (まだ保存していません) / 灰=休み / 黄=未定 / 赤=当欠 / ✔=出勤済み。\n今日の営業日より前の日は見るだけです。',
  shSave:'更新\nオレンジの所だけを保存します。直せるのは今日の営業日以降の日だけです。\n空には戻せません (戻したい時は元の値を選び直します)。入れられなかった所は赤い枠にまとめて出て、オレンジのまま残ります。',
@@ -1140,7 +1140,7 @@ function sgRender(){
   var rowHtml=function(x,ro){
     var k=sgKey(x),chg=sgPend[k]!==undefined,tm=sgDir==='go'?(x.pick?x.pick+' 迎え':(x.time||'')):(x.time||''),pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
     var safe=esc(k);
-    return '<div class="sgr'+(chg?' chg':'')+(x.cancel?' cx':'')+'"><span class="sgn"><span class="ab">'+esc(x.ban)+'</span><b class="ag'+(x.dohan?' dh':'')+'">'+esc(x.name)+'</b>'+(x.visit&&!x.dohan?'<span class="sgv">来店</span>':'')+'<span class="sgs">'+esc(x.shop)+'</span></span><span class="sgt">'+esc(tm||'—')+'</span><span class="sgb">'+esc(x.bin||'便 未定')+(x.order?' 順'+esc(x.order):'')+'</span><span class="sgp">'+esc(pl)+'</span>'+
+    return '<div class="sgr'+(chg?' chg':'')+(x.cancel?' cx':'')+'"><span class="sgn"><span class="ab">'+esc(x.ban)+'</span><b class="ag'+(x.dohan?' dh':'')+'">'+esc(x.name)+'</b>'+(x.visit&&!x.dohan?'<span class="sgv">来店</span>':'')+'<span class="sgs">'+esc(x.shop)+'</span></span><span class="sgt">'+esc(tm||'—')+'</span><span class="sgb">'+esc(x.bin||'便 未定')+(x.order?' 順'+esc(x.order):'')+(nodrv(x)&&!x.area&&!x.trial&&!x.extra&&!x.cancel?' <span class="un">方面未入力</span>':'')+'</span><span class="sgp">'+esc(pl)+'</span>'+
       (ro?'<span class="sgx">'+esc(x.cancel)+' (送迎なし)</span>':'<select data-k="'+safe+'" class="sgsel'+(nodrv(x)?' un':'')+'">'+optHtml(sgEff(x))+'</select>')+'</div>';
   };
   var head='<div class="sgr sgh"><span>店番 / 源氏名</span><span>時刻</span><span>便</span><span>乗る場所 (町名まで)</span><span>ドライバー</span></div>';

@@ -305,7 +305,7 @@ function lineHtml(x,cx){
   var tm=x.dir==='go'?(x.pick||x.time||'—'):(x.time||'—'),tmS=x.dir==='go'&&x.pick?'迎え':'';
   var pl=x.place==='自宅'?('自宅'+(x.town?' '+x.town:'')):(x.place||'');
   var d=drvOf(x.driver),st=stOf(x);
-  var dr=cx?'<span class="dr">送迎なし</span>':x.ride?'<span class="dr">'+esc(x.rideBy||'')+(x.rideAt?'<small>'+esc(x.rideAt)+'</small>':'')+'</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定</span>';
+  var dr=cx?'<span class="dr">送迎なし</span>':x.ride?'<span class="dr">'+esc(x.rideBy||'')+(x.rideAt?'<small>'+esc(x.rideAt)+'</small>':'')+'</span>':x.driver?'<span class="dr">'+esc(x.driver)+(d&&d.no?'<small>車 NO.'+esc(carNo(d.no))+'</small>':'')+'</span>':x.bin==='店スタッフ'&&x.dir==='back'?'<span class="dr">店スタッフ</span>':'<span class="dr un">ドライバー未定'+(!x.area&&!x.trial&&!x.extra&&!x.cancel?'<small>方面未入力</small>':'')+'</span>';
   var main='<span class="tm">'+esc(tm)+(tmS?'<small>'+tmS+'</small>':'')+'</span><span class="fl"><span class="nm"><b>'+esc(x.name)+'</b>'+tags+'</span><span class="sb">'+esc(x.shop)+(x.ban?' '+esc(x.ban)+'番':'')+(pl?' · '+esc(pl):'')+(x.bin?' · '+esc(x.bin):'')+'</span>'+dr+'</span>';
   var rc=cx?'':'<span class="rc">'+btnsHtml(x)+(STAFF&&!x.extra?'<button type="button" class="dtl" aria-label="'+esc(x.name)+' の詳細">詳細</button>':'')+'</span>';
   return '<div class="lr'+(cx?' cx':(st==='hm'?' d':st==='cl'?' n':''))+'" data-k="'+esc(rkey(x))+'">'+main+rc+'</div>';
