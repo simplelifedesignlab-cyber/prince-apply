@@ -458,6 +458,7 @@ header:not([data-v]) h1::before,header[data-v=""] h1::before,header[data-v="rost
 header .hq{background:transparent;border-color:rgba(255,255,255,.6);color:#fff}
 header .hq:hover,header .hq[aria-expanded="true"]{background:#fff;color:#1F2A44;border-color:#fff}
 .hdx .nav .hq{margin-left:2px}
+@media (max-width:640px){.hdx .nav{min-width:0}.hdx .nav .hq::after{left:auto;right:0;transform:translateY(-50%)}} /* 2026-11-29 iPhone 375: タップ範囲 32px が 20px の丸の外へ 6px はみ出して横スクロールが出た。右端は内側へ寄せる (見た目は変えない) */
 .hdx .atabs .hq{display:none;align-self:center}
 @media (min-width:641px){.hdx .atabs .hq{display:inline-flex}}
 .arh .hq{margin-left:3px;vertical-align:-5px}
