@@ -375,6 +375,24 @@ header.tday #back{order:4;min-height:36px;padding:4px 12px}
 .hdx .sx{flex:0 0 auto;flex-direction:row;justify-content:center;align-items:center;gap:0;min-height:36px;padding:2px 18px;font-size:14px;font-weight:700;background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:4px}
 .hdx .sx.on{background:#fff;color:var(--pri);border-color:#fff}
 .shg th{z-index:2}
+/* 月の入力 (2026-11-29) */
+.shmb{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 8px}
+.shmt{display:flex;border:2px solid var(--pri);border-radius:6px;overflow:hidden}
+.shmm{min-height:40px;min-width:64px;font:inherit;font-size:15px;font-weight:700;border:0;background:#fff;color:var(--priD);cursor:pointer}
+.shmm.on{background:var(--pri);color:#fff}
+.shmn{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.shmn[hidden]{display:none}
+.shmn b{font-size:16px;min-width:84px;text-align:center}
+.shmn .nb{min-height:40px;min-width:44px;border-radius:4px}
+.shcp{min-height:40px;padding:0 14px;font:inherit;font-size:14px;font-weight:700;border:1px solid var(--pri);border-radius:4px;background:#fff;color:var(--priD);cursor:pointer}
+.card.shm{padding:0;max-height:calc(100vh - 330px);max-height:calc(100dvh - 330px);min-height:200px;overflow:auto}
+.shgm{min-width:0;width:max-content}.shgm th,.shgm td{padding:2px 1px;text-align:center}.shgm th{font-size:12px;line-height:1.2;min-width:54px}.shgm th:first-child{min-width:92px}
+.shgm td.nm{position:sticky;left:0;background:#fff;text-align:left;z-index:1;box-shadow:1px 0 0 #C3C8D1}
+.shgm .shs{min-width:52px;width:54px;min-height:30px;font-size:12px;padding:0 2px}
+.shgm th.dsat{color:#1565c0}.shgm th.dsun{color:#c62828}
+.shgm td.c-on,.shgm td.c-off,.shgm td.c-und{font-size:12px}
+.shs.cbs,.shgm td.cbs{background-color:#b6dcf2}
+#shmo>.cnt{font-size:14px;margin:0 2px 4px}
+@media (max-width:640px){.card.shm{max-height:calc(100vh - 380px);max-height:calc(100dvh - 380px)}}
 .card.shc{max-height:calc(100vh - 292px);max-height:calc(100dvh - 292px);min-height:200px;overflow:auto}
 #shp-cast>.cnt{font-size:14px;margin:0 2px 4px}
 #shp-cast .abar{margin-top:6px}
@@ -571,7 +589,7 @@ var HELP={
  salesIn:'売上 (花もみじだけ)\n本指・場内・同伴本数・売上①〜⑩ に、数字だけを入れて「更新」で保存します。\n下の電卓は見るだけで、保存されません (伝票合計から 15%抜き → 税 10%抜き → 人数割りを出します)。',
  slPane:'美容室の予約\n縦=時間、横=美容師の枠です。名前の札を押すと「対応した / 来なかった / キャンセル」を選べます (対応した時は担当の美容師を選びます)。「空き」を押すと人を入れられます。\n操作はその場で保存されます。上の数字は 時間指定・指定なし・対応済・来なかった・空き の数です。',
  sgPane:'送迎の割り振り\n「行き」「帰り」を切り替えて、人ごとのドライバーを選びます。\n変えた行は黄色になり、下の「更新」で保存されます (出勤表の「送迎 当日」シートには 10 分以内に反映)。\n赤い「未定」=ドライバーがまだ決まっていません。LINE WORKS へは、ここからは送りません。\n「方面未入力」=その子の方面が出勤表の「キャスト」に入っていないので、自動の割り振りに乗りません。方面を入れると次から自動で入ります (今は、ここで手で選べます)。',
- shHead:'シフト管理\n◀ ▶ で週を移動します。\nキャスト=週のシフトを選んで入れる / ドライバー=出勤の○を押す / 美容師=美容室の画面で入れます。店の名前で店を切り替えます。\n変更があると未保存の件数が出て、移動する時は確認が出ます。',
+ shHead:'シフト管理\n◀ ▶ で週を移動します。キャストのタブの「週 / 月」で、月の表 (基本シフトを月の初めに入れる画面) に切り替えられます。月の表で入れた値は、キャストのシフト入力の初期値になり、あとで「基本」として残ります (キャストが変えた日は水色)。\nキャスト=週のシフトを選んで入れる / ドライバー=出勤の○を押す / 美容師=美容室の画面で入れます。店の名前で店を切り替えます。\n変更があると未保存の件数が出て、移動する時は確認が出ます。',
  shLegend:'色の意味\n白=キャストが入れた予定 / オレンジ=今あなたが変えた所 (まだ保存していません) / 灰=休み / 黄=未定 / 赤=当欠 / ✔=出勤済み。\n今日の営業日より前の日は見るだけです。',
  shSave:'更新\nオレンジの所だけを保存します。直せるのは今日の営業日以降の日だけです。\n空には戻せません (戻したい時は元の値を選び直します)。入れられなかった所は赤い枠にまとめて出て、オレンジのまま残ります。',
  shDrv:'ドライバー出勤\n○を押すと出勤、もう一度押すと取消です。\n薄い○は、送迎の予定にその人がいる日 (候補)。押すと出勤に確定します。',
@@ -1293,7 +1311,7 @@ function dayBtns(w){
 // ---- シフト管理 (2026-11-28): 黒服がキャストの週シフトを入れる。キャスト = 週表のセルが select (今日の営業日以降) / ドライバー = 送迎の週表 / 美容師 = 美容室の画面へ ----
 // SHIFT_OPTS は cast-app / staff-portal Code.js と同じ値 (休み・未定・19:00〜24:00 の 30 分刻み)
 var SHIFT_OPTS=['休み','未定'].concat((function(){var a=[];for(var m=19*60;m<=24*60;m+=30)a.push(pad(Math.floor(m/60))+':'+pad(m%60));return a;})());
-var SHS={chg:{},w:null,tab:'cast',busy:false,errs:[]};
+var SHS={chg:{},w:null,tab:'cast',busy:false,errs:[],mode:'week',m:null,ym:'',cp:null}; // mode = 週 / 月 (2026-11-29 基本シフト: 月の表で入れた値も 基本 になる)
 function shN(){return Object.keys(SHS.chg).length;}
 function shDirty(){return !!$('shgrid')&&shN()>0;}
 function shGuard(){return !shDirty()||window.confirm('保存していない変更があります。捨てて移動しますか？');}
@@ -1331,6 +1349,91 @@ function shHead(){ // 2026-11-28 H「上部を使いすぎ」: 週の移動・3 
   $('hdx').hidden=false;var h=document.querySelector('header');h.classList.add('tday','tsh');
   $('pw').onclick=function(){shMv(-7);};$('nw').onclick=function(){shMv(7);}; // 読み込み前・失敗時も押せる (読み込み後は shBind が付け直す)
 }
+// ---- 月の入力 (2026-11-29 H「基本シフト」): 黒服が月の初めに基本のシフトを入れる画面。値は週の表と同じ (SHIFT_OPTS)・保存は同じ setCastShifts (出勤 と 基本 の両方に書く)。水色 = キャストが基本から変えた日 ----
+function shModeBar(){
+  return '<div class="shmb"><div class="shmt" role="group" aria-label="週と月">'+[['week','週'],['month','月']].map(function(t){return '<button type="button" class="shmm'+(SHS.mode===t[0]?' on':'')+'" data-shm="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+    '<span class="shmn"'+(SHS.mode==='month'?'':' hidden')+'><button type="button" class="nb" id="shmp" aria-label="前の月">◀</button><b id="shmy">'+shYmLabel()+'</b><button type="button" class="nb" id="shmx" aria-label="次の月">▶</button><button type="button" class="shcp" id="shcopy">前の月をコピー</button></span></div>';
+}
+function shYmLabel(){var p=(SHS.ym||weekStart.slice(0,7)).split('-');return p[0]+'年'+(+p[1])+'月';}
+function shMonthShift(ym,n){var p=ym.split('-'),d=new Date(+p[0],+p[1]-1+n,1,12);return d.getFullYear()+'-'+pad(d.getMonth()+1);}
+function shMEff(c,d){var x=c.days[d],o=x?x.shift:'',ch=SHS.chg[c.id+'|'+d];return ch?ch.shift:o;}
+function shMCls(cur,chg,base){return 'shs'+(chg?' chg':cur==='休み'?' off':cur==='未定'?' und':(base&&cur&&base!==cur?' cbs':''));}
+var SHOPT_={};
+function shOptsHtml(cur){ // 選んだ値ごとに 1 度だけ作る (月の表は select が数百個)
+  var k=cur||'';if(SHOPT_[k])return SHOPT_[k];
+  var opts=SHIFT_OPTS.slice();if(cur&&opts.indexOf(cur)<0)opts.unshift(cur);
+  return SHOPT_[k]='<option value=""'+(cur?'':' selected')+'></option>'+opts.map(function(o){return '<option value="'+esc(o)+'"'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('');
+}
+function shMCell(c,d,m){
+  var x=c.days[d.date],s=x?x.shift:'',b=x?x.base:'';
+  var editable=d.date>=m.biz&&d.date<=m.last&&c.id;
+  if(!editable){
+    if(!s)return '<td></td>';
+    if(s==='休み')return '<td class="c-off">休</td>';
+    if(s==='未定')return '<td class="c-und">未</td>';
+    return '<td class="c-on'+(b&&b!==s?' cbs':'')+'">'+esc(s)+'</td>';
+  }
+  var k=c.id+'|'+d.date,ch=SHS.chg[k],cur=ch?ch.shift:s;
+  return '<td><select class="'+shMCls(cur,!!ch,b)+'" data-id="'+esc(c.id)+'" data-g="'+esc(c.gen)+'" data-d="'+d.date+'" data-o="'+esc(s)+'" data-b="'+esc(b)+'">'+shOptsHtml(cur)+'</select></td>';
+}
+function shMonthInner(){
+  var m=SHS.m;
+  if(!m||m.ym!==SHS.ym)return '<div class="msg" style="padding:12px">読み込み中...</div>';
+  var head='<tr><th>名前</th>'+m.days.map(function(d){return '<th class="'+(d.dow==='土'?'dsat':d.dow==='日'?'dsun':'')+'">'+d.d+'<br>'+d.dow+'</th>';}).join('')+'</tr>';
+  var rows=m.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td>'+m.days.map(function(d){return shMCell(c,d,m);}).join('')+'</tr>';}).join('');
+  var sum='<tr class="sum"><td class="nm">出勤人数</td>'+m.days.map(function(d,i){return '<td id="shmsum'+i+'"></td>';}).join('')+'</tr>';
+  return '<div class="card sc shm"><table class="shg shgm" id="shmgrid">'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+
+    '<div class="upd shl"><i style="background:#fff;border:1px solid #C3C8D1"></i>白＝基本のまま　<i style="background:#b6dcf2"></i>水色＝キャストが基本から変えた日　<i style="background:#FDEBD3"></i>オレンジ＝黒服が今変えた所 (保存すると基本になります)　<i style="background:#E0E0E0"></i>灰＝休み　<i style="background:#FFF3B0"></i>黄＝未定　(今日の営業日から60日先まで入れられます)</div>';
+}
+function shMSums(){
+  var m=SHS.m;if(!m||m.ym!==SHS.ym)return;
+  m.days.forEach(function(d,i){
+    var n=0;m.casts.forEach(function(c){if(/^\d\d:\d\d$/.test(shMEff(c,d.date)))n++;});
+    var e=$('shmsum'+i);if(e)e.textContent=n;
+  });
+}
+function shMLoad(){
+  var ym=SHS.ym,st=store;
+  api('getMonthShift',[st,ym]).then(function(m){
+    if(SHS.ym!==ym||store!==st||!$('shmo'))return; // 読んでいる間に月・店が変わった
+    SHS.m=m;$('shmo').innerHTML=shMonthInner();shMBind();shUpd();shFit();
+  }).catch(function(e){if($('shmo'))$('shmo').innerHTML='<div class="msg" style="padding:12px;color:#b71c1c">'+esc(e.message||String(e))+'</div>';});
+}
+function shMBind(){
+  var g=$('shmgrid');if(!g)return;
+  g.onchange=function(ev){
+    var sel=ev.target;if(!sel||sel.tagName!=='SELECT')return;
+    var id=sel.getAttribute('data-id'),d=sel.getAttribute('data-d'),o=sel.getAttribute('data-o'),b=sel.getAttribute('data-b'),k=id+'|'+d,v=sel.value;
+    if(v===o||!v)delete SHS.chg[k];else SHS.chg[k]={id:id,gen:sel.getAttribute('data-g'),date:d,shift:v};
+    if(!v)sel.value=o; // 空には戻せない (週の表と同じ)
+    sel.className=shMCls(sel.value,!!SHS.chg[k],b);
+    shUpd();
+  };
+}
+function shMRe(){$('shmo').innerHTML=shMonthInner();shMBind();shUpd();shFit();}
+// 前の月の同じ曜日 (28 日前・同じ月に入る 29〜31 日は 35 日前) の 基本 (無ければ出勤) を、空の所だけ入れる。保存はしない
+function shMCopy(){
+  var m=SHS.m;if(!m||m.ym!==SHS.ym||SHS.busy)return;
+  var pym=shMonthShift(m.ym,-1);
+  SHS.busy=true;shUpd();setMsg2('前の月を読んでいます...',false);
+  api('getMonthShift',[store,pym]).then(function(pm){
+    SHS.busy=false;
+    if(SHS.ym!==m.ym)return;
+    var pby={},n=0;pm.casts.forEach(function(c){if(c.id)pby[c.id]=c;});
+    m.casts.forEach(function(c){
+      var pc=c.id&&pby[c.id];if(!pc)return;
+      m.days.forEach(function(d){
+        if(d.date<m.biz||d.date>m.last||shMEff(c,d.date))return; // 入れられない日・もう入っている所は触らない
+        var sd=parse(d.date);sd.setDate(sd.getDate()-28);var sk=ymd(sd);
+        if(sk.slice(0,7)===m.ym){sd.setDate(sd.getDate()-7);sk=ymd(sd);}
+        var x=pc.days[sk];if(!x)return;
+        var v=x.base||x.shift;if(!v||v==='未定'||SHIFT_OPTS.indexOf(v)<0)return;
+        SHS.chg[c.id+'|'+d.date]={id:c.id,gen:c.gen,date:d.date,shift:v};n++;
+      });
+    });
+    shMRe();setMsg2(n?'前の月から '+n+' 件コピーしました (まだ保存していません。「更新」で保存)':'コピーできる所がありませんでした (空の日が無いか、前の月に入力がありません)',!n);
+  }).catch(function(e){SHS.busy=false;shUpd();setMsg2(e.message||String(e),true);});
+}
 function shInner(w){
   var biz=bizDay(),miss=w.casts.filter(function(c){return !c.submitted;}).length;
   var rows=w.casts.map(function(c){return '<tr><td class="nm">'+esc(c.gen)+'</td>'+w.days.map(function(d){return shCell(c,d,biz);}).join('')+'</tr>';}).join('');
@@ -1339,16 +1442,19 @@ function shInner(w){
   var legend='<div class="upd shl"><i style="background:#fff;border:1px solid #C3C8D1"></i>白＝キャストの入力　<i style="background:#FDEBD3"></i>オレンジ＝黒服が今変えた所　<i style="background:#E0E0E0"></i>灰＝休み　<i style="background:#FFF3B0"></i>黄＝未定　<i style="background:#f8c9c9"></i>赤＝当欠　✔＝出勤済み (今日の営業日より前の日は見るだけ)'+hq('shLegend')+'</div>';
   var errs=SHS.errs.length?'<div class="sher"><b>入れられなかった所</b>'+SHS.errs.map(function(e){var p=String(e.date).split('-');return '<div>'+esc(e.gen||'')+' '+(+p[1])+'/'+(+p[2])+'　'+esc(e.msg)+'</div>';}).join('')+'</div>':'';
   return ''+
-    '<div id="shp-cast"'+(SHS.tab==='cast'?'':' hidden')+'>'+(miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
-      '<div class="card sc shc"><table class="shg" id="shgrid">'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+legend+errs+
+    '<div id="shp-cast"'+(SHS.tab==='cast'?'':' hidden')+'>'+shModeBar()+'<div id="shwk"'+(SHS.mode==='month'?' hidden':'')+'>'+(miss?'<div class="cnt" style="color:#e53935">未提出 '+miss+'人</div>':'')+
+      '<div class="card sc shc"><table class="shg" id="shgrid">'+head+(rows||'<tr><td colspan="8">在籍はいません</td></tr>')+sum+'</table></div>'+legend+'</div>'+
+      '<div id="shmo"'+(SHS.mode==='month'?'':' hidden')+'>'+(SHS.mode==='month'?shMonthInner():'')+'</div>'+errs+
       '<div class="abar"><button id="shsave" disabled>更新</button>'+hq('shSave')+'<span class="aun" id="shun"></span><span class="am2" id="shmsg"></span></div></div>'+
     '<div id="shp-drv"'+(SHS.tab==='drv'?'':' hidden')+'><div class="hd"><b>ドライバー出勤'+hq('shDrv')+'</b><span>○を押す／もう一度で取消　薄い○＝送迎予定にいる日 (押して確定)</span></div><div class="card sc dv" id="drv"><div class="msg" style="padding:12px">読み込み中...</div></div></div>'+
     '<div id="shp-hair"'+(SHS.tab==='hair'?'':' hidden')+'><div class="card"><div class="note" style="font-size:14px;margin:0 0 12px">美容師の週シフトは、美容室の本人用ページで黒服も入れられます。</div><a class="big" href="../salon/#t=shift" style="margin:0">美容師のシフトを入れる<small>美容室の画面 (週間シフト) を開く</small></a></div></div>';
 }
 function shFit(){ // 表の高さ = 画面の残り (ページ全体は縦に動かさず 表の中だけ動く = 見出し・名前の列が残る)。CSS の max-height は読み込み前の代わり
-  var c=document.querySelector('.card.shc');if(!c||!c.offsetParent)return;
-  var rest=document.documentElement.scrollHeight-c.offsetHeight;
-  c.style.maxHeight=Math.max(200,window.innerHeight-rest)+'px';
+  [].forEach.call(document.querySelectorAll('.card.shc,.card.shm'),function(c){
+    if(!c.offsetParent)return;
+    var rest=document.documentElement.scrollHeight-c.offsetHeight;
+    c.style.maxHeight=Math.max(200,window.innerHeight-rest)+'px';
+  });
 }
 window.addEventListener('resize',function(){shFit();});
 function shUpd(){
@@ -1356,7 +1462,30 @@ function shUpd(){
   if(b)b.disabled=!n||SHS.busy;
   if(u)u.textContent=n?'未保存 '+n+' 件':'';
   if(b)b.classList.toggle('dirty',n>0);
-  shSums();
+  shSums();shMSums();
+}
+// 月の保存: 200 件ずつ (サーバーの上限) 順に送る。終わったら週・月の両方を読み直す。入れられなかった所はオレンジのまま残す
+function shMSave(cells){
+  SHS.busy=true;shUpd();
+  var chunks=[],i,saved=0,errs=[];
+  for(i=0;i<cells.length;i+=200)chunks.push(cells.slice(i,i+200));
+  var st=store;
+  (function next(k){
+    if(k>=chunks.length){
+      SHS.errs=errs;
+      var keep={};errs.forEach(function(e){keep[e.id+'|'+e.date]=1;});
+      var nc={};Object.keys(SHS.chg).forEach(function(q){if(keep[q])nc[q]=SHS.chg[q];});SHS.chg=nc;
+      Promise.all([api('getWeek',[st,weekStart]),api('getMonthShift',[st,SHS.ym])]).then(function(a){
+        SHS.busy=false;SHS.w=a[0];SHS.m=a[1];
+        $('shroot').innerHTML=shInner(SHS.w);shBind();
+        setMsg2('保存しました ('+saved+' 件・基本シフトとして残ります)'+(errs.length?'　入れられなかった所 '+errs.length+' 件':''),errs.length>0);
+      }).catch(function(e){SHS.busy=false;shUpd();setMsg2('保存はできましたが読み直せませんでした: '+(e.message||String(e)),true);});
+      return;
+    }
+    setMsg2('保存しています... ('+(k+1)+'/'+chunks.length+')',false);
+    api('setCastShifts',[st,chunks[k],true]).then(function(r){saved+=r.saved||0;errs=errs.concat(r.errors||[]);next(k+1);})
+      .catch(function(e){SHS.busy=false;shUpd();setMsg2('途中で止まりました ('+saved+' 件は保存済み): '+(e.message||String(e)),true);});
+  })(0);
 }
 function shBind(){
   var w=SHS.w;if(!w)return;
@@ -1368,6 +1497,16 @@ function shBind(){
     [].forEach.call(document.querySelectorAll('[data-sht]'),function(x){x.classList.toggle('on',x===b);});
     ['cast','drv','hair'].forEach(function(t){var e=$('shp-'+t);if(e)e.hidden=t!==SHS.tab;});
   };});
+  [].forEach.call(document.querySelectorAll('[data-shm]'),function(b){b.onclick=function(){
+    var mm=b.getAttribute('data-shm');if(SHS.mode===mm)return; // 未保存の変更は両方の表で共通 (保存するまで残る)
+    SHS.mode=mm;$('shroot').innerHTML=shInner(SHS.w);shBind();
+  };});
+  if(SHS.mode==='month'){
+    if($('shmp'))$('shmp').onclick=function(){if(!shGuard())return;SHS.chg={};SHS.errs=[];SHS.ym=shMonthShift(SHS.ym,-1);SHS.m=null;$('shroot').innerHTML=shInner(SHS.w);shBind();};
+    if($('shmx'))$('shmx').onclick=function(){if(!shGuard())return;SHS.chg={};SHS.errs=[];SHS.ym=shMonthShift(SHS.ym,1);SHS.m=null;$('shroot').innerHTML=shInner(SHS.w);shBind();};
+    if($('shcopy'))$('shcopy').onclick=shMCopy;
+    if(SHS.m&&SHS.m.ym===SHS.ym)shMBind();else{SHS.m=null;if($('shmo'))$('shmo').innerHTML=shMonthInner();shMLoad();}
+  }
   [].forEach.call(document.querySelectorAll('#shgrid select'),function(sel){sel.onchange=function(){
     var id=sel.getAttribute('data-id'),d=sel.getAttribute('data-d'),o=sel.getAttribute('data-o'),k=id+'|'+d,v=sel.value;
     if(v===o||!v)delete SHS.chg[k];else SHS.chg[k]={id:id,gen:sel.getAttribute('data-g'),date:d,shift:v};
@@ -1378,6 +1517,7 @@ function shBind(){
   if($('shsave'))$('shsave').onclick=function(){
     var cells=Object.keys(SHS.chg).map(function(k){return SHS.chg[k];});
     if(!cells.length||SHS.busy)return;
+    if(SHS.mode==='month'){shMSave(cells);return;}
     SHS.busy=true;shUpd();setMsg2('保存しています...',false);
     api('setCastShifts',[store,cells]).then(function(r){
       SHS.busy=false;SHS.w=r.week;SHS.errs=r.errors||[];
@@ -1392,7 +1532,7 @@ function shBind(){
 }
 function setMsg2(t,err){var m=$('shmsg');if(m){m.textContent=t||'';m.className='am2'+(err?' err':' ok');}}
 function vShift(){
-  SHS.chg={};SHS.errs=[];SHS.busy=false;
+  SHS.chg={};SHS.errs=[];SHS.busy=false;SHS.m=null;if(!SHS.ym)SHS.ym=weekStart.slice(0,7);
   loadWeek(function(w){
     SHS.w=w;
     setTimeout(shBind,0);
