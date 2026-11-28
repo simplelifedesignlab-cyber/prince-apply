@@ -229,7 +229,7 @@ body.nostaff .moneyonly{display:none!important}
 </div>
 <!-- 当日 (一覧) -->
 <div id="vList" hidden>
-  <div class="tip" data-tip="list"><span>この画面でできること: 今日の予約を見て、来た子に「ヘアメイク」、来なかった子に「キャンセル」を押します。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="tip" data-tip="list"><span>この画面でできること: 今日の予約を見て、来た子に「ヘアメイク」、来なかった子に「来なかった」を押します。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
   <div class="nav"><b id="lTitle">&nbsp;</b><div class="r"><button type="button" class="hq" data-h="date" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button><button class="ib" id="lPrev" aria-label="前の日" style="border:1.5px solid #1F2A44">‹</button><button class="tb" id="lToday">今日</button><button class="ib" id="lNext" aria-label="次の日" style="border:1.5px solid #1F2A44">›</button></div></div>
   <div class="sum" id="lCn"></div>
   <div id="lNote"></div>
@@ -260,7 +260,7 @@ body.nostaff .moneyonly{display:none!important}
 </div>
 <!-- 2 ページ目: その日の詳細 -->
 <div id="vDay" hidden>
-  <div class="tip" data-tip="day"><span>この画面でできること: 空きに名前を入れる、「ヘアメイク」「キャンセル」を押す、特別枠 (撮影など) を入れる。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
+  <div class="tip" data-tip="day"><span>この画面でできること: 空きに名前を入れる、「ヘアメイク」「来なかった」を押す、特別枠 (撮影など) を入れる。</span><button type="button" aria-label="この説明を閉じる">×</button></div>
   <div class="dh">
     <button class="back" id="dBack"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg><span id="dBackT">戻る</span></button>
     <div style="display:flex;align-items:center"><button type="button" class="hq" data-h="screen" aria-expanded="false" aria-label="ヘルプ"><i>?</i></button>
@@ -357,7 +357,7 @@ function loadList(){
 }
 function ovOf(e){var o=null;((listData&&listData.overlaps)||[]).forEach(function(x){if(x.place===e.place&&x.time===e.time)o=x;});return e.any?null:o;}
 function stOf(e){return e.status==='済'?'hm':e.status==='来ず'?'cl':'';}
-function btnsHtml(e){var st=stOf(e);return '<span class="tgs"><button type="button" class="tgb hm'+(st==='hm'?' on':'')+'" data-w="hm" aria-pressed="'+(st==='hm')+'">ヘアメイク</button><button type="button" class="tgb cl'+(st==='cl'?' on':'')+'" data-w="cl" aria-pressed="'+(st==='cl')+'">キャンセル</button></span>';}
+function btnsHtml(e){var st=stOf(e);return '<span class="tgs"><button type="button" class="tgb hm'+(st==='hm'?' on':'')+'" data-w="hm" aria-pressed="'+(st==='hm')+'">ヘアメイク</button><button type="button" class="tgb cl'+(st==='cl'?' on':'')+'" data-w="cl" aria-pressed="'+(st==='cl')+'">来なかった</button></span>';}
 function lineHtml(e,i,multiPlace){
   var tags='',ov=ovOf(e);
   if(e.tag)tags+='<span class="tg '+(e.tag==='同伴'?'dou':e.tag==='優先'?'pri':'sat')+'">'+esc(e.tag==='優先'?'来店':e.tag)+'</span>';
@@ -368,13 +368,13 @@ function lineHtml(e,i,multiPlace){
   if(e.by&&e.status==='済')sub.push('担当 '+e.by);
   return '<div class="lr'+(e.over?' ovr':'')+(e.status==='済'?' d1':'')+(e.status==='来ず'?' nsh2':'')+'" data-i="'+i+'"><span class="tm">'+esc(e.any?'着順':e.time)+'</span><span class="fl"><span class="nm"><b>'+esc(e.gen)+'</b>'+tags+'</span><span class="sb'+(e.over?' r':'')+'">'+(e.over?'定員を超えています · ':'')+esc(sub.join(' · '))+'</span></span>'+btnsHtml(e)+'</div>';
 }
-// 集計: 予約 = ヘアメイク + キャンセル + まだ (札の総数・予約なしで来た子も含む)。元 = getSalonSlots の rows(booked)+special+any
+// 集計: 予約 = ヘアメイク + 来なかった + まだ (札の総数・予約なしで来た子も含む)。元 = getSalonSlots の rows(booked)+special+any
 function allEntries(r){var a=[];(r.rows||[]).forEach(function(e){if(e.kind==='booked')a.push(e);});return a.concat(r.special||[]).concat(r.any||[]);}
 function summaryHtml(r,withFree){
   var n=0,hm=0,cl=0,by={};
   allEntries(r).forEach(function(e){n++;if(e.status==='済'){hm++;var k=e.by||'担当なし';by[k]=(by[k]||0)+1;}else if(e.status==='来ず')cl++;});
   var rest=n-hm-cl,names=Object.keys(by).sort(function(a,b){return by[b]-by[a]||(a<b?-1:1);});
-  return '<div class="cn sm4"><div><small>予約</small><b>'+n+'</b></div><div class="op">＝</div><div><small style="color:#15803D">ヘアメイク</small><b>'+hm+'</b></div><div class="op">＋</div><div><small style="color:#C2410C">キャンセル</small><b>'+cl+'</b></div><div class="op">＋</div><div><small>まだ</small><b>'+rest+'</b></div></div>'+
+  return '<div class="cn sm4"><div><small>予約</small><b>'+n+'</b></div><div class="op">＝</div><div><small style="color:#15803D">ヘアメイク</small><b>'+hm+'</b></div><div class="op">＋</div><div><small style="color:#C2410C">来なかった</small><b>'+cl+'</b></div><div class="op">＋</div><div><small>まだ</small><b>'+rest+'</b></div></div>'+
     '<div class="sumMsg '+(rest>0?'ng':'ok')+'">'+(rest>0?'まだ押していない子が '+rest+' 人います':'全員 押しました')+hq('sum')+'</div>'+
     '<div class="sumSty">'+(names.length?'ヘアメイク '+names.map(function(k){return esc(k)+' '+by[k]+' 人';}).join('・'):'ヘアメイク まだいません')+'</div>'+
     (withFree?'<div class="sumSty">空き '+r.counts.free+'</div>':'');
@@ -679,7 +679,7 @@ function tog(e,row,w,dy){
   if(busy||!e||e.kind==='free')return;
   var cur=stOf(e),a,sty='';
   if(w===cur)a='reset';else if(w==='hm'){a='done';sty=needSty();if(!sty)return;}else a='noshow';
-  var undo=function(){row.classList.remove('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent=b.getAttribute('data-w')==='hm'?'ヘアメイク':'キャンセル';});};
+  var undo=function(){row.classList.remove('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent=b.getAttribute('data-w')==='hm'?'ヘアメイク':'来なかった';});};
   row.classList.add('pend');[].forEach.call(row.querySelectorAll('.tgb'),function(b){b.textContent='処理中…';});
   act(function(){return e.any?api('setSalonAny',[dy,e.store,e.gen,a,sty]):api('setSalonSlot',[dy,e.place,e.time,e.store,e.gen,a,sty]);},undo);
 }
@@ -734,15 +734,15 @@ $('sClose').onclick=closeSheets;
 $('ovSt').onclick=function(e){if(e.target===$('ovSt'))closeSheets();};
 
 var HELP={
- "screen_list": "当日 (その日の予約の一覧)\n予約が「時間指定」→「指定なし」の順に並びます。\n来た子は「ヘアメイク」、来なかった子は「キャンセル」を押します。\n押す前に、上の「担当」で自分の名前を選びます。",
+ "screen_list": "当日 (その日の予約の一覧)\n予約が「時間指定」→「指定なし」の順に並びます。\n来た子は「ヘアメイク」、来なかった子は「来なかった」を押します。\n押す前に、上の「担当」で自分の名前を選びます。",
  "screen_week": "週間予約\n場所ごとに、月〜日の 1 週間の人数と空きが出ます。\n色の帯は時間ごとの人数です。\n日を押すと、その日の予約画面が開きます。",
  "screen_shift": "週間シフト\n日付を押して、その日に出勤する美容師を選びます。\n過ぎた日は変えられません。\n選んだら「決定」を押すと保存されます。",
- "screen_day": "その日の予約画面\n「空き」の行の「入れる」を押すと、名前を入れられます (入れられるのは今日から 14 日先まで)。\n「ヘアメイク」「キャンセル」は当日の一覧と同じです。\n上の ‹ › で前後の日、「戻る」で一覧へ戻ります。",
+ "screen_day": "その日の予約画面\n「空き」の行の「入れる」を押すと、名前を入れられます (入れられるのは今日から 14 日先まで)。\n「ヘアメイク」「来なかった」は当日の一覧と同じです。\n上の ‹ › で前後の日、「戻る」で一覧へ戻ります。",
  "date": "日付を動かす\n‹ で前の日、› で次の日、「今日」で今日に戻ります。\n日付が変わるのは朝 5 時です (朝 5 時までは前の日として扱います)。",
  "weekmove": "週を動かす\n‹ で前の週、› で次の週、「今週」で今週に戻ります。\n月曜から日曜までの 1 週間が出ます。",
  "sty": "担当 (あなたの名前)\n「ヘアメイク」を押す時、誰が担当したかを記録するので、先に自分の名前を選びます。\n1 回選ぶと、この端末が覚えます。",
- "sum": "上の数字の見かた\n予約 ＝ ヘアメイク ＋ キャンセル ＋ まだ。「まだ」は、どちらも押していない子の数です。\n「まだ」が 0 になれば、全員押し終わりです。\n「空き」は、まだ入っていない枠の数です (1 日の画面に出ます)。",
- "btns": "札と印の見かた\n「ヘアメイク」= やった子。押すと緑になり、もう一度押すと元に戻ります (担当の名前が要ります)。\n「キャンセル」= 来なかった・取りやめた子。押すと橙になります。枠は空きに戻りません。\n印: 同伴 / 来店 (来店予定・本指名) / 撮影 / 手入力 / 「同じ時刻 2人」は同じ時刻に重なっています。\n「詳細」(黒服の画面だけ) から、撮影の美容室費や、枠を空ける操作ができます。",
+ "sum": "上の数字の見かた\n予約 ＝ ヘアメイク ＋ 来なかった ＋ まだ。「まだ」は、どちらも押していない子の数です。\n「まだ」が 0 になれば、全員押し終わりです。\n「空き」は、まだ入っていない枠の数です (1 日の画面に出ます)。",
+ "btns": "札と印の見かた\n「ヘアメイク」= やった子。押すと緑になり、もう一度押すと元に戻ります (担当の名前が要ります)。\n「来なかった」= 来なかった・取りやめた子。押すと橙になります。枠は空きに戻りません。\n印: 同伴 / 来店 (来店予定・本指名) / 撮影 / 手入力 / 「同じ時刻 2人」は同じ時刻に重なっています。\n「詳細」(黒服の画面だけ) から、撮影の美容室費や、枠を空ける操作ができます。",
  "sec_time": "時間指定\n同伴・撮影など、時刻が決まっている予約です。時刻の早い順に並びます。\n場所ごとに、美容師の人数と、出勤している人が出ます。",
  "sec_any": "指定なし (着いた順)\n来る時刻を決めていない子です。19:00〜22:00 の間に、着いた順でできるだけ終わらせます。\n同伴の子と、その他に分かれて出ます。",
  "special": "特別枠 (撮影など)\n決まった枠の外の時刻に、撮影などを入れる枠です。\n時刻は 15:00 から 30 分きざみで選べます (きざみは設定で変わります)。\n入れる時は、1 日の予約画面の「特別枠」ボタンから。",
@@ -753,7 +753,7 @@ var HELP={
  "addsheet": "空きに入れる\n名前の最初の文字を打つと、候補が出ます。店舗を選ぶと、その店の子だけに絞れます。\n候補を押してから「確定」を押すと、予約に入ります。\n特別枠の時は、先に時刻も選びます。",
  "plan": "予定 (印)\nなし / 同伴 / 優先 / 撮影 のどれかを選びます。一覧に印として出ます。\n「優先」は来店予定・本指名の印です (一覧では「来店」と出ます)。\n「撮影」を選ぶと、美容室費 (無料 / 有料) を選べます (黒服の画面だけ)。",
  "fee": "美容室費 (撮影)\n無料 = 「ヘアメイク」を押しても、給料引きに載りません。\n有料 = 給料引きに載ります。\nキャストが入れた撮影は、最初は有料で入ります。店が確認して無料に直します。",
- "stsheet": "詳細 (黒服のみ)\n撮影の予約は、美容室費を 無料 / 有料 に変えられます。\n「枠を空ける」は本当のキャンセルです。この枠は空きに戻り、ほかの子を入れられます。\n札の「キャンセル」(来なかった子) とは別です。"
+ "stsheet": "詳細 (黒服のみ)\n撮影の予約は、美容室費を 無料 / 有料 に変えられます。\n「枠を空ける」は本当のキャンセルです。この枠は空きに戻り、ほかの子を入れられます。\n札の「来なかった」とは別です。"
 };
 window.hqScreen=function(){return $('vDay').hidden?'screen_'+tab:'screen_day';};
 

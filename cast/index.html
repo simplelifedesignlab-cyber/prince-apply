@@ -343,9 +343,10 @@ function render() {
           mkSel(data.pickOpts.map(function (o) { return o; }), d.pick || '自宅', null, function (v) { d.pick = v; render(); }),
           mkSel(data.arriveOpts, d.arrive || (isT(d.shift) ? d.shift : ''), isT(d.shift) ? null : '出勤に合わせる', function (v) { d.arrive = v; })));
         if ((d.pick || '自宅') === 'その他') {
-          var po = el('input'); po.type = 'text'; po.maxLength = 40; po.placeholder = '迎えの場所を書いてください'; po.value = d.pickOther || '';
+          var po = el('input'); po.type = 'text'; po.maxLength = 40; po.placeholder = '迎えの場所 (例: 札幌プリンスビル)'; po.value = d.pickOther || '';
           po.oninput = function () { d.pickOther = po.value; };
           bd.appendChild(rw('', po));
+          bd.appendChild(el('p', 'hint', '地図で探すので、札幌プリンスビル・千歳プリンスビルのように市名から書いてください'));
         }
       }
       if (d.back) {
@@ -353,9 +354,10 @@ function render() {
         ac.appendChild(chip('アフター ' + (d.after ? 'あり' : 'なし'), d.after, function () { d.after = !d.after; }));
         bd.appendChild(rw('送り', mkSel(data.dropOpts, d.drop || '自宅', null, function (v) { d.drop = v; render(); }), ac));
         if ((d.drop || '自宅') === 'その他') {
-          var dof = el('input'); dof.type = 'text'; dof.maxLength = 40; dof.placeholder = '送り先を書いてください'; dof.value = d.dropOther || '';
+          var dof = el('input'); dof.type = 'text'; dof.maxLength = 40; dof.placeholder = '送り先 (例: 札幌プリンスビル)'; dof.value = d.dropOther || '';
           dof.oninput = function () { d.dropOther = dof.value; };
           bd.appendChild(rw('', dof));
+          bd.appendChild(el('p', 'hint', '地図で探すので、札幌プリンスビル・千歳プリンスビルのように市名から書いてください'));
         }
         if (d.after) bd.appendChild(el('p', 'hint', 'アフターの日は 3:00 までの帰りになります'));
       }
