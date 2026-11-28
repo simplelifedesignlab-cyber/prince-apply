@@ -413,13 +413,15 @@ document.getElementById('save').onclick = function () {
   var btn = this, msg = document.getElementById('msg');
   btn.disabled = true; btn.textContent = '保存中…'; msg.className = ''; msg.textContent = '';
   var payload = data.days.map(function (d) {
-    return { date: d.date, shift: d.shift, go: d.go, back: d.back, hair: d.hair,
+    return { date: d.date, shift: d.shift, shift0: d.shift0, go: d.go, back: d.back, hair: d.hair,
       leave: d.leave, pick: d.pick, pickOther: d.pickOther, arrive: d.arrive, drop: d.drop, dropOther: d.dropOther, after: d.after, hairTime: d.hairTime, note: d.note,
       plans: d.plans.filter(function (p) { return String(p.n || '').trim() || p.c || p.s || p.t; }) };
   });
   google.script.run.withSuccessHandler(function (res) {
     saving = false; btn.disabled = false; btn.textContent = '保存';
     msg.className = 'ok'; msg.textContent = '保存しました';
+    if (res && res.shiftFix) data.days.forEach(function (d) { if (res.shiftFix[d.date] !== undefined) d.shift = res.shiftFix[d.date]; }); // 黒服が先に変えていた出勤は、画面もその値に合わせる
+    data.days.forEach(function (d) { d.shift0 = d.shift; }); // 保存した値が、次の保存の「読み込み時の値」
     if (res && res.sougei !== undefined) data.sougei = res.sougei; // 送迎をなしにした時、「今日の送迎」を更新する (W9)
     if (res && res.pastDropped) { msg.className = 'ng'; msg.textContent = '日付が変わったので、昨日の分は保存しませんでした。開き直してください'; }
     data.days.forEach(function (d) { d.plans = d.plans.filter(function (p) { return String(p.n || '').trim() || p.c || p.s || p.t; }); });
